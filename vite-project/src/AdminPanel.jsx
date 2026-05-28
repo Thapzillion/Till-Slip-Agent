@@ -30,76 +30,306 @@ export default function AdminPanel() {
     logo_url: ''
   });
 
-  // RuachAgent Production Mastering Dashboard - "Dark Onyx Minimalist" Theme Tokens
-  const styles = {
-    container: {
-      minHeight: '100vh',
-      background: '#0a0a0a', // True deep obsidian black for absolute minimalism
-      color: '#e5e5e5', // Muted, sophisticated off-white to prevent eye strain
-      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
-      paddingBottom: '32px',
-      transition: 'opacity 0.2s ease',
-    },
-    header: {
-      display: 'flex',
-      justify: 'space-between',
-      alignItems: 'center',
-      padding: '16px 24px', // Reduced horizontal padding for a tighter mobile layout footprint
-      background: '#0a0a0a', // Blends seamlessly with the container background
-      borderBottom: '1px solid #171717', // Extremely faint separation boundary line
-    },
-    flatCard: {
-      background: '#121212', // Slightly elevated surface layer
-      borderRadius: '8px', // Slightly sharper, cleaner corner radius
-      padding: '20px', // Balanced whitespace padding
-      border: '1px solid #1c1c1c', // Muted container framing border
-      boxShadow: 'none', // Drop shadows removed completely for a true flat flat-design aesthetic
-    },
-    concaveCard: {
-      background: '#171717', // Faint alternative layout tier
-      borderRadius: '6px',
-      padding: '14px',
-      border: '1px solid #262626',
-    },
-    input: {
-      width: '100%',
-      boxSizing: 'border-box',
-      padding: '10px 12px',
-      background: '#121212', // Matches card level to drop out visual noise
-      border: '1px solid #262626', // Thin structural border boundary
-      borderRadius: '6px',
-      color: '#ffffff',
-      fontSize: '14px',
-      outline: 'none',
-      transition: 'border-color 0.15s ease',
-    },
-    button: {
-      width: '100%',
-      background: '#ffffff', // Striking pure white element focus
-      color: '#0a0a0a', // Deep contrast text readability anchor
-      border: 'none',
-      padding: '12px 16px',
-      borderRadius: '6px',
-      fontWeight: '500', // Cleaner medium stroke weight instead of heavy bolding
-      fontSize: '13px',
-      letterSpacing: '0.3px',
-      cursor: 'pointer',
-      transition: 'opacity 0.15s ease',
-    },
-    modalOverlay: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0, 0, 0, 0.85)', // High opacity pitch black overlay drop
-      backdropFilter: 'blur(8px)', // Slightly deep background abstraction blur
-      display: 'flex',
-      alignItems: 'center',
-      justify: 'center',
-      zIndex: 1000,
-    }
-  };
+  // RuachAgent Production Mastering Dashboard — Cyber Neon Theme Tokens
+// Inspired by the uploaded futuristic VPN/mobile UI design
+
+const styles = {
+
+  container: {
+
+    minHeight: '100vh',
+
+    background: `
+      radial-gradient(circle at top left, rgba(0,255,200,0.08), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(0,255,255,0.05), transparent 35%),
+      linear-gradient(135deg, #05070a 0%, #0b1118 40%, #07131a 100%)
+    `,
+
+    color: '#e8ffff',
+
+    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
+
+    paddingBottom: '32px',
+
+    transition: 'all 0.25s ease',
+
+    position: 'relative',
+
+    overflowX: 'hidden',
+
+  },
+
+  header: {
+
+    display: 'flex',
+
+    justifyContent: 'space-between',
+
+    alignItems: 'center',
+
+    padding: '18px 24px',
+
+    background: 'rgba(10, 18, 24, 0.72)',
+
+    backdropFilter: 'blur(18px)',
+
+    borderBottom: '1px solid rgba(0,255,200,0.12)',
+
+    position: 'sticky',
+
+    top: 0,
+
+    zIndex: 100,
+
+  },
+
+  flatCard: {
+
+    background: `
+      linear-gradient(
+        180deg,
+        rgba(12, 20, 26, 0.96),
+        rgba(8, 14, 18, 0.98)
+      )
+    `,
+
+    borderRadius: '22px',
+
+    padding: '22px',
+
+    border: '1px solid rgba(0,255,200,0.14)',
+
+    boxShadow: `
+      0 0 0 1px rgba(255,255,255,0.02),
+      0 12px 40px rgba(0,0,0,0.55),
+      0 0 25px rgba(0,255,200,0.08)
+    `,
+
+    backdropFilter: 'blur(18px)',
+
+    position: 'relative',
+
+    overflow: 'hidden',
+
+  },
+
+  concaveCard: {
+
+    background: `
+      linear-gradient(
+        145deg,
+        rgba(10, 20, 26, 0.92),
+        rgba(6, 12, 16, 0.98)
+      )
+    `,
+
+    borderRadius: '18px',
+
+    padding: '16px',
+
+    border: '1px solid rgba(0,255,200,0.10)',
+
+    boxShadow: `
+      inset 0 1px 1px rgba(255,255,255,0.04),
+      inset 0 -8px 12px rgba(0,0,0,0.35)
+    `,
+
+  },
+
+  input: {
+
+    width: '100%',
+
+    boxSizing: 'border-box',
+
+    padding: '14px 16px',
+
+    background: 'rgba(255,255,255,0.03)',
+
+    border: '1px solid rgba(0,255,200,0.12)',
+
+    borderRadius: '14px',
+
+    color: '#ffffff',
+
+    fontSize: '14px',
+
+    outline: 'none',
+
+    transition: 'all 0.2s ease',
+
+    backdropFilter: 'blur(10px)',
+
+    boxShadow: 'inset 0 0 12px rgba(0,0,0,0.3)',
+
+  },
+
+  button: {
+
+    width: '100%',
+
+    background: `
+      linear-gradient(
+        90deg,
+        #00e0b8 0%,
+        #00f5d4 50%,
+        #00ffd5 100%
+      )
+    `,
+
+    color: '#041014',
+
+    border: 'none',
+
+    padding: '14px 18px',
+
+    borderRadius: '16px',
+
+    fontWeight: '600',
+
+    fontSize: '14px',
+
+    letterSpacing: '0.4px',
+
+    cursor: 'pointer',
+
+    transition: 'all 0.2s ease',
+
+    boxShadow: `
+      0 0 18px rgba(0,255,200,0.35),
+      0 8px 24px rgba(0,255,200,0.18)
+    `,
+
+    textTransform: 'uppercase',
+
+  },
+
+  modalOverlay: {
+
+    position: 'fixed',
+
+    top: 0,
+
+    left: 0,
+
+    right: 0,
+
+    bottom: 0,
+
+    background: 'rgba(2, 8, 12, 0.82)',
+
+    backdropFilter: 'blur(12px)',
+
+    display: 'flex',
+
+    alignItems: 'center',
+
+    justifyContent: 'center',
+
+    zIndex: 1000,
+
+  },
+
+  title: {
+
+    fontSize: '28px',
+
+    fontWeight: '700',
+
+    letterSpacing: '1px',
+
+    color: '#ffffff',
+
+    textShadow: '0 0 12px rgba(0,255,200,0.28)',
+
+  },
+
+  subtitle: {
+
+    fontSize: '13px',
+
+    color: 'rgba(220,255,250,0.55)',
+
+    letterSpacing: '1.2px',
+
+    textTransform: 'uppercase',
+
+  },
+
+  glowText: {
+
+    color: '#00ffd5',
+
+    textShadow: '0 0 12px rgba(0,255,213,0.45)',
+
+  },
+
+  statusBadge: {
+
+    display: 'inline-flex',
+
+    alignItems: 'center',
+
+    gap: '8px',
+
+    padding: '8px 14px',
+
+    borderRadius: '999px',
+
+    background: 'rgba(0,255,200,0.08)',
+
+    border: '1px solid rgba(0,255,200,0.18)',
+
+    color: '#00ffd5',
+
+    fontSize: '12px',
+
+    fontWeight: '600',
+
+    letterSpacing: '0.5px',
+
+  },
+
+  divider: {
+
+    width: '100%',
+
+    height: '1px',
+
+    background: 'linear-gradient(90deg, transparent, rgba(0,255,200,0.18), transparent)',
+
+    margin: '18px 0',
+
+  },
+
+  neonCircle: {
+
+    width: '180px',
+
+    height: '180px',
+
+    borderRadius: '50%',
+
+    border: '2px solid rgba(0,255,200,0.14)',
+
+    display: 'flex',
+
+    alignItems: 'center',
+
+    justifyContent: 'center',
+
+    margin: '0 auto',
+
+    boxShadow: `
+      0 0 30px rgba(0,255,200,0.15),
+      inset 0 0 24px rgba(0,255,200,0.08)
+    `,
+
+    background: 'radial-gradient(circle, rgba(0,255,200,0.06), transparent)',
+
+  }
+
+};
 
   useEffect(() => {
     let isMounted = true;
