@@ -30,59 +30,60 @@ export default function AdminPanel() {
     logo_url: ''
   });
 
-  // RuachAgent Realtime Mastering Dashboard - "Luminous Obsidian" Theme Tokens
+  // RuachAgent Production Mastering Dashboard - "Slate & Steel Obsidian" Theme Tokens
   const styles = {
     container: {
       minHeight: '100vh',
-      background: '#0a0b0d',
-      color: '#e0e6ed',
-      fontFamily: 'system-ui, sans-serif',
+      background: '#090d16', // Deep, professional midnight blue-black
+      color: '#f1f5f9', // Clean slate white
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
       paddingBottom: '40px',
-      transition: 'opacity 0.3s ease',
+      transition: 'opacity 0.2s ease',
     },
     header: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justify: 'space-between',
       alignItems: 'center',
-      padding: '20px 40px',
-      background: '#0a0b0d',
-      boxShadow: '0 4px 20px rgba(59, 130, 246, 0.15)',
+      padding: '16px 40px',
+      background: '#0f172a', // Solid dark slate background
+      borderBottom: '1px solid #1e293b', // Razor-sharp border instead of a blurry shadow
     },
     flatCard: {
-      background: '#0a0b0d',
-      borderRadius: '20px',
-      padding: '30px',
-      boxShadow: '9px 9px 20px rgba(0, 0, 0, 0.6), -9px -9px 20px rgba(59, 130, 246, 0.1), inset 0 0 10px rgba(59, 130, 246, 0.05)',
+      background: '#0f172a',
+      borderRadius: '12px', // Tighter, cleaner corners
+      padding: '24px',
+      border: '1px solid #1e293b', // Crisp containment line
+      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)', // Elegant drop shadow
     },
     concaveCard: {
-      background: '#0a0b0d',
-      borderRadius: '16px',
-      padding: '20px',
-      boxShadow: 'inset 5px 5px 10px rgba(0, 0, 0, 0.5), inset -5px -5px 10px rgba(251, 191, 36, 0.05)',
+      background: '#1e293b', // Flat secondary surface
+      borderRadius: '8px',
+      padding: '16px',
+      border: '1px solid #334155',
     },
     input: {
       width: '100%',
       boxSizing: 'border-box',
-      padding: '14px',
-      background: '#0a0b0d',
-      border: 'none',
-      borderRadius: '12px',
-      color: '#fff',
+      padding: '12px 14px',
+      background: '#1e293b',
+      border: '1px solid #334155',
+      borderRadius: '8px',
+      color: '#ffffff',
       fontSize: '14px',
-      boxShadow: 'inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -4px -4px 8px rgba(251, 191, 36, 0.05)',
       outline: 'none',
+      transition: 'border-color 0.2s',
     },
     button: {
-      background: '#0a0b0d',
-      color: '#fff',
+      width: '100%',
+      background: '#2563eb', // Solid, high-converting royal blueprint blue
+      color: '#ffffff',
       border: 'none',
-      padding: '16px',
-      borderRadius: '12px',
-      fontWeight: 'bold',
-      fontSize: '15px',
+      padding: '12px 16px',
+      borderRadius: '8px',
+      fontWeight: '600',
+      fontSize: '14px',
       cursor: 'pointer',
-      boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.6), -6px -6px 12px rgba(16, 185, 129, 0.1), inset 0 0 10px rgba(16, 185, 129, 0.05)',
-      transition: 'all 0.2s',
+      transition: 'background-color 0.2s, transform 0.1s',
     },
     modalOverlay: {
       position: 'fixed',
@@ -90,11 +91,11 @@ export default function AdminPanel() {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(5, 6, 8, 0.85)',
-      backdropFilter: 'blur(8px)',
+      background: 'rgba(2, 6, 23, 0.8)', // Deep slate overlay
+      backdropFilter: 'blur(4px)',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
+      justify: 'center',
       zIndex: 1000,
     }
   };
@@ -212,24 +213,38 @@ export default function AdminPanel() {
     }
   }
 
-  async function handleAuth(type) {
-    setIsSyncing(true);
+async function handleAuth(type) {
+    // Validation pre-check before disabling the UI
+    if (!email || !password) {
+      alert("Please fill in all authorization fields.");
+      return;
+    }
+
     try {
       if (type === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) alert(error.message);
+        if (error) {
+          alert(error.message);
+          return;
+        }
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) {
           alert(error.message);
+          return;
         } else {
           setShowVerifyModal(true);
         }
       }
+      // Only set loading/syncing states IF the operation passes initial structural checks
+      setIsSyncing(true);
     } catch (err) {
       alert(err.message);
     } finally {
-      setIsSyncing(false);
+      // Short delay ensures processing registers safely across your browser layout
+      setTimeout(() => {
+        setIsSyncing(false);
+      }, 400);
     }
   }
 
@@ -242,32 +257,29 @@ export default function AdminPanel() {
     const cleanBusinessName = settings.business_name?.trim();
     const cleanWebhookSlug = settings.webhook_slug?.trim();
 
-    if (!cleanBusinessName) {
-      alert("Validation Failed: Business Brand Name cannot be left blank.");
+    if (!cleanBusinessName || !cleanWebhookSlug) {
+      alert("Validation Failed: Required parameter fields cannot be left blank.");
       return;
     }
 
-    if (!cleanWebhookSlug) {
-      alert("Validation Failed: Live Webhook Unique Slug cannot be left blank.");
-      return;
+    // Let the payload build completely BEFORE changing component loading layouts
+    const payload = {
+      owner_id: user.id,
+      business_name: cleanBusinessName,
+      store_address: settings.store_address?.trim() || '',
+      discount_percentage: Number(settings.discount_percentage ?? 10),
+      webhook_slug: cleanWebhookSlug,
+      currency: settings.currency || 'ZAR',
+      logo_url: settings.logo_url || ''
+    };
+
+    if (settings.id) {
+      payload.id = settings.id;
     }
 
     setIsSyncing(true);
+    
     try {
-      const payload = {
-        owner_id: user.id,
-        business_name: cleanBusinessName,
-        store_address: settings.store_address?.trim() || '',
-        discount_percentage: Number(settings.discount_percentage ?? 10),
-        webhook_slug: cleanWebhookSlug,
-        currency: settings.currency || 'ZAR',
-        logo_url: settings.logo_url || ''
-      };
-
-      if (settings.id) {
-        payload.id = settings.id;
-      }
-
       const { data, error } = await supabase
         .from('business_settings')
         .upsert(payload, { onConflict: 'owner_id' })
@@ -281,7 +293,7 @@ export default function AdminPanel() {
       }
     } catch (error) {
       console.error("Profile synchronization failed:", error);
-      alert('Error syncing live profile: ' + (error.message || error.description || 'Unknown error'));
+      alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
     } finally {
       setIsSyncing(false);
     }
