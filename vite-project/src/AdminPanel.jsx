@@ -30,60 +30,61 @@ export default function AdminPanel() {
     logo_url: ''
   });
 
-  // RuachAgent Production Mastering Dashboard - "Slate & Steel Obsidian" Theme Tokens
+  // RuachAgent Production Mastering Dashboard - "Dark Onyx Minimalist" Theme Tokens
   const styles = {
     container: {
       minHeight: '100vh',
-      background: '#090d16', // Deep, professional midnight blue-black
-      color: '#f1f5f9', // Clean slate white
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-      paddingBottom: '40px',
+      background: '#0a0a0a', // True deep obsidian black for absolute minimalism
+      color: '#e5e5e5', // Muted, sophisticated off-white to prevent eye strain
+      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
+      paddingBottom: '32px',
       transition: 'opacity 0.2s ease',
     },
     header: {
       display: 'flex',
       justify: 'space-between',
       alignItems: 'center',
-      padding: '16px 40px',
-      background: '#0f172a', // Solid dark slate background
-      borderBottom: '1px solid #1e293b', // Razor-sharp border instead of a blurry shadow
+      padding: '16px 24px', // Reduced horizontal padding for a tighter mobile layout footprint
+      background: '#0a0a0a', // Blends seamlessly with the container background
+      borderBottom: '1px solid #171717', // Extremely faint separation boundary line
     },
     flatCard: {
-      background: '#0f172a',
-      borderRadius: '12px', // Tighter, cleaner corners
-      padding: '24px',
-      border: '1px solid #1e293b', // Crisp containment line
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.25)', // Elegant drop shadow
+      background: '#121212', // Slightly elevated surface layer
+      borderRadius: '8px', // Slightly sharper, cleaner corner radius
+      padding: '20px', // Balanced whitespace padding
+      border: '1px solid #1c1c1c', // Muted container framing border
+      boxShadow: 'none', // Drop shadows removed completely for a true flat flat-design aesthetic
     },
     concaveCard: {
-      background: '#1e293b', // Flat secondary surface
-      borderRadius: '8px',
-      padding: '16px',
-      border: '1px solid #334155',
+      background: '#171717', // Faint alternative layout tier
+      borderRadius: '6px',
+      padding: '14px',
+      border: '1px solid #262626',
     },
     input: {
       width: '100%',
       boxSizing: 'border-box',
-      padding: '12px 14px',
-      background: '#1e293b',
-      border: '1px solid #334155',
-      borderRadius: '8px',
+      padding: '10px 12px',
+      background: '#121212', // Matches card level to drop out visual noise
+      border: '1px solid #262626', // Thin structural border boundary
+      borderRadius: '6px',
       color: '#ffffff',
       fontSize: '14px',
       outline: 'none',
-      transition: 'border-color 0.2s',
+      transition: 'border-color 0.15s ease',
     },
     button: {
       width: '100%',
-      background: '#2563eb', // Solid, high-converting royal blueprint blue
-      color: '#ffffff',
+      background: '#ffffff', // Striking pure white element focus
+      color: '#0a0a0a', // Deep contrast text readability anchor
       border: 'none',
       padding: '12px 16px',
-      borderRadius: '8px',
-      fontWeight: '600',
-      fontSize: '14px',
+      borderRadius: '6px',
+      fontWeight: '500', // Cleaner medium stroke weight instead of heavy bolding
+      fontSize: '13px',
+      letterSpacing: '0.3px',
       cursor: 'pointer',
-      transition: 'background-color 0.2s, transform 0.1s',
+      transition: 'opacity 0.15s ease',
     },
     modalOverlay: {
       position: 'fixed',
@@ -91,8 +92,8 @@ export default function AdminPanel() {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(2, 6, 23, 0.8)', // Deep slate overlay
-      backdropFilter: 'blur(4px)',
+      background: 'rgba(0, 0, 0, 0.85)', // High opacity pitch black overlay drop
+      backdropFilter: 'blur(8px)', // Slightly deep background abstraction blur
       display: 'flex',
       alignItems: 'center',
       justify: 'center',
@@ -319,12 +320,12 @@ async function handleAuth(type) {
       {showVerifyModal && (
         <div style={styles.modalOverlay}>
           <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center' }}>
-            <div style={{ fontSize: '40px', marginBottom: '16px' }}>✉️</div>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#fff' }}>Verification Link Dispatched</h3>
-            <p style={{ fontSize: '13px', color: '#a3b1c6', lineHeight: '1.5', margin: '0 0 20px 0' }}>
-              We have sent a confirmation email to <strong style={{ color: '#fff' }}>{email}</strong>. Please check your inbox and click the activation link to configure your system node.
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>✉️</div>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#ffffff', letterSpacing: '0.3px', fontWeight: '500' }}>Verification Link Dispatched</h3>
+            <p style={{ fontSize: '13px', color: '#a3a3a3', lineHeight: '1.6', margin: '0 0 20px 0' }}>
+              We have sent a confirmation email to <strong style={{ color: '#ffffff', fontWeight: '500' }}>{email}</strong>. Please check your inbox and click the activation link to configure your system node.
             </p>
-            <button onClick={() => setShowVerifyModal(false)} style={{ ...styles.button, padding: '12px 24px', fontSize: '13px', width: 'auto' }}>
+            <button onClick={() => setShowVerifyModal(false)} style={{ ...styles.button, padding: '10px 20px', fontSize: '12px', width: 'auto', display: 'inline-block', margin: '0 auto' }}>
               Acknowledge
             </button>
           </div>
@@ -334,21 +335,21 @@ async function handleAuth(type) {
       {/* GLOBAL MODAL 2: EMAIL CONFIRMED SUCCESS POP-UP */}
       {showSuccessModal && (
         <div style={styles.modalOverlay}>
-          <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-            <div style={{ fontSize: '40px', marginBottom: '16px', color: '#10b981' }}>⚡</div>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '19px', color: '#10b981', fontWeight: '800', letterSpacing: '0.5px' }}>Email Confirmed Successfully!</h3>
-            <p style={{ fontSize: '13px', color: '#a3b1c6', lineHeight: '1.5', margin: '0 0 24px 0' }}>
+          <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center', borderColor: '#262626' }}>
+            <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚡</div>
+            <h3 style={{ margin: '0 0 10px 0', fontSize: '17px', color: '#ffffff', fontWeight: '500', letterSpacing: '0.3px' }}>Email Confirmed Successfully!</h3>
+            <p style={{ fontSize: '13px', color: '#a3a3a3', lineHeight: '1.6', margin: '0 0 24px 0' }}>
               Your merchant node identity has been verified by the authentication gateway. Welcome to RuachAgent.
             </p>
             <button 
               onClick={() => setShowSuccessModal(false)} 
               style={{ 
                 ...styles.button, 
-                padding: '12px 30px', 
-                fontSize: '13px', 
+                padding: '10px 24px', 
+                fontSize: '12px', 
                 width: 'auto',
-                color: '#fff',
-                boxShadow: '6px 6px 12px rgba(0, 0, 0, 0.6), -6px -6px 12px rgba(16, 185, 129, 0.15)' 
+                display: 'inline-block',
+                margin: '0 auto'
               }}
             >
               Enter Workspace
@@ -360,52 +361,81 @@ async function handleAuth(type) {
       {/* HEADER NAVIGATION */}
       <header style={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontWeight: '900', fontSize: '20px', letterSpacing: '2px', color: '#fff' }}>RUACHAGENT</span>
-          <span style={{ fontSize: '10px', boxShadow: 'inset 2px 2px 5px #151a22, inset -2px -2px 5px #27303e', color: '#3b82f6', padding: '4px 10px', borderRadius: '20px', fontWeight: 'bold' }}>NEUMORPHIC NODE</span>
+          <span style={{ fontWeight: '700', fontSize: '16px', letterSpacing: '1.5px', color: '#ffffff' }}>RUACHAGENT</span>
+          <span style={{ fontSize: '9px', border: '1px solid #262626', color: '#a3a3a3', padding: '3px 8px', borderRadius: '4px', fontWeight: '500', letterSpacing: '0.5px' }}>PRODUCTION NODE</span>
         </div>
         {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <span style={{ fontSize: '13px', color: '#9ca3af', fontFamily: 'monospace' }}>{user.email}</span>
-            <button onClick={() => supabase.auth.signOut()} style={{ background: '#0a0b0d', border: 'none', color: '#ef4444', padding: '8px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '3px 3px 6px #000, -3px -3px 6px rgba(255,255,255,0.05)' }}>Disconnect</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{ fontSize: '12px', color: '#737373', fontFamily: 'monospace' }}>{user.email}</span>
+            <button 
+              onClick={() => supabase.auth.signOut()} 
+              style={{ 
+                background: 'transparent', 
+                border: '1px solid #262626', 
+                color: '#ef4444', 
+                padding: '6px 12px', 
+                borderRadius: '6px', 
+                fontSize: '11px', 
+                fontWeight: '500', 
+                cursor: 'pointer',
+                transition: 'border-color 0.15s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ef4444'}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = '#262626'}
+            >
+              Disconnect
+            </button>
           </div>
         )}
       </header>
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
-      <main style={{ padding: '40px 20px', maxWidth: '1000px', margin: '0 auto' }}>
+      <main style={{ padding: '32px 16px', maxWidth: '1000px', margin: '0 auto' }}>
         {!user ? (
-          /* NEUMORPHIC AUTH SECTION */
-          <section style={{ maxWidth: '400px', margin: '60px auto 0 auto' }}>
+          /* MINIMALIST AUTH SECTION */
+          <section style={{ maxWidth: '360px', margin: '60px auto 0 auto' }}>
             <div style={styles.flatCard}>
-              <h2 style={{ textAlign: 'center', fontSize: '22px', fontWeight: '800', margin: '0 0 25px 0' }}>Master Portal Login</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <h2 style={{ textAlign: 'center', fontSize: '18px', fontWeight: '500', margin: '0 0 24px 0', color: '#ffffff', letterSpacing: '0.3px' }}>Master Portal Login</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={styles.input} />
                 <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={styles.input} />
                 <button onClick={() => handleAuth('login')} style={styles.button} disabled={isSyncing}>
                   {isSyncing ? 'Verifying Node...' : 'Authenticate Identity'}
                 </button>
-                <button onClick={() => handleAuth('register')} style={{ ...styles.button, color: '#a3b1c6' }} disabled={isSyncing}>Register New Node</button>
+                <button 
+                  onClick={() => handleAuth('register')} 
+                  style={{ 
+                    ...styles.button, 
+                    background: 'transparent', 
+                    color: '#a3a3a3', 
+                    border: '1px solid #262626',
+                    marginTop: '4px'
+                  }} 
+                  disabled={isSyncing}
+                >
+                  Register New Node
+                </button>
               </div>
             </div>
           </section>
         ) : (
-          /* NEUMORPHIC WORKSPACE SECTION */
-          <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px', alignItems: 'start' }}>
+          /* MINIMALIST WORKSPACE SECTION */
+          <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
             {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
             <div style={styles.flatCard}>
-              <h3 style={{ margin: '0 0 20px 0', fontSize: '15px', fontWeight: '800', color: '#3b82f6', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '13px', fontWeight: '500', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
                 Agent Parameters
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* BRAND LOGO */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#a3b1c6', fontWeight: '700', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     BUSINESS BRAND LOGO (PICTURE PRINT)
                   </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                    <label style={{ ...styles.button, display: 'inline-block', padding: '12px 20px', fontSize: '12px', color: '#3b82f6', cursor: 'pointer', textAlign: 'center', flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <label style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #262626', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1 }}>
                       Choose Image File
                       <input 
                         type="file" 
@@ -420,11 +450,11 @@ async function handleAuth(type) {
                         style={{ display: 'none' }} 
                       />
                     </label>
-                    <div style={{ ...styles.concaveCard, padding: '5px', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '12px' }}>
+                    <div style={{ ...styles.concaveCard, padding: '2px', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '4px' }}>
                       {settings?.logo_url ? (
-                        <img src={settings.logo_url} alt="Logo Mirror" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+                        <img src={settings.logo_url} alt="Logo Mirror" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
                       ) : (
-                        <span style={{ fontSize: '18px', color: '#4b5563' }}>🖼️</span>
+                        <span style={{ fontSize: '14px', color: '#404040' }}>🖼️</span>
                       )}
                     </div>
                   </div>
@@ -432,7 +462,7 @@ async function handleAuth(type) {
 
                 {/* LIVE WEBHOOK SLUG */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#a3b1c6', fontWeight: '700', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     LIVE WEBHOOK SLUG
                   </label>
                   <input 
@@ -443,13 +473,13 @@ async function handleAuth(type) {
                       const cleanValue = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
                       setSettings(prev => ({ ...prev, webhook_slug: cleanValue }));
                     }} 
-                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', color: '#fff' }} 
+                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }} 
                   />
                 </div>
 
                 {/* DYNAMIC CURRENCY SELECT SYSTEM */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#a3b1c6', fontWeight: '700', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     OPERATIONAL CURRENCY
                   </label>
                   <div style={{ position: 'relative' }}>
@@ -459,21 +489,21 @@ async function handleAuth(type) {
                         const val = e.target.value;
                         setSettings(prev => ({ ...prev, currency: val }));
                       }} 
-                      style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', color: '#fff', appearance: 'none', cursor: 'pointer', paddingRight: '30px' }}
+                      style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer', paddingRight: '30px' }}
                     >
                       {CURRENCY_OPTIONS.map((curr) => (
-                        <option key={curr.code} value={curr.code} style={{ background: '#0a0b0d', color: '#fff', fontFamily: 'monospace' }}>
+                        <option key={curr.code} value={curr.code} style={{ background: '#121212', color: '#ffffff', fontFamily: 'monospace' }}>
                           {curr.name} ({curr.symbol})
                         </option>
                       ))}
                     </select>
-                    <span style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', fontSize: '10px', color: '#3b82f6', pointerEvents: 'none', fontFamily: 'monospace' }}>▼</span>
+                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '9px', color: '#737373', pointerEvents: 'none', fontFamily: 'monospace' }}>▼</span>
                   </div>
                 </div>
 
                 {/* BUSINESS BRAND NAME */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#a3b1c6', fontWeight: '700', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     BUSINESS BRAND NAME
                   </label>
                   <input 
@@ -483,13 +513,13 @@ async function handleAuth(type) {
                       const val = e.target.value;
                       setSettings(prev => ({ ...prev, business_name: val }));
                     }} 
-                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', color: '#fff' }} 
+                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }} 
                   />
                 </div>
 
                 {/* PHYSICAL OUTLET ADDRESS */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#a3b1c6', fontWeight: '700', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     PHYSICAL OUTLET ADDRESS
                   </label>
                   <textarea 
@@ -498,13 +528,13 @@ async function handleAuth(type) {
                       const val = e.target.value;
                       setSettings(prev => ({ ...prev, store_address: val }));
                     }} 
-                    style={{ ...styles.input, minHeight: '70px', resize: 'none', fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', color: '#fff', lineHeight: '1.6' }} 
+                    style={{ ...styles.input, minHeight: '64px', resize: 'none', fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', lineHeight: '1.6' }} 
                   />
                 </div>
 
                 {/* AI DISCOUNT COMPILER VALUE (%) */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#a3b1c6', fontWeight: '700', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     AI DISCOUNT COMPILER VALUE (%)
                   </label>
                   <input 
@@ -514,7 +544,7 @@ async function handleAuth(type) {
                       const val = parseInt(e.target.value) || 0;
                       setSettings(prev => ({ ...prev, discount_percentage: val }));
                     }} 
-                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', color: '#fff' }} 
+                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }} 
                   />
                 </div>
 
