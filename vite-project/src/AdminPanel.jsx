@@ -30,10 +30,17 @@ export default function AdminPanel() {
     logo_url: ''
   });
 
-  // RuachAgent Production Mastering Dashboard — Cyber Neon Theme Tokens
-// Inspired by the uploaded futuristic VPN/mobile UI design
+  // RuachAgent Responsive Cyber Neon Theme System
+
+const isMobile = window.innerWidth <= 768;
+const isTablet = window.innerWidth > 768 && window.innerWidth <= 1200;
+const isDesktop = window.innerWidth > 1200;
 
 const styles = {
+
+  /* =========================
+     APP CONTAINER
+  ========================= */
 
   container: {
 
@@ -47,9 +54,20 @@ const styles = {
 
     color: '#e8ffff',
 
-    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif',
+    fontFamily: `
+      -apple-system,
+      BlinkMacSystemFont,
+      "SF Pro Display",
+      "Segoe UI",
+      Roboto,
+      sans-serif
+    `,
 
-    paddingBottom: '32px',
+    paddingBottom: isMobile ? '90px' : '32px',
+
+    paddingLeft: isDesktop ? '24px' : '14px',
+
+    paddingRight: isDesktop ? '24px' : '14px',
 
     transition: 'all 0.25s ease',
 
@@ -59,29 +77,145 @@ const styles = {
 
   },
 
+  /* =========================
+     MAIN APP SHELL
+  ========================= */
+
+  appShell: {
+
+    display: 'grid',
+
+    gridTemplateColumns: isDesktop
+      ? '280px 1fr'
+      : '1fr',
+
+    gap: '22px',
+
+    width: '100%',
+
+    maxWidth: '1700px',
+
+    margin: '0 auto',
+
+    alignItems: 'start',
+
+  },
+
+  /* =========================
+     SIDEBAR
+  ========================= */
+
+  sidebar: {
+
+    position: isDesktop ? 'sticky' : 'relative',
+
+    top: isDesktop ? '18px' : '0',
+
+    height: isDesktop ? 'calc(100vh - 36px)' : 'auto',
+
+    overflowY: 'auto',
+
+    borderRadius: '24px',
+
+    background: `
+      linear-gradient(
+        180deg,
+        rgba(10,18,24,0.96),
+        rgba(6,12,16,0.98)
+      )
+    `,
+
+    border: '1px solid rgba(0,255,200,0.12)',
+
+    padding: isMobile ? '16px' : '22px',
+
+    backdropFilter: 'blur(18px)',
+
+    boxShadow: `
+      0 12px 40px rgba(0,0,0,0.45),
+      0 0 25px rgba(0,255,200,0.05)
+    `,
+
+  },
+
+  /* =========================
+     CONTENT AREA
+  ========================= */
+
+  content: {
+
+    width: '100%',
+
+    display: 'flex',
+
+    flexDirection: 'column',
+
+    gap: '20px',
+
+  },
+
+  /* =========================
+     HEADER
+  ========================= */
+
   header: {
 
     display: 'flex',
 
+    flexDirection: isMobile ? 'column' : 'row',
+
     justifyContent: 'space-between',
 
-    alignItems: 'center',
+    alignItems: isMobile ? 'flex-start' : 'center',
 
-    padding: '18px 24px',
+    gap: isMobile ? '14px' : '0',
+
+    padding: isMobile ? '16px' : '20px 24px',
 
     background: 'rgba(10, 18, 24, 0.72)',
 
     backdropFilter: 'blur(18px)',
 
-    borderBottom: '1px solid rgba(0,255,200,0.12)',
+    border: '1px solid rgba(0,255,200,0.10)',
+
+    borderRadius: '22px',
 
     position: 'sticky',
 
-    top: 0,
+    top: '12px',
 
     zIndex: 100,
 
+    boxShadow: `
+      0 10px 35px rgba(0,0,0,0.35)
+    `,
+
   },
+
+  /* =========================
+     GRID SYSTEM
+  ========================= */
+
+  dashboardGrid: {
+
+    display: 'grid',
+
+    gridTemplateColumns:
+      isDesktop
+        ? 'repeat(3, 1fr)'
+        : isTablet
+          ? 'repeat(2, 1fr)'
+          : '1fr',
+
+    gap: '20px',
+
+    width: '100%',
+
+  },
+
+  /* =========================
+     CARDS
+  ========================= */
 
   flatCard: {
 
@@ -93,9 +227,9 @@ const styles = {
       )
     `,
 
-    borderRadius: '22px',
+    borderRadius: isMobile ? '18px' : '24px',
 
-    padding: '22px',
+    padding: isMobile ? '18px' : '24px',
 
     border: '1px solid rgba(0,255,200,0.14)',
 
@@ -111,7 +245,13 @@ const styles = {
 
     overflow: 'hidden',
 
+    transition: 'all 0.25s ease',
+
   },
+
+  /* =========================
+     MINI CARD
+  ========================= */
 
   concaveCard: {
 
@@ -125,7 +265,7 @@ const styles = {
 
     borderRadius: '18px',
 
-    padding: '16px',
+    padding: isMobile ? '14px' : '16px',
 
     border: '1px solid rgba(0,255,200,0.10)',
 
@@ -136,23 +276,27 @@ const styles = {
 
   },
 
+  /* =========================
+     INPUTS
+  ========================= */
+
   input: {
 
     width: '100%',
 
     boxSizing: 'border-box',
 
-    padding: '14px 16px',
+    padding: isMobile ? '13px 14px' : '15px 16px',
 
     background: 'rgba(255,255,255,0.03)',
 
     border: '1px solid rgba(0,255,200,0.12)',
 
-    borderRadius: '14px',
+    borderRadius: '16px',
 
     color: '#ffffff',
 
-    fontSize: '14px',
+    fontSize: isMobile ? '13px' : '14px',
 
     outline: 'none',
 
@@ -163,6 +307,10 @@ const styles = {
     boxShadow: 'inset 0 0 12px rgba(0,0,0,0.3)',
 
   },
+
+  /* =========================
+     BUTTONS
+  ========================= */
 
   button: {
 
@@ -181,15 +329,15 @@ const styles = {
 
     border: 'none',
 
-    padding: '14px 18px',
+    padding: isMobile ? '13px 14px' : '15px 18px',
 
     borderRadius: '16px',
 
-    fontWeight: '600',
+    fontWeight: '700',
 
-    fontSize: '14px',
+    fontSize: isMobile ? '13px' : '14px',
 
-    letterSpacing: '0.4px',
+    letterSpacing: '0.5px',
 
     cursor: 'pointer',
 
@@ -203,6 +351,138 @@ const styles = {
     textTransform: 'uppercase',
 
   },
+
+  /* =========================
+     RESPONSIVE TITLES
+  ========================= */
+
+  title: {
+
+    fontSize: isMobile ? '21px' : isTablet ? '25px' : '30px',
+
+    fontWeight: '700',
+
+    letterSpacing: '1px',
+
+    color: '#ffffff',
+
+    textShadow: '0 0 12px rgba(0,255,200,0.28)',
+
+    lineHeight: '1.1',
+
+  },
+
+  subtitle: {
+
+    fontSize: isMobile ? '11px' : '13px',
+
+    color: 'rgba(220,255,250,0.55)',
+
+    letterSpacing: '1.2px',
+
+    textTransform: 'uppercase',
+
+  },
+
+  /* =========================
+     STATUS BADGES
+  ========================= */
+
+  statusBadge: {
+
+    display: 'inline-flex',
+
+    alignItems: 'center',
+
+    gap: '8px',
+
+    padding: isMobile ? '7px 12px' : '8px 14px',
+
+    borderRadius: '999px',
+
+    background: 'rgba(0,255,200,0.08)',
+
+    border: '1px solid rgba(0,255,200,0.18)',
+
+    color: '#00ffd5',
+
+    fontSize: isMobile ? '11px' : '12px',
+
+    fontWeight: '600',
+
+    letterSpacing: '0.5px',
+
+  },
+
+  /* =========================
+     RESPONSIVE DIVIDER
+  ========================= */
+
+  divider: {
+
+    width: '100%',
+
+    height: '1px',
+
+    background: `
+      linear-gradient(
+        90deg,
+        transparent,
+        rgba(0,255,200,0.18),
+        transparent
+      )
+    `,
+
+    margin: isMobile ? '14px 0' : '18px 0',
+
+  },
+
+  /* =========================
+     MOBILE FLOATING ACTION BAR
+  ========================= */
+
+  mobileDock: {
+
+    position: 'fixed',
+
+    bottom: '18px',
+
+    left: '50%',
+
+    transform: 'translateX(-50%)',
+
+    width: 'calc(100% - 28px)',
+
+    maxWidth: '420px',
+
+    display: isMobile ? 'flex' : 'none',
+
+    justifyContent: 'space-around',
+
+    alignItems: 'center',
+
+    padding: '14px',
+
+    borderRadius: '22px',
+
+    background: 'rgba(8,18,24,0.88)',
+
+    backdropFilter: 'blur(18px)',
+
+    border: '1px solid rgba(0,255,200,0.14)',
+
+    zIndex: 500,
+
+    boxShadow: `
+      0 10px 35px rgba(0,0,0,0.45),
+      0 0 25px rgba(0,255,200,0.08)
+    `,
+
+  },
+
+  /* =========================
+     MODAL
+  ========================= */
 
   modalOverlay: {
 
@@ -228,85 +508,19 @@ const styles = {
 
     zIndex: 1000,
 
-  },
-
-  title: {
-
-    fontSize: '28px',
-
-    fontWeight: '700',
-
-    letterSpacing: '1px',
-
-    color: '#ffffff',
-
-    textShadow: '0 0 12px rgba(0,255,200,0.28)',
+    padding: isMobile ? '14px' : '22px',
 
   },
 
-  subtitle: {
-
-    fontSize: '13px',
-
-    color: 'rgba(220,255,250,0.55)',
-
-    letterSpacing: '1.2px',
-
-    textTransform: 'uppercase',
-
-  },
-
-  glowText: {
-
-    color: '#00ffd5',
-
-    textShadow: '0 0 12px rgba(0,255,213,0.45)',
-
-  },
-
-  statusBadge: {
-
-    display: 'inline-flex',
-
-    alignItems: 'center',
-
-    gap: '8px',
-
-    padding: '8px 14px',
-
-    borderRadius: '999px',
-
-    background: 'rgba(0,255,200,0.08)',
-
-    border: '1px solid rgba(0,255,200,0.18)',
-
-    color: '#00ffd5',
-
-    fontSize: '12px',
-
-    fontWeight: '600',
-
-    letterSpacing: '0.5px',
-
-  },
-
-  divider: {
-
-    width: '100%',
-
-    height: '1px',
-
-    background: 'linear-gradient(90deg, transparent, rgba(0,255,200,0.18), transparent)',
-
-    margin: '18px 0',
-
-  },
+  /* =========================
+     RESPONSIVE NEON CIRCLE
+  ========================= */
 
   neonCircle: {
 
-    width: '180px',
+    width: isMobile ? '140px' : '180px',
 
-    height: '180px',
+    height: isMobile ? '140px' : '180px',
 
     borderRadius: '50%',
 
@@ -325,7 +539,13 @@ const styles = {
       inset 0 0 24px rgba(0,255,200,0.08)
     `,
 
-    background: 'radial-gradient(circle, rgba(0,255,200,0.06), transparent)',
+    background: `
+      radial-gradient(
+        circle,
+        rgba(0,255,200,0.06),
+        transparent
+      )
+    `,
 
   }
 
@@ -908,133 +1128,452 @@ async function handleAuth(type) {
               </div>
 
               {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
-              <div style={{ ...styles.flatCard, border: '1px solid rgba(59, 130, 246, 0.1)' }}>
-                <h3 style={{ margin: '0 0 15px 0', fontSize: '13px', fontWeight: '800', color: '#3b82f6', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                  Live Inbox Email Till Slip Mirror
-                </h3>
-                
-                {/* ADVANCED THERMAL RECEIPT CONTAINER */}
-                <div style={{ 
-                  background: '#fcfdfd',
-                  backgroundImage: 'linear-gradient(rgba(0,0,0,0.01) 1px, transparent 1px)',
-                  backgroundSize: '100% 4px',
-                  color: '#11161d', 
-                  borderRadius: '16px', 
-                  padding: '30px 24px', 
-                  boxShadow: '0 15px 35px rgba(0,0,0,0.5)', 
-                  fontFamily: 'Courier New, Courier, monospace',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  
-                  {/* CENTRAL BIG LOGO WATERMARK */}
-                  {settings?.logo_url && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '55%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: '260px',
-                      height: '260px',
-                      backgroundImage: `url(${settings.logo_url})`,
-                      backgroundSize: 'contain',
-                      backgroundPosition: 'center',
-                      backgroundRepeat: 'no-repeat',
-                      opacity: 0.06,
-                      pointerEvents: 'none',
-                      zIndex: 1
-                    }} />
-                  )}
+<div style={{
+  ...styles.flatCard,
+  border: '1px solid rgba(0,255,200,0.12)',
+  background: 'linear-gradient(180deg, rgba(8,18,24,0.95), rgba(4,10,14,0.98))',
+  boxShadow: '0 0 35px rgba(0,255,200,0.08)',
+  position: 'relative',
+  overflow: 'hidden'
+}}>
 
-                  {/* RECEIPT CONTENT WRAPPER */}
-                  <div style={{ position: 'relative', zIndex: 2 }}>
-                    
-                    {/* TOP METADATA ROW */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', fontSize: '10px', color: '#555', marginBottom: '15px' }}>
-                      <span>&nbsp;</span>
-                      <div style={{ textAlign: 'right', lineHeight: '1.4' }}>
-                        <div><strong>Transaction</strong></div>
-                        <div>21. Jan 21 19:43:36</div>
-                      </div>
-                    </div>
+  {/* TOP GLOW EFFECT */}
+  <div style={{
+    position: 'absolute',
+    top: '-120px',
+    right: '-120px',
+    width: '240px',
+    height: '240px',
+    borderRadius: '50%',
+    background: 'radial-gradient(circle, rgba(0,255,200,0.18), transparent 70%)',
+    filter: 'blur(10px)',
+    pointerEvents: 'none'
+  }} />
 
-                    {/* TOP MINI LOGO */}
-                    <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                      {settings?.logo_url ? (
-                        <img src={settings.logo_url} alt="Merchant Logo" style={{ maxHeight: '50px', maxWidth: '160px', objectFit: 'contain' }} />
-                      ) : (
-                        <div style={{ border: '1px dashed #94a3b8', padding: '6px', color: '#64748b', fontSize: '10px', fontWeight: 'bold' }}>[ NO LOGO RECORDED ]</div>
-                      )}
-                    </div>
+  <h3 style={{
+    margin: '0 0 18px 0',
+    fontSize: '12px',
+    fontWeight: '800',
+    color: '#00ffd5',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    position: 'relative',
+    zIndex: 2
+  }}>
+    ⚡ Live Inbox Email Till Slip Mirror
+  </h3>
 
-                    {/* BRAND DETAILS */}
-                    <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                      <strong style={{ fontSize: '18px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.2px', display: 'block', color: '#000' }}>
-                        {settings?.business_name || 'MY BUSINESS BRAND'}
-                      </strong>
-                      <div style={{ fontSize: '11px', color: '#222', marginTop: '6px', whiteSpace: 'pre-wrap', lineHeight: '1.4', fontWeight: '600' }}>
-                        {settings?.store_address || 'Outlet Physical Address Street\nKrugersdorp, South Africa'}
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#444', marginTop: '4px', fontFamily: 'sans-serif' }}>
-                        {user?.email || 'info@merchantnode.com'}
-                      </div>
-                    </div>
+  {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
+  <div style={{
+    background: `
+      linear-gradient(
+        180deg,
+        rgba(250,255,255,0.98),
+        rgba(240,248,250,0.98)
+      )
+    `,
+    backgroundImage: `
+      linear-gradient(rgba(0,0,0,0.018) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.015) 1px, transparent 1px)
+    `,
+    backgroundSize: '100% 5px, 5px 100%',
+    color: '#11161d',
+    borderRadius: '26px',
+    padding: '32px 24px',
+    boxShadow: `
+      0 25px 50px rgba(0,0,0,0.45),
+      0 0 40px rgba(0,255,200,0.08)
+    `,
+    fontFamily: '"Courier New", monospace',
+    position: 'relative',
+    overflow: 'hidden',
+    border: '1px solid rgba(255,255,255,0.75)'
+  }}>
 
-                    {/* LINE SEPARATOR */}
-                    <div style={{ borderBottom: '1px dashed #444', marginBottom: '15px' }}></div>
+    {/* RECEIPT CORNER LIGHT */}
+    <div style={{
+      position: 'absolute',
+      top: '-80px',
+      left: '-80px',
+      width: '180px',
+      height: '180px',
+      background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
+      borderRadius: '50%'
+    }} />
 
-                    {/* ITEMIZATION */}
-                    <div style={{ fontSize: '11px', lineHeight: '1.8', marginBottom: '12px', fontWeight: '600' }}>
-                      <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px', color: '#444' }}>Items purchased:</div>
-                      
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <span style={{ maxWidth: '75%' }}>1x Premium Sample Merchandise Item</span>
-                        <span>{activeCurrencySymbol}120.00</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ maxWidth: '75%' }}>1x Standard Agent Automation Node Addon</span>
-                        <span>{activeCurrencySymbol}80.00</span>
-                      </div>
-                      
-                      {/* TOTAL DUE ROW (TAX IGNORED) */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #111', marginTop: '8px', paddingTop: '8px', fontWeight: '900', fontSize: '13px', color: '#000' }}>
-                        <span>TOTAL DUE</span>
-                        <span>{activeCurrencySymbol}200.00</span>
-                      </div>
-                    </div>
+    {/* CENTRAL BIG LOGO WATERMARK */}
+    {settings?.logo_url && (
+      <div style={{
+        position: 'absolute',
+        top: '52%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '280px',
+        height: '280px',
+        backgroundImage: `url(${settings.logo_url})`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        opacity: 0.045,
+        pointerEvents: 'none',
+        zIndex: 1,
+        filter: 'grayscale(100%)'
+      }} />
+    )}
 
-                    {/* VOUCHER SECTION BOX */}
-                    <div style={{ background: 'rgba(240, 244, 248, 0.85)', border: '1px solid #dbe2e9', borderRadius: '12px', padding: '16px 12px', textAlign: 'center', marginTop: '20px' }}>
-                      <span style={{ fontSize: '9px', color: '#111', fontWeight: '900', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', marginBottom: '10px', letterSpacing: '0.5px' }}>
-                        ⚡ NEXT VISIT VOUCHER CODE INSIDE
-                      </span>
-                      
-                      <div style={{ display: 'inline-block', padding: '6px', background: '#fff', borderRadius: '10px', border: '1px solid #cbd5e1', boxShadow: '0 2px 8px rgba(0,0,0,0.03)', marginBottom: '4px' }}>
-                        <img 
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=115x115&data=${encodeURIComponent(
-                            `https://ruachagent.net/redeem?token=${settings?.webhook_slug || 'node'}_preview`
-                          )}&color=11161d`} 
-                          alt="Voucher Token QR" 
-                          style={{ width: '115px', height: '115px', display: 'block' }}
-                        />
-                      </div>
-                      
-                      <div style={{ fontSize: '8px', color: '#444', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: 'bold', marginBottom: '6px' }}>
-                        Claim Discount
-                      </div>
+    {/* RECEIPT CONTENT WRAPPER */}
+    <div style={{ position: 'relative', zIndex: 2 }}>
 
-                      <div style={{ fontSize: '11px', color: '#333', lineHeight: '1.4', fontFamily: 'sans-serif', padding: '0 4px' }}>
-                        Scan to instantly claim your <strong style={{ color: '#16a34a', fontWeight: '700' }}>{settings?.discount_percentage ?? 10}% discount</strong> balance.
-                      </div>
-                    </div>
+      {/* TOP METADATA ROW */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        fontSize: '10px',
+        color: '#64748b',
+        marginBottom: '18px'
+      }}>
+        <div style={{
+          padding: '4px 10px',
+          borderRadius: '999px',
+          background: 'rgba(0,255,200,0.08)',
+          border: '1px solid rgba(0,255,200,0.15)',
+          color: '#089981',
+          fontWeight: '800',
+          letterSpacing: '0.5px'
+        }}>
+          VERIFIED NODE
+        </div>
 
-                    {/* ACTIONS BUTTON */}
-                    <div style={{ marginTop: '24px', textAlign: 'center' }}>
-                      <a href="#download" onClick={(e) => e.preventDefault()} style={{ display: 'block', background: '#3b82f6', color: '#ffffff', textDecoration: 'none', padding: '14px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', fontFamily: 'system-ui, sans-serif', boxShadow: '0 4px 14px rgba(59,130,246,0.4)', transition: 'all 0.2s' }}>
-                        Download Official Invoice PDF
-                      </a>
-                    </div>
+        <div style={{
+          textAlign: 'right',
+          lineHeight: '1.5'
+        }}>
+          <div style={{
+            fontWeight: '900',
+            color: '#0f172a',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>
+            Transaction
+          </div>
 
+          <div>21. Jan 21 19:43:36</div>
+        </div>
+      </div>
+
+      {/* TOP MINI LOGO */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '18px'
+      }}>
+        {settings?.logo_url ? (
+          <div style={{
+            display: 'inline-flex',
+            padding: '10px 18px',
+            borderRadius: '18px',
+            background: 'rgba(255,255,255,0.82)',
+            border: '1px solid rgba(15,23,42,0.06)',
+            boxShadow: '0 10px 24px rgba(0,0,0,0.08)'
+          }}>
+            <img
+              src={settings.logo_url}
+              alt="Merchant Logo"
+              style={{
+                maxHeight: '52px',
+                maxWidth: '170px',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
+        ) : (
+          <div style={{
+            border: '1px dashed #94a3b8',
+            padding: '10px',
+            color: '#64748b',
+            fontSize: '10px',
+            fontWeight: 'bold',
+            borderRadius: '12px'
+          }}>
+            [ NO LOGO RECORDED ]
+          </div>
+        )}
+      </div>
+
+      {/* BRAND DETAILS */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '22px'
+      }}>
+        <strong style={{
+          fontSize: '20px',
+          fontWeight: '900',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          display: 'block',
+          color: '#020617'
+        }}>
+          {settings?.business_name || 'MY BUSINESS BRAND'}
+        </strong>
+
+        <div style={{
+          width: '70px',
+          height: '3px',
+          margin: '10px auto',
+          borderRadius: '999px',
+          background: 'linear-gradient(90deg, #00ffd5, #00b8ff)'
+        }} />
+
+        <div style={{
+          fontSize: '11px',
+          color: '#1e293b',
+          marginTop: '6px',
+          whiteSpace: 'pre-wrap',
+          lineHeight: '1.6',
+          fontWeight: '700'
+        }}>
+          {settings?.store_address || 'Outlet Physical Address Street\nKrugersdorp, South Africa'}
+        </div>
+
+        <div style={{
+          fontSize: '11px',
+          color: '#475569',
+          marginTop: '6px',
+          fontFamily: 'system-ui, sans-serif'
+        }}>
+          {user?.email || 'info@merchantnode.com'}
+        </div>
+      </div>
+
+      {/* PREMIUM SEPARATOR */}
+      <div style={{
+        height: '1px',
+        background: 'linear-gradient(90deg, transparent, rgba(15,23,42,0.25), transparent)',
+        marginBottom: '18px'
+      }} />
+
+      {/* ITEMIZATION */}
+      <div style={{
+        fontSize: '11px',
+        lineHeight: '1.9',
+        marginBottom: '12px',
+        fontWeight: '700'
+      }}>
+
+        <div style={{
+          fontSize: '10px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          marginBottom: '12px',
+          color: '#475569',
+          fontWeight: '900'
+        }}>
+          Items Purchased
+        </div>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '8px',
+          padding: '8px 0',
+          borderBottom: '1px dashed rgba(15,23,42,0.12)'
+        }}>
+          <span style={{ maxWidth: '75%' }}>
+            1x Premium Sample Merchandise Item
+          </span>
+
+          <span style={{
+            fontWeight: '900',
+            color: '#0f172a'
+          }}>
+            {activeCurrencySymbol}120.00
+          </span>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '12px',
+          padding: '8px 0',
+          borderBottom: '1px dashed rgba(15,23,42,0.12)'
+        }}>
+          <span style={{ maxWidth: '75%' }}>
+            1x Standard Agent Automation Node Addon
+          </span>
+
+          <span style={{
+            fontWeight: '900',
+            color: '#0f172a'
+          }}>
+            {activeCurrencySymbol}80.00
+          </span>
+        </div>
+
+        {/* TOTAL DUE ROW */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginTop: '14px',
+          padding: '16px',
+          borderRadius: '16px',
+          background: 'linear-gradient(90deg, rgba(0,255,200,0.08), rgba(0,184,255,0.08))',
+          border: '1px solid rgba(0,255,200,0.15)',
+          fontWeight: '900',
+          fontSize: '14px',
+          color: '#020617',
+          boxShadow: '0 6px 20px rgba(0,255,200,0.08)'
+        }}>
+          <span>TOTAL DUE</span>
+
+          <span style={{
+            color: '#00a884',
+            textShadow: '0 0 10px rgba(0,255,200,0.15)'
+          }}>
+            {activeCurrencySymbol}200.00
+          </span>
+        </div>
+      </div>
+
+      {/* VOUCHER SECTION BOX */}
+      <div style={{
+        background: `
+          linear-gradient(
+            180deg,
+            rgba(248,250,252,0.95),
+            rgba(241,245,249,0.98)
+          )
+        `,
+        border: '1px solid rgba(0,255,200,0.15)',
+        borderRadius: '22px',
+        padding: '22px 16px',
+        textAlign: 'center',
+        marginTop: '24px',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 12px 30px rgba(0,0,0,0.08)'
+      }}>
+
+        {/* INNER GLOW */}
+        <div style={{
+          position: 'absolute',
+          top: '-40px',
+          right: '-40px',
+          width: '120px',
+          height: '120px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(0,255,200,0.12), transparent 70%)'
+        }} />
+
+        <span style={{
+          fontSize: '9px',
+          color: '#020617',
+          fontWeight: '900',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '6px',
+          marginBottom: '12px',
+          letterSpacing: '1px',
+          textTransform: 'uppercase'
+        }}>
+          ⚡ Next Visit Voucher Code Inside
+        </span>
+
+        <div style={{
+          display: 'inline-block',
+          padding: '12px',
+          background: '#ffffff',
+          borderRadius: '18px',
+          border: '1px solid rgba(15,23,42,0.06)',
+          boxShadow: `
+            0 12px 25px rgba(0,0,0,0.08),
+            0 0 20px rgba(0,255,200,0.08)
+          `,
+          marginBottom: '10px'
+        }}>
+
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=115x115&data=${encodeURIComponent(
+              `https://ruachagent.net/redeem?token=${settings?.webhook_slug || 'node'}_preview`
+            )}&color=11161d`}
+            alt="Voucher Token QR"
+            style={{
+              width: '115px',
+              height: '115px',
+              display: 'block'
+            }}
+          />
+        </div>
+
+        <div style={{
+          fontSize: '9px',
+          color: '#334155',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          fontWeight: '900',
+          marginBottom: '8px'
+        }}>
+          Claim Discount
+        </div>
+
+        <div style={{
+          fontSize: '11px',
+          color: '#334155',
+          lineHeight: '1.6',
+          fontFamily: 'system-ui, sans-serif',
+          padding: '0 6px'
+        }}>
+          Scan to instantly claim your{' '}
+          <strong style={{
+            color: '#00a884',
+            fontWeight: '900'
+          }}>
+            {settings?.discount_percentage ?? 10}% discount
+          </strong>{' '}
+          balance.
+        </div>
+      </div>
+
+      {/* ACTION BUTTON */}
+      <div style={{
+        marginTop: '28px',
+        textAlign: 'center'
+      }}>
+        <a
+          href="#download"
+          onClick={(e) => e.preventDefault()}
+          style={{
+            display: 'block',
+            background: `
+              linear-gradient(
+                90deg,
+                #00e0b8 0%,
+                #00ffd5 50%,
+                #00b8ff 100%
+              )
+            `,
+            color: '#041014',
+            textDecoration: 'none',
+            padding: '16px',
+            borderRadius: '16px',
+            fontSize: '12px',
+            fontWeight: '900',
+            fontFamily: 'system-ui, sans-serif',
+            letterSpacing: '0.8px',
+            textTransform: 'uppercase',
+            boxShadow: `
+              0 12px 30px rgba(0,255,200,0.25),
+              0 0 24px rgba(0,255,200,0.15)
+            `,
+            transition: 'all 0.25s ease'
+          }}
+        >
+          Download Official Invoice PDF
+        </a>
+      </div>
                   </div>
                 </div>
               </div>
