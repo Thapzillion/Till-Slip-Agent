@@ -1,0 +1,55 @@
+.neumorphic-card {
+  background: #e0e0e0;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+  max-width: 400px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input, textarea {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  background: #e0e0e0;
+  box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff;
+}
+
+.receipt-container {
+  background: #fff;
+  color: #333;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  border: 1px solid #eee;
+  font-family: 'Inter', sans-serif;
+}
+
+.receipt-header h2 {
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px dashed #ccc;
+  margin: 20px 0;
+}
+
+.total-row {
+  font-weight: bold;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: space-between;
+}
