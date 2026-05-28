@@ -262,7 +262,17 @@ async function handleAuth(type) {
       return;
     }
 
+    // Make sure your function arguments match (passing the event 'e' if it's a form)
+  const handleSaveProfile = async (e) => {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+    // 🛑 THE NATIVE GUARD RAIL: Exit immediately if a sync is already running!
+    if (isSyncing) return;
+
     // Let the payload build completely BEFORE changing component loading layouts
+    const cleanBusinessName = settings.business_name?.trim() || '';
+    const cleanWebhookSlug = settings.webhook_slug?.trim() || '';
+
     const payload = {
       owner_id: user.id,
       business_name: cleanBusinessName,
@@ -277,6 +287,7 @@ async function handleAuth(type) {
       payload.id = settings.id;
     }
 
+    // Lock the gate securely
     setIsSyncing(true);
     
     try {
@@ -295,10 +306,11 @@ async function handleAuth(type) {
       console.error("Profile synchronization failed:", error);
       alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
     } finally {
+      // Unlock the gate cleanly
       setIsSyncing(false);
     }
-  }
-
+  } 
+}
   const activeCurrencySymbol = CURRENCY_OPTIONS.find(c => c.code === (settings?.currency || 'ZAR'))?.symbol || 'R';
 
   return (
@@ -512,9 +524,18 @@ async function handleAuth(type) {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    handleSave();
+                    if (!isSyncing) handleSave(e); // Pass the event cleanly and safeguard the click
                   }} 
-                  style={{ ...styles.button, color: '#10b981', marginTop: '10px', fontSize: '13px', letterSpacing: '0.5px', textTransform: 'uppercase', cursor: 'pointer' }}
+                  style={{ 
+                    ...styles.button, 
+                    color: isSyncing ? '#64748b' : '#10b981', // Turns muted slate when locked
+                    backgroundColor: isSyncing ? '#1e293b' : styles.button.background, // Visual lock indicator
+                    marginTop: '10px', 
+                    fontSize: '13px', 
+                    letterSpacing: '0.5px', 
+                    textTransform: 'uppercase', 
+                    cursor: isSyncing ? 'not-allowed' : 'pointer' // Changes mouse arrow to blocked symbol
+                  }}
                   disabled={isSyncing}
                 >
                   {isSyncing ? 'Syncing Profile...' : 'Save & Sync Live Profile'}
