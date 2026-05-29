@@ -1593,15 +1593,18 @@ const activeCurrencySymbol =
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* BRAND LOGO */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label htmlFor="logo-upload" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     BUSINESS BRAND LOGO (PICTURE PRINT)
                   </label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <label style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #262626', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
+                    <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #262626', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
                       Choose Image File
-                      <input 
+                      <input
+                        id="logo-upload"
+                        name="logo_url"
                         type="file" 
                         accept="image/*" 
+                        autoComplete="off"
                         onChange={(e) => {
                           const file = e.target.files[0];
                           if (file) {
@@ -1624,11 +1627,14 @@ const activeCurrencySymbol =
 
                 {/* LIVE WEBHOOK SLUG */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label htmlFor="webhook-slug" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     LIVE WEBHOOK SLUG
                   </label>
-                  <input 
+                  <input
+                    id="webhook-slug"
+                    name="webhook_slug"
                     type="text" 
+                    autoComplete="off"
                     placeholder="e.g., eddienetwork" 
                     value={settings?.webhook_slug || ''} 
                     onChange={(e) => {
@@ -1641,11 +1647,13 @@ const activeCurrencySymbol =
 
                 {/* DYNAMIC CURRENCY SELECT SYSTEM */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label htmlFor="currency" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     OPERATIONAL CURRENCY
                   </label>
                   <div style={{ position: 'relative' }}>
-                    <select 
+                    <select
+                      id="currency"
+                      name="currency"
                       value={settings?.currency || 'ZAR'} 
                       onChange={(e) => {
                         const val = e.target.value;
@@ -1665,11 +1673,14 @@ const activeCurrencySymbol =
 
                 {/* BUSINESS BRAND NAME */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label htmlFor="business-name" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     BUSINESS BRAND NAME
                   </label>
-                  <input 
-                    type="text" 
+                  <input
+                    id="business-name"
+                    name="business_name"
+                    type="text"
+                    autoComplete="organization"
                     value={settings?.business_name || ''} 
                     onChange={(e) => {
                       const val = e.target.value;
@@ -1681,10 +1692,13 @@ const activeCurrencySymbol =
 
                 {/* PHYSICAL OUTLET ADDRESS */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label htmlFor="store-address" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     PHYSICAL OUTLET ADDRESS
                   </label>
-                  <textarea 
+                  <textarea
+                    id="store-address"
+                    name="store_address"
+                    autoComplete="street-address"
                     value={settings?.store_address || ''} 
                     onChange={(e) => {
                       const val = e.target.value;
@@ -1696,11 +1710,14 @@ const activeCurrencySymbol =
 
                 {/* AI DISCOUNT COMPILER VALUE (%) */}
                 <div>
-                  <label style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                  <label htmlFor="discount-percentage" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
                     AI DISCOUNT COMPILER VALUE (%)
                   </label>
-                  <input 
-                    type="number" 
+                  <input
+                    id="discount-percentage"
+                    name="discount_percentage"
+                    type="number"
+                    autoComplete="off"
                     value={settings?.discount_percentage ?? 10} 
                     onChange={(e) => {
                       const val = parseInt(e.target.value) || 0;
@@ -1720,7 +1737,7 @@ const activeCurrencySymbol =
                   }} 
                   style={{ 
                     ...styles.button, 
-                    background: isSaveSyncing ? '#111827' : styles.button.background, // Fixed background override logic
+                    background: isSaveSyncing ? '#111827' : styles.button.background,
                     color: isSaveSyncing ? '#6b7280' : '#041014', 
                     border: isSaveSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
                     boxShadow: isSaveSyncing ? 'none' : styles.button.boxShadow,
@@ -1736,7 +1753,6 @@ const activeCurrencySymbol =
                 </button>
               </div>
             </div>
-
            {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
                     {/* PERFORMANCE METRICS CARD */}
