@@ -1692,16 +1692,6 @@ const styles = {
                   💡 <span style={{ fontWeight: '600' }}>Deployment Action:</span> Paste this generated webhook link into your <strong style={{ color: '#fff' }}>[Inbound Email Webhook Configuration or POS Webhook Portal]</strong> to begin routing automated transaction slip payloads directly to your AI agent node.
                 </div>
               </div>
-        {/* Block 3 CORNER LIGHT */}
-    <div style={{
-      position: 'absolute',
-      top: '-80px',
-      left: '-80px',
-      width: '180px',
-      height: '180px',
-      background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
-      borderRadius: '50%'
-    }} />
 
           {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
 <div style={{
@@ -1841,10 +1831,10 @@ const styles = {
       }}>
         {settings?.logo_url ? (
           <div style={{
-            display: 'flex',
+            display: 'inline-flex',
             padding: '10px 18px',
             borderRadius: '18px',
-            background: 'rgba(255,255,255,0.82)',
+            background: 'rgba(15, 23, 42, 0.06)',
             border: '1px solid rgba(15,23,42,0.06)',
             boxShadow: '0 10px 24px rgba(0,0,0,0.08)'
           }}>
@@ -1854,7 +1844,7 @@ const styles = {
               style={{
                 maxHeight: '52px',
                 maxWidth: '170px',
-                objectFit: 'fill'
+                objectFit: 'contain'
               }}
             />
           </div>
