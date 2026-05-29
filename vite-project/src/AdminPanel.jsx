@@ -1185,83 +1185,178 @@ const styles = {
     }
   }
 
-  async function fetchLiveAnalytics(userId) {
-    try {
-      const { data: biz } = await supabase.from('business_settings').select('id').eq('owner_id', userId).maybeSingle();
-      if (biz) {
-        const { data: receipts } = await supabase
-          .from('receipts')
-          .select('total_amount, created_at')
-          .eq('business_id', biz.id)
-          .order('created_at', { ascending: true });
+async function getActiveUser() {
+  try {
+    const {
+      data: { session },
+      error
+    } = await supabase.auth.getSession();
 
-        if (receipts && receipts.length > 0) {
-          const totalVol = receipts.reduce((sum, rx) => sum + (rx.total_amount || 0), 0);
-          setTxCount(receipts.length);
-          setTxVolume(totalVol);
-
-          const maxTx = Math.max(...receipts.map(r => r.total_amount || 1));
-
-          const historicalPrices = receipts.map(rx => {
-            const rawAmount = rx.total_amount || 0;
-            return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
-          });
-
-          const paddedData = Array(28).fill(0).concat(historicalPrices).slice(-28);
-          setGraphData(paddedData);
-        }
-      }
-    } catch (err) {
-      console.error("Analytics stream catch handled:", err.message);
+    if (error) {
+      console.error("Session retrieval failed:", error.message);
+      return null;
     }
-  }
 
-  async function handleAuth(type) {
-    if (!email || !password) {
-      alert("Please fill in all authorization fields.");
+    return session?.user || null;
+  } catch (err) {
+    console.error("Auth session crash:", err.message);
+    return null;
+  }
+}
+
+async function fetchLiveAnalytics() {
+  try {
+    // ALWAYS fetch live authenticated user directly from Supabase
+    const activeUser = await getActiveUser();
+
+    if (!activeUser?.id) {
+      console.warn("Analytics blocked: No authenticated user.");
       return;
     }
 
-    try {
-      if (type === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          alert(error.message);
-          return;
-        }
-      } else {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) {
-          alert(error.message);
-          return;
-        } else {
-          setShowVerifyModal(true);
-        }
-      }
-      setIsSyncing(true);
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setTimeout(() => {
-        setIsSyncing(false);
-      }, 400);
+    const { data: biz, error: bizError } = await supabase
+      .from('business_settings')
+      .select('id')
+      .eq('owner_id', activeUser.id)
+      .maybeSingle();
+
+    if (bizError) throw bizError;
+
+    if (!biz?.id) {
+      console.warn("No business profile found.");
+      return;
     }
+
+    const { data: receipts, error: receiptsError } = await supabase
+      .from('receipts')
+      .select('total_amount, created_at')
+      .eq('business_id', biz.id)
+      .order('created_at', { ascending: true });
+
+    if (receiptsError) throw receiptsError;
+
+    if (receipts && receipts.length > 0) {
+      const totalVol = receipts.reduce(
+        (sum, rx) => sum + (Number(rx.total_amount) || 0),
+        0
+      );
+
+      setTxCount(receipts.length);
+      setTxVolume(totalVol);
+
+      const maxTx = Math.max(
+        ...receipts.map(r => Number(r.total_amount) || 1),
+        1
+      );
+
+      const historicalPrices = receipts.map(rx => {
+        const rawAmount = Number(rx.total_amount) || 0;
+
+        return Math.max(
+          15,
+          Math.min(90, (rawAmount / maxTx) * 90)
+        );
+      });
+
+      const paddedData = Array(28)
+        .fill(0)
+        .concat(historicalPrices)
+        .slice(-28);
+
+      setGraphData(paddedData);
+    }
+  } catch (err) {
+    console.error("Analytics stream catch handled:", err.message);
+  }
+}
+
+async function handleAuth(type) {
+  if (!email || !password) {
+    alert("Please fill in all authorization fields.");
+    return;
   }
 
-  // Unified, bulletproof database sync function
-  async function handleSave(e) {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+  if (isSyncing) return;
 
-    if (!user?.id) {
+  setIsSyncing(true);
+
+  try {
+    let authResponse;
+
+    if (type === 'login') {
+      authResponse = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+    } else {
+      authResponse = await supabase.auth.signUp({
+        email,
+        password
+      });
+    }
+
+    if (authResponse.error) {
+      alert(authResponse.error.message);
+      return;
+    }
+
+    // Wait briefly for auth state hydration
+    let activeUser = null;
+
+    for (let i = 0; i < 5; i++) {
+      activeUser = await getActiveUser();
+
+      if (activeUser?.id) break;
+
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    if (!activeUser?.id) {
+      alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
+      return;
+    }
+
+    console.log("Authenticated User:", activeUser.id);
+
+    if (type !== 'login') {
+      setShowVerifyModal(true);
+    }
+
+  } catch (err) {
+    console.error("Authentication crash:", err);
+    alert(err.message || "Authentication failed.");
+  } finally {
+    setIsSyncing(false);
+  }
+}
+
+// Unified, stabilized database sync function
+async function handleSave(e) {
+  if (e && typeof e.preventDefault === 'function') {
+    e.preventDefault();
+  }
+
+  if (isSyncing) {
+    console.warn("Sync blocked: already syncing.");
+    return;
+  }
+
+  setIsSyncing(true);
+
+  try {
+    // ALWAYS fetch latest authenticated user directly
+    const activeUser = await getActiveUser();
+
+    if (!activeUser?.id) {
       alert("Sync Blocked: Active authentication session required.");
       return;
     }
 
-    // 🛑 THE NATIVE GUARD RAIL: Exit immediately if a synchronization sweep is already running!
-    if (isSyncing) return;
+    const cleanBusinessName =
+      settings?.business_name?.trim() || '';
 
-    const cleanBusinessName = settings.business_name?.trim() || '';
-    const cleanWebhookSlug = settings.webhook_slug?.trim() || '';
+    const cleanWebhookSlug =
+      settings?.webhook_slug?.trim() || '';
 
     if (!cleanBusinessName || !cleanWebhookSlug) {
       alert("Validation Failed: Required parameter fields cannot be left blank.");
@@ -1269,44 +1364,55 @@ const styles = {
     }
 
     const payload = {
-      owner_id: user.id,
+      owner_id: activeUser.id,
       business_name: cleanBusinessName,
-      store_address: settings.store_address?.trim() || '',
-      discount_percentage: Number(settings.discount_percentage ?? 10),
+      store_address: settings?.store_address?.trim() || '',
+      discount_percentage: Number(settings?.discount_percentage ?? 10),
       webhook_slug: cleanWebhookSlug,
-      currency: settings.currency || 'ZAR',
-      logo_url: settings.logo_url || ''
+      currency: settings?.currency || 'ZAR',
+      logo_url: settings?.logo_url || ''
     };
 
-    if (settings.id) {
+    if (settings?.id) {
       payload.id = settings.id;
     }
 
-    // Lock the structural processing gate
-    setIsSyncing(true);
-    
-    try {
-      const { data, error } = await supabase
-        .from('business_settings')
-        .upsert(payload, { onConflict: 'owner_id' })
-        .select();
+    const { data, error } = await supabase
+      .from('business_settings')
+      .upsert(payload, {
+        onConflict: 'owner_id'
+      })
+      .select();
 
-      if (error) throw error;
-
-      alert('Live Agent Settings Synced Successfully!');
-      if (data && data[0]) {
-        setSettings(data[0]); 
-      }
-    } catch (error) {
-      console.error("Profile synchronization failed:", error);
-      alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
-    } finally {
-      // Unlock the gate safely
-      setIsSyncing(false);
+    if (error) {
+      throw error;
     }
-  }
 
-  const activeCurrencySymbol = CURRENCY_OPTIONS.find(c => c.code === (settings?.currency || 'ZAR'))?.symbol || 'R';
+    console.log("Business profile synced successfully.");
+
+    alert('Live Agent Settings Synced Successfully!');
+
+    if (data && data[0]) {
+      setSettings(data[0]);
+    }
+
+  } catch (error) {
+    console.error("Profile synchronization failed:", error);
+
+    alert(
+      'Error syncing live profile: ' +
+      (error.message || 'Unknown error')
+    );
+  } finally {
+    setIsSyncing(false);
+  }
+}
+
+const activeCurrencySymbol =
+  CURRENCY_OPTIONS.find(
+    c => c.code === (settings?.currency || 'ZAR')
+  )?.symbol || 'R';
+
 
   return (
     <div style={{ ...styles.container, opacity: isSyncing ? 0.6 : 1 }}>
