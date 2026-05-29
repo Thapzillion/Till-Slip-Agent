@@ -26,8 +26,6 @@ export default function AdminPanel() {
 
   const [user, setUser] = useState(null);
 
-  const [isSyncing, setIsSyncing] = useState(false);
-
   const [email, setEmail] = useState('');
 
   const [password, setPassword] = useState('');
@@ -42,7 +40,10 @@ export default function AdminPanel() {
 
   const [graphData, setGraphData] = useState(Array.from({ length: 28 }).map(() => 0));
 
+  const [isSaveSyncing, setIsSaveSyncing] = useState(false);
  
+  const [isAuthSyncing, setIsAuthSyncing] = useState(false);
+
 
   const [settings, setSettings] = useState({
 
@@ -1310,9 +1311,9 @@ async function handleAuth(type) {
     return;
   }
 
-  if (isSyncing) return;
+  if (isAuthSyncing) return;
 
-  setIsSyncing(true);
+  setIsAuthSyncing(true);
 
   try {
     let authResponse;
@@ -1347,7 +1348,7 @@ async function handleAuth(type) {
     console.error("Authentication crash:", err);
     alert(err.message || "Authentication failed.");
   } finally {
-    setIsSyncing(false);
+    setIsAuthSyncing(false);
   }
 }
 
@@ -1398,12 +1399,12 @@ async function handleSave(e) {
     e.preventDefault();
   }
 
-  if (isSyncing) {
+  if (isSaveSyncing) {
     console.warn("Sync blocked: already syncing.");
     return;
   }
 
-  setIsSyncing(true);
+  setIsSaveSyncing(true);
 
   try {
     // Fix 4: use user already in state; only call getActiveUser() as fallback.
@@ -1457,7 +1458,7 @@ async function handleSave(e) {
     console.error("Profile synchronization failed:", error);
     alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
   } finally {
-    setIsSyncing(false);
+    setIsSaveSyncing(false);
   }
 }
 
@@ -1467,7 +1468,7 @@ const activeCurrencySymbol =
   )?.symbol || 'R';
 
   return (
-    <div style={{ ...styles.container, opacity: isSyncing ? 0.6 : 1 }}>
+    <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
       {/* GLOBAL MODAL 1: AWAITING VERIFICATION LINK */}
       {showVerifyModal && (
         <div style={styles.modalOverlay}>
@@ -1551,8 +1552,8 @@ const activeCurrencySymbol =
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={styles.input} />
                 <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={styles.input} />
-                <button onClick={() => handleAuth('login')} style={styles.button} disabled={isSyncing}>
-                  {isSyncing ? 'Verifying Node...' : 'Authenticate Identity'}
+                <button onClick={() => handleAuth('login')} style={styles.button} disabled={isAuthSyncing}>
+                  {isAuthSyncing ? 'Verifying Node...' : 'Authenticate Identity'}
                 </button>
                 <button 
                   onClick={() => handleAuth('register')} 
@@ -1563,7 +1564,7 @@ const activeCurrencySymbol =
                     border: '1px solid #262626',
                     marginTop: '4px'
                   }} 
-                  disabled={isSyncing}
+                  disabled={isAuthSyncing}
                 >
                   Register New Node
                 </button>
@@ -1715,23 +1716,23 @@ const activeCurrencySymbol =
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (!isSyncing) handleSave(e);
+                    if (!isSaveSyncing) handleSave(e);
                   }} 
                   style={{ 
                     ...styles.button, 
-                    background: isSyncing ? '#111827' : styles.button.background, // Fixed background override logic
-                    color: isSyncing ? '#6b7280' : '#041014', 
-                    border: isSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                    boxShadow: isSyncing ? 'none' : styles.button.boxShadow,
+                    background: isSaveSyncing ? '#111827' : styles.button.background, // Fixed background override logic
+                    color: isSaveSyncing ? '#6b7280' : '#041014', 
+                    border: isSaveSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    boxShadow: isSaveSyncing ? 'none' : styles.button.boxShadow,
                     marginTop: '10px', 
                     fontSize: '13px', 
                     letterSpacing: '0.5px', 
                     textTransform: 'uppercase', 
-                    cursor: isSyncing ? 'not-allowed' : 'pointer'
+                    cursor: isSaveSyncing ? 'not-allowed' : 'pointer'
                   }}
-                  disabled={isSyncing}
+                  disabled={isSaveSyncing}
                 >
-                  {isSyncing ? 'Syncing Profile...' : 'Save & Sync Live Profile'}
+                  {isSaveSyncing ? 'Syncing Profile...' : 'Save & Sync Live Profile'}
                 </button>
               </div>
             </div>
