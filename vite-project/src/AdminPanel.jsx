@@ -1797,9 +1797,12 @@ const styles = {
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
+
             Transaction
           </div>
+
           <div>21. Jan 21 19:43:36</div>
+
         </div>
       </div>
 
@@ -1832,7 +1835,9 @@ const styles = {
               }}
             />
           </div>
-        ) : (
+          
+          ):(
+            
           <div style={{
             border: '1px dashed rgba(0,255,200,0.25)',
             padding: '12px',
