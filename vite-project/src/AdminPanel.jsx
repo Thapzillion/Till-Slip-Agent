@@ -34,7 +34,7 @@ export default function AdminPanel() {
 
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // New state for confirmation feedback
+   // New state for confirmation feedback
 
   const [txCount, setTxCount] = useState(0);
 
