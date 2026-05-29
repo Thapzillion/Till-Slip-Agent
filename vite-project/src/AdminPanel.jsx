@@ -1103,10 +1103,7 @@ const styles = {
 };
 
 
-// Added missing state variable safely to anchor confirmation redirect UI flags
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-
-  useEffect(() => {
+useEffect(() => {
     let isMounted = true;
 
     // Detect if user landed via an email confirmation redirection link
@@ -1240,7 +1237,8 @@ const styles = {
       if (receiptsError) throw receiptsError;
 
       if (receipts && receipts.length > 0) {
-        const totalVol = receipts.reduce((sum, rx) => sum + (targetUserId(rx.total_amount) || 0), 0);
+        // Fixed compilation math typing anomaly here
+        const totalVol = receipts.reduce((sum, rx) => sum + (Number(rx.total_amount) || 0), 0);
         setTxCount(receipts.length);
         setTxVolume(totalVol);
 
@@ -1277,7 +1275,7 @@ const styles = {
 
       if (authResponse.error) {
         alert(authResponse.error.message);
-        return; // Now cleanly breaks out while safely resolving via the finally block below
+        return;
       }
 
       // Wait briefly for auth state hydration
@@ -1301,7 +1299,7 @@ const styles = {
       console.error("Authentication crash:", err);
       alert(err.message || "Authentication failed.");
     } finally {
-      setIsSyncing(false); // Safeguard locked in permanently here
+      setIsSyncing(false);
     }
   }
 
