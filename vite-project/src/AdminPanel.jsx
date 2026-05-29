@@ -1793,51 +1793,42 @@ const styles = {
         }}>
           <div style={{
             fontWeight: '900',
-            color: '#ffffff',
+            color: '#0f172a',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
-
             Transaction
           </div>
 
           <div>21. Jan 21 19:43:36</div>
-
         </div>
       </div>
 
       {/* TOP MINI LOGO */}
       <div style={{
-        display: 'flex',
-        justify: 'center',
-        alignItems: 'center',
-        marginBottom: '18px',
-        width: '100%'
+        textAlign: 'center',
+        marginBottom: '18px'
       }}>
         {settings?.logo_url ? (
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            background: 'transparent',
-            borderRadius: '12px',
-            maxWidth: '100%'
+            display: 'inline-flex',
+            padding: '10px 18px',
+            borderRadius: '18px',
+            background: 'rgba(255,255,255,0.82)',
+            border: '1px solid rgba(15,23,42,0.06)',
+            boxShadow: '0 10px 24px rgba(0,0,0,0.08)'
           }}>
             <img
               src={settings.logo_url}
               alt="Merchant Logo"
               style={{
-                width: 'auto',
-                height: 'auto',
-                maxHeight: '75px',
-                maxWidth: '100%',
+                maxHeight: '52px',
+                maxWidth: '170px',
                 objectFit: 'contain'
               }}
             />
-          </div>
-          
+          </div>  
           ):(
-            
           <div style={{
             border: '1px dashed rgba(0,255,200,0.25)',
             padding: '12px',
