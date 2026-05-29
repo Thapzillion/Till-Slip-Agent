@@ -1104,166 +1104,59 @@ const styles = {
 
 
  useEffect(() => {
-    let isMounted = true;
+  let isMounted = true;
 
-    // Detect if user landed via an email confirmation redirection link
-    const hash = window.location.hash;
-    if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-      setShowSuccessModal(true);
-      // Clean the URL fragments up so it looks professional and tidy
-      window.history.replaceState(null, null, window.location.pathname);
-    }
+  // 1. Clean up URL Fragments from Email Confirmations safely
+  const hash = window.location.hash;
+  if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
+    setShowSuccessModal(true);
+    window.history.replaceState(null, null, window.location.pathname);
+  }
 
-    async function initializePortal() {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!isMounted) return;
+  // 2. Single source of truth for initialization and changes
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (!isMounted) return;
 
-        if (session?.user) {
-          setUser(session.user);
-          await Promise.all([
-            fetchMerchantSettings(session.user.id),
-            fetchLiveAnalytics(session.user.id)
-          ]);
-        }
-      } catch (error) {
-        console.error("Initialization loop error caught:", error);
-      }
-    }
+    console.log(`Auth Event Triggered: ${event}`);
 
-    initializePortal();
+    if (session?.user) {
+      setUser(session.user);
+      setShowVerifyModal(false);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!isMounted) return;
-
-      if (session?.user) {
-        setUser(session.user);
-        setShowVerifyModal(false);
+      // Only run expensive network fetches on relevant status shifts
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         await Promise.all([
           fetchMerchantSettings(session.user.id),
           fetchLiveAnalytics(session.user.id)
         ]);
-      } else {
-        setUser(null);
-        setSettings({ business_name: '', store_address: '', discount_percentage: 10, webhook_slug: '', currency: 'ZAR', logo_url: '' });
-        setTxCount(0);
-        setTxVolume(0);
-        setGraphData(Array.from({ length: 28 }).map(() => 0));
       }
-    });
-
-    return () => {
-      isMounted = false;
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  async function fetchMerchantSettings(userId) {
-    if (!userId) return;
-    try {
-      const { data, error } = await supabase
-        .from('business_settings')
-        .select('*')
-        .eq('owner_id', userId)
-        .maybeSingle();
-        
-      if (error) throw error;
-      if (data) {
-        setSettings({
-          id: data.id,
-          owner_id: data.owner_id,
-          business_name: data.business_name || '',
-          store_address: data.store_address || '',
-          discount_percentage: data.discount_percentage ?? 10,
-          webhook_slug: data.webhook_slug || '',
-          currency: data.currency || 'ZAR',
-          logo_url: data.logo_url || ''
-        });
-      }
-    } catch (error) {
-      console.error("Profile load failure:", error.message);
+    } else {
+      // Clear states explicitly upon logout
+      setUser(null);
+      setSettings({ business_name: '', store_address: '', discount_percentage: 10, webhook_slug: '', currency: 'ZAR', logo_url: '' });
+      setTxCount(0);
+      setTxVolume(0);
+      setGraphData(Array.from({ length: 28 }).map(() => 0));
     }
-  }
+  });
 
+  return () => {
+    isMounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
+
+// Secure, direct authentication-checker utility
 async function getActiveUser() {
   try {
-    const {
-      data: { session },
-      error
-    } = await supabase.auth.getSession();
-
-    if (error) {
-      console.error("Session retrieval failed:", error.message);
-      return null;
-    }
-
-    return session?.user || null;
+    // .getUser() hits the Supabase server validation API directly, which is safer 
+    // than .getSession() which reads from local cookies/storage tokens
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (error) throw error;
+    return user;
   } catch (err) {
-    console.error("Auth session crash:", err.message);
+    console.error("Auth session validation failed:", err.message);
     return null;
-  }
-}
-
-async function fetchLiveAnalytics(userId) {
-  try {
-    if (!userId) {
-  console.warn("Analytics blocked: No authenticated user.");
-  return;
-}
-
-    const { data: biz, error: bizError } = await supabase
-      .from('business_settings')
-      .select('id')
-      .eq('owner_id', userId)
-      .maybeSingle();
-
-    if (bizError) throw bizError;
-
-    if (!biz?.id) {
-      console.warn("No business profile found.");
-      return;
-    }
-
-    const { data: receipts, error: receiptsError } = await supabase
-      .from('receipts')
-      .select('total_amount, created_at')
-      .eq('business_id', biz.id)
-      .order('created_at', { ascending: true });
-
-    if (receiptsError) throw receiptsError;
-
-    if (receipts && receipts.length > 0) {
-      const totalVol = receipts.reduce(
-        (sum, rx) => sum + (Number(rx.total_amount) || 0),
-        0
-      );
-
-      setTxCount(receipts.length);
-      setTxVolume(totalVol);
-
-      const maxTx = Math.max(
-        ...receipts.map(r => Number(r.total_amount) || 1),
-        1
-      );
-
-      const historicalPrices = receipts.map(rx => {
-        const rawAmount = Number(rx.total_amount) || 0;
-
-        return Math.max(
-          15,
-          Math.min(90, (rawAmount / maxTx) * 90)
-        );
-      });
-
-      const paddedData = Array(28)
-        .fill(0)
-        .concat(historicalPrices)
-        .slice(-28);
-
-      setGraphData(paddedData);
-    }
-  } catch (err) {
-    console.error("Analytics stream catch handled:", err.message);
   }
 }
 
@@ -1272,48 +1165,32 @@ async function handleAuth(type) {
     alert("Please fill in all authorization fields.");
     return;
   }
-
   if (isSyncing) return;
-
   setIsSyncing(true);
 
   try {
-    let authResponse;
+    let data, error;
 
     if (type === 'login') {
-      authResponse = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      ({ data, error } = await supabase.auth.signInWithPassword({ email, password }));
     } else {
-      authResponse = await supabase.auth.signUp({
-        email,
-        password
-      });
+      ({ data, error } = await supabase.auth.signUp({ email, password }));
     }
 
-    if (authResponse.error) {
-      alert(authResponse.error.message);
+    if (error) {
+      alert(error.message);
       return;
     }
 
-    // Wait briefly for auth state hydration
-    let activeUser = null;
+    // Instead of looping, read directly from the successful response payload
+    const activeUser = data?.user;
 
-    for (let i = 0; i < 5; i++) {
-      activeUser = await getActiveUser();
-
-      if (activeUser?.id) break;
-
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-
-    if (!activeUser?.id) {
-      alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
+    if (!activeUser) {
+      alert("Authentication triggered, waiting for confirmation step.");
       return;
     }
 
-    console.log("Authenticated User:", activeUser.id);
+    console.log("Authenticated User ID:", activeUser.id);
 
     if (type !== 'login') {
       setShowVerifyModal(true);
@@ -1326,89 +1203,6 @@ async function handleAuth(type) {
     setIsSyncing(false);
   }
 }
-
-// Unified, stabilized database sync function
-async function handleSave(e) {
-  if (e && typeof e.preventDefault === 'function') {
-    e.preventDefault();
-  }
-
-  if (isSyncing) {
-    console.warn("Sync blocked: already syncing.");
-    return;
-  }
-
-  setIsSyncing(true);
-
-  try {
-    // ALWAYS fetch latest authenticated user directly
-    const activeUser = await getActiveUser();
-
-    if (!activeUser?.id) {
-      alert("Sync Blocked: Active authentication session required.");
-      return;
-    }
-
-    const cleanBusinessName =
-      settings?.business_name?.trim() || '';
-
-    const cleanWebhookSlug =
-      settings?.webhook_slug?.trim() || '';
-
-    if (!cleanBusinessName || !cleanWebhookSlug) {
-      alert("Validation Failed: Required parameter fields cannot be left blank.");
-      return;
-    }
-
-    const payload = {
-      owner_id: activeUser.id,
-      business_name: cleanBusinessName,
-      store_address: settings?.store_address?.trim() || '',
-      discount_percentage: Number(settings?.discount_percentage ?? 10),
-      webhook_slug: cleanWebhookSlug,
-      currency: settings?.currency || 'ZAR',
-      logo_url: settings?.logo_url || ''
-    };
-
-    if (settings?.id) {
-      payload.id = settings.id;
-    }
-
-    const { data, error } = await supabase
-      .from('business_settings')
-      .upsert(payload, {
-        onConflict: 'owner_id'
-      })
-      .select();
-
-    if (error) {
-      throw error;
-    }
-
-    console.log("Business profile synced successfully.");
-
-    alert('Live Agent Settings Synced Successfully!');
-
-    if (data && data[0]) {
-      setSettings(data[0]);
-    }
-
-  } catch (error) {
-    console.error("Profile synchronization failed:", error);
-
-    alert(
-      'Error syncing live profile: ' +
-      (error.message || 'Unknown error')
-    );
-  } finally {
-    setIsSyncing(false);
-  }
-}
-
-const activeCurrencySymbol =
-  CURRENCY_OPTIONS.find(
-    c => c.code === (settings?.currency || 'ZAR')
-  )?.symbol || 'R';
 
 
   return (
