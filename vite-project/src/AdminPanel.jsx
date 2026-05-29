@@ -34,15 +34,13 @@ export default function AdminPanel() {
 
   const [showVerifyModal, setShowVerifyModal] = useState(false);
 
-   // New state for confirmation feedback
+  const [showSuccessModal, setShowSuccessModal] = useState(false); // New state for confirmation feedback
 
   const [txCount, setTxCount] = useState(0);
 
   const [txVolume, setTxVolume] = useState(0);
 
   const [graphData, setGraphData] = useState(Array.from({ length: 28 }).map(() => 0));
-
-  const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
 
  
 
@@ -1108,15 +1106,13 @@ const styles = {
  useEffect(() => {
     let isMounted = true;
 
-// Detect if user landed via an email confirmation redirection link
-const hash = window.location.hash;
-
-if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-  setShowVerificationSuccess(true);
-
-  // Clean the URL fragments up so it looks professional and tidy
-  window.history.replaceState(null, null, window.location.pathname);
-}
+    // Detect if user landed via an email confirmation redirection link
+    const hash = window.location.hash;
+    if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
+      setShowSuccessModal(false);
+      // Clean the URL fragments up so it looks professional and tidy
+      window.history.replaceState(null, null, window.location.pathname);
+    }
 
     async function initializePortal() {
       try {
