@@ -1109,7 +1109,7 @@ const styles = {
     // Detect if user landed via an email confirmation redirection link
     const hash = window.location.hash;
     if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-      setShowSuccessModal(false);
+      setShowSuccessModal(true);
       // Clean the URL fragments up so it looks professional and tidy
       window.history.replaceState(null, null, window.location.pathname);
     }
