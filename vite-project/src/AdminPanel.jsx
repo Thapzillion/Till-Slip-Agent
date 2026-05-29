@@ -42,6 +42,8 @@ export default function AdminPanel() {
 
   const [graphData, setGraphData] = useState(Array.from({ length: 28 }).map(() => 0));
 
+  const [showVerificationSuccess, setShowVerificationSuccess] = useState(false);
+
  
 
   const [settings, setSettings] = useState({
@@ -1106,24 +1108,14 @@ const styles = {
  useEffect(() => {
     let isMounted = true;
 
-// Detect if user landed via an email confirmation redirect
-const authHash = window.location.hash;
+// Detect if user landed via an email confirmation redirection link
+const hash = window.location.hash;
 
-if (
-  authHash &&
-  (
-    authHash.includes('access_token=') ||
-    authHash.includes('type=signup')
-  )
-) {
-  setShowSuccessModal(true);
+if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
+  setShowVerificationSuccess(true);
 
-  // Clean URL fragments after auth redirect
-  window.history.replaceState(
-    {},
-    document.title,
-    window.location.pathname
-  );
+  // Clean the URL fragments up so it looks professional and tidy
+  window.history.replaceState(null, null, window.location.pathname);
 }
 
     async function initializePortal() {
