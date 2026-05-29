@@ -1419,8 +1419,18 @@ const styles = {
             <div style={styles.flatCard}>
               <h3 style={{ margin: '0 0 20px 0', fontSize: '13px', fontWeight: '500', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
                 Agent Parameters
-              </h3>
-              
+              </h3>              
+          {/* Block 1 CORNER LIGHT */}
+    <div style={{
+      position: 'absolute',
+      top: '-80px',
+      left: '-80px',
+      width: '180px',
+      height: '180px',
+      background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
+      borderRadius: '50%'
+    }} />
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* BRAND LOGO */}
                 <div>
@@ -1584,6 +1594,17 @@ const styles = {
     </div>
   </div>
 
+{/* Block 2 CORNER LIGHT */}
+    <div style={{
+      position: 'absolute',
+      top: '-80px',
+      left: '-80px',
+      width: '180px',
+      height: '180px',
+      background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
+      borderRadius: '50%'
+    }} />
+
   {/* NEW FLAT GRID FOCUSING ON REVENUE VOLUME & LEASE SUBSCRIPTION STATUS */}
   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
     <div style={{ ...styles.concaveCard, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -1671,7 +1692,16 @@ const styles = {
                   💡 <span style={{ fontWeight: '600' }}>Deployment Action:</span> Paste this generated webhook link into your <strong style={{ color: '#fff' }}>[Inbound Email Webhook Configuration or POS Webhook Portal]</strong> to begin routing automated transaction slip payloads directly to your AI agent node.
                 </div>
               </div>
-
+        {/* Block 3 CORNER LIGHT */}
+    <div style={{
+      position: 'absolute',
+      top: '-80px',
+      left: '-80px',
+      width: '180px',
+      height: '180px',
+      background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
+      borderRadius: '50%'
+    }} />
 
           {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
 <div style={{
@@ -1807,8 +1837,7 @@ const styles = {
       {/* TOP MINI LOGO */}
       <div style={{
         textAlign: 'center',
-        marginBottom: '18px',
-
+        marginBottom: '18px'
       }}>
         {settings?.logo_url ? (
           <div style={{
@@ -1828,8 +1857,8 @@ const styles = {
                 objectFit: 'fill'
               }}
             />
-          </div>  
-          ):(
+          </div>
+        ) : (
           <div style={{
             border: '1px dashed #94a3b8',
             padding: '10px',
