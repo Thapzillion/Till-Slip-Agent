@@ -1,557 +1,1109 @@
 import { useState, useEffect } from 'react';
+
 import { supabase } from './supabaseClient';
 
+
+
 // Static reference data available instantly globally
+
 const CURRENCY_OPTIONS = [
+
   { code: 'ZAR', symbol: 'R', name: 'South African Rand' },
+
   { code: 'USD', symbol: '$', name: 'US Dollar' },
+
   { code: 'GBP', symbol: '£', name: 'British Pound' },
+
   { code: 'EUR', symbol: '€', name: 'Euro' },
+
   { code: 'NGN', symbol: '₦', name: 'Nigerian Naira' }
+
 ];
 
+
+
 export default function AdminPanel() {
+
   const [user, setUser] = useState(null);
+
   const [isSyncing, setIsSyncing] = useState(false);
+
   const [email, setEmail] = useState('');
+
   const [password, setPassword] = useState('');
+
   const [showVerifyModal, setShowVerifyModal] = useState(false);
+
   const [showSuccessModal, setShowSuccessModal] = useState(false); // New state for confirmation feedback
+
   const [txCount, setTxCount] = useState(0);
+
   const [txVolume, setTxVolume] = useState(0);
+
   const [graphData, setGraphData] = useState(Array.from({ length: 28 }).map(() => 0));
-  
+
+ 
+
   const [settings, setSettings] = useState({
+
     business_name: '',
+
     store_address: '',
+
     discount_percentage: 10,
+
     webhook_slug: '',
+
     currency: 'ZAR',
+
     logo_url: ''
+
   });
+
+
 
   // RuachAgent Responsive Cyber Neon Theme System
 
+
+
 const isMobile = window.innerWidth <= 768;
+
 const isTablet = window.innerWidth > 768 && window.innerWidth <= 1200;
+
 const isDesktop = window.innerWidth > 1200;
+
+
 
 const styles = {
 
+
+
   /* =========================
+
      APP CONTAINER
+
   ========================= */
+
+
 
   container: {
 
+
+
     minHeight: '100vh',
 
+
+
     background: `
+
       radial-gradient(circle at top left, rgba(0,255,200,0.08), transparent 30%),
+
       radial-gradient(circle at bottom right, rgba(0,255,255,0.05), transparent 35%),
+
       linear-gradient(135deg, #05070a 0%, #0b1118 40%, #07131a 100%)
+
     `,
+
+
 
     color: '#e8ffff',
 
+
+
     fontFamily: `
+
       -apple-system,
+
       BlinkMacSystemFont,
+
       "SF Pro Display",
+
       "Segoe UI",
+
       Roboto,
+
       sans-serif
+
     `,
+
+
 
     paddingBottom: isMobile ? '90px' : '32px',
 
+
+
     paddingLeft: isDesktop ? '24px' : '14px',
+
+
 
     paddingRight: isDesktop ? '24px' : '14px',
 
+
+
     transition: 'all 0.25s ease',
 
+
+
     position: 'relative',
+
+
 
     overflowX: 'hidden',
 
+
+
   },
 
+
+
   /* =========================
+
      MAIN APP SHELL
+
   ========================= */
+
+
 
   appShell: {
 
+
+
     display: 'grid',
 
+
+
     gridTemplateColumns: isDesktop
+
       ? '280px 1fr'
+
       : '1fr',
+
+
 
     gap: '22px',
 
+
+
     width: '100%',
+
+
 
     maxWidth: '1700px',
 
+
+
     margin: '0 auto',
+
+
 
     alignItems: 'start',
 
+
+
   },
 
+
+
   /* =========================
+
      SIDEBAR
+
   ========================= */
+
+
 
   sidebar: {
 
+
+
     position: isDesktop ? 'sticky' : 'relative',
+
+
 
     top: isDesktop ? '18px' : '0',
 
+
+
     height: isDesktop ? 'calc(100vh - 36px)' : 'auto',
+
+
 
     overflowY: 'auto',
 
+
+
     borderRadius: '24px',
 
+
+
     background: `
+
       linear-gradient(
+
         180deg,
+
         rgba(10,18,24,0.96),
+
         rgba(6,12,16,0.98)
+
       )
+
     `,
 
+
+
     border: '1px solid rgba(0,255,200,0.12)',
+
+
 
     padding: isMobile ? '16px' : '22px',
 
+
+
     backdropFilter: 'blur(18px)',
 
+
+
     boxShadow: `
+
       0 12px 40px rgba(0,0,0,0.45),
+
       0 0 25px rgba(0,255,200,0.05)
+
     `,
+
+
 
   },
 
+
+
   /* =========================
+
      CONTENT AREA
+
   ========================= */
+
+
 
   content: {
 
+
+
     width: '100%',
 
+
+
     display: 'flex',
+
+
 
     flexDirection: 'column',
 
+
+
     gap: '20px',
+
+
 
   },
 
+
+
   /* =========================
+
      HEADER
+
   ========================= */
+
+
 
   header: {
 
+
+
     display: 'flex',
+
+
 
     flexDirection: isMobile ? 'column' : 'row',
 
+
+
     justifyContent: 'space-between',
+
+
 
     alignItems: isMobile ? 'flex-start' : 'center',
 
+
+
     gap: isMobile ? '14px' : '0',
+
+
 
     padding: isMobile ? '16px' : '20px 24px',
 
+
+
     background: 'rgba(10, 18, 24, 0.72)',
+
+
 
     backdropFilter: 'blur(18px)',
 
+
+
     border: '1px solid rgba(0,255,200,0.10)',
 
+
+
     borderRadius: '22px',
+
+
 
     position: 'sticky',
 
+
+
     top: '12px',
+
+
 
     zIndex: 100,
 
+
+
     boxShadow: `
+
       0 10px 35px rgba(0,0,0,0.35)
+
     `,
+
+
 
   },
 
+
+
   /* =========================
+
      GRID SYSTEM
+
   ========================= */
+
+
 
   dashboardGrid: {
 
+
+
     display: 'grid',
 
+
+
     gridTemplateColumns:
+
       isDesktop
+
         ? 'repeat(3, 1fr)'
+
         : isTablet
+
           ? 'repeat(2, 1fr)'
+
           : '1fr',
+
+
 
     gap: '20px',
 
+
+
     width: '100%',
+
+
 
   },
 
+
+
   /* =========================
+
      CARDS
+
   ========================= */
+
+
 
   flatCard: {
 
+
+
     background: `
+
       linear-gradient(
+
         180deg,
+
         rgba(12, 20, 26, 0.96),
+
         rgba(8, 14, 18, 0.98)
+
       )
+
     `,
+
+
 
     borderRadius: isMobile ? '18px' : '24px',
 
+
+
     padding: isMobile ? '18px' : '24px',
+
+
 
     border: '1px solid rgba(0,255,200,0.14)',
 
+
+
     boxShadow: `
+
       0 0 0 1px rgba(255,255,255,0.02),
+
       0 12px 40px rgba(0,0,0,0.55),
+
       0 0 25px rgba(0,255,200,0.08)
+
     `,
 
+
+
     backdropFilter: 'blur(18px)',
+
+
 
     position: 'relative',
 
+
+
     overflow: 'hidden',
+
+
 
     transition: 'all 0.25s ease',
 
+
+
   },
 
+
+
   /* =========================
+
      MINI CARD
+
   ========================= */
+
+
 
   concaveCard: {
 
+
+
     background: `
+
       linear-gradient(
+
         145deg,
+
         rgba(10, 20, 26, 0.92),
+
         rgba(6, 12, 16, 0.98)
+
       )
+
     `,
+
+
 
     borderRadius: '18px',
 
+
+
     padding: isMobile ? '14px' : '16px',
+
+
 
     border: '1px solid rgba(0,255,200,0.10)',
 
+
+
     boxShadow: `
+
       inset 0 1px 1px rgba(255,255,255,0.04),
+
       inset 0 -8px 12px rgba(0,0,0,0.35)
+
     `,
+
+
 
   },
 
+
+
   /* =========================
+
      INPUTS
+
   ========================= */
+
+
 
   input: {
 
+
+
     width: '100%',
+
+
 
     boxSizing: 'border-box',
 
+
+
     padding: isMobile ? '13px 14px' : '15px 16px',
+
+
 
     background: 'rgba(255,255,255,0.03)',
 
+
+
     border: '1px solid rgba(0,255,200,0.12)',
+
+
 
     borderRadius: '16px',
 
+
+
     color: '#ffffff',
 
+
+
     fontSize: isMobile ? '13px' : '14px',
+
+
 
     outline: 'none',
 
+
+
     transition: 'all 0.2s ease',
+
+
 
     backdropFilter: 'blur(10px)',
 
+
+
     boxShadow: 'inset 0 0 12px rgba(0,0,0,0.3)',
+
+
 
   },
 
+
+
   /* =========================
+
      BUTTONS
+
   ========================= */
+
+
 
   button: {
 
+
+
     width: '100%',
 
+
+
     background: `
+
       linear-gradient(
+
         90deg,
+
         #00e0b8 0%,
+
         #00f5d4 50%,
+
         #00ffd5 100%
+
       )
+
     `,
+
+
 
     color: '#041014',
 
+
+
     border: 'none',
+
+
 
     padding: isMobile ? '13px 14px' : '15px 18px',
 
+
+
     borderRadius: '16px',
 
+
+
     fontWeight: '700',
+
+
 
     fontSize: isMobile ? '13px' : '14px',
 
+
+
     letterSpacing: '0.5px',
+
+
 
     cursor: 'pointer',
 
+
+
     transition: 'all 0.2s ease',
 
+
+
     boxShadow: `
+
       0 0 18px rgba(0,255,200,0.35),
+
       0 8px 24px rgba(0,255,200,0.18)
+
     `,
+
+
 
     textTransform: 'uppercase',
 
+
+
   },
 
+
+
   /* =========================
+
      RESPONSIVE TITLES
+
   ========================= */
+
+
 
   title: {
 
+
+
     fontSize: isMobile ? '21px' : isTablet ? '25px' : '30px',
+
+
 
     fontWeight: '700',
 
+
+
     letterSpacing: '1px',
+
+
 
     color: '#ffffff',
 
+
+
     textShadow: '0 0 12px rgba(0,255,200,0.28)',
+
+
 
     lineHeight: '1.1',
 
+
+
   },
+
+
 
   subtitle: {
 
+
+
     fontSize: isMobile ? '11px' : '13px',
+
+
 
     color: 'rgba(220,255,250,0.55)',
 
+
+
     letterSpacing: '1.2px',
+
+
 
     textTransform: 'uppercase',
 
+
+
   },
 
+
+
   /* =========================
+
      STATUS BADGES
+
   ========================= */
+
+
 
   statusBadge: {
 
+
+
     display: 'inline-flex',
 
+
+
     alignItems: 'center',
+
+
 
     gap: '8px',
 
+
+
     padding: isMobile ? '7px 12px' : '8px 14px',
+
+
 
     borderRadius: '999px',
 
+
+
     background: 'rgba(0,255,200,0.08)',
+
+
 
     border: '1px solid rgba(0,255,200,0.18)',
 
+
+
     color: '#00ffd5',
+
+
 
     fontSize: isMobile ? '11px' : '12px',
 
+
+
     fontWeight: '600',
+
+
 
     letterSpacing: '0.5px',
 
+
+
   },
 
+
+
   /* =========================
+
      RESPONSIVE DIVIDER
+
   ========================= */
+
+
 
   divider: {
 
+
+
     width: '100%',
+
+
 
     height: '1px',
 
+
+
     background: `
+
       linear-gradient(
+
         90deg,
+
         transparent,
+
         rgba(0,255,200,0.18),
+
         transparent
+
       )
+
     `,
+
+
 
     margin: isMobile ? '14px 0' : '18px 0',
 
+
+
   },
 
+
+
   /* =========================
+
      MOBILE FLOATING ACTION BAR
+
   ========================= */
+
+
 
   mobileDock: {
 
+
+
     position: 'fixed',
+
+
 
     bottom: '18px',
 
+
+
     left: '50%',
+
+
 
     transform: 'translateX(-50%)',
 
+
+
     width: 'calc(100% - 28px)',
+
+
 
     maxWidth: '420px',
 
+
+
     display: isMobile ? 'flex' : 'none',
+
+
 
     justifyContent: 'space-around',
 
+
+
     alignItems: 'center',
+
+
 
     padding: '14px',
 
+
+
     borderRadius: '22px',
+
+
 
     background: 'rgba(8,18,24,0.88)',
 
+
+
     backdropFilter: 'blur(18px)',
+
+
 
     border: '1px solid rgba(0,255,200,0.14)',
 
+
+
     zIndex: 500,
 
+
+
     boxShadow: `
+
       0 10px 35px rgba(0,0,0,0.45),
+
       0 0 25px rgba(0,255,200,0.08)
+
     `,
+
+
 
   },
 
+
+
   /* =========================
+
      MODAL
+
   ========================= */
+
+
 
   modalOverlay: {
 
+
+
     position: 'fixed',
+
+
 
     top: 0,
 
+
+
     left: 0,
+
+
 
     right: 0,
 
+
+
     bottom: 0,
+
+
 
     background: 'rgba(2, 8, 12, 0.82)',
 
+
+
     backdropFilter: 'blur(12px)',
+
+
 
     display: 'flex',
 
+
+
     alignItems: 'center',
 
+
+
     justifyContent: 'center',
+
+
 
     zIndex: 1000,
 
+
+
     padding: isMobile ? '14px' : '22px',
+
+
 
   },
 
+
+
   /* =========================
+
      RESPONSIVE NEON CIRCLE
+
   ========================= */
+
+
 
   neonCircle: {
 
+
+
     width: isMobile ? '140px' : '180px',
+
+
 
     height: isMobile ? '140px' : '180px',
 
+
+
     borderRadius: '50%',
+
+
 
     border: '2px solid rgba(0,255,200,0.14)',
 
+
+
     display: 'flex',
+
+
 
     alignItems: 'center',
 
+
+
     justifyContent: 'center',
+
+
 
     margin: '0 auto',
 
+
+
     boxShadow: `
+
       0 0 30px rgba(0,255,200,0.15),
+
       inset 0 0 24px rgba(0,255,200,0.08)
+
     `,
 
+
+
     background: `
+
       radial-gradient(
+
         circle,
+
         rgba(0,255,200,0.06),
+
         transparent
+
       )
+
     `,
+
+
 
   }
 
+
+
 };
 
-  useEffect(() => {
+
+ useEffect(() => {
     let isMounted = true;
 
     // Detect if user landed via an email confirmation redirection link
@@ -664,8 +1216,7 @@ const styles = {
     }
   }
 
-async function handleAuth(type) {
-    // Validation pre-check before disabling the UI
+  async function handleAuth(type) {
     if (!email || !password) {
       alert("Please fill in all authorization fields.");
       return;
@@ -687,42 +1238,35 @@ async function handleAuth(type) {
           setShowVerifyModal(true);
         }
       }
-      // Only set loading/syncing states IF the operation passes initial structural checks
       setIsSyncing(true);
     } catch (err) {
       alert(err.message);
     } finally {
-      // Short delay ensures processing registers safely across your browser layout
       setTimeout(() => {
         setIsSyncing(false);
       }, 400);
     }
   }
 
-  async function handleSave() {
+  // Unified, bulletproof database sync function
+  async function handleSave(e) {
+    if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
     if (!user?.id) {
       alert("Sync Blocked: Active authentication session required.");
       return;
     }
 
-    const cleanBusinessName = settings.business_name?.trim();
-    const cleanWebhookSlug = settings.webhook_slug?.trim();
+    // 🛑 THE NATIVE GUARD RAIL: Exit immediately if a synchronization sweep is already running!
+    if (isSyncing) return;
+
+    const cleanBusinessName = settings.business_name?.trim() || '';
+    const cleanWebhookSlug = settings.webhook_slug?.trim() || '';
 
     if (!cleanBusinessName || !cleanWebhookSlug) {
       alert("Validation Failed: Required parameter fields cannot be left blank.");
       return;
     }
-
-    // Make sure your function arguments match (passing the event 'e' if it's a form)
-  const handleSaveProfile = async (e) => {
-    if (e && typeof e.preventDefault === 'function') e.preventDefault();
-
-    // 🛑 THE NATIVE GUARD RAIL: Exit immediately if a sync is already running!
-    if (isSyncing) return;
-
-    // Let the payload build completely BEFORE changing component loading layouts
-    const cleanBusinessName = settings.business_name?.trim() || '';
-    const cleanWebhookSlug = settings.webhook_slug?.trim() || '';
 
     const payload = {
       owner_id: user.id,
@@ -738,7 +1282,7 @@ async function handleAuth(type) {
       payload.id = settings.id;
     }
 
-    // Lock the gate securely
+    // Lock the structural processing gate
     setIsSyncing(true);
     
     try {
@@ -757,11 +1301,11 @@ async function handleAuth(type) {
       console.error("Profile synchronization failed:", error);
       alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
     } finally {
-      // Unlock the gate cleanly
+      // Unlock the gate safely
       setIsSyncing(false);
     }
-  } 
-}
+  }
+
   const activeCurrencySymbol = CURRENCY_OPTIONS.find(c => c.code === (settings?.currency || 'ZAR'))?.symbol || 'R';
 
   return (
@@ -808,7 +1352,11 @@ async function handleAuth(type) {
         </div>
       )}
 
-      {/* HEADER NAVIGATION */}
+
+---------------------------------------------------------------------------------------
+
+
+            {/* HEADER NAVIGATION */}
       <header style={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span style={{ fontWeight: '700', fontSize: '16px', letterSpacing: '1.5px', color: '#ffffff' }}>RUACHAGENT</span>
@@ -843,7 +1391,6 @@ async function handleAuth(type) {
 
       <main style={{ padding: '32px 16px', maxWidth: '1000px', margin: '0 auto' }}>
         {!user ? (
-          /* MINIMALIST AUTH SECTION */
           <section style={{ maxWidth: '360px', margin: '60px auto 0 auto' }}>
             <div style={styles.flatCard}>
               <h2 style={{ textAlign: 'center', fontSize: '18px', fontWeight: '500', margin: '0 0 24px 0', color: '#ffffff', letterSpacing: '0.3px' }}>Master Portal Login</h2>
@@ -869,8 +1416,8 @@ async function handleAuth(type) {
               </div>
             </div>
           </section>
+
         ) : (
-          /* MINIMALIST WORKSPACE SECTION */
           <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
             {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
             <div style={styles.flatCard}>
@@ -885,7 +1432,7 @@ async function handleAuth(type) {
                     BUSINESS BRAND LOGO (PICTURE PRINT)
                   </label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <label style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #262626', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1 }}>
+                    <label style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #262626', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
                       Choose Image File
                       <input 
                         type="file" 
@@ -942,7 +1489,7 @@ async function handleAuth(type) {
                       style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer', paddingRight: '30px' }}
                     >
                       {CURRENCY_OPTIONS.map((curr) => (
-                        <option key={curr.code} value={curr.code} style={{ background: '#121212', color: '#ffffff', fontFamily: 'monospace' }}>
+                        <option key={curr.code} value={curr.code} style={{ background: '#0b1118', color: '#ffffff', fontFamily: 'monospace' }}>
                           {curr.name} ({curr.symbol})
                         </option>
                       ))}
@@ -1004,17 +1551,19 @@ async function handleAuth(type) {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (!isSyncing) handleSave(e); // Pass the event cleanly and safeguard the click
+                    if (!isSyncing) handleSave(e);
                   }} 
                   style={{ 
                     ...styles.button, 
-                    color: isSyncing ? '#64748b' : '#10b981', // Turns muted slate when locked
-                    backgroundColor: isSyncing ? '#1e293b' : styles.button.background, // Visual lock indicator
+                    background: isSyncing ? '#111827' : styles.button.background, // Fixed background override logic
+                    color: isSyncing ? '#6b7280' : '#041014', 
+                    border: isSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                    boxShadow: isSyncing ? 'none' : styles.button.boxShadow,
                     marginTop: '10px', 
                     fontSize: '13px', 
                     letterSpacing: '0.5px', 
                     textTransform: 'uppercase', 
-                    cursor: isSyncing ? 'not-allowed' : 'pointer' // Changes mouse arrow to blocked symbol
+                    cursor: isSyncing ? 'not-allowed' : 'pointer'
                   }}
                   disabled={isSyncing}
                 >
@@ -1022,8 +1571,9 @@ async function handleAuth(type) {
                 </button>
               </div>
             </div>
+----------------------------------------------------------------------------------------
 
-            {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
+           {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
                     {/* PERFORMANCE METRICS CARD */}
 <div style={{ ...styles.flatCard, border: '1px solid rgba(255, 255, 255, 0.02)' }}>
@@ -1116,7 +1666,9 @@ async function handleAuth(type) {
   </div>
 </div>
 
-              {/* INTEGRATION ENDPOINT TARGET BLOCK */}
+--------------------------------------------------------------------------------------------
+
+            {/* INTEGRATION ENDPOINT TARGET BLOCK */}
               <div style={styles.flatCard}>
                 <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '800' }}>Integration Endpoint Target</h3>
                 <div style={{ ...styles.concaveCard, fontFamily: 'monospace', fontSize: '12px', color: '#3b82f6', wordBreak: 'break-all', padding: '15px', marginBottom: '14px' }}>
@@ -1127,7 +1679,9 @@ async function handleAuth(type) {
                 </div>
               </div>
 
-              {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
+-------------------------------------------------------------------------------------------
+
+          {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
 <div style={{
   ...styles.flatCard,
   border: '1px solid rgba(0,255,200,0.12)',
@@ -1168,19 +1722,13 @@ async function handleAuth(type) {
 
   {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
   <div style={{
-    background: `
-      linear-gradient(
-        180deg,
-        rgba(250,255,255,0.98),
-        rgba(240,248,250,0.98)
-      )
-    `,
+    background: 'linear-gradient(180deg, rgba(12, 22, 31, 0.85), rgba(8, 15, 22, 0.95))',
     backgroundImage: `
-      linear-gradient(rgba(0,0,0,0.018) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.015) 1px, transparent 1px)
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)
     `,
     backgroundSize: '100% 5px, 5px 100%',
-    color: '#11161d',
+    color: '#ffffff',
     borderRadius: '26px',
     padding: '32px 24px',
     boxShadow: `
@@ -1190,7 +1738,7 @@ async function handleAuth(type) {
     fontFamily: '"Courier New", monospace',
     position: 'relative',
     overflow: 'hidden',
-    border: '1px solid rgba(255,255,255,0.75)'
+    border: '1px solid rgba(0, 255, 200, 0.15)'
   }}>
 
     {/* RECEIPT CORNER LIGHT */}
@@ -1217,10 +1765,9 @@ async function handleAuth(type) {
         backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        opacity: 0.045,
+        opacity: 0.035,
         pointerEvents: 'none',
-        zIndex: 1,
-        filter: 'grayscale(100%)'
+        zIndex: 1
       }} />
     )}
 
@@ -1230,18 +1777,18 @@ async function handleAuth(type) {
       {/* TOP METADATA ROW */}
       <div style={{
         display: 'flex',
-        justifyContent: 'space-between',
+        justify: 'space-between',
         alignItems: 'flex-start',
         fontSize: '10px',
-        color: '#64748b',
+        color: 'rgba(220,255,250,0.5)',
         marginBottom: '18px'
       }}>
         <div style={{
           padding: '4px 10px',
           borderRadius: '999px',
           background: 'rgba(0,255,200,0.08)',
-          border: '1px solid rgba(0,255,200,0.15)',
-          color: '#089981',
+          border: '1px solid rgba(0,255,200,0.25)',
+          color: '#00ffd5',
           fontWeight: '800',
           letterSpacing: '0.5px'
         }}>
@@ -1254,49 +1801,55 @@ async function handleAuth(type) {
         }}>
           <div style={{
             fontWeight: '900',
-            color: '#0f172a',
+            color: '#ffffff',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
             Transaction
           </div>
-
           <div>21. Jan 21 19:43:36</div>
         </div>
       </div>
 
       {/* TOP MINI LOGO */}
       <div style={{
-        textAlign: 'center',
-        marginBottom: '18px'
+        display: 'flex',
+        justify: 'center',
+        alignItems: 'center',
+        marginBottom: '18px',
+        width: '100%'
       }}>
         {settings?.logo_url ? (
           <div style={{
-            display: 'inline-flex',
-            padding: '10px 18px',
-            borderRadius: '18px',
-            background: 'rgba(255,255,255,0.82)',
-            border: '1px solid rgba(15,23,42,0.06)',
-            boxShadow: '0 10px 24px rgba(0,0,0,0.08)'
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            background: 'transparent',
+            borderRadius: '12px',
+            maxWidth: '100%'
           }}>
             <img
               src={settings.logo_url}
               alt="Merchant Logo"
               style={{
-                maxHeight: '52px',
-                maxWidth: '170px',
+                width: 'auto',
+                height: 'auto',
+                maxHeight: '75px',
+                maxWidth: '100%',
                 objectFit: 'contain'
               }}
             />
           </div>
         ) : (
           <div style={{
-            border: '1px dashed #94a3b8',
-            padding: '10px',
-            color: '#64748b',
+            border: '1px dashed rgba(0,255,200,0.25)',
+            padding: '12px',
+            color: 'rgba(0,255,200,0.4)',
             fontSize: '10px',
             fontWeight: 'bold',
-            borderRadius: '12px'
+            borderRadius: '12px',
+            width: '100%',
+            textAlign: 'center'
           }}>
             [ NO LOGO RECORDED ]
           </div>
@@ -1314,14 +1867,15 @@ async function handleAuth(type) {
           textTransform: 'uppercase',
           letterSpacing: '1px',
           display: 'block',
-          color: '#020617'
+          color: '#ffffff',
+          textShadow: '0 0 10px rgba(0,255,200,0.15)'
         }}>
           {settings?.business_name || 'MY BUSINESS BRAND'}
         </strong>
 
         <div style={{
           width: '70px',
-          height: '3px',
+          height: '2px',
           margin: '10px auto',
           borderRadius: '999px',
           background: 'linear-gradient(90deg, #00ffd5, #00b8ff)'
@@ -1329,7 +1883,7 @@ async function handleAuth(type) {
 
         <div style={{
           fontSize: '11px',
-          color: '#1e293b',
+          color: 'rgba(255,255,255,0.85)',
           marginTop: '6px',
           whiteSpace: 'pre-wrap',
           lineHeight: '1.6',
@@ -1340,7 +1894,7 @@ async function handleAuth(type) {
 
         <div style={{
           fontSize: '11px',
-          color: '#475569',
+          color: 'rgba(220,255,250,0.5)',
           marginTop: '6px',
           fontFamily: 'system-ui, sans-serif'
         }}>
@@ -1351,7 +1905,7 @@ async function handleAuth(type) {
       {/* PREMIUM SEPARATOR */}
       <div style={{
         height: '1px',
-        background: 'linear-gradient(90deg, transparent, rgba(15,23,42,0.25), transparent)',
+        background: 'linear-gradient(90deg, transparent, rgba(0,255,200,0.2), transparent)',
         marginBottom: '18px'
       }} />
 
@@ -1368,7 +1922,7 @@ async function handleAuth(type) {
           textTransform: 'uppercase',
           letterSpacing: '1px',
           marginBottom: '12px',
-          color: '#475569',
+          color: 'rgba(0,255,200,0.6)',
           fontWeight: '900'
         }}>
           Items Purchased
@@ -1376,38 +1930,32 @@ async function handleAuth(type) {
 
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justify: 'space-between',
           marginBottom: '8px',
           padding: '8px 0',
-          borderBottom: '1px dashed rgba(15,23,42,0.12)'
+          color: '#ffffff',
+          borderBottom: '1px dashed rgba(0,255,200,0.12)'
         }}>
           <span style={{ maxWidth: '75%' }}>
             1x Premium Sample Merchandise Item
           </span>
-
-          <span style={{
-            fontWeight: '900',
-            color: '#0f172a'
-          }}>
+          <span style={{ fontWeight: '900', color: '#ffffff' }}>
             {activeCurrencySymbol}120.00
           </span>
         </div>
 
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justify: 'space-between',
           marginBottom: '12px',
           padding: '8px 0',
-          borderBottom: '1px dashed rgba(15,23,42,0.12)'
+          color: '#ffffff',
+          borderBottom: '1px dashed rgba(0,255,200,0.12)'
         }}>
           <span style={{ maxWidth: '75%' }}>
             1x Standard Agent Automation Node Addon
           </span>
-
-          <span style={{
-            fontWeight: '900',
-            color: '#0f172a'
-          }}>
+          <span style={{ fontWeight: '900', color: '#ffffff' }}>
             {activeCurrencySymbol}80.00
           </span>
         </div>
@@ -1415,23 +1963,19 @@ async function handleAuth(type) {
         {/* TOTAL DUE ROW */}
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justify: 'space-between',
           marginTop: '14px',
           padding: '16px',
           borderRadius: '16px',
-          background: 'linear-gradient(90deg, rgba(0,255,200,0.08), rgba(0,184,255,0.08))',
-          border: '1px solid rgba(0,255,200,0.15)',
+          background: 'linear-gradient(90deg, rgba(0,255,200,0.06), rgba(0,184,255,0.06))',
+          border: '1px solid rgba(0,255,200,0.2)',
           fontWeight: '900',
           fontSize: '14px',
-          color: '#020617',
-          boxShadow: '0 6px 20px rgba(0,255,200,0.08)'
+          color: '#ffffff',
+          boxShadow: '0 6px 20px rgba(0,255,200,0.05)'
         }}>
           <span>TOTAL DUE</span>
-
-          <span style={{
-            color: '#00a884',
-            textShadow: '0 0 10px rgba(0,255,200,0.15)'
-          }}>
+          <span style={{ color: '#00ffd5', textShadow: '0 0 10px rgba(0,255,200,0.3)' }}>
             {activeCurrencySymbol}200.00
           </span>
         </div>
@@ -1439,13 +1983,7 @@ async function handleAuth(type) {
 
       {/* VOUCHER SECTION BOX */}
       <div style={{
-        background: `
-          linear-gradient(
-            180deg,
-            rgba(248,250,252,0.95),
-            rgba(241,245,249,0.98)
-          )
-        `,
+        background: 'rgba(10, 20, 28, 0.6)',
         border: '1px solid rgba(0,255,200,0.15)',
         borderRadius: '22px',
         padding: '22px 16px',
@@ -1453,7 +1991,7 @@ async function handleAuth(type) {
         marginTop: '24px',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 12px 30px rgba(0,0,0,0.08)'
+        boxShadow: '0 12px 30px rgba(0,0,0,0.25)'
       }}>
 
         {/* INNER GLOW */}
@@ -1469,11 +2007,11 @@ async function handleAuth(type) {
 
         <span style={{
           fontSize: '9px',
-          color: '#020617',
+          color: '#00ffd5',
           fontWeight: '900',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
+          justify: 'center',
           gap: '6px',
           marginBottom: '12px',
           letterSpacing: '1px',
@@ -1487,14 +2025,13 @@ async function handleAuth(type) {
           padding: '12px',
           background: '#ffffff',
           borderRadius: '18px',
-          border: '1px solid rgba(15,23,42,0.06)',
+          border: '1px solid rgba(0,255,200,0.15)',
           boxShadow: `
-            0 12px 25px rgba(0,0,0,0.08),
-            0 0 20px rgba(0,255,200,0.08)
+            0 12px 25px rgba(0,0,0,0.35),
+            0 0 20px rgba(0,255,200,0.15)
           `,
           marginBottom: '10px'
         }}>
-
           <img
             src={`https://api.qrserver.com/v1/create-qr-code/?size=115x115&data=${encodeURIComponent(
               `https://ruachagent.net/redeem?token=${settings?.webhook_slug || 'node'}_preview`
@@ -1510,7 +2047,7 @@ async function handleAuth(type) {
 
         <div style={{
           fontSize: '9px',
-          color: '#334155',
+          color: 'rgba(255,255,255,0.9)',
           textTransform: 'uppercase',
           letterSpacing: '1px',
           fontWeight: '900',
@@ -1521,16 +2058,13 @@ async function handleAuth(type) {
 
         <div style={{
           fontSize: '11px',
-          color: '#334155',
+          color: 'rgba(220,255,250,0.7)',
           lineHeight: '1.6',
-          fontFamily: 'system-ui, sans-serif',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
           padding: '0 6px'
         }}>
           Scan to instantly claim your{' '}
-          <strong style={{
-            color: '#00a884',
-            fontWeight: '900'
-          }}>
+          <strong style={{ color: '#00ffd5', fontWeight: '900' }}>
             {settings?.discount_percentage ?? 10}% discount
           </strong>{' '}
           balance.
@@ -1547,14 +2081,7 @@ async function handleAuth(type) {
           onClick={(e) => e.preventDefault()}
           style={{
             display: 'block',
-            background: `
-              linear-gradient(
-                90deg,
-                #00e0b8 0%,
-                #00ffd5 50%,
-                #00b8ff 100%
-              )
-            `,
+            background: 'linear-gradient(90deg, #00e0b8 0%, #00ffd5 50%, #00b8ff 100%)',
             color: '#041014',
             textDecoration: 'none',
             padding: '16px',
@@ -1574,9 +2101,9 @@ async function handleAuth(type) {
           Download Official Invoice PDF
         </a>
       </div>
-                  </div>
-                </div>
-              </div>
+    </div>
+  </div>
+</div>
             </div>
           </section>
         )}
