@@ -1348,6 +1348,47 @@ async function handleAuth(type) {
   }
 }
 
+async function uploadBusinessLogo(file, webhookSlug) {
+  try {
+    // 1. Generate a unique file name to avoid overwriting existing files
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `public/${webhookSlug}_${Date.now()}.${fileExtension}`;
+
+    // 2. Upload the raw file to your Supabase Storage bucket
+    const { data: storageData, error: storageError } = await supabase
+      .storage
+      .from('logos') // Replace 'logos' with your actual bucket name
+      .upload(fileName, file, {
+        upsert: true // Overwrites the file if it already exists
+      });
+
+    if (storageError) throw storageError;
+
+    // 3. Retrieve the permanent, public URL of the uploaded image
+    const { data: publicUrlData } = supabase
+      .storage
+      .from('logos')
+      .getPublicUrl(storageData.path);
+
+    const permanentUrl = publicUrlData.publicUrl;
+
+    // 4. Update the business_settings table with the permanent URL
+    const { data: dbData, error: dbError } = await supabase
+      .from('business_settings')
+      .update({ logo_url: permanentUrl })
+      .eq('webhook_slug', webhookSlug);
+
+    if (dbError) throw dbError;
+
+    console.log('Logo updated successfully:', permanentUrl);
+    return permanentUrl;
+
+  } catch (error) {
+    console.error('Error handling logo upload:', error.message);
+    return null;
+  }
+}
+
 // Unified, stabilized database sync function
 async function handleSave(e) {
   if (e && typeof e.preventDefault === 'function') {
@@ -1422,22 +1463,6 @@ const activeCurrencySymbol =
     c => c.code === (settings?.currency || 'ZAR')
   )?.symbol || 'R';
 
-
-  if (data) {
-  const { data: publicUrlData } = supabase
-    .storage
-    .from('logos')
-    .getPublicUrl(data.path);
-
-  const permanentUrl = publicUrlData.publicUrl; 
-  // This will look like: https://[your-project].supabase.co/storage/v1/object/public/logos/...
-
-  // Now, update or insert this permanentUrl into your business_settings table
-  const { error: dbError } = await supabase
-    .from('business_settings')
-    .update({ logo_url: permanentUrl })
-    .eq('webhook_slug', 'eddienettie'); // matching your identifier
-}
   return (
     <div style={{ ...styles.container, opacity: isSyncing ? 0.6 : 1 }}>
       {/* GLOBAL MODAL 1: AWAITING VERIFICATION LINK */}
