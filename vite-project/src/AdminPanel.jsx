@@ -1103,37 +1103,77 @@ const styles = {
 };
 
 
- useEffect(() => {
-  let isMounted = true;
+ // ============================================================
+// FIXES APPLIED:
+// 1. handleAuth now uses authResponse.data.user directly —
+//    no more polling loop / getActiveUser() race condition.
+// 2. initializePortal is guarded with a flag so it doesn't
+//    double-fetch when onAuthStateChange also fires on mount.
+// 3. fetchLiveAnalytics sets analytics to zero when no business
+//    profile exists yet, instead of silently returning.
+// 4. handleSave uses the user already in state first,
+//    only falling back to getActiveUser() if state is empty.
+// 5. NOTE (schema): Ensure owner_id has a UNIQUE CONSTRAINT
+//    in your Supabase business_settings table for upsert to work.
+// ============================================================
 
-  // 1. Clean up URL Fragments from Email Confirmations safely
+useEffect(() => {
+  let isMounted = true;
+  // Fix 2: flag prevents onAuthStateChange from double-fetching
+  // when initializePortal has already handled the initial session.
+  let initialSessionHandled = false;
+
+  // Detect if user landed via an email confirmation redirection link
   const hash = window.location.hash;
   if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
     setShowSuccessModal(true);
+    // Clean the URL fragments up so it looks professional and tidy
     window.history.replaceState(null, null, window.location.pathname);
   }
 
-  // 2. Single source of truth for initialization and changes
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-    if (!isMounted) return;
+  async function initializePortal() {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!isMounted) return;
 
-    console.log(`Auth Event Triggered: ${event}`);
-
-    if (session?.user) {
-      setUser(session.user);
-      setShowVerifyModal(false);
-
-      // Only run expensive network fetches on relevant status shifts
-      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      if (session?.user) {
+        initialSessionHandled = true; // Fix 2: mark as handled
+        setUser(session.user);
         await Promise.all([
           fetchMerchantSettings(session.user.id),
           fetchLiveAnalytics(session.user.id)
         ]);
       }
+    } catch (error) {
+      console.error("Initialization loop error caught:", error);
+    }
+  }
+
+  initializePortal();
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (!isMounted) return;
+
+    if (session?.user) {
+      // Fix 2: skip if initializePortal already handled this session
+      if (initialSessionHandled && event === 'INITIAL_SESSION') return;
+
+      setUser(session.user);
+      setShowVerifyModal(false);
+      await Promise.all([
+        fetchMerchantSettings(session.user.id),
+        fetchLiveAnalytics(session.user.id)
+      ]);
     } else {
-      // Clear states explicitly upon logout
       setUser(null);
-      setSettings({ business_name: '', store_address: '', discount_percentage: 10, webhook_slug: '', currency: 'ZAR', logo_url: '' });
+      setSettings({
+        business_name: '',
+        store_address: '',
+        discount_percentage: 10,
+        webhook_slug: '',
+        currency: 'ZAR',
+        logo_url: ''
+      });
       setTxCount(0);
       setTxVolume(0);
       setGraphData(Array.from({ length: 28 }).map(() => 0));
@@ -1146,17 +1186,118 @@ const styles = {
   };
 }, []);
 
-// Secure, direct authentication-checker utility
+async function fetchMerchantSettings(userId) {
+  if (!userId) return;
+  try {
+    const { data, error } = await supabase
+      .from('business_settings')
+      .select('*')
+      .eq('owner_id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (data) {
+      setSettings({
+        id: data.id,
+        owner_id: data.owner_id,
+        business_name: data.business_name || '',
+        store_address: data.store_address || '',
+        discount_percentage: data.discount_percentage ?? 10,
+        webhook_slug: data.webhook_slug || '',
+        currency: data.currency || 'ZAR',
+        logo_url: data.logo_url || ''
+      });
+    }
+  } catch (error) {
+    console.error("Profile load failure:", error.message);
+  }
+}
+
 async function getActiveUser() {
   try {
-    // .getUser() hits the Supabase server validation API directly, which is safer 
-    // than .getSession() which reads from local cookies/storage tokens
-    const { data: { user }, error } = await supabase.auth.getUser();
-    if (error) throw error;
-    return user;
+    const {
+      data: { session },
+      error
+    } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("Session retrieval failed:", error.message);
+      return null;
+    }
+
+    return session?.user || null;
   } catch (err) {
-    console.error("Auth session validation failed:", err.message);
+    console.error("Auth session crash:", err.message);
     return null;
+  }
+}
+
+async function fetchLiveAnalytics(userId) {
+  try {
+    if (!userId) {
+      console.warn("Analytics blocked: No authenticated user.");
+      return;
+    }
+
+    const { data: biz, error: bizError } = await supabase
+      .from('business_settings')
+      .select('id')
+      .eq('owner_id', userId)
+      .maybeSingle();
+
+    if (bizError) throw bizError;
+
+    // Fix 3: reset analytics to zero instead of silently returning,
+    // so the UI reflects "no data yet" rather than appearing broken.
+    if (!biz?.id) {
+      console.warn("No business profile found — resetting analytics to zero.");
+      setTxCount(0);
+      setTxVolume(0);
+      setGraphData(Array.from({ length: 28 }).map(() => 0));
+      return;
+    }
+
+    const { data: receipts, error: receiptsError } = await supabase
+      .from('receipts')
+      .select('total_amount, created_at')
+      .eq('business_id', biz.id)
+      .order('created_at', { ascending: true });
+
+    if (receiptsError) throw receiptsError;
+
+    if (receipts && receipts.length > 0) {
+      const totalVol = receipts.reduce(
+        (sum, rx) => sum + (Number(rx.total_amount) || 0),
+        0
+      );
+
+      setTxCount(receipts.length);
+      setTxVolume(totalVol);
+
+      const maxTx = Math.max(
+        ...receipts.map(r => Number(r.total_amount) || 1),
+        1
+      );
+
+      const historicalPrices = receipts.map(rx => {
+        const rawAmount = Number(rx.total_amount) || 0;
+        return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
+      });
+
+      const paddedData = Array(28)
+        .fill(0)
+        .concat(historicalPrices)
+        .slice(-28);
+
+      setGraphData(paddedData);
+    } else {
+      // Fix 3: also reset when receipts exist but are empty
+      setTxCount(0);
+      setTxVolume(0);
+      setGraphData(Array.from({ length: 28 }).map(() => 0));
+    }
+  } catch (err) {
+    console.error("Analytics stream catch handled:", err.message);
   }
 }
 
@@ -1165,32 +1306,35 @@ async function handleAuth(type) {
     alert("Please fill in all authorization fields.");
     return;
   }
+
   if (isSyncing) return;
+
   setIsSyncing(true);
 
   try {
-    let data, error;
+    let authResponse;
 
     if (type === 'login') {
-      ({ data, error } = await supabase.auth.signInWithPassword({ email, password }));
+      authResponse = await supabase.auth.signInWithPassword({ email, password });
     } else {
-      ({ data, error } = await supabase.auth.signUp({ email, password }));
+      authResponse = await supabase.auth.signUp({ email, password });
     }
 
-    if (error) {
-      alert(error.message);
+    if (authResponse.error) {
+      alert(authResponse.error.message);
       return;
     }
 
-    // Instead of looping, read directly from the successful response payload
-    const activeUser = data?.user;
+    // Fix 1: use the user returned directly from authResponse —
+    // no polling loop needed; onAuthStateChange handles session hydration.
+    const activeUser = authResponse.data?.user;
 
-    if (!activeUser) {
-      alert("Authentication triggered, waiting for confirmation step.");
+    if (!activeUser?.id) {
+      alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
       return;
     }
 
-    console.log("Authenticated User ID:", activeUser.id);
+    console.log("Authenticated User:", activeUser.id);
 
     if (type !== 'login') {
       setShowVerifyModal(true);
@@ -1203,6 +1347,80 @@ async function handleAuth(type) {
     setIsSyncing(false);
   }
 }
+
+// Unified, stabilized database sync function
+async function handleSave(e) {
+  if (e && typeof e.preventDefault === 'function') {
+    e.preventDefault();
+  }
+
+  if (isSyncing) {
+    console.warn("Sync blocked: already syncing.");
+    return;
+  }
+
+  setIsSyncing(true);
+
+  try {
+    // Fix 4: use user already in state; only call getActiveUser() as fallback.
+    // This avoids an unnecessary async round-trip on every save.
+    const activeUser = user || await getActiveUser();
+
+    if (!activeUser?.id) {
+      alert("Sync Blocked: Active authentication session required.");
+      return;
+    }
+
+    const cleanBusinessName = settings?.business_name?.trim() || '';
+    const cleanWebhookSlug = settings?.webhook_slug?.trim() || '';
+
+    if (!cleanBusinessName || !cleanWebhookSlug) {
+      alert("Validation Failed: Required parameter fields cannot be left blank.");
+      return;
+    }
+
+    const payload = {
+      owner_id: activeUser.id,
+      business_name: cleanBusinessName,
+      store_address: settings?.store_address?.trim() || '',
+      discount_percentage: Number(settings?.discount_percentage ?? 10),
+      webhook_slug: cleanWebhookSlug,
+      currency: settings?.currency || 'ZAR',
+      logo_url: settings?.logo_url || ''
+    };
+
+    if (settings?.id) {
+      payload.id = settings.id;
+    }
+
+    // Fix 5 reminder: this upsert requires owner_id to have a UNIQUE
+    // CONSTRAINT in Supabase — verify this in Table Editor if saves fail silently.
+    const { data, error } = await supabase
+      .from('business_settings')
+      .upsert(payload, { onConflict: 'owner_id' })
+      .select();
+
+    if (error) throw error;
+
+    console.log("Business profile synced successfully.");
+    alert('Live Agent Settings Synced Successfully!');
+
+    if (data && data[0]) {
+      setSettings(data[0]);
+    }
+
+  } catch (error) {
+    console.error("Profile synchronization failed:", error);
+    alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
+  } finally {
+    setIsSyncing(false);
+  }
+}
+
+const activeCurrencySymbol =
+  CURRENCY_OPTIONS.find(
+    c => c.code === (settings?.currency || 'ZAR')
+  )?.symbol || 'R';
 
 
   return (
