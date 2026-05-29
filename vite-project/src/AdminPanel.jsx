@@ -188,7 +188,7 @@ const styles = {
 
 
 
-    maxWidth: '1700px',
+    maxWidth: '1800px',
 
 
 
@@ -1591,8 +1591,8 @@ const styles = {
         Processed Volume
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-        <span style={{ fontSize: '13px', fontWeight: '600', color: '#3b82f6', fontFamily: 'monospace' }}>{activeCurrencySymbol}</span>
-        <span style={{ fontSize: '20px', fontWeight: '900', color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
+        <span style={{ fontSize: '5px', fontWeight: '600', color: '#3b82f6', fontFamily: 'monospace' }}>{activeCurrencySymbol}</span>
+        <span style={{ fontSize: '12px', fontWeight: '900', color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
           {txVolume.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
       </div>
@@ -1603,8 +1603,8 @@ const styles = {
         Agent Lease Cost
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-        <span style={{ fontSize: '13px', fontWeight: '600', color: '#10b981', fontFamily: 'monospace' }}>$</span>
-        <span style={{ fontSize: '20px', fontWeight: '900', color: '#10b981', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
+        <span style={{ fontSize: '5px', fontWeight: '600', color: '#10b981', fontFamily: 'monospace' }}>$</span>
+        <span style={{ fontSize: '12px', fontWeight: '900', color: '#10b981', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
           5.00<span style={{ fontSize: '11px', color: '#6ee7b7', fontWeight: '500' }}>/mo</span>
         </span>
       </div>
@@ -1769,18 +1769,18 @@ const styles = {
       {/* TOP METADATA ROW */}
       <div style={{
         display: 'flex',
-        justify: 'space-between',
+        justifyContent: 'space-between',
         alignItems: 'flex-start',
         fontSize: '10px',
-        color: 'rgba(220,255,250,0.5)',
+        color: '#64748b',
         marginBottom: '18px'
       }}>
         <div style={{
           padding: '4px 10px',
           borderRadius: '999px',
           background: 'rgba(0,255,200,0.08)',
-          border: '1px solid rgba(0,255,200,0.25)',
-          color: '#00ffd5',
+          border: '1px solid rgba(0,255,200,0.15)',
+          color: '#089981',
           fontWeight: '800',
           letterSpacing: '0.5px'
         }}>
@@ -1793,7 +1793,7 @@ const styles = {
         }}>
           <div style={{
             fontWeight: '900',
-            color: '#b6b8bd',
+            color: '#c5ccda',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
@@ -1808,7 +1808,7 @@ const styles = {
       <div style={{
         textAlign: 'center',
         marginBottom: '18px',
-        display: 'flex',
+
       }}>
         {settings?.logo_url ? (
           <div style={{
