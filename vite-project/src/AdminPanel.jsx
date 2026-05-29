@@ -1103,11 +1103,11 @@ const styles = {
 };
 
 
-useEffect(() => {
+ useEffect(() => {
     let isMounted = true;
 
     // Detect if user landed via an email confirmation redirection link
-    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    const hash = window.location.hash;
     if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
       setShowSuccessModal(true);
       // Clean the URL fragments up so it looks professional and tidy
@@ -1121,7 +1121,6 @@ useEffect(() => {
 
         if (session?.user) {
           setUser(session.user);
-          // Pass user down directly to eliminate redundant getActiveUser network requests
           await Promise.all([
             fetchMerchantSettings(session.user.id),
             fetchLiveAnalytics(session.user.id)
@@ -1186,182 +1185,225 @@ useEffect(() => {
     }
   }
 
-  async function getActiveUser() {
-    try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error("Session retrieval failed:", error.message);
-        return null;
-      }
-      return session?.user || null;
-    } catch (err) {
-      console.error("Auth session crash:", err.message);
+async function getActiveUser() {
+  try {
+    const {
+      data: { session },
+      error
+    } = await supabase.auth.getSession();
+
+    if (error) {
+      console.error("Session retrieval failed:", error.message);
       return null;
     }
+
+    return session?.user || null;
+  } catch (err) {
+    console.error("Auth session crash:", err.message);
+    return null;
   }
+}
 
-  // Optimized to accept a straight userId parameter, falling back to network only if empty
-  async function fetchLiveAnalytics(forcedUserId = null) {
-    try {
-      let targetUserId = forcedUserId;
-      
-      if (!targetUserId) {
-        const activeUser = await getActiveUser();
-        targetUserId = activeUser?.id;
-      }
+async function fetchLiveAnalytics(userId) {
+  try {
+    if (!userId) {
+  console.warn("Analytics blocked: No authenticated user.");
+  return;
+}
 
-      if (!targetUserId) {
-        console.warn("Analytics blocked: No authenticated user.");
-        return;
-      }
+    const { data: biz, error: bizError } = await supabase
+      .from('business_settings')
+      .select('id')
+      .eq('owner_id', userId)
+      .maybeSingle();
 
-      const { data: biz, error: bizError } = await supabase
-        .from('business_settings')
-        .select('id')
-        .eq('owner_id', targetUserId)
-        .maybeSingle();
+    if (bizError) throw bizError;
 
-      if (bizError) throw bizError;
-
-      if (!biz?.id) {
-        console.warn("No business profile found.");
-        return;
-      }
-
-      const { data: receipts, error: receiptsError } = await supabase
-        .from('receipts')
-        .select('total_amount, created_at')
-        .eq('business_id', biz.id)
-        .order('created_at', { ascending: true });
-
-      if (receiptsError) throw receiptsError;
-
-      if (receipts && receipts.length > 0) {
-        // Fixed compilation math typing anomaly here
-        const totalVol = receipts.reduce((sum, rx) => sum + (Number(rx.total_amount) || 0), 0);
-        setTxCount(receipts.length);
-        setTxVolume(totalVol);
-
-        const maxTx = Math.max(...receipts.map(r => Number(r.total_amount) || 1), 1);
-
-        const historicalPrices = receipts.map(rx => {
-          const rawAmount = Number(rx.total_amount) || 0;
-          return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
-        });
-
-        const paddedData = Array(28).fill(0).concat(historicalPrices).slice(-28);
-        setGraphData(paddedData);
-      }
-    } catch (err) {
-      console.error("Analytics stream catch handled:", err.message);
-    }
-  }
-
-  async function handleAuth(type) {
-    if (!email || !password) {
-      alert("Please fill in all authorization fields.");
+    if (!biz?.id) {
+      console.warn("No business profile found.");
       return;
     }
-    if (isSyncing) return;
-    setIsSyncing(true);
 
-    try {
-      let authResponse;
-      if (type === 'login') {
-        authResponse = await supabase.auth.signInWithPassword({ email, password });
-      } else {
-        authResponse = await supabase.auth.signUp({ email, password });
-      }
+    const { data: receipts, error: receiptsError } = await supabase
+      .from('receipts')
+      .select('total_amount, created_at')
+      .eq('business_id', biz.id)
+      .order('created_at', { ascending: true });
 
-      if (authResponse.error) {
-        alert(authResponse.error.message);
-        return;
-      }
+    if (receiptsError) throw receiptsError;
 
-      // Wait briefly for auth state hydration
-      let activeUser = null;
-      for (let i = 0; i < 5; i++) {
-        activeUser = await getActiveUser();
-        if (activeUser?.id) break;
-        await new Promise(resolve => setTimeout(resolve, 300));
-      }
+    if (receipts && receipts.length > 0) {
+      const totalVol = receipts.reduce(
+        (sum, rx) => sum + (Number(rx.total_amount) || 0),
+        0
+      );
 
-      if (!activeUser?.id) {
-        alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
-        return;
-      }
+      setTxCount(receipts.length);
+      setTxVolume(totalVol);
 
-      console.log("Authenticated User:", activeUser.id);
-      if (type !== 'login') {
-        setShowVerifyModal(true);
-      }
-    } catch (err) {
-      console.error("Authentication crash:", err);
-      alert(err.message || "Authentication failed.");
-    } finally {
-      setIsSyncing(false);
+      const maxTx = Math.max(
+        ...receipts.map(r => Number(r.total_amount) || 1),
+        1
+      );
+
+      const historicalPrices = receipts.map(rx => {
+        const rawAmount = Number(rx.total_amount) || 0;
+
+        return Math.max(
+          15,
+          Math.min(90, (rawAmount / maxTx) * 90)
+        );
+      });
+
+      const paddedData = Array(28)
+        .fill(0)
+        .concat(historicalPrices)
+        .slice(-28);
+
+      setGraphData(paddedData);
     }
+  } catch (err) {
+    console.error("Analytics stream catch handled:", err.message);
+  }
+}
+
+async function handleAuth(type) {
+  if (!email || !password) {
+    alert("Please fill in all authorization fields.");
+    return;
   }
 
-  async function handleSave(e) {
-    if (e && typeof e.preventDefault === 'function') {
-      e.preventDefault();
+  if (isSyncing) return;
+
+  setIsSyncing(true);
+
+  try {
+    let authResponse;
+
+    if (type === 'login') {
+      authResponse = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+    } else {
+      authResponse = await supabase.auth.signUp({
+        email,
+        password
+      });
     }
-    if (isSyncing) {
-      console.warn("Sync blocked: already syncing.");
+
+    if (authResponse.error) {
+      alert(authResponse.error.message);
       return;
     }
-    setIsSyncing(true);
 
-    try {
-      const activeUser = await getActiveUser();
-      if (!activeUser?.id) {
-        alert("Sync Blocked: Active authentication session required.");
-        return;
-      }
+    // Wait briefly for auth state hydration
+    let activeUser = null;
 
-      const cleanBusinessName = settings?.business_name?.trim() || '';
-      const cleanWebhookSlug = settings?.webhook_slug?.trim() || '';
+    for (let i = 0; i < 5; i++) {
+      activeUser = await getActiveUser();
 
-      if (!cleanBusinessName || !cleanWebhookSlug) {
-        alert("Validation Failed: Required parameter fields cannot be left blank.");
-        return;
-      }
+      if (activeUser?.id) break;
 
-      const payload = {
-        owner_id: activeUser.id,
-        business_name: cleanBusinessName,
-        store_address: settings?.store_address?.trim() || '',
-        discount_percentage: Number(settings?.discount_percentage ?? 10),
-        webhook_slug: cleanWebhookSlug,
-        currency: settings?.currency || 'ZAR',
-        logo_url: settings?.logo_url || ''
-      };
-
-      if (settings?.id) {
-        payload.id = settings.id;
-      }
-
-      const { data, error } = await supabase
-        .from('business_settings')
-        .upsert(payload, { onConflict: 'owner_id' })
-        .select();
-
-      if (error) throw error;
-
-      console.log("Business profile synced successfully.");
-      alert('Live Agent Settings Synced Successfully!');
-
-      if (data && data[0]) {
-        setSettings(data[0]);
-      }
-    } catch (error) {
-      console.error("Profile synchronization failed:", error);
-      alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
-    } finally {
-      setIsSyncing(false);
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
+
+    if (!activeUser?.id) {
+      alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
+      return;
+    }
+
+    console.log("Authenticated User:", activeUser.id);
+
+    if (type !== 'login') {
+      setShowVerifyModal(true);
+    }
+
+  } catch (err) {
+    console.error("Authentication crash:", err);
+    alert(err.message || "Authentication failed.");
+  } finally {
+    setIsSyncing(false);
   }
+}
+
+// Unified, stabilized database sync function
+async function handleSave(e) {
+  if (e && typeof e.preventDefault === 'function') {
+    e.preventDefault();
+  }
+
+  if (isSyncing) {
+    console.warn("Sync blocked: already syncing.");
+    return;
+  }
+
+  setIsSyncing(true);
+
+  try {
+    // ALWAYS fetch latest authenticated user directly
+    const activeUser = await getActiveUser();
+
+    if (!activeUser?.id) {
+      alert("Sync Blocked: Active authentication session required.");
+      return;
+    }
+
+    const cleanBusinessName =
+      settings?.business_name?.trim() || '';
+
+    const cleanWebhookSlug =
+      settings?.webhook_slug?.trim() || '';
+
+    if (!cleanBusinessName || !cleanWebhookSlug) {
+      alert("Validation Failed: Required parameter fields cannot be left blank.");
+      return;
+    }
+
+    const payload = {
+      owner_id: activeUser.id,
+      business_name: cleanBusinessName,
+      store_address: settings?.store_address?.trim() || '',
+      discount_percentage: Number(settings?.discount_percentage ?? 10),
+      webhook_slug: cleanWebhookSlug,
+      currency: settings?.currency || 'ZAR',
+      logo_url: settings?.logo_url || ''
+    };
+
+    if (settings?.id) {
+      payload.id = settings.id;
+    }
+
+    const { data, error } = await supabase
+      .from('business_settings')
+      .upsert(payload, {
+        onConflict: 'owner_id'
+      })
+      .select();
+
+    if (error) {
+      throw error;
+    }
+
+    console.log("Business profile synced successfully.");
+
+    alert('Live Agent Settings Synced Successfully!');
+
+    if (data && data[0]) {
+      setSettings(data[0]);
+    }
+
+  } catch (error) {
+    console.error("Profile synchronization failed:", error);
+
+    alert(
+      'Error syncing live profile: ' +
+      (error.message || 'Unknown error')
+    );
+  } finally {
+    setIsSyncing(false);
+  }
+}
 
 const activeCurrencySymbol =
   CURRENCY_OPTIONS.find(
