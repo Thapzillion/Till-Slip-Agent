@@ -1423,6 +1423,21 @@ const activeCurrencySymbol =
   )?.symbol || 'R';
 
 
+  if (data) {
+  const { data: publicUrlData } = supabase
+    .storage
+    .from('logos')
+    .getPublicUrl(data.path);
+
+  const permanentUrl = publicUrlData.publicUrl; 
+  // This will look like: https://[your-project].supabase.co/storage/v1/object/public/logos/...
+
+  // Now, update or insert this permanentUrl into your business_settings table
+  const { error: dbError } = await supabase
+    .from('business_settings')
+    .update({ logo_url: permanentUrl })
+    .eq('webhook_slug', 'eddienettie'); // matching your identifier
+}
   return (
     <div style={{ ...styles.container, opacity: isSyncing ? 0.6 : 1 }}>
       {/* GLOBAL MODAL 1: AWAITING VERIFICATION LINK */}
