@@ -1591,7 +1591,7 @@ const styles = {
         Processed Volume
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-        <span style={{ fontSize: '5px', fontWeight: '600', color: '#3b82f6', fontFamily: 'monospace' }}>{activeCurrencySymbol}</span>
+        <span style={{ fontSize: '12px', fontWeight: '600', color: '#3b82f6', fontFamily: 'monospace' }}>{activeCurrencySymbol}</span>
         <span style={{ fontSize: '12px', fontWeight: '900', color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
           {txVolume.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </span>
@@ -1603,7 +1603,7 @@ const styles = {
         Agent Lease Cost
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-        <span style={{ fontSize: '5px', fontWeight: '600', color: '#10b981', fontFamily: 'monospace' }}>$</span>
+        <span style={{ fontSize: '12px', fontWeight: '600', color: '#10b981', fontFamily: 'monospace' }}>$</span>
         <span style={{ fontSize: '12px', fontWeight: '900', color: '#10b981', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
           5.00<span style={{ fontSize: '11px', color: '#6ee7b7', fontWeight: '500' }}>/mo</span>
         </span>
@@ -1663,7 +1663,7 @@ const styles = {
 
             {/* INTEGRATION ENDPOINT TARGET BLOCK */}
               <div style={styles.flatCard}>
-                <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '800' }}>Integration Endpoint Target</h3>
+                <h3 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '800' }}>Integration Endpoint Target</h3>
                 <div style={{ ...styles.concaveCard, fontFamily: 'monospace', fontSize: '12px', color: '#3b82f6', wordBreak: 'break-all', padding: '15px', marginBottom: '14px' }}>
                   {settings?.webhook_slug ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}` : 'Define a unique webhook slug first...'}
                 </div>
@@ -1825,20 +1825,18 @@ const styles = {
               style={{
                 maxHeight: '52px',
                 maxWidth: '170px',
-                objectFit: 'contain'
+                objectFit: 'fill'
               }}
             />
           </div>  
           ):(
           <div style={{
-            border: '1px dashed rgba(0,255,200,0.25)',
-            padding: '12px',
-            color: 'rgba(0,255,200,0.4)',
+            border: '1px dashed #94a3b8',
+            padding: '10px',
+            color: '#64748b',
             fontSize: '10px',
             fontWeight: 'bold',
-            borderRadius: '12px',
-            width: '100%',
-            textAlign: 'center'
+            borderRadius: '12px'
           }}>
             [ NO LOGO RECORDED ]
           </div>
@@ -1919,52 +1917,62 @@ const styles = {
 
         <div style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           marginBottom: '8px',
           padding: '8px 0',
-          color: '#ffffff',
-          borderBottom: '1px dashed rgba(0,255,200,0.12)'
+          borderBottom: '1px dashed rgba(15,23,42,0.12)'
         }}>
           <span style={{ maxWidth: '75%' }}>
             1x Premium Sample Merchandise Item
           </span>
-          <span style={{ fontWeight: '900', color: '#ffffff' }}>
+
+          <span style={{
+            fontWeight: '900',
+            color: '#bfc1c8'
+          }}>
             {activeCurrencySymbol}120.00
           </span>
         </div>
 
         <div style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           marginBottom: '12px',
           padding: '8px 0',
-          color: '#ffffff',
-          borderBottom: '1px dashed rgba(0,255,200,0.12)'
+          borderBottom: '1px dashed rgba(15,23,42,0.12)'
         }}>
           <span style={{ maxWidth: '75%' }}>
             1x Standard Agent Automation Node Addon
           </span>
-          <span style={{ fontWeight: '900', color: '#ffffff' }}>
+
+          <span style={{
+            fontWeight: '900',
+            color: '#aeb4c3'
+          }}>
             {activeCurrencySymbol}80.00
           </span>
         </div>
 
-        {/* TOTAL DUE ROW */}
+         {/* TOTAL DUE ROW */}
         <div style={{
           display: 'flex',
-          justify: 'space-between',
+          justifyContent: 'space-between',
           marginTop: '14px',
           padding: '16px',
           borderRadius: '16px',
-          background: 'linear-gradient(90deg, rgba(0,255,200,0.06), rgba(0,184,255,0.06))',
-          border: '1px solid rgba(0,255,200,0.2)',
+          background: 'linear-gradient(90deg, rgba(0,255,200,0.08), rgba(0,184,255,0.08))',
+          border: '1px solid rgba(0,255,200,0.15)',
           fontWeight: '900',
           fontSize: '14px',
-          color: '#ffffff',
-          boxShadow: '0 6px 20px rgba(0,255,200,0.05)'
+          color: '#b1b5c6',
+          boxShadow: '0 6px 20px rgba(0,255,200,0.08)'
         }}>
           <span>TOTAL DUE</span>
-          <span style={{ color: '#00ffd5', textShadow: '0 0 10px rgba(0,255,200,0.3)' }}>
+
+          <span style={{
+            color: '#00a884',
+            textShadow: '0 0 10px rgba(0,255,200,0.15)'
+          }}>
             {activeCurrencySymbol}200.00
           </span>
         </div>
