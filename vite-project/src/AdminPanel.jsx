@@ -1136,6 +1136,9 @@ useEffect(() => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!isMounted) return;
 
+      const { data, error } = await supabase.from('business_settings').select('count');
+      console.log('Supabase reachability check:', data, error);  // Temporary debug log to verify Superbase Connection
+
       if (session?.user) {
         initialSessionHandled = true; // Fix 2: mark as handled
         setUser(session.user);
