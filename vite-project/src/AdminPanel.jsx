@@ -754,7 +754,7 @@ const styles = {
 
 
 
-    color: 'rgba(220,255,250,0.55)',
+    color: 'rgba(220, 255, 250, 0.71)',
 
 
 
@@ -802,7 +802,7 @@ const styles = {
 
 
 
-    background: 'rgba(0,255,200,0.08)',
+    background: 'rgba(0, 255, 200, 0)',
 
 
 
@@ -1793,7 +1793,7 @@ const styles = {
         }}>
           <div style={{
             fontWeight: '900',
-            color: '#0f172a',
+            color: '#b6b8bd',
             textTransform: 'uppercase',
             letterSpacing: '0.5px'
           }}>
@@ -1807,11 +1807,12 @@ const styles = {
       {/* TOP MINI LOGO */}
       <div style={{
         textAlign: 'center',
-        marginBottom: '18px'
+        marginBottom: '18px',
+        display: 'flex',
       }}>
         {settings?.logo_url ? (
           <div style={{
-            display: 'inline-flex',
+            display: 'flex',
             padding: '10px 18px',
             borderRadius: '18px',
             background: 'rgba(255,255,255,0.82)',
