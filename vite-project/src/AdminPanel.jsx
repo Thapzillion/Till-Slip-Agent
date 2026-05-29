@@ -1352,10 +1352,6 @@ const styles = {
         </div>
       )}
 
-
----------------------------------------------------------------------------------------
-
-
             {/* HEADER NAVIGATION */}
       <header style={styles.header}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1571,7 +1567,6 @@ const styles = {
                 </button>
               </div>
             </div>
-----------------------------------------------------------------------------------------
 
            {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
@@ -1666,8 +1661,6 @@ const styles = {
   </div>
 </div>
 
---------------------------------------------------------------------------------------------
-
             {/* INTEGRATION ENDPOINT TARGET BLOCK */}
               <div style={styles.flatCard}>
                 <h3 style={{ margin: '0 0 12px 0', fontSize: '16px', fontWeight: '800' }}>Integration Endpoint Target</h3>
@@ -1679,7 +1672,6 @@ const styles = {
                 </div>
               </div>
 
--------------------------------------------------------------------------------------------
 
           {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
 <div style={{
