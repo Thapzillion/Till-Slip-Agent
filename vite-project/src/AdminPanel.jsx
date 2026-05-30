@@ -1525,7 +1525,7 @@ const activeCurrencySymbol =
         </div>
       )}
 
-      {/* GLOBAL MODAL 2: EMAIL CONFIRMED SUCCESS POP-UP */}
+{/* GLOBAL MODAL 2: EMAIL CONFIRMED SUCCESS POP-UP */}
       {showSuccessModal && (
         <div style={styles.modalOverlay}>
           <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center', borderColor: '#262626' }}>
@@ -1551,88 +1551,100 @@ const activeCurrencySymbol =
         </div>
       )}
 
-             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-
-  <header style={styles.header}>           
-  <svg
-    width="220"
-    height="80"
-    viewBox="0 0 220 80"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    style={{
-      filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.8))',
-      flexShrink: 0
-    }}
-  >
-    {/* Receipt Icon */}
-    <rect
-      x="5"
-      y="10"
-      width="52"
-      height="60"
-      rx="8"
-      stroke="#FFFFFF"
-      strokeWidth="2"
-    />
-
-    {/* Receipt Lines */}
-    <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
-    <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
-    <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
-
-    {/* AI Scan Line */}
-    <line
-      x1="12"
-      y1="56"
-      x2="50"
-      y2="56"
-      stroke="#FFFFFF"
-      strokeWidth="3"
-    />
-
-    {/* RA Monogram */}
-    <text
-      x="72"
-      y="38"
-      fill="#FFFFFF"
-      fontSize="28"
-      fontWeight="900"
-      fontFamily="Arial, sans-serif"
-      letterSpacing="2"
-    >
-      RA
-    </text>
-
-    {/* Brand Name */}
-    <text
-      x="72"
-      y="62"
-      fill="#FFFFFF"
-      fontSize="18"
-      fontWeight="700"
-      fontFamily="Arial, sans-serif"
-      letterSpacing="3"
-    >
-      RUACHAGENT
-    </text>
-  </svg>
-
-  <span
-    style={{
-      fontSize: '9px',
-      border: '1px solid #262626',
-      color: '#a3a3a3',
-      padding: '3px 8px',
-      borderRadius: '4px',
-      fontWeight: '500',
-      letterSpacing: '0.5px'
-    }}
-  >
-    PRODUCTION NODE
-  </span>
+      <header style={{ 
+        ...styles.header, 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        gap: '12px'
+      }}>
+        
+        {/* Logo + badge — only visible when user is logged in */}
         {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <svg
+              width="220"
+              height="80"
+              viewBox="0 0 220 80"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{
+                filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.8))',
+                flexShrink: 0
+              }}
+            >
+              {/* Receipt Icon */}
+              <rect
+                x="5"
+                y="10"
+                width="52"
+                height="60"
+                rx="8"
+                stroke="#FFFFFF"
+                strokeWidth="2"
+              />
+
+              {/* Receipt Lines */}
+              <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
+              <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
+              <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
+
+              {/* AI Scan Line */}
+              <line
+                x1="12"
+                y1="56"
+                x2="50"
+                y2="56"
+                stroke="#FFFFFF"
+                strokeWidth="3"
+              />
+
+              {/* RA Monogram */}
+              <text
+                x="72"
+                y="38"
+                fill="#FFFFFF"
+                fontSize="28"
+                fontWeight="900"
+                fontFamily="Arial, sans-serif"
+                letterSpacing="2"
+              >
+                RA
+              </text>
+
+              {/* Brand Name */}
+              <text
+                x="72"
+                y="62"
+                fill="#FFFFFF"
+                fontSize="18"
+                fontWeight="700"
+                fontFamily="Arial, sans-serif"
+                letterSpacing="3"
+              >
+                RUACHAGENT
+              </text>
+            </svg>
+
+            <span
+              style={{
+                fontSize: '9px',
+                border: '1px solid #262626',
+                color: '#a3a3a3',
+                padding: '3px 8px',
+                borderRadius: '4px',
+                fontWeight: '500',
+                letterSpacing: '0.5px'
+              }}
+            >
+              PRODUCTION NODE
+            </span>
+          </div>
+        )}
+
+        {/* User email + disconnect — pushed to the far right */}
+        {user && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
             <span style={{ fontSize: '12px', color: '#737373', fontFamily: 'monospace' }}>{user.email}</span>
             <button 
               onClick={() => supabase.auth.signOut()} 
@@ -1654,9 +1666,9 @@ const activeCurrencySymbol =
             </button>
           </div>
         )}
+
       </header>
-      </div>
-      
+
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
       <main style={{ padding: '32px 16px', maxWidth: '1000px', margin: '0 auto' }}>
