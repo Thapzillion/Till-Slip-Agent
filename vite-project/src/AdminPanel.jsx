@@ -1631,13 +1631,89 @@ const activeCurrencySymbol =
     }} />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* BRAND LOGO */}
-                <div>
-                  <label htmlFor="logo-upload" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    BUSINESS BRAND LOGO (PICTURE PRINT)
-                  </label>
+  {/* RUACHAGENT NEON LOGO */}
+  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+    <svg
+      width="220"
+      height="80"
+      viewBox="0 0 220 80"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{
+        filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.8))',
+      }}
+    >
+      {/* Receipt Icon */}
+      <rect
+        x="5"
+        y="10"
+        width="52"
+        height="60"
+        rx="8"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+      />
+
+      {/* Receipt Lines */}
+      <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
+      <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
+      <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
+
+      {/* AI Scan Line */}
+      <line
+        x1="12"
+        y1="56"
+        x2="50"
+        y2="56"
+        stroke="#FFFFFF"
+        strokeWidth="3"
+      />
+
+      {/* RA Monogram */}
+      <text
+        x="72"
+        y="38"
+        fill="#FFFFFF"
+        fontSize="28"
+        fontWeight="900"
+        fontFamily="Arial, sans-serif"
+        letterSpacing="2"
+      >
+        RA
+      </text>
+
+      {/* Brand Name */}
+      <text
+        x="72"
+        y="62"
+        fill="#FFFFFF"
+        fontSize="18"
+        fontWeight="700"
+        fontFamily="Arial, sans-serif"
+        letterSpacing="3"
+      >
+        RUACHAGENT
+      </text>
+    </svg>
+  </div>
+
+  {/* BRAND LOGO */}
+  <div>
+    <label
+      htmlFor="logo-upload"
+      style={{
+        fontSize: '10px',
+        color: '#737373',
+        fontWeight: '500',
+        display: 'block',
+        marginBottom: '8px',
+        letterSpacing: '0.5px'
+      }}
+    >
+      BUSINESS BRAND LOGO (PICTURE PRINT)
+    </label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #262626', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
+                    <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
                       Choose Image File
                       <input
                         id="logo-upload"
