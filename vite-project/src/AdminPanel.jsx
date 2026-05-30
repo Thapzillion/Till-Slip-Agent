@@ -1392,6 +1392,7 @@ async function uploadBusinessLogo(file, webhookSlug) {
     return null;
   }
 }
+
 // Unified, stabilized database sync function
 async function handleSave(e) {
   if (e && typeof e.preventDefault === 'function') {
@@ -1434,6 +1435,24 @@ async function handleSave(e) {
       return;
     }
 
+    // Resolve logo URL: if the current value is a temporary blob (picked this
+    // session but not yet uploaded), upload it now and get the permanent URL.
+    // If it's already a permanent https URL, use it as-is.
+    let resolvedLogoUrl = settings?.logo_url || '';
+
+    if (resolvedLogoUrl.startsWith('blob:') && pendingLogoFile) {
+      console.log('Blob URL detected — uploading logo to Supabase Storage...');
+      const uploadedUrl = await uploadBusinessLogo(pendingLogoFile, cleanWebhookSlug);
+      if (uploadedUrl) {
+        resolvedLogoUrl = uploadedUrl;
+        setPendingLogoFile(null); // Clear the pending file after successful upload
+        console.log('Logo uploaded, permanent URL:', resolvedLogoUrl);
+      } else {
+        console.warn('Logo upload failed — saving without logo update.');
+        resolvedLogoUrl = settings?.logo_url?.startsWith('blob:') ? '' : (settings?.logo_url || '');
+      }
+    }
+
     const payload = {
       owner_id: activeUser.id,
       business_name: cleanBusinessName,
@@ -1441,7 +1460,7 @@ async function handleSave(e) {
       discount_percentage: Number(settings?.discount_percentage ?? 10),
       webhook_slug: cleanWebhookSlug,
       currency: settings?.currency || 'ZAR',
-      logo_url: settings?.logo_url || ''
+      logo_url: resolvedLogoUrl  // Always a permanent URL or empty string, never a blob
     };
 
     if (settings?.id) {
