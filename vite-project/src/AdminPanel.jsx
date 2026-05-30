@@ -1392,12 +1392,14 @@ async function uploadBusinessLogo(file, webhookSlug) {
     return null;
   }
 }
-
 // Unified, stabilized database sync function
 async function handleSave(e) {
   if (e && typeof e.preventDefault === 'function') {
     e.preventDefault();
   }
+
+  console.log('--- handleSave fired ---');
+  console.log('isSaveSyncing at entry:', isSaveSyncing);
 
   if (isSaveSyncing) {
     console.warn("Sync blocked: already syncing.");
@@ -1411,7 +1413,11 @@ async function handleSave(e) {
     // This avoids an unnecessary async round-trip on every save.
     const activeUser = user || await getActiveUser();
 
+    console.log('activeUser resolved:', activeUser);
+    console.log('activeUser.id:', activeUser?.id);
+
     if (!activeUser?.id) {
+      console.error('BLOCKED: No active user — save aborted before reaching Supabase.');
       alert("Sync Blocked: Active authentication session required.");
       return;
     }
@@ -1419,7 +1425,11 @@ async function handleSave(e) {
     const cleanBusinessName = settings?.business_name?.trim() || '';
     const cleanWebhookSlug = settings?.webhook_slug?.trim() || '';
 
+    console.log('cleanBusinessName:', cleanBusinessName);
+    console.log('cleanWebhookSlug:', cleanWebhookSlug);
+
     if (!cleanBusinessName || !cleanWebhookSlug) {
+      console.error('BLOCKED: Validation failed — one or both required fields are empty.');
       alert("Validation Failed: Required parameter fields cannot be left blank.");
       return;
     }
@@ -1438,12 +1448,17 @@ async function handleSave(e) {
       payload.id = settings.id;
     }
 
+    console.log('Payload being sent to Supabase:', payload);
+
     // Fix 5 reminder: this upsert requires owner_id to have a UNIQUE
     // CONSTRAINT in Supabase — verify this in Table Editor if saves fail silently.
     const { data, error } = await supabase
       .from('business_settings')
       .upsert(payload, { onConflict: 'owner_id' })
       .select();
+
+    console.log('Supabase upsert response — data:', data);
+    console.log('Supabase upsert response — error:', error);
 
     if (error) throw error;
 
@@ -1456,6 +1471,10 @@ async function handleSave(e) {
 
   } catch (error) {
     console.error("Profile synchronization failed:", error);
+    console.error("Error code:", error?.code);
+    console.error("Error message:", error?.message);
+    console.error("Error details:", error?.details);
+    console.error("Error hint:", error?.hint);
     alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
   } finally {
     setIsSaveSyncing(false);
