@@ -1696,22 +1696,8 @@ const activeCurrencySymbol =
       </text>
     </svg>
   </div>
-
-  {/* BRAND LOGO */}
   <div>
-    <label
-      htmlFor="logo-upload"
-      style={{
-        fontSize: '10px',
-        color: '#737373',
-        fontWeight: '500',
-        display: 'block',
-        marginBottom: '8px',
-        letterSpacing: '0.5px'
-      }}
-    >
-      BUSINESS BRAND LOGO (PICTURE PRINT)
-    </label>
+
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
                       Choose Image File
