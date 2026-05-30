@@ -1356,9 +1356,15 @@ async function handleAuth(type) {
 
 async function uploadBusinessLogo(file, webhookSlug) {
   try {
+    console.log('--- uploadBusinessLogo fired ---');
+    console.log('file:', file);
+    console.log('webhookSlug:', webhookSlug);
+
     // 1. Generate a unique file name to avoid overwriting existing files
     const fileExtension = file.name.split('.').pop();
     const fileName = `public/${webhookSlug}_${Date.now()}.${fileExtension}`;
+
+    console.log('fileName to upload:', fileName);
 
     // 2. Upload the raw file to your Supabase Storage bucket
     const { data: storageData, error: storageError } = await supabase
@@ -1368,6 +1374,9 @@ async function uploadBusinessLogo(file, webhookSlug) {
         upsert: true // Overwrites the file if it already exists
       });
 
+    console.log('storageData:', storageData);
+    console.log('storageError:', storageError);
+
     if (storageError) throw storageError;
 
     // 3. Retrieve the permanent, public URL of the uploaded image
@@ -1376,7 +1385,11 @@ async function uploadBusinessLogo(file, webhookSlug) {
       .from('logos')
       .getPublicUrl(storageData.path);
 
+    console.log('publicUrlData:', publicUrlData);
+
     const permanentUrl = publicUrlData.publicUrl;
+
+    console.log('permanentUrl:', permanentUrl);
 
     // 4. Update the business_settings table with the permanent URL
     const { data: dbData, error: dbError } = await supabase
@@ -1384,13 +1397,17 @@ async function uploadBusinessLogo(file, webhookSlug) {
       .update({ logo_url: permanentUrl })
       .eq('webhook_slug', webhookSlug);
 
+    console.log('dbData:', dbData);
+    console.log('dbError:', dbError);
+
     if (dbError) throw dbError;
 
     console.log('Logo updated successfully:', permanentUrl);
     return permanentUrl;
 
   } catch (error) {
-    console.error('Error handling logo upload:', error.message);
+    console.error('uploadBusinessLogo caught error:', error.message);
+    console.error('full error object:', error);
     return null;
   }
 }
