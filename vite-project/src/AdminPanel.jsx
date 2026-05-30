@@ -1551,12 +1551,86 @@ const activeCurrencySymbol =
         </div>
       )}
 
-            {/* HEADER NAVIGATION */}
-      <header style={styles.header}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontWeight: '700', fontSize: '16px', letterSpacing: '1.5px', color: '#ffffff' }}>RUACHAGENT</span>
-          <span style={{ fontSize: '9px', border: '1px solid #262626', color: '#a3a3a3', padding: '3px 8px', borderRadius: '4px', fontWeight: '500', letterSpacing: '0.5px' }}>PRODUCTION NODE</span>
-        </div>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+
+  <header style={styles.header}>           
+  <svg
+    width="220"
+    height="80"
+    viewBox="0 0 220 80"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{
+      filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.8))',
+      flexShrink: 0
+    }}
+  >
+    {/* Receipt Icon */}
+    <rect
+      x="5"
+      y="10"
+      width="52"
+      height="60"
+      rx="8"
+      stroke="#FFFFFF"
+      strokeWidth="2"
+    />
+
+    {/* Receipt Lines */}
+    <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
+    <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
+    <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
+
+    {/* AI Scan Line */}
+    <line
+      x1="12"
+      y1="56"
+      x2="50"
+      y2="56"
+      stroke="#FFFFFF"
+      strokeWidth="3"
+    />
+
+    {/* RA Monogram */}
+    <text
+      x="72"
+      y="38"
+      fill="#FFFFFF"
+      fontSize="28"
+      fontWeight="900"
+      fontFamily="Arial, sans-serif"
+      letterSpacing="2"
+    >
+      RA
+    </text>
+
+    {/* Brand Name */}
+    <text
+      x="72"
+      y="62"
+      fill="#FFFFFF"
+      fontSize="18"
+      fontWeight="700"
+      fontFamily="Arial, sans-serif"
+      letterSpacing="3"
+    >
+      RUACHAGENT
+    </text>
+  </svg>
+
+  <span
+    style={{
+      fontSize: '9px',
+      border: '1px solid #262626',
+      color: '#a3a3a3',
+      padding: '3px 8px',
+      borderRadius: '4px',
+      fontWeight: '500',
+      letterSpacing: '0.5px'
+    }}
+  >
+    PRODUCTION NODE
+  </span>
         {user && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <span style={{ fontSize: '12px', color: '#737373', fontFamily: 'monospace' }}>{user.email}</span>
@@ -1574,14 +1648,15 @@ const activeCurrencySymbol =
                 transition: 'border-color 0.15s ease'
               }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ef4444'}
-              onMouseLeave={(e) => e.currentTarget.style.borderColor = '#262626'}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = '#152d38'}
             >
               Disconnect
             </button>
           </div>
         )}
       </header>
-
+      </div>
+      
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
       <main style={{ padding: '32px 16px', maxWidth: '1000px', margin: '0 auto' }}>
@@ -1631,73 +1706,11 @@ const activeCurrencySymbol =
     }} />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-  {/* RUACHAGENT NEON LOGO */}
-  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-    <svg
-      width="220"
-      height="80"
-      viewBox="0 0 220 80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{
-        filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.8))',
-      }}
-    >
-      {/* Receipt Icon */}
-      <rect
-        x="5"
-        y="10"
-        width="52"
-        height="60"
-        rx="8"
-        stroke="#FFFFFF"
-        strokeWidth="2"
-      />
-
-      {/* Receipt Lines */}
-      <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
-      <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
-      <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
-
-      {/* AI Scan Line */}
-      <line
-        x1="12"
-        y1="56"
-        x2="50"
-        y2="56"
-        stroke="#FFFFFF"
-        strokeWidth="3"
-      />
-
-      {/* RA Monogram */}
-      <text
-        x="72"
-        y="38"
-        fill="#FFFFFF"
-        fontSize="28"
-        fontWeight="900"
-        fontFamily="Arial, sans-serif"
-        letterSpacing="2"
-      >
-        RA
-      </text>
-
-      {/* Brand Name */}
-      <text
-        x="72"
-        y="62"
-        fill="#FFFFFF"
-        fontSize="18"
-        fontWeight="700"
-        fontFamily="Arial, sans-serif"
-        letterSpacing="3"
-      >
-        RUACHAGENT
-      </text>
-    </svg>
-  </div>
-  <div>
-
+                {/* BRAND LOGO */}
+                <div>
+                  <label htmlFor="logo-upload" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+                    BUSINESS BRAND LOGO (PICTURE PRINT)
+                  </label>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                     <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
                       Choose Image File
@@ -1727,7 +1740,7 @@ const activeCurrencySymbol =
                     </div>
                   </div>
                 </div>
-
+            
                 {/* LIVE WEBHOOK SLUG */}
                 <div>
                   <label htmlFor="webhook-slug" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>

@@ -131,7 +131,7 @@ export default function ReceiptView() {
         </div>
 
         <div style={{ textAlign: "center", fontSize: "9px", color: "#6b7280", marginTop: "20px", letterSpacing: "0.5px" }}>
-          Powered by RuachAgent Engine<br />Node ID: {id.slice(0,8)}
+          Powered by  Engine<br />Node ID: {id.slice(0,8)}
         </div>
       </div>
     </div>
