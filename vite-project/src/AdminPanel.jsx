@@ -44,6 +44,8 @@ export default function AdminPanel() {
  
   const [isAuthSyncing, setIsAuthSyncing] = useState(false);
 
+  const [pendingLogoFile, setPendingLogoFile] = useState(null);
+
 
   const [settings, setSettings] = useState({
 
@@ -1648,6 +1650,7 @@ const activeCurrencySymbol =
                           if (file) {
                             const localUrl = URL.createObjectURL(file);
                             setSettings(prev => ({ ...prev, logo_url: localUrl }));
+                            setPendingLogoFile(file);
                           }
                         }} 
                         style={{ display: 'none' }} 
