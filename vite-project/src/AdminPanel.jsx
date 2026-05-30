@@ -1366,6 +1366,11 @@ async function uploadBusinessLogo(file, webhookSlug) {
 
     console.log('fileName to upload:', fileName);
 
+    // TEMPORARY DIAGNOSTIC — remove after testing
+const { data: bucketTest, error: bucketError } = await supabase.storage.from('logos').list();
+console.log('Bucket reachability test — data:', bucketTest);
+console.log('Bucket reachability test — error:', bucketError);
+
     // 2. Upload the raw file to your Supabase Storage bucket
     const { data: storageData, error: storageError } = await supabase
       .storage
