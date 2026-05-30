@@ -22,7 +22,7 @@ serve(async (req: Request) => {
 
     if (settingsError || !settings) throw new Error("Merchant configuration not found");
 
-    -- Save the transaction record securely
+    // Save the transaction record securely
     const { data: transaction, error: txError } = await supabase
       .from('receipts')
       .insert({
