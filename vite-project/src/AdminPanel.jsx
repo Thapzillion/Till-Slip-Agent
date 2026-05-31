@@ -80,7 +80,7 @@ const isDesktop = window.innerWidth > 1200;
 const styles = {
 
   /* =========================
-     APP CONTAINER
+      APP CONTAINER
   ========================= */
 
   container: {
@@ -119,7 +119,7 @@ const styles = {
   },
 
   /* =========================
-     MAIN APP SHELL
+      MAIN APP SHELL
   ========================= */
 
   appShell: {
@@ -143,7 +143,7 @@ const styles = {
   },
 
   /* =========================
-     SIDEBAR
+      SIDEBAR
   ========================= */
 
   sidebar: {
@@ -180,7 +180,7 @@ const styles = {
   },
 
   /* =========================
-     CONTENT AREA
+      CONTENT AREA
   ========================= */
 
   content: {
@@ -196,7 +196,7 @@ const styles = {
   },
 
   /* =========================
-     HEADER
+      HEADER
   ========================= */
 
   header: {
@@ -234,23 +234,27 @@ const styles = {
   },
 
   /* =========================
-     GRID SYSTEM (Main Layout Sections)
+      GRID SYSTEM (Main Layout Sections)
   ========================= */
 
   dashboardGrid: {
 
-    display: 'flex',
+    display: isDesktop ? 'grid' : 'flex',
 
-    flexDirection: isDesktop ? 'row' : 'column',
+    flexDirection: isDesktop ? undefined : 'column',
+
+    gridTemplateColumns: isDesktop ? '1.1fr 1fr 1.1fr' : undefined,
 
     gap: '30px',
 
     width: '100%',
 
+    alignItems: 'start',
+
   },
 
   /* =========================
-     PERFORMANCE NODE METRICS SUB-GRID
+      PERFORMANCE NODE METRICS SUB-GRID
   ========================= */
 
   analyticsSubGrid: {
@@ -266,7 +270,7 @@ const styles = {
   },
 
   /* =========================
-     CARDS
+      CARDS
   ========================= */
 
   flatCard: {
@@ -302,7 +306,7 @@ const styles = {
   },
 
   /* =========================
-     MINI CARD
+      MINI CARD
   ========================= */
 
   concaveCard: {
@@ -329,7 +333,6 @@ const styles = {
     `,
 
   },
-
 
   /* =========================
 
