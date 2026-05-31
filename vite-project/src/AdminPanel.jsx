@@ -80,7 +80,7 @@ const isDesktop = window.innerWidth > 1200;
 const styles = {
 
   /* =========================
-      APP CONTAINER
+       APP CONTAINER
   ========================= */
 
   container: {
@@ -119,23 +119,22 @@ const styles = {
   },
 
   /* =========================
-     MAIN APP SHELL
+       MAIN APP SHELL
   ========================= */
 
   appShell: {
 
     display: 'grid',
 
-    /* Changed from a fixed 280px to a slightly more compact, fluid 240px sidebar on standard desktops to free up immediate space */
+    /* Compacted the sidebar footprint to allow the 3 columns to scale wider */
     gridTemplateColumns: isDesktop
-      ? '240px 1fr'
+      ? '230px 1fr'
       : '1fr',
 
     gap: '22px',
 
     width: '100%',
 
-    /* Max-width remains untouched as per your structure */
     maxWidth: '1800px',
 
     margin: '0 auto',
@@ -145,7 +144,7 @@ const styles = {
   },
 
   /* =========================
-     CONTENT AREA
+       CONTENT AREA
   ========================= */
 
   content: {
@@ -157,38 +156,13 @@ const styles = {
     flexDirection: 'column',
 
     gap: '20px',
-    
-    /* Forces the content area to expand to the maximum available bounds of the 1fr allocation */
+
     alignSelf: 'stretch',
 
   },
 
   /* =========================
-     GRID SYSTEM (Main Layout Sections)
-  ========================= */
-
-  dashboardGrid: {
-
-    display: isDesktop ? 'grid' : 'flex',
-
-    flexDirection: isDesktop ? undefined : 'column',
-
-    /* Switched from fr units to a minmax container strategy. 
-       This guarantees each of your 3 columns gets a safe minimum width of 320px. 
-       If the screen is too narrow to support 3 columns side-by-side at 320px each, 
-       it cleanly wraps instead of crushing them sideways. */
-    gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(320px, 1fr))' : undefined,
-
-    gap: '30px',
-
-    width: '100%',
-
-    alignItems: 'start',
-
-  },
-
-  /* =========================
-      HEADER
+       HEADER
   ========================= */
 
   header: {
@@ -226,7 +200,7 @@ const styles = {
   },
 
   /* =========================
-      GRID SYSTEM (Main Layout Sections)
+       GRID SYSTEM (Main Layout Sections)
   ========================= */
 
   dashboardGrid: {
@@ -235,9 +209,11 @@ const styles = {
 
     flexDirection: isDesktop ? undefined : 'column',
 
-    gridTemplateColumns: isDesktop ? '1.1fr 1fr 1.1fr' : undefined,
+    /* Balanced proportions to scale tightly across all 3 view blocks */
+    gridTemplateColumns: isDesktop ? '2.8fr 2.5fr 2.7fr' : undefined,
 
-    gap: '30px',
+    /* Reduced spacing between main blocks to gain side-to-side breathing room */
+    gap: isDesktop ? '16px' : '30px',
 
     width: '100%',
 
@@ -246,7 +222,7 @@ const styles = {
   },
 
   /* =========================
-      PERFORMANCE NODE METRICS SUB-GRID
+       PERFORMANCE NODE METRICS SUB-GRID
   ========================= */
 
   analyticsSubGrid: {
@@ -255,14 +231,15 @@ const styles = {
 
     flexDirection: isMobile ? 'column' : 'row',
 
-    gap: isMobile ? '3px' : '5px',
+    /* Reduced gap between sub-cards to minimize content spillover */
+    gap: isMobile ? '3px' : '6px',
 
     width: '100%',
 
   },
 
   /* =========================
-      CARDS
+       CARDS
   ========================= */
 
   flatCard: {
@@ -275,9 +252,10 @@ const styles = {
       )
     `,
 
-    borderRadius: isMobile ? '18px' : '24px',
+    borderRadius: isMobile ? '18px' : '20px',
 
-    padding: isMobile ? '18px' : '24px',
+    /* Shrunk internal padding on desktop down to 16px to compress the outer dimensions */
+    padding: isMobile ? '18px' : '16px',
 
     border: '1px solid rgba(0,255,200,0.14)',
 
@@ -298,12 +276,13 @@ const styles = {
   },
 
   /* =========================
-      MINI CARD
+       MINI CARD
   ========================= */
 
   concaveCard: {
 
-    flex: isMobile ? '1 1 auto' : '1 1 160px',
+    /* Altered basis down to 120px to prevent metrics text boundaries from pushing outward */
+    flex: isMobile ? '1 1 auto' : '1 1 120px',
 
     background: `
       linear-gradient(
@@ -313,9 +292,10 @@ const styles = {
       )
     `,
 
-    borderRadius: '18px',
+    borderRadius: '14px',
 
-    padding: isMobile ? '14px' : '16px',
+    /* Compacted padding internally to make elements sit neatly inside small layouts */
+    padding: isMobile ? '14px' : '12px',
 
     border: '1px solid rgba(0,255,200,0.10)',
 
@@ -327,550 +307,277 @@ const styles = {
   },
 
   /* =========================
-
-     INPUTS
-
+       INPUTS
   ========================= */
-
-
 
   input: {
 
-
-
     width: '100%',
-
-
 
     boxSizing: 'border-box',
 
-
-
     padding: isMobile ? '13px 14px' : '15px 16px',
-
-
 
     background: 'rgba(255,255,255,0.03)',
 
-
-
     border: '1px solid rgba(0,255,200,0.12)',
-
-
 
     borderRadius: '16px',
 
-
-
     color: '#ffffff',
 
-
-
     fontSize: isMobile ? '13px' : '14px',
-
-
 
     outline: 'none',
 
-
-
     transition: 'all 0.2s ease',
-
-
 
     backdropFilter: 'blur(10px)',
 
-
-
     boxShadow: 'inset 0 0 12px rgba(0,0,0,0.3)',
-
-
 
   },
 
-
-
   /* =========================
-
-     BUTTONS
-
+       BUTTONS
   ========================= */
-
-
 
   button: {
 
-
-
     width: '100%',
 
-
-
     background: `
-
       linear-gradient(
-
         90deg,
-
         #00e0b8 0%,
-
         #00f5d4 50%,
-
         #00ffd5 100%
-
       )
-
     `,
-
-
 
     color: '#041014',
 
-
-
     border: 'none',
-
-
 
     padding: isMobile ? '13px 14px' : '15px 18px',
 
-
-
     borderRadius: '16px',
 
-
-
     fontWeight: '700',
-
-
 
     fontSize: isMobile ? '13px' : '14px',
 
-
-
     letterSpacing: '0.5px',
-
-
 
     cursor: 'pointer',
 
-
-
     transition: 'all 0.2s ease',
 
-
-
     boxShadow: `
-
       0 0 18px rgba(0,255,200,0.35),
-
       0 8px 24px rgba(0,255,200,0.18)
-
     `,
-
-
 
     textTransform: 'uppercase',
 
-
-
   },
 
-
-
   /* =========================
-
-     RESPONSIVE TITLES
-
+       RESPONSIVE TITLES
   ========================= */
-
-
 
   title: {
 
-
-
     fontSize: isMobile ? '21px' : isTablet ? '25px' : '30px',
-
-
 
     fontWeight: '700',
 
-
-
     letterSpacing: '1px',
-
-
 
     color: '#ffffff',
 
-
-
     textShadow: '0 0 12px rgba(0,255,200,0.28)',
-
-
 
     lineHeight: '1.1',
 
-
-
   },
-
-
 
   subtitle: {
 
-
-
     fontSize: isMobile ? '11px' : '13px',
-
-
 
     color: 'rgba(220, 255, 250, 0.71)',
 
-
-
     letterSpacing: '1.2px',
-
-
 
     textTransform: 'uppercase',
 
-
-
   },
 
-
-
   /* =========================
-
-     STATUS BADGES
-
+       STATUS BADGES
   ========================= */
-
-
 
   statusBadge: {
 
-
-
     display: 'inline-flex',
 
-
-
     alignItems: 'center',
-
-
 
     gap: '8px',
 
-
-
     padding: isMobile ? '7px 12px' : '8px 14px',
-
-
 
     borderRadius: '999px',
 
-
-
     background: 'rgba(0, 255, 200, 0)',
-
-
 
     border: '1px solid rgba(0,255,200,0.18)',
 
-
-
     color: '#00ffd5',
-
-
 
     fontSize: isMobile ? '11px' : '12px',
 
-
-
     fontWeight: '600',
-
-
 
     letterSpacing: '0.5px',
 
-
-
   },
 
-
-
   /* =========================
-
-     RESPONSIVE DIVIDER
-
+       RESPONSIVE DIVIDER
   ========================= */
-
-
 
   divider: {
 
-
-
     width: '100%',
-
-
 
     height: '1px',
 
-
-
     background: `
-
       linear-gradient(
-
         90deg,
-
         transparent,
-
         rgba(0,255,200,0.18),
-
         transparent
-
       )
-
     `,
-
-
 
     margin: isMobile ? '14px 0' : '18px 0',
 
-
-
   },
 
-
-
   /* =========================
-
-     MOBILE FLOATING ACTION BAR
-
+       MOBILE FLOATING ACTION BAR
   ========================= */
-
-
 
   mobileDock: {
 
-
-
     position: 'fixed',
-
-
 
     bottom: '18px',
 
-
-
     left: '50%',
-
-
 
     transform: 'translateX(-50%)',
 
-
-
     width: 'calc(100% - 28px)',
-
-
 
     maxWidth: '420px',
 
-
-
     display: isMobile ? 'flex' : 'none',
-
-
 
     justifyContent: 'space-around',
 
-
-
     alignItems: 'center',
-
-
 
     padding: '14px',
 
-
-
     borderRadius: '22px',
-
-
 
     background: 'rgba(8,18,24,0.88)',
 
-
-
     backdropFilter: 'blur(18px)',
-
-
 
     border: '1px solid rgba(0,255,200,0.14)',
 
-
-
     zIndex: 500,
 
-
-
     boxShadow: `
-
       0 10px 35px rgba(0,0,0,0.45),
-
       0 0 25px rgba(0,255,200,0.08)
-
     `,
-
-
 
   },
 
-
-
   /* =========================
-
-     MODAL
-
+       MODAL
   ========================= */
-
-
 
   modalOverlay: {
 
-
-
     position: 'fixed',
-
-
 
     top: 0,
 
-
-
     left: 0,
-
-
 
     right: 0,
 
-
-
     bottom: 0,
-
-
 
     background: 'rgba(2, 8, 12, 0.82)',
 
-
-
     backdropFilter: 'blur(12px)',
-
-
 
     display: 'flex',
 
-
-
     alignItems: 'center',
 
-
-
     justifyContent: 'center',
-
-
 
     zIndex: 1000,
 
-
-
     padding: isMobile ? '14px' : '22px',
-
-
 
   },
 
-
-
   /* =========================
-
-     RESPONSIVE NEON CIRCLE
-
+       RESPONSIVE NEON CIRCLE
   ========================= */
-
-
 
   neonCircle: {
 
-
-
     width: isMobile ? '140px' : '180px',
-
-
 
     height: isMobile ? '140px' : '180px',
 
-
-
     borderRadius: '50%',
-
-
 
     border: '2px solid rgba(0,255,200,0.14)',
 
-
-
     display: 'flex',
-
-
 
     alignItems: 'center',
 
-
-
     justifyContent: 'center',
-
-
 
     margin: '0 auto',
 
-
-
     boxShadow: `
-
       0 0 30px rgba(0,255,200,0.15),
-
       inset 0 0 24px rgba(0,255,200,0.08)
-
     `,
-
-
 
     background: `
-
       radial-gradient(
-
         circle,
-
         rgba(0,255,200,0.06),
-
         transparent
-
       )
-
     `,
 
-
-
   }
-
-
 
 };
 
