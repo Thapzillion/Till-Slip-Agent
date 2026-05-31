@@ -1485,7 +1485,13 @@ const activeCurrencySymbol =
           </section>
 
         ) : (
-          <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'start' }}>
+          <section style={{ 
+  display: 'flex', 
+  flexDirection: isDesktop ? 'row' : 'column', 
+  gap: '32px', 
+  alignItems: 'start',
+  width: '100%'
+}}>
             {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
             <div style={styles.flatCard}>
               <h3 style={{ margin: '0 0 20px 0', fontSize: '13px', fontWeight: '500', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
@@ -1667,7 +1673,7 @@ const activeCurrencySymbol =
               </div>
             </div>
            {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
-            <div style={styles.dashboardGrid}>
+<div style={{ display: 'flex', flexDirection: 'column', gap: '30px', width: '100%' }}>
                     {/* PERFORMANCE METRICS CARD */}
 <div style={{ ...styles.flatCard, border: '1px solid rgba(255, 255, 255, 0.02)' }}>
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
