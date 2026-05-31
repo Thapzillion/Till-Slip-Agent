@@ -1787,6 +1787,15 @@ const activeCurrencySymbol =
                 </div>
               </div>
 
+
+     {/* COLUMN 3: LIVE ENDPOINT & INVOICE MIRROR STACK */}
+<div style={{ 
+  flex: isDesktop ? '1 1 0%' : '1 1 100%', 
+  width: '100%',
+  display: 'flex', 
+  flexDirection: 'column', 
+  gap: '30px' 
+}}>
           {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
 <div style={{
   ...styles.flatCard,
@@ -2214,6 +2223,7 @@ const activeCurrencySymbol =
     </div>
   </div>
 </div>
+            </div>
             </div>
           </section>
         )}
