@@ -79,482 +79,256 @@ const isDesktop = window.innerWidth > 1200;
 
 const styles = {
 
-
-
   /* =========================
-
      APP CONTAINER
-
   ========================= */
-
-
 
   container: {
 
-
-
     minHeight: '100vh',
 
-
-
     background: `
-
       radial-gradient(circle at top left, rgba(0,255,200,0.08), transparent 30%),
-
       radial-gradient(circle at bottom right, rgba(0,255,255,0.05), transparent 35%),
-
       linear-gradient(135deg, #05070a 0%, #0b1118 40%, #07131a 100%)
-
     `,
-
-
 
     color: '#e8ffff',
 
-
-
     fontFamily: `
-
       -apple-system,
-
       BlinkMacSystemFont,
-
       "SF Pro Display",
-
       "Segoe UI",
-
       Roboto,
-
       sans-serif
-
     `,
-
-
 
     paddingBottom: isMobile ? '90px' : '32px',
 
-
-
     paddingLeft: isDesktop ? '24px' : '14px',
-
-
 
     paddingRight: isDesktop ? '24px' : '14px',
 
-
-
     transition: 'all 0.25s ease',
 
-
-
     position: 'relative',
-
-
 
     overflowX: 'hidden',
 
-
-
   },
 
-
-
   /* =========================
-
      MAIN APP SHELL
-
   ========================= */
-
-
 
   appShell: {
 
-
-
     display: 'grid',
 
-
-
     gridTemplateColumns: isDesktop
-
       ? '280px 1fr'
-
       : '1fr',
-
-
 
     gap: '22px',
 
-
-
     width: '100%',
-
-
 
     maxWidth: '1800px',
 
-
-
     margin: '0 auto',
-
-
 
     alignItems: 'start',
 
-
-
   },
 
-
-
   /* =========================
-
      SIDEBAR
-
   ========================= */
-
-
 
   sidebar: {
 
-
-
     position: isDesktop ? 'sticky' : 'relative',
-
-
 
     top: isDesktop ? '18px' : '0',
 
-
-
     height: isDesktop ? 'calc(100vh - 36px)' : 'auto',
-
-
 
     overflowY: 'auto',
 
-
-
     borderRadius: '24px',
 
-
-
     background: `
-
       linear-gradient(
-
         180deg,
-
         rgba(10,18,24,0.96),
-
         rgba(6,12,16,0.98)
-
       )
-
     `,
-
-
 
     border: '1px solid rgba(0,255,200,0.12)',
 
-
-
     padding: isMobile ? '16px' : '22px',
-
-
 
     backdropFilter: 'blur(18px)',
 
-
-
     boxShadow: `
-
       0 12px 40px rgba(0,0,0,0.45),
-
       0 0 25px rgba(0,255,200,0.05)
-
     `,
-
-
 
   },
 
-
-
   /* =========================
-
      CONTENT AREA
-
   ========================= */
-
-
 
   content: {
 
-
-
     width: '100%',
 
-
-
     display: 'flex',
-
-
 
     flexDirection: 'column',
 
-
-
     gap: '20px',
-
-
 
   },
 
-
-
   /* =========================
-
      HEADER
-
   ========================= */
-
-
 
   header: {
 
-
-
     display: 'flex',
-
-
 
     flexDirection: isMobile ? 'column' : 'row',
 
-
-
     justifyContent: 'space-between',
-
-
 
     alignItems: isMobile ? 'flex-start' : 'center',
 
-
-
     gap: isMobile ? '14px' : '0',
-
-
 
     padding: isMobile ? '16px' : '20px 24px',
 
-
-
     background: 'rgba(10, 18, 24, 0.72)',
-
-
 
     backdropFilter: 'blur(18px)',
 
-
-
     border: '1px solid rgba(0,255,200,0.10)',
-
-
 
     borderRadius: '22px',
 
-
-
     position: 'sticky',
-
-
 
     top: '12px',
 
-
-
     zIndex: 100,
 
-
-
     boxShadow: `
-
       0 10px 35px rgba(0,0,0,0.35)
-
     `,
-
-
 
   },
 
-
-
   /* =========================
-
-     GRID SYSTEM
-
+     GRID SYSTEM (Main Layout Sections)
   ========================= */
-
-
 
   dashboardGrid: {
 
+    display: 'flex',
 
+    flexDirection: isDesktop ? 'row' : 'column',
 
-    display: 'grid',
-
-
-
-    gridTemplateColumns:
-
-      isDesktop
-
-        ? 'repeat(3, 1fr)'
-
-        : isTablet
-
-          ? 'repeat(2, 1fr)'
-
-          : '1fr',
-
-
-
-    gap: '20px',
-
-
+    gap: '30px',
 
     width: '100%',
 
+  },
 
+  /* =========================
+     PERFORMANCE NODE METRICS SUB-GRID
+  ========================= */
+
+  analyticsSubGrid: {
+
+    display: 'flex',
+
+    flexDirection: isMobile ? 'column' : 'row',
+
+    gap: isMobile ? '3px' : '5px',
+
+    width: '100%',
 
   },
 
-
-
   /* =========================
-
      CARDS
-
   ========================= */
-
-
 
   flatCard: {
 
-
-
     background: `
-
       linear-gradient(
-
         180deg,
-
         rgba(12, 20, 26, 0.96),
-
         rgba(8, 14, 18, 0.98)
-
       )
-
     `,
-
-
 
     borderRadius: isMobile ? '18px' : '24px',
 
-
-
     padding: isMobile ? '18px' : '24px',
-
-
 
     border: '1px solid rgba(0,255,200,0.14)',
 
-
-
     boxShadow: `
-
       0 0 0 1px rgba(255,255,255,0.02),
-
       0 12px 40px rgba(0,0,0,0.55),
-
       0 0 25px rgba(0,255,200,0.08)
-
     `,
-
-
 
     backdropFilter: 'blur(18px)',
 
-
-
     position: 'relative',
-
-
 
     overflow: 'hidden',
 
-
-
     transition: 'all 0.25s ease',
-
-
 
   },
 
-
-
   /* =========================
-
      MINI CARD
-
   ========================= */
-
-
 
   concaveCard: {
 
-
+    flex: isMobile ? '1 1 auto' : '1 1 160px',
 
     background: `
-
       linear-gradient(
-
         145deg,
-
         rgba(10, 20, 26, 0.92),
-
         rgba(6, 12, 16, 0.98)
-
       )
-
     `,
-
-
 
     borderRadius: '18px',
 
-
-
     padding: isMobile ? '14px' : '16px',
-
-
 
     border: '1px solid rgba(0,255,200,0.10)',
 
-
-
     boxShadow: `
-
       inset 0 1px 1px rgba(255,255,255,0.04),
-
       inset 0 -8px 12px rgba(0,0,0,0.35)
-
     `,
 
-
-
   },
-
 
 
   /* =========================
@@ -1893,7 +1667,7 @@ const activeCurrencySymbol =
               </div>
             </div>
            {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+            <div style={styles.dashboardGrid}>
                     {/* PERFORMANCE METRICS CARD */}
 <div style={{ ...styles.flatCard, border: '1px solid rgba(255, 255, 255, 0.02)' }}>
   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -1920,7 +1694,7 @@ const activeCurrencySymbol =
     }} />
 
   {/* NEW FLAT GRID FOCUSING ON REVENUE VOLUME & LEASE SUBSCRIPTION STATUS */}
-  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+  <div style={styles.analyticsSubGrid}>
     <div style={{ ...styles.concaveCard, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
       <div style={{ fontSize: '9px', color: '#8a99ad', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
         Processed Volume
