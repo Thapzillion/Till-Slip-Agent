@@ -119,21 +119,23 @@ const styles = {
   },
 
   /* =========================
-      MAIN APP SHELL
+     MAIN APP SHELL
   ========================= */
 
   appShell: {
 
     display: 'grid',
 
+    /* Changed from a fixed 280px to a slightly more compact, fluid 240px sidebar on standard desktops to free up immediate space */
     gridTemplateColumns: isDesktop
-      ? '280px 1fr'
+      ? '240px 1fr'
       : '1fr',
 
     gap: '22px',
 
     width: '100%',
 
+    /* Max-width remains untouched as per your structure */
     maxWidth: '1800px',
 
     margin: '0 auto',
@@ -143,44 +145,7 @@ const styles = {
   },
 
   /* =========================
-      SIDEBAR
-  ========================= */
-
-  sidebar: {
-
-    position: isDesktop ? 'sticky' : 'relative',
-
-    top: isDesktop ? '18px' : '0',
-
-    height: isDesktop ? 'calc(100vh - 36px)' : 'auto',
-
-    overflowY: 'auto',
-
-    borderRadius: '24px',
-
-    background: `
-      linear-gradient(
-        180deg,
-        rgba(10,18,24,0.96),
-        rgba(6,12,16,0.98)
-      )
-    `,
-
-    border: '1px solid rgba(0,255,200,0.12)',
-
-    padding: isMobile ? '16px' : '22px',
-
-    backdropFilter: 'blur(18px)',
-
-    boxShadow: `
-      0 12px 40px rgba(0,0,0,0.45),
-      0 0 25px rgba(0,255,200,0.05)
-    `,
-
-  },
-
-  /* =========================
-      CONTENT AREA
+     CONTENT AREA
   ========================= */
 
   content: {
@@ -192,6 +157,33 @@ const styles = {
     flexDirection: 'column',
 
     gap: '20px',
+    
+    /* Forces the content area to expand to the maximum available bounds of the 1fr allocation */
+    alignSelf: 'stretch',
+
+  },
+
+  /* =========================
+     GRID SYSTEM (Main Layout Sections)
+  ========================= */
+
+  dashboardGrid: {
+
+    display: isDesktop ? 'grid' : 'flex',
+
+    flexDirection: isDesktop ? undefined : 'column',
+
+    /* Switched from fr units to a minmax container strategy. 
+       This guarantees each of your 3 columns gets a safe minimum width of 320px. 
+       If the screen is too narrow to support 3 columns side-by-side at 320px each, 
+       it cleanly wraps instead of crushing them sideways. */
+    gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(320px, 1fr))' : undefined,
+
+    gap: '30px',
+
+    width: '100%',
+
+    alignItems: 'start',
 
   },
 
