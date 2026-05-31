@@ -1122,9 +1122,6 @@ const styles = {
 
 useEffect(() => {
   let isMounted = true;
-  // Fix 2: flag prevents onAuthStateChange from double-fetching
-  // when initializePortal has already handled the initial session.
-  let initialSessionHandled = false;
 
   // Detect if user landed via an email confirmation redirection link
   const hash = window.location.hash;
@@ -1134,43 +1131,35 @@ useEffect(() => {
     window.history.replaceState(null, null, window.location.pathname);
   }
 
-  async function initializePortal() {
+  // Temporary connectivity diagnostics check
+  async function checkSupabaseReachability() {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!isMounted) return;
-
       const { data, error } = await supabase.from('business_settings').select('count');
-      console.log('Supabase reachability check:', data, error);  // Temporary debug log to verify Superbase Connection
-
-      if (session?.user) {
-        initialSessionHandled = true; // Fix 2: mark as handled
-        setUser(session.user);
-        await Promise.all([
-          fetchMerchantSettings(session.user.id),
-          fetchLiveAnalytics(session.user.id)
-        ]);
-      }
-    } catch (error) {
-      console.error("Initialization loop error caught:", error);
+      console.log('Supabase reachability check:', data, error);
+    } catch (e) {
+      console.error('Reachability network check failed:', e);
     }
   }
+  checkSupabaseReachability();
 
-  initializePortal();
-
+  // Unified Single-Source Auth Listener Engine
   const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
     if (!isMounted) return;
 
-    if (session?.user) {
-      // Fix 2: skip if initializePortal already handled this session
-      if (initialSessionHandled && event === 'INITIAL_SESSION') return;
+    console.log(`Supabase Auth Event Triggered: [${event}]`);
 
+    if (session?.user) {
+      // Set user profile in state first
       setUser(session.user);
       setShowVerifyModal(false);
+      
+      // Execute non-blocking data fetching securely with verified session ID
       await Promise.all([
         fetchMerchantSettings(session.user.id),
         fetchLiveAnalytics(session.user.id)
       ]);
     } else {
+      // Graceful teardown when no active session is found (Signed Out)
       setUser(null);
       setSettings({
         business_name: '',
