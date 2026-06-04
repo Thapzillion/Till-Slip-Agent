@@ -209,10 +209,10 @@ const styles = {
 
     flexDirection: isDesktop ? undefined : 'column',
 
-    /* Balanced proportions to scale tightly across all 3 view blocks */
-    gridTemplateColumns: isDesktop ? '2.8fr 2.5fr 2.7fr' : undefined,
+    /* Fixes the overwriting bug: Elements wrap gracefully if they have less than 320px of width */
+    gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(320px, 1fr))' : undefined,
 
-    /* Reduced spacing between main blocks to gain side-to-side breathing room */
+    /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
     gap: isDesktop ? '16px' : '30px',
 
     width: '100%',
@@ -1187,19 +1187,13 @@ const activeCurrencySymbol =
           </section>
 
         ) : (
-          <section style={{
-  display: 'flex',
-  flexDirection: isDesktop ? 'row' : 'column',
-  gap: '32px',
-  alignItems: 'start',
-  width: '100%'
-}}>
-            {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
-            <div style={{ ...styles.flatCard, flex: isDesktop ? '0 0 380px' : '1 1 100%', width: '100%' }}>
-              <h3 style={{ margin: '0 0 20px 0', fontSize: '13px', fontWeight: '500', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-                Agent Parameters
-              </h3>              
-          {/* Block 1 CORNER LIGHT */}
+          <section style={styles.dashboardGrid}>
+  {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
+  <div style={{ ...styles.flatCard, width: '100%' }}>
+    <h3 style={{ margin: '0 0 20px 0', fontSize: '13px', fontWeight: '500', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+      Agent Parameters
+    </h3>              
+    {/* Block 1 CORNER LIGHT */}
     <div style={{
       position: 'absolute',
       top: '-80px',
@@ -1210,170 +1204,170 @@ const activeCurrencySymbol =
       borderRadius: '50%'
     }} />
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* BRAND LOGO */}
-                <div>
-                  <label htmlFor="logo-upload" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    BUSINESS BRAND LOGO (PICTURE PRINT)
-                  </label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
-                      Choose Image File
-                      <input
-                        id="logo-upload"
-                        name="logo_url"
-                        type="file"
-                        accept="image/*"
-                        autoComplete="off"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file) {
-                            const localUrl = URL.createObjectURL(file);
-                            setSettings(prev => ({ ...prev, logo_url: localUrl }));
-                            setPendingLogoFile(file);
-                          }
-                        }}
-                        style={{ display: 'none' }}
-                      />
-                    </label>
-                    <div style={{ ...styles.concaveCard, padding: '2px', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '4px' }}>
-                      {settings?.logo_url ? (
-                        <img src={settings.logo_url} alt="Logo Mirror" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
-                      ) : (
-                        <span style={{ fontSize: '14px', color: '#404040' }}>🖼️</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-           
-                {/* LIVE WEBHOOK SLUG */}
-                <div>
-                  <label htmlFor="webhook-slug" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    LIVE WEBHOOK SLUG
-                  </label>
-                  <input
-                    id="webhook-slug"
-                    name="webhook_slug"
-                    type="text"
-                    autoComplete="off"
-                    placeholder="e.g., eddienetwork"
-                    value={settings?.webhook_slug || ''}
-                    onChange={(e) => {
-                      const cleanValue = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
-                      setSettings(prev => ({ ...prev, webhook_slug: cleanValue }));
-                    }}
-                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-                  />
-                </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* BRAND LOGO */}
+      <div>
+        <label htmlFor="logo-upload" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          BUSINESS BRAND LOGO (PICTURE PRINT)
+        </label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
+            Choose Image File
+            <input
+              id="logo-upload"
+              name="logo_url"
+              type="file"
+              accept="image/*"
+              autoComplete="off"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const localUrl = URL.createObjectURL(file);
+                  setSettings(prev => ({ ...prev, logo_url: localUrl }));
+                  setPendingLogoFile(file);
+                }
+              }}
+              style={{ display: 'none' }}
+            />
+          </label>
+          <div style={{ ...styles.concaveCard, padding: '2px', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '4px' }}>
+            {settings?.logo_url ? (
+              <img src={settings.logo_url} alt="Logo Mirror" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
+            ) : (
+              <span style={{ fontSize: '14px', color: '#404040' }}>🖼️</span>
+            )}
+          </div>
+        </div>
+      </div>
+ 
+      {/* LIVE WEBHOOK SLUG */}
+      <div>
+        <label htmlFor="webhook-slug" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          LIVE WEBHOOK SLUG
+        </label>
+        <input
+          id="webhook-slug"
+          name="webhook_slug"
+          type="text"
+          autoComplete="off"
+          placeholder="e.g., eddienetwork"
+          value={settings?.webhook_slug || ''}
+          onChange={(e) => {
+            const cleanValue = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
+            setSettings(prev => ({ ...prev, webhook_slug: cleanValue }));
+          }}
+          style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+        />
+      </div>
 
-                {/* DYNAMIC CURRENCY SELECT SYSTEM */}
-                <div>
-                  <label htmlFor="currency" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    OPERATIONAL CURRENCY
-                  </label>
-                  <div style={{ position: 'relative' }}>
-                    <select
-                      id="currency"
-                      name="currency"
-                      value={settings?.currency || 'ZAR'}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setSettings(prev => ({ ...prev, currency: val }));
-                      }}
-                      style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer', paddingRight: '30px' }}
-                    >
-                      {CURRENCY_OPTIONS.map((curr) => (
-                        <option key={curr.code} value={curr.code} style={{ background: '#0b1118', color: '#ffffff', fontFamily: 'monospace' }}>
-                          {curr.name} ({curr.symbol})
-                        </option>
-                      ))}
-                    </select>
-                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '9px', color: '#737373', pointerEvents: 'none', fontFamily: 'monospace' }}>▼</span>
-                  </div>
-                </div>
+      {/* DYNAMIC CURRENCY SELECT SYSTEM */}
+      <div>
+        <label htmlFor="currency" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          OPERATIONAL CURRENCY
+        </label>
+        <div style={{ position: 'relative' }}>
+          <select
+            id="currency"
+            name="currency"
+            value={settings?.currency || 'ZAR'}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSettings(prev => ({ ...prev, currency: val }));
+            }}
+            style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer', paddingRight: '30px' }}
+          >
+            {CURRENCY_OPTIONS.map((curr) => (
+              <option key={curr.code} value={curr.code} style={{ background: '#0b1118', color: '#ffffff', fontFamily: 'monospace' }}>
+                {curr.name} ({curr.symbol})
+              </option>
+            ))}
+          </select>
+          <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '9px', color: '#737373', pointerEvents: 'none', fontFamily: 'monospace' }}>▼</span>
+        </div>
+      </div>
 
-                {/* BUSINESS BRAND NAME */}
-                <div>
-                  <label htmlFor="business-name" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    BUSINESS BRAND NAME
-                  </label>
-                  <input
-                    id="business-name"
-                    name="business_name"
-                    type="text"
-                    autoComplete="organization"
-                    value={settings?.business_name || ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setSettings(prev => ({ ...prev, business_name: val }));
-                    }}
-                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-                  />
-                </div>
+      {/* BUSINESS BRAND NAME */}
+      <div>
+        <label htmlFor="business-name" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          BUSINESS BRAND NAME
+        </label>
+        <input
+          id="business-name"
+          name="business_name"
+          type="text"
+          autoComplete="organization"
+          value={settings?.business_name || ''}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSettings(prev => ({ ...prev, business_name: val }));
+          }}
+          style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+        />
+      </div>
 
-                {/* PHYSICAL OUTLET ADDRESS */}
-                <div>
-                  <label htmlFor="store-address" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    PHYSICAL OUTLET ADDRESS
-                  </label>
-                  <textarea
-                    id="store-address"
-                    name="store_address"
-                    autoComplete="street-address"
-                    value={settings?.store_address || ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setSettings(prev => ({ ...prev, store_address: val }));
-                    }}
-                    style={{ ...styles.input, minHeight: '64px', resize: 'none', fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', lineHeight: '1.6' }}
-                  />
-                </div>
+      {/* PHYSICAL OUTLET ADDRESS */}
+      <div>
+        <label htmlFor="store-address" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          PHYSICAL OUTLET ADDRESS
+        </label>
+        <textarea
+          id="store-address"
+          name="store_address"
+          autoComplete="street-address"
+          value={settings?.store_address || ''}
+          onChange={(e) => {
+            const val = e.target.value;
+            setSettings(prev => ({ ...prev, store_address: val }));
+          }}
+          style={{ ...styles.input, minHeight: '64px', resize: 'none', fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', lineHeight: '1.6' }}
+        />
+      </div>
 
-                {/* AI DISCOUNT COMPILER VALUE (%) */}
-                <div>
-                  <label htmlFor="discount-percentage" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
-                    AI DISCOUNT COMPILER VALUE (%)
-                  </label>
-                  <input
-                    id="discount-percentage"
-                    name="discount_percentage"
-                    type="number"
-                    autoComplete="off"
-                    value={settings?.discount_percentage ?? 10}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value) || 0;
-                      setSettings(prev => ({ ...prev, discount_percentage: val }));
-                    }}
-                    style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-                  />
-                </div>
+      {/* AI DISCOUNT COMPILER VALUE (%) */}
+      <div>
+        <label htmlFor="discount-percentage" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+          AI DISCOUNT COMPILER VALUE (%)
+        </label>
+        <input
+          id="discount-percentage"
+          name="discount_percentage"
+          type="number"
+          autoComplete="off"
+          value={settings?.discount_percentage ?? 10}
+          onChange={(e) => {
+            const val = parseInt(e.target.value) || 0;
+            setSettings(prev => ({ ...prev, discount_percentage: val }));
+          }}
+          style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+        />
+      </div>
 
-                {/* TRIGGER LIVE HANDSHAKE SYNC */}
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (!isSaveSyncing) handleSave(e);
-                  }}
-                  style={{
-                    ...styles.button,
-                    background: isSaveSyncing ? '#111827' : styles.button.background,
-                    color: isSaveSyncing ? '#6b7280' : '#041014',
-                    border: isSaveSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                    boxShadow: isSaveSyncing ? 'none' : styles.button.boxShadow,
-                    marginTop: '10px',
-                    fontSize: '13px',
-                    letterSpacing: '0.5px',
-                    textTransform: 'uppercase',
-                    cursor: isSaveSyncing ? 'not-allowed' : 'pointer'
-                  }}
-                  disabled={isSaveSyncing}
-                >
-                  {isSaveSyncing ? 'Syncing Profile...' : 'Save & Sync Live Profile'}
-                </button>
-              </div>
-            </div>
+      {/* TRIGGER LIVE HANDSHAKE SYNC */}
+      <button
+        type="button"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!isSaveSyncing) handleSave(e);
+        }}
+        style={{
+          ...styles.button,
+          background: isSaveSyncing ? '#111827' : styles.button.background,
+          color: isSaveSyncing ? '#6b7280' : '#041014',
+          border: isSaveSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
+          boxShadow: isSaveSyncing ? 'none' : styles.button.boxShadow,
+          marginTop: '10px',
+          fontSize: '13px',
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase',
+          cursor: isSaveSyncing ? 'not-allowed' : 'pointer'
+        }}
+        disabled={isSaveSyncing}
+      >
+        {isSaveSyncing ? 'Syncing Profile...' : 'Save & Sync Live Profile'}
+      </button>
+    </div>
+  </div>
 
             {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', flex: isDesktop ? '1 1 0%' : '1 1 100%', width: '100%' }}>
