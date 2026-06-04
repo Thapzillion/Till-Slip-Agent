@@ -1189,8 +1189,8 @@ const activeCurrencySymbol =
         ) : (
           <section style={styles.dashboardGrid}>
   {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
-  <div style={{ ...styles.flatCard, width: '100%' }}>
-    <h3 style={{ margin: '0 0 20px 0', fontSize: '13px', fontWeight: '500', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
+  <div style={{ ...styles.flatCard, width: '100%', padding: isDesktop ? '12px' : '18px' }}>
+    <h3 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: '600', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
       Agent Parameters
     </h3>              
     {/* Block 1 CORNER LIGHT */}
@@ -1204,14 +1204,15 @@ const activeCurrencySymbol =
       borderRadius: '50%'
     }} />
 
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    {/* Reduced internal gap from 20px to 12px */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {/* BRAND LOGO */}
       <div>
-        <label htmlFor="logo-upload" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+        <label htmlFor="logo-upload" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           BUSINESS BRAND LOGO (PICTURE PRINT)
         </label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '10px 14px', fontSize: '12px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '8px 12px', fontSize: '11px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
             Choose Image File
             <input
               id="logo-upload"
@@ -1230,11 +1231,11 @@ const activeCurrencySymbol =
               style={{ display: 'none' }}
             />
           </label>
-          <div style={{ ...styles.concaveCard, padding: '2px', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '4px' }}>
+          <div style={{ ...styles.concaveCard, padding: '2px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '4px' }}>
             {settings?.logo_url ? (
               <img src={settings.logo_url} alt="Logo Mirror" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
             ) : (
-              <span style={{ fontSize: '14px', color: '#404040' }}>🖼️</span>
+              <span style={{ fontSize: '12px', color: '#404040' }}>🖼️</span>
             )}
           </div>
         </div>
@@ -1242,7 +1243,7 @@ const activeCurrencySymbol =
  
       {/* LIVE WEBHOOK SLUG */}
       <div>
-        <label htmlFor="webhook-slug" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+        <label htmlFor="webhook-slug" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           LIVE WEBHOOK SLUG
         </label>
         <input
@@ -1256,13 +1257,13 @@ const activeCurrencySymbol =
             const cleanValue = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
             setSettings(prev => ({ ...prev, webhook_slug: cleanValue }));
           }}
-          style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+          style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
         />
       </div>
 
       {/* DYNAMIC CURRENCY SELECT SYSTEM */}
       <div>
-        <label htmlFor="currency" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+        <label htmlFor="currency" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           OPERATIONAL CURRENCY
         </label>
         <div style={{ position: 'relative' }}>
@@ -1274,7 +1275,7 @@ const activeCurrencySymbol =
               const val = e.target.value;
               setSettings(prev => ({ ...prev, currency: val }));
             }}
-            style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer', paddingRight: '30px' }}
+            style={{ ...styles.input, padding: '10px 30px 10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer' }}
           >
             {CURRENCY_OPTIONS.map((curr) => (
               <option key={curr.code} value={curr.code} style={{ background: '#0b1118', color: '#ffffff', fontFamily: 'monospace' }}>
@@ -1288,7 +1289,7 @@ const activeCurrencySymbol =
 
       {/* BUSINESS BRAND NAME */}
       <div>
-        <label htmlFor="business-name" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+        <label htmlFor="business-name" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           BUSINESS BRAND NAME
         </label>
         <input
@@ -1301,13 +1302,13 @@ const activeCurrencySymbol =
             const val = e.target.value;
             setSettings(prev => ({ ...prev, business_name: val }));
           }}
-          style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+          style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
         />
       </div>
 
       {/* PHYSICAL OUTLET ADDRESS */}
       <div>
-        <label htmlFor="store-address" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+        <label htmlFor="store-address" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           PHYSICAL OUTLET ADDRESS
         </label>
         <textarea
@@ -1319,13 +1320,13 @@ const activeCurrencySymbol =
             const val = e.target.value;
             setSettings(prev => ({ ...prev, store_address: val }));
           }}
-          style={{ ...styles.input, minHeight: '64px', resize: 'none', fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px', lineHeight: '1.6' }}
+          style={{ ...styles.input, padding: '10px 12px', minHeight: '52px', resize: 'none', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px', lineHeight: '1.5' }}
         />
       </div>
 
       {/* AI DISCOUNT COMPILER VALUE (%) */}
       <div>
-        <label htmlFor="discount-percentage" style={{ fontSize: '10px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '8px', letterSpacing: '0.5px' }}>
+        <label htmlFor="discount-percentage" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           AI DISCOUNT COMPILER VALUE (%)
         </label>
         <input
@@ -1338,7 +1339,7 @@ const activeCurrencySymbol =
             const val = parseInt(e.target.value) || 0;
             setSettings(prev => ({ ...prev, discount_percentage: val }));
           }}
-          style={{ ...styles.input, fontSize: '12px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+          style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
         />
       </div>
 
@@ -1356,8 +1357,9 @@ const activeCurrencySymbol =
           color: isSaveSyncing ? '#6b7280' : '#041014',
           border: isSaveSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
           boxShadow: isSaveSyncing ? 'none' : styles.button.boxShadow,
-          marginTop: '10px',
-          fontSize: '13px',
+          marginTop: '6px',
+          padding: '11px 14px',
+          fontSize: '12px',
           letterSpacing: '0.5px',
           textTransform: 'uppercase',
           cursor: isSaveSyncing ? 'not-allowed' : 'pointer'
