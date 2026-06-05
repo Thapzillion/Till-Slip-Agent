@@ -216,7 +216,7 @@ const styles = {
     : '1fr',
 
     /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
-    gap: isDesktop ? '70px' : '26px',
+    gap: isDesktop ? '50px' : '26px',
 
     width: '100%',
 
@@ -1599,7 +1599,7 @@ const activeCurrencySymbol =
                       alignItems: 'flex-start',
                       fontSize: '10px',
                       color: '#64748b',
-                      marginBottom: '18px'
+                      marginBottom: '9px'
                     }}>
                       <div style={{
                         padding: '2px 5px',
@@ -1633,7 +1633,7 @@ const activeCurrencySymbol =
                     {/* TOP MINI LOGO */}
                     <div style={{
                       textAlign: 'center',
-                      marginBottom: '18px'
+                      marginBottom: '9px'
                     }}>
                       {settings?.logo_url ? (
                         <div style={{
@@ -1671,7 +1671,7 @@ const activeCurrencySymbol =
                     {/* BRAND DETAILS */}
                     <div style={{
                       textAlign: 'center',
-                      marginBottom: '22px'
+                      marginBottom: '11px'
                     }}>
                       <strong style={{
                         fontSize: '20px',
@@ -1718,14 +1718,14 @@ const activeCurrencySymbol =
                     <div style={{
                       height: '1px',
                       background: 'linear-gradient(90deg, transparent, rgba(0,255,200,0.2), transparent)',
-                      marginBottom: '18px'
+                      marginBottom: '9px'
                     }} />
 
                     {/* ITEMIZATION */}
                     <div style={{
                       fontSize: '11px',
                       lineHeight: '1.9',
-                      marginBottom: '12px',
+                      marginBottom: '6px',
                       fontWeight: '700'
                     }}>
 
@@ -1733,7 +1733,7 @@ const activeCurrencySymbol =
                         fontSize: '10px',
                         textTransform: 'uppercase',
                         letterSpacing: '1px',
-                        marginBottom: '12px',
+                        marginBottom: '6px',
                         color: 'rgba(0,255,200,0.6)',
                         fontWeight: '900'
                       }}>
@@ -1743,7 +1743,7 @@ const activeCurrencySymbol =
                       <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        marginBottom: '8px',
+                        marginBottom: '4px',
                         padding: '8px 0',
                         borderBottom: '1px dashed rgba(15,23,42,0.12)'
                       }}>
@@ -1762,7 +1762,7 @@ const activeCurrencySymbol =
                       <div style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        marginBottom: '12px',
+                        marginBottom: '6px',
                         padding: '8px 0',
                         borderBottom: '1px dashed rgba(15,23,42,0.12)'
                       }}>
@@ -1835,7 +1835,7 @@ const activeCurrencySymbol =
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '6px',
-                        marginBottom: '12px',
+                        marginBottom: '6px',
                         letterSpacing: '1px',
                         textTransform: 'uppercase'
                       }}>
@@ -1852,7 +1852,7 @@ const activeCurrencySymbol =
                           0 12px 25px rgba(0,0,0,0.35),
                           0 0 20px rgba(0,255,200,0.15)
                         `,
-                        marginBottom: '10px'
+                        marginBottom: '5px'
                       }}>
                         <img
                           src={`https://api.qrserver.com/v1/create-qr-code/?size=115x115&data=${encodeURIComponent(
@@ -1873,7 +1873,7 @@ const activeCurrencySymbol =
                         textTransform: 'uppercase',
                         letterSpacing: '1px',
                         fontWeight: '900',
-                        marginBottom: '8px'
+                        marginBottom: '4px'
                       }}>
                         Claim Discount
                       </div>
