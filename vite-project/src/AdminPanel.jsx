@@ -216,7 +216,7 @@ const styles = {
     : '1fr',
 
     /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
-    gap: isDesktop ? '60px' : '31px',
+    gap: isDesktop ? '50px' : '25px',
 
     width: '100%',
 
