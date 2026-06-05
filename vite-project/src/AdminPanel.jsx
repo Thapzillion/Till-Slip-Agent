@@ -128,14 +128,14 @@ const styles = {
 
     /* Compacted the sidebar footprint to allow the 3 columns to scale wider */
     gridTemplateColumns: isDesktop
-      ? '230px 1fr'
+      ? '460px 1fr'
       : '1fr',
 
     gap: '22px',
 
     width: '100%',
 
-    maxWidth: '4800px',
+    maxWidth: '1800px',
 
     margin: '0 auto',
 
