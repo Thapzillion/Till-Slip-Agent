@@ -128,7 +128,7 @@ const styles = {
 
     /* Compacted the sidebar footprint to allow the 3 columns to scale wider */
     gridTemplateColumns: isDesktop
-      ? '460px 1fr'
+      ? '230px 1fr'
       : '1fr',
 
     gap: '22px',
@@ -216,7 +216,7 @@ const styles = {
     : '1fr',
 
     /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
-    gap: isDesktop ? '24px' : '20px',
+    gap: isDesktop ? '50px' : '26px',
 
     width: '100%',
 
