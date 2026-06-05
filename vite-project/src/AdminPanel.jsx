@@ -204,25 +204,13 @@ const styles = {
   ========================= */
 
   dashboardGrid: {
-
-    display: isDesktop ? 'grid' : 'flex',
-
-    flexDirection: isDesktop ? undefined : 'column',
-
-    /* Fixes the overwriting bug: Elements wrap gracefully if they have less than 320px of width */
-    gridTemplateColumns:
-  isDesktop
-    ? '1fr 1fr 1fr'
+  display: 'grid',
+  gridTemplateColumns: isDesktop
+    ? 'repeat(3, minmax(250px,1fr))'
     : '1fr',
-
-    /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
-    gap: isDesktop ? '16px' : '30px',
-
-    width: '100%',
-
-    alignItems: 'start',
-
-  },
+  gap: '12px',
+  width: '100%',
+},
 
   /* =========================
        PERFORMANCE NODE METRICS SUB-GRID
