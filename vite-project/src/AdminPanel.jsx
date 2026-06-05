@@ -210,7 +210,10 @@ const styles = {
     flexDirection: isDesktop ? undefined : 'column',
 
     /* Fixes the overwriting bug: Elements wrap gracefully if they have less than 320px of width */
-    gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(320px, 1fr))' : undefined,
+    gridTemplateColumns:
+  isDesktop
+    ? '1fr 1fr 1fr'
+    : '1fr',
 
     /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
     gap: isDesktop ? '16px' : '30px',
@@ -255,7 +258,7 @@ const styles = {
     borderRadius: isMobile ? '18px' : '20px',
 
     /* Shrunk internal padding on desktop down to 16px to compress the outer dimensions */
-    padding: isMobile ? '18px' : '16px',
+    padding: isMobile ? '14px' : '12px',
 
     border: '1px solid rgba(0,255,200,0.14)',
 
@@ -1158,7 +1161,7 @@ const activeCurrencySymbol =
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
-      <main style={{ padding: '32px 16px', maxWidth: '1000px', margin: '0 auto' }}>
+      <main style={{ padding: '24px 12px', maxWidth: '1500px', margin: '0 auto' }}>
         {!user ? (
           <section style={{ maxWidth: '360px', margin: '60px auto 0 auto' }}>
             <div style={styles.flatCard}>
@@ -1372,7 +1375,7 @@ const activeCurrencySymbol =
   </div>
 
             {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', flex: isDesktop ? '1 1 0%' : '1 1 100%', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: isDesktop ? '1 1 0%' : '1 1 100%', width: '100%' }}>
               {/* PERFORMANCE METRICS CARD */}
               <div style={{ ...styles.flatCard, border: '1px solid rgba(255, 255, 255, 0.02)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -1494,7 +1497,7 @@ const activeCurrencySymbol =
               width: '100%',
               display: 'flex',
               flexDirection: 'column',
-              gap: '30px'
+              gap: '12px'
             }}>
               {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
               <div style={{
@@ -1545,7 +1548,7 @@ const activeCurrencySymbol =
                   backgroundSize: '100% 5px, 5px 100%',
                   color: '#ffffff',
                   borderRadius: '26px',
-                  padding: '32px 24px',
+                  padding: '18px 14px',
                   boxShadow: `
                     0 25px 50px rgba(0,0,0,0.45),
                     0 0 40px rgba(0,255,200,0.08)
@@ -1574,8 +1577,8 @@ const activeCurrencySymbol =
                       top: '52%',
                       left: '50%',
                       transform: 'translate(-50%, -50%)',
-                      width: '280px',
-                      height: '280px',
+                      width: '180px',
+                      height: '180px',
                       backgroundImage: `url(${settings.logo_url})`,
                       backgroundSize: 'contain',
                       backgroundPosition: 'center',
@@ -1805,7 +1808,7 @@ const activeCurrencySymbol =
                       background: 'rgba(10, 20, 28, 0.6)',
                       border: '1px solid rgba(0,255,200,0.15)',
                       borderRadius: '22px',
-                      padding: '22px 16px',
+                      padding: '12px',
                       textAlign: 'center',
                       marginTop: '24px',
                       position: 'relative',
@@ -1857,8 +1860,8 @@ const activeCurrencySymbol =
                           )}&color=11161d`}
                           alt="Voucher Token QR"
                           style={{
-                            width: '115px',
-                            height: '115px',
+                            width: '80px',
+                            height: '80px',
                             display: 'block'
                           }}
                         />
