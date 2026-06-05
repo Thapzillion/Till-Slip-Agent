@@ -1545,10 +1545,10 @@ const activeCurrencySymbol =
                     linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
                     linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)
                   `,
-                  backgroundSize: '100% 5px, 5px 100%',
+                  backgroundSize: '100% 2px, 2px 100%',
                   color: '#ffffff',
-                  borderRadius: '13px',
-                  padding: '18px 14px',
+                  borderRadius: '26px',
+                  padding: '9px 7px',
                   boxShadow: `
                     0 25px 50px rgba(0,0,0,0.45),
                     0 0 40px rgba(0,255,200,0.08)
@@ -1602,7 +1602,7 @@ const activeCurrencySymbol =
                       marginBottom: '18px'
                     }}>
                       <div style={{
-                        padding: '4px 10px',
+                        padding: '2px 5px',
                         borderRadius: '999px',
                         background: 'rgba(0,255,200,0.08)',
                         border: '1px solid rgba(0,255,200,0.15)',
