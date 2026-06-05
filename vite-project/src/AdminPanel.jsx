@@ -1547,7 +1547,7 @@ const activeCurrencySymbol =
                   `,
                   backgroundSize: '100% 5px, 5px 100%',
                   color: '#ffffff',
-                  borderRadius: '26px',
+                  borderRadius: '13px',
                   padding: '18px 14px',
                   boxShadow: `
                     0 25px 50px rgba(0,0,0,0.45),
