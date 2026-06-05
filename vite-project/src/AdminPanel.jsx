@@ -1564,8 +1564,8 @@ const activeCurrencySymbol =
                     position: 'absolute',
                     top: '-80px',
                     left: '-80px',
-                    width: '180px',
-                    height: '180px',
+                    width: '90px',
+                    height: '90px',
                     background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
                     borderRadius: '50%'
                   }} />
