@@ -212,7 +212,7 @@ const styles = {
     /* Fixes the overwriting bug: Elements wrap gracefully if they have less than 320px of width */
     gridTemplateColumns:
   isDesktop
-    ? '1fr 1fr 1fr'
+    ? '0.9fr 0.9fr 1.3fr'
     : '1fr',
 
     /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
