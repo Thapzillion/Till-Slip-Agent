@@ -204,13 +204,25 @@ const styles = {
   ========================= */
 
   dashboardGrid: {
-  display: 'grid',
-  gridTemplateColumns: isDesktop
-    ? 'repeat(3, minmax(250px,1fr))'
+
+    display: isDesktop ? 'grid' : 'flex',
+
+    flexDirection: isDesktop ? undefined : 'column',
+
+    /* Fixes the overwriting bug: Elements wrap gracefully if they have less than 320px of width */
+    gridTemplateColumns:
+  isDesktop
+    ? '1fr 1fr 1fr'
     : '1fr',
-  gap: '12px',
-  width: '100%',
-},
+
+    /* Tightened from 30px to 16px to give the blocks immediate horizontal room */
+    gap: isDesktop ? '24px' : '20px',
+
+    width: '100%',
+
+    alignItems: 'start',
+
+  },
 
   /* =========================
        PERFORMANCE NODE METRICS SUB-GRID
@@ -246,7 +258,7 @@ const styles = {
     borderRadius: isMobile ? '18px' : '20px',
 
     /* Shrunk internal padding on desktop down to 16px to compress the outer dimensions */
-    padding: isMobile ? '14px' : '12px',
+    padding: isMobile ? '14px' : '10px',
 
     border: '1px solid rgba(0,255,200,0.14)',
 
