@@ -135,7 +135,7 @@ const styles = {
 
     width: '100%',
 
-    maxWidth: '2800px',
+    maxWidth: '4800px',
 
     margin: '0 auto',
 
