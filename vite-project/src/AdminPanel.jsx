@@ -681,11 +681,18 @@ bootstrapSession();
 async function fetchMerchantSettings(userId) {
   if (!userId) return;
   try {
+
+    console.log("FETCH SETTINGS START");
+    console.log("userId:", userId);
+
     const { data, error } = await supabase
       .from('business_settings')
       .select('*')
       .eq('owner_id', userId)
       .maybeSingle();
+
+    console.log("SETTINGS DATA:", data);
+    console.log("SETTINGS ERROR:", error);
 
     if (error) throw error;
     if (data) {
