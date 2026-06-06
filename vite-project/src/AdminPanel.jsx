@@ -1214,7 +1214,7 @@ const activeCurrencySymbol =
         <label htmlFor="logo-upload" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           BUSINESS BRAND LOGO (PICTURE PRINT)
         </label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '8px 12px', fontSize: '11px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
             Choose Image File
             <input
