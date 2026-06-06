@@ -602,6 +602,24 @@ const styles = {
 useEffect(() => {
   let isMounted = true;
 
+// On intitial load to handle page refreshes and direct navigation when a session already exists.
+  async function bootstrapSession() {
+  const {
+    data: { session }
+  } = await supabase.auth.getSession();
+
+  if (!session?.user) return;
+
+  setUser(session.user);
+
+  await Promise.all([
+    fetchMerchantSettings(session.user.id),
+    fetchLiveAnalytics(session.user.id)
+  ]);
+}
+
+bootstrapSession();
+
   // Detect if user landed via an email confirmation redirection link
   const hash = window.location.hash;
   if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
@@ -1214,7 +1232,7 @@ const activeCurrencySymbol =
         <label htmlFor="logo-upload" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
           BUSINESS BRAND LOGO (PICTURE PRINT)
         </label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '8px 12px', fontSize: '11px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
             Choose Image File
             <input
