@@ -1423,31 +1423,169 @@ const activeCurrencySymbol =
   }} />
 
   {/* NEW FLAT GRID FOCUSING ON INBOX VOLUMES & PARSING SUCCESS METRICS */}
-  <div style={styles.analyticsSubGrid}>
-    <div style={{ ...styles.concaveCard, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-      <div style={{ fontSize: '9px', color: '#8a99ad', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
-        Inboxes Synchronized
-      </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-        <span style={{ fontSize: '12px', fontWeight: '900', color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
-          {/* Added window/fallback binding to prevent undefined crash */}
-          {(typeof activeInboxesCount !== 'undefined' ? activeInboxesCount : 0)} <span style={{ fontSize: '10px', color: '#10b981', fontWeight: '500' }}>Active</span>
-        </span>
-      </div>
+<div
+  style={{
+    ...styles.analyticsSubGrid,
+    gap: '14px',
+    marginTop: '6px'
+  }}
+>
+  {/* INBOXES SYNCHRONIZED */}
+  <div
+    style={{
+      ...styles.concaveCard,
+      padding: '18px',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      minHeight: '90px',
+      border: '1px solid rgba(16,185,129,0.08)',
+      background:
+        'linear-gradient(145deg, rgba(16,185,129,0.04), rgba(255,255,255,0.01))',
+      position: 'relative',
+      overflow: 'hidden'
+    }}
+  >
+    <div
+      style={{
+        position: 'absolute',
+        top: '-20px',
+        right: '-20px',
+        width: '70px',
+        height: '70px',
+        borderRadius: '50%',
+        background: 'rgba(16,185,129,0.05)'
+      }}
+    />
+
+    <div
+      style={{
+        fontSize: '9px',
+        color: '#8a99ad',
+        fontWeight: '700',
+        letterSpacing: '1px',
+        textTransform: 'uppercase'
+      }}
+    >
+      Inboxes Synchronized
     </div>
 
-    <div style={{ ...styles.concaveCard, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-      <div style={{ fontSize: '9px', color: '#8a99ad', fontWeight: '700', letterSpacing: '0.8px', textTransform: 'uppercase' }}>
-        Parsed Slips Vol.
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: '8px'
+      }}
+    >
+      <div
+        style={{
+          fontSize: '24px',
+          fontWeight: '900',
+          color: '#ffffff',
+          fontFamily: 'monospace',
+          lineHeight: '1'
+        }}
+      >
+        {typeof activeInboxesCount !== 'undefined'
+          ? activeInboxesCount
+          : 0}
       </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-        <span style={{ fontSize: '12px', fontWeight: '900', color: '#10b981', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
-          {/* Added fallback check */}
-          {(typeof totalParsedCount !== 'undefined' ? totalParsedCount : 0).toLocaleString()} <span style={{ fontSize: '11px', color: '#6ee7b7', fontWeight: '500' }}>docs</span>
-        </span>
+
+      <div
+        style={{
+          padding: '4px 8px',
+          borderRadius: '999px',
+          background: 'rgba(16,185,129,0.12)',
+          color: '#10b981',
+          fontSize: '10px',
+          fontWeight: '700',
+          letterSpacing: '0.4px'
+        }}
+      >
+        ACTIVE
       </div>
     </div>
   </div>
+
+  {/* PARSED SLIPS */}
+  <div
+    style={{
+      ...styles.concaveCard,
+      padding: '18px',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      minHeight: '90px',
+      border: '1px solid rgba(59,130,246,0.08)',
+      background:
+        'linear-gradient(145deg, rgba(59,130,246,0.04), rgba(255,255,255,0.01))',
+      position: 'relative',
+      overflow: 'hidden'
+    }}
+  >
+    <div
+      style={{
+        position: 'absolute',
+        top: '-20px',
+        right: '-20px',
+        width: '70px',
+        height: '70px',
+        borderRadius: '50%',
+        background: 'rgba(59,130,246,0.05)'
+      }}
+    />
+
+    <div
+      style={{
+        fontSize: '9px',
+        color: '#8a99ad',
+        fontWeight: '700',
+        letterSpacing: '1px',
+        textTransform: 'uppercase'
+      }}
+    >
+      Parsed Slips Volume
+    </div>
+
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: '8px'
+      }}
+    >
+      <div
+        style={{
+          fontSize: '24px',
+          fontWeight: '900',
+          color: '#3b82f6',
+          fontFamily: 'monospace',
+          lineHeight: '1'
+        }}
+      >
+        {(typeof totalParsedCount !== 'undefined'
+          ? totalParsedCount
+          : 0).toLocaleString()}
+      </div>
+
+      <div
+        style={{
+          padding: '4px 8px',
+          borderRadius: '999px',
+          background: 'rgba(59,130,246,0.12)',
+          color: '#60a5fa',
+          fontSize: '10px',
+          fontWeight: '700',
+          letterSpacing: '0.4px'
+        }}
+      >
+        DOCS
+      </div>
+    </div>
+  </div>
+</div>
 
   {/* DATE RANGE PERIOD HISTOGRAM MICRO-GRAPH */}
   <div style={{ marginTop: '24px', marginBottom: '5px' }}>
