@@ -1149,7 +1149,7 @@ const activeCurrencySymbol =
                 padding: '3px 8px',
                 borderRadius: '4px',
                 fontWeight: '500',
-                letterSpacing: '0.5px'
+                letterSpacing: '2.5px'
               }}
             >
               PRODUCTION NODE
@@ -1626,16 +1626,7 @@ const activeCurrencySymbol =
       <div style={{ position: 'absolute', width: '100%', height: '1px', background: 'rgba(255,255,255,0.02)', top: '45px', left: 0 }}></div>
     </div>
   </div>
-
-  {/* Footer Metadata Diagnostics */}
-  <div style={{ marginTop: '20px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.03)', fontSize: '10px', color: '#8a99ad', display: 'flex', justifyContent: 'space-between', fontWeight: '600', fontFamily: 'monospace' }}>
-    <div style={{ display: 'flex', gap: '14px' }}>
-      <span>PARSING_EFFICIENCY: <strong style={{ color: '#fff' }}>{typeof parsingSuccessRate !== 'undefined' ? parsingSuccessRate : '99.2'}%</strong></span>
-      <span>STREAM: <strong style={{ color: '#10b981' }}>IDLE_LISTENING</strong></span>
-    </div>
-    <span style={{ color: '#6b7d96' }}>NODE_INBOX_V2</span>
   </div>
-</div>
 
               {/* INTEGRATION ENDPOINT TARGET BLOCK */}
               <div style={styles.flatCard}>
