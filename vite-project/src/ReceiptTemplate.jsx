@@ -1,4 +1,11 @@
 export const ReceiptTemplate = ({ data, settings }) => {
+
+const [activeInboxesCount, setActiveInboxesCount] = useState(2); 
+const [totalParsedCount, setTotalParsedCount] = useState(145);
+const [selectedDateRangeLabel, setSelectedDateRangeLabel] = useState("PAST_30_DAYS");
+const [inboxGraphData, setInboxGraphData] = useState([10, 20, 15, 40, 60, 30, 80, 45, 90, 10, 0, 5, 25, 45, 12, 67, 34, 89, 90, 12, 45, 67, 23, 78, 89, 90, 23, 95]);
+const [parsingSuccessRate, setParsingSuccessRate] = useState(98.7);
+
   return (
     <div className="receipt-container">
       {/* Header with Business Branding */}

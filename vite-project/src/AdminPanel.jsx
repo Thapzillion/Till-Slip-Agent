@@ -1376,12 +1376,12 @@ const activeCurrencySymbol =
 
             {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: isDesktop ? '1 1 0%' : '1 1 100%', width: '100%' }}>
-              {/* PERFORMANCE NODE ANALYTICS: INBOX EMAIL SLIP METRICS */}
+             {/* PERFORMANCE NODE ANALYTICS: INBOX EMAIL SLIP METRICS */}
 <div style={{
   ...styles.flatCard,
-  border: '1px solid rgba(16, 185, 129, 0.25)', // Changed to theme green border
+  border: '1px solid rgba(16, 185, 129, 0.25)', 
   background: 'linear-gradient(180deg, rgba(8, 18, 24, 0.95), rgba(4, 10, 14, 0.98))',
-  boxShadow: '0 0 35px rgba(16, 185, 129, 0.05)', // Updated shadow glow profile to match green border
+  boxShadow: '0 0 35px rgba(16, 185, 129, 0.05)', 
   position: 'relative',
   overflow: 'hidden'
 }}>
@@ -1393,7 +1393,7 @@ const activeCurrencySymbol =
     left: '-80px',
     width: '180px',
     height: '180px',
-    background: 'radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%)', // Adjusted glow to match theme green
+    background: 'radial-gradient(circle, rgba(16, 185, 129, 0.08), transparent 70%)', 
     borderRadius: '50%'
   }} />
 
@@ -1405,7 +1405,8 @@ const activeCurrencySymbol =
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
         <span style={{ fontSize: '12px', fontWeight: '900', color: '#fff', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
-          {activeInboxesCount || 0} <span style={{ fontSize: '10px', color: '#10b981', fontWeight: '500' }}>Active</span>
+          {/* Added window/fallback binding to prevent undefined crash */}
+          {(typeof activeInboxesCount !== 'undefined' ? activeInboxesCount : 0)} <span style={{ fontSize: '10px', color: '#10b981', fontWeight: '500' }}>Active</span>
         </span>
       </div>
     </div>
@@ -1416,7 +1417,8 @@ const activeCurrencySymbol =
       </div>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
         <span style={{ fontSize: '12px', fontWeight: '900', color: '#10b981', fontFamily: 'monospace', letterSpacing: '-0.3px' }}>
-          {(totalParsedCount || 0).toLocaleString()} <span style={{ fontSize: '11px', color: '#6ee7b7', fontWeight: '500' }}>docs</span>
+          {/* Added fallback check */}
+          {(typeof totalParsedCount !== 'undefined' ? totalParsedCount : 0).toLocaleString()} <span style={{ fontSize: '11px', color: '#6ee7b7', fontWeight: '500' }}>docs</span>
         </span>
       </div>
     </div>
@@ -1430,12 +1432,12 @@ const activeCurrencySymbol =
         <span>INBOX SLIP DENSITY OVER TIME PERIOD</span>
       </div>
       <span style={{ color: '#10b981' }}>
-        RANGE: {selectedDateRangeLabel || 'PAST_30_DAYS'}
+        RANGE: {typeof selectedDateRangeLabel !== 'undefined' ? selectedDateRangeLabel : 'PAST_30_DAYS'}
       </span>
     </div>
     
     <div style={{ background: '#0a0b0d', height: '65px', borderRadius: '12px', boxShadow: 'inset 3px 3px 6px #000, inset -3px -3px 6px rgba(255,255,255,0.02)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '0 12px', gap: '5px' }}>
-      {(inboxGraphData || Array(28).fill(0)).map((heightValue, idx, arr) => {
+      {(typeof inboxGraphData !== 'undefined' ? inboxGraphData : Array(28).fill(0)).map((heightValue, idx, arr) => {
         const hasData = heightValue > 0;
         const isLatestPeriod = idx === arr.length - 1;
         return (
@@ -1465,7 +1467,7 @@ const activeCurrencySymbol =
   {/* Footer Metadata Diagnostics */}
   <div style={{ marginTop: '20px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.03)', fontSize: '10px', color: '#8a99ad', display: 'flex', justifyContent: 'space-between', fontWeight: '600', fontFamily: 'monospace' }}>
     <div style={{ display: 'flex', gap: '14px' }}>
-      <span>PARSING_EFFICIENCY: <strong style={{ color: '#fff' }}>{parsingSuccessRate || '99.2'}%</strong></span>
+      <span>PARSING_EFFICIENCY: <strong style={{ color: '#fff' }}>{typeof parsingSuccessRate !== 'undefined' ? parsingSuccessRate : '99.2'}%</strong></span>
       <span>STREAM: <strong style={{ color: '#10b981' }}>IDLE_LISTENING</strong></span>
     </div>
     <span style={{ color: '#6b7d96' }}>NODE_INBOX_V2</span>
