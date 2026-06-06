@@ -32,7 +32,7 @@ export default function ReceiptView() {
       } catch (err) {
         console.error(err.message);
       } finally {
-        setLoading(false);
+        loading(false);
       }
     }
     fetchReceiptData();
@@ -53,85 +53,442 @@ export default function ReceiptView() {
   if (loading) return <div style={{ color: "#9ca3af", padding: "40px", textAlign: "center" }}>Reassembling encrypted tax payload...</div>;
   if (!receipt || !business) return <div style={{ color: "#ef4444", padding: "40px", textAlign: "center" }}>Invoice Node Invalid.</div>;
 
+  // Resolve dynamic currency notation (extract symbol or fallback to native config)
+  const activeCurrencySymbol = business.currency === "ZAR" ? "R" : business.currency === "USD" ? "$" : (business.currency || "R");
+
   const rewardCode = `FTC${business.discount_percentage}SAVE`;
   const checkoutPayloadLink = `https://till-slip-agent.vercel.app/redeem?code=${rewardCode}&merchant=${business.webhook_slug}`;
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkoutPayloadLink)}&color=0-0-0&bgcolor=fff`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkoutPayloadLink)}&color=11161d&bgcolor=fff`;
 
   return (
     <div style={{ background: "#090d16", minHeight: "100vh", padding: "40px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       
-      <button onClick={triggerDownload} style={{ background: "#3b82f6", color: "#fff", border: "none", padding: "12px 24px", borderRadius: "30px", fontWeight: "bold", cursor: "pointer", marginBottom: "25px", boxShadow: "0 0 15px rgba(59,130,246,0.4)" }}>
-        Download Official PDF Slip
-      </button>
+      {/* GLOBAL BACKGROUND ENCLOSURE TO MATCH ADMIN WORKSPACE MIRROR FRAME */}
+      <div style={{
+        width: '100%',
+        maxWidth: '440px',
+        border: '1px solid rgba(0,255,200,0.12)',
+        background: 'linear-gradient(180deg, rgba(8,18,24,0.95), rgba(4,10,14,0.98))',
+        boxShadow: '0 0 35px rgba(0,255,200,0.08)',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: '24px 16px',
+        borderRadius: '16px'
+      }}>
 
-      <div id="till-slip-capture" style={{ width: "380px", background: "#fcfbf7", color: "#111827", padding: "30px 24px", fontFamily: "'Courier New', Courier, monospace", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.7)" }}>
-        
-        <div style={{ textAlign: "center", marginBottom: "20px" }}>
-          <div style={{ fontSize: "28px", fontWeight: "900", textTransform: "uppercase", letterSpacing: "1px" }}>⚽ {business.business_name}</div>
-          <div style={{ fontSize: "11px", color: "#4b5563", marginTop: "4px", lineHeight: "1.4" }}>{business.store_address}</div>
-        </div>
+        {/* TOP GLOW EFFECT */}
+        <div style={{
+          position: 'absolute',
+          top: '-120px',
+          right: '-120px',
+          width: '240px',
+          height: '240px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(0,255,200,0.18), transparent 70%)',
+          filter: 'blur(10px)',
+          pointerEvents: 'none'
+        }} />
 
-        <div style={{ borderTop: "2px dashed #111827", margin: "15px 0" }}></div>
+        <h3 style={{
+          margin: '0 0 18px 0',
+          fontSize: '12px',
+          fontWeight: '800',
+          color: '#00ffd5',
+          letterSpacing: '2px',
+          textTransform: 'uppercase',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          position: 'relative',
+          zIndex: 2
+        }}>
+          ⚡ Live Inbox Email Till Slip Mirror
+        </h3>
 
-        <div style={{ fontSize: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}><span>REF: RUACH-{receipt.id.slice(0, 8).toUpperCase()}</span><span style={{ background: "#111827", color: "#fff", padding: "1px 5px", borderRadius: "3px", fontWeight: "bold", fontSize: "10px" }}>PAID</span></div>
-          <div>DATE: {new Date(receipt.created_at).toLocaleString('en-ZA')}</div>
-          <div>CLIENT: {receipt.customer_email}</div>
-        </div>
+        {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
+        <div id="till-slip-capture" style={{
+          background: 'linear-gradient(180deg, rgba(12, 22, 31, 0.85), rgba(8, 15, 22, 0.95))',
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)
+          `,
+          backgroundSize: '100% 2px, 2px 100%',
+          color: '#ffffff',
+          borderRadius: '26px',
+          padding: '20px 16px',
+          boxShadow: `
+            0 25px 50px rgba(0,0,0,0.45),
+            0 0 40px rgba(0,255,200,0.08)
+          `,
+          fontFamily: '"Courier New", monospace',
+          position: 'relative',
+          overflow: 'hidden',
+          border: '1px solid rgba(0, 255, 200, 0.15)'
+        }}>
 
-        <div style={{ borderTop: "2px dashed #111827", margin: "15px 0" }}></div>
+          {/* RECEIPT CORNER LIGHT */}
+          <div style={{
+            position: 'absolute',
+            top: '-80px',
+            left: '-80px',
+            width: '180px',
+            height: '180px',
+            background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
+            borderRadius: '50%'
+          }} />
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "12px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", textTransform: "uppercase" }}>
-            <span style={{ flex: 2 }}>Item Description</span>
-            <span style={{ flex: 1, textAlign: "center" }}>Qty</span>
-            <span style={{ flex: 1, textAlign: "right" }}>Total</span>
-          </div>
-          <div style={{ borderTop: "1px solid #e5e7eb", margin: "4px 0" }}></div>
-          
-          {Array.isArray(receipt.items) ? receipt.items.map((item, idx) => (
-            <div key={idx} style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ flex: 2, overflow: "hidden", textOverflow: "ellipsis" }}>{item.name || "Store Item"}</span>
-              <span style={{ flex: 1, textAlign: "center" }}>{item.qty || 1}</span>
-              <span style={{ flex: 1, textAlign: "right" }}>R{(item.price * (item.qty || 1)).toFixed(2)}</span>
-            </div>
-          )) : (
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ flex: 2 }}>General Merchandise</span>
-              <span style={{ flex: 1, textAlign: "center" }}>1</span>
-              <span style={{ flex: 1, textAlign: "right" }}>R{receipt.total_amount.toFixed(2)}</span>
-            </div>
+          {/* CENTRAL BIG LOGO WATERMARK */}
+          {business?.logo_url && (
+            <div style={{
+              position: 'absolute',
+              top: '52%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '180px',
+              height: '180px',
+              backgroundImage: `url(${business.logo_url})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              opacity: 0.035,
+              pointerEvents: 'none',
+              zIndex: 1
+            }} />
           )}
-        </div>
 
-        <div style={{ borderTop: "2px dashed #111827", margin: "15px 0" }}></div>
+          {/* RECEIPT CONTENT WRAPPER */}
+          <div style={{ position: 'relative', zIndex: 2 }}>
 
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "bold" }}>
-          <span>GRAND TOTAL:</span>
-          <span>R{receipt.total_amount.toFixed(2)}</span>
-        </div>
+            {/* TOP METADATA ROW */}
+            <div style={{
+              display: 'flex',
+              justify: 'space-between',
+              alignItems: 'flex-start',
+              fontSize: '10px',
+              color: '#64748b',
+              marginBottom: '9px'
+            }}>
+              <div style={{
+                padding: '2px 5px',
+                borderRadius: '999px',
+                background: 'rgba(0,255,200,0.08)',
+                border: '1px solid rgba(0,255,200,0.15)',
+                color: '#089981',
+                fontWeight: '800',
+                letterSpacing: '0.5px'
+              }}>
+                VERIFIED NODE
+              </div>
 
-        <div style={{ borderTop: "2px dashed #111827", margin: "20px 0" }}></div>
+              <div style={{
+                textAlign: 'right',
+                lineHeight: '1.5'
+              }}>
+                <div style={{
+                  fontWeight: '900',
+                  color: '#c5ccda',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  Transaction
+                </div>
+                <div>{new Date(receipt.created_at).toLocaleString('en-ZA', { day: 'numeric', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}</div>
+              </div>
+            </div>
 
-        <div style={{ border: "2px dashed #111827", padding: "15px", borderRadius: "8px", textAlign: "center", background: "#fff" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontWeight: "bold", fontSize: "12px", marginBottom: "10px" }}>
-            <span>🤖 RUACHAGENT AI SMART OFFERS</span>
+            {/* TOP MINI LOGO */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '9px'
+            }}>
+              {business?.logo_url ? (
+                <div style={{
+                  display: 'inline-flex',
+                  padding: '10px 18px',
+                  borderRadius: '18px',
+                  background: 'rgba(15, 23, 42, 0.06)',
+                  border: '1px solid rgba(15,23,42,0.06)',
+                  boxShadow: '0 10px 24px rgba(0,0,0,0.08)'
+                }}>
+                  <img
+                    src={business.logo_url}
+                    alt="Merchant Logo"
+                    style={{
+                      maxHeight: '52px',
+                      maxWidth: '170px',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </div>
+              ) : (
+                <div style={{
+                  border: '1px dashed #94a3b8',
+                  padding: '10px',
+                  color: '#64748b',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  borderRadius: '12px'
+                }}>
+                  [ NO LOGO RECORDED ]
+                </div>
+              )}
+            </div>
+
+            {/* BRAND DETAILS */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '11px'
+            }}>
+              <strong style={{
+                fontSize: '20px',
+                fontWeight: '900',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                display: 'block',
+                color: '#ffffff',
+                textShadow: '0 0 10px rgba(0,255,200,0.15)'
+              }}>
+                {business?.business_name || 'MY BUSINESS BRAND'}
+              </strong>
+
+              <div style={{
+                width: '70px',
+                height: '2px',
+                margin: '10px auto',
+                borderRadius: '999px',
+                background: 'linear-gradient(90deg, #00ffd5, #00b8ff)'
+              }} />
+
+              <div style={{
+                fontSize: '11px',
+                color: 'rgba(255,255,255,0.85)',
+                marginTop: '6px',
+                whiteSpace: 'pre-wrap',
+                lineHeight: '1.6',
+                fontWeight: '700'
+              }}>
+                {business?.store_address || 'Outlet Physical Address Street\nKrugersdorp, South Africa'}
+              </div>
+
+              <div style={{
+                fontSize: '11px',
+                color: 'rgba(220,255,250,0.5)',
+                marginTop: '6px',
+                fontFamily: 'system-ui, sans-serif'
+              }}>
+                {receipt.customer_email || 'info@merchantnode.com'}
+              </div>
+            </div>
+
+            {/* PREMIUM SEPARATOR */}
+            <div style={{
+              height: '1px',
+              background: 'linear-gradient(90deg, transparent, rgba(0,255,200,0.2), transparent)',
+              marginBottom: '9px'
+            }} />
+
+            {/* ITEMIZATION */}
+            <div style={{
+              fontSize: '11px',
+              lineHeight: '1.9',
+              marginBottom: '6px',
+              fontWeight: '700'
+            }}>
+
+              <div style={{
+                fontSize: '10px',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '6px',
+                color: 'rgba(0,255,200,0.6)',
+                fontWeight: '900'
+              }}>
+                Items Purchased
+              </div>
+
+              {/* ITERATIVE ITEMS DATABASE CHECKOUT LAYER */}
+              {Array.isArray(receipt.items) ? receipt.items.map((item, idx) => (
+                <div key={idx} style={{
+                  display: 'flex',
+                  justify: 'space-between',
+                  marginBottom: '4px',
+                  padding: '8px 0',
+                  borderBottom: '1px dashed rgba(255,255,255,0.08)'
+                }}>
+                  <span style={{ maxWidth: '75%' }}>
+                    {item.qty || 1}x {item.name || "Store Item"}
+                  </span>
+                  <span style={{
+                    fontWeight: '900',
+                    color: '#bfc1c8'
+                  }}>
+                    {activeCurrencySymbol}{(item.price * (item.qty || 1)).toFixed(2)}
+                  </span>
+                </div>
+              )) : (
+                <div style={{
+                  display: 'flex',
+                  justify: 'space-between',
+                  marginBottom: '4px',
+                  padding: '8px 0',
+                  borderBottom: '1px dashed rgba(255,255,255,0.08)'
+                }}>
+                  <span style={{ maxWidth: '75%' }}>
+                    1x General Merchandise Node
+                  </span>
+                  <span style={{
+                    fontWeight: '900',
+                    color: '#bfc1c8'
+                  }}>
+                    {activeCurrencySymbol}{receipt.total_amount?.toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              {/* TOTAL DUE ROW */}
+              <div style={{
+                display: 'flex',
+                justify: 'space-between',
+                marginTop: '14px',
+                padding: '16px',
+                borderRadius: '16px',
+                background: 'linear-gradient(90deg, rgba(0,255,200,0.08), rgba(0,184,255,0.08))',
+                border: '1px solid rgba(0,255,200,0.15)',
+                fontWeight: '900',
+                fontSize: '14px',
+                color: '#b1b5c6',
+                boxShadow: '0 6px 20px rgba(0,255,200,0.08)'
+              }}>
+                <span>TOTAL DUE</span>
+                <span style={{
+                  color: '#00a884',
+                  textShadow: '0 0 10px rgba(0,255,200,0.15)'
+                }}>
+                  {activeCurrencySymbol}{receipt.total_amount?.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            {/* VOUCHER SECTION BOX */}
+            <div style={{
+              background: 'rgba(10, 20, 28, 0.6)',
+              border: '1px solid rgba(0,255,200,0.15)',
+              borderRadius: '22px',
+              padding: '12px',
+              textAlign: 'center',
+              marginTop: '24px',
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 12px 30px rgba(0,0,0,0.25)'
+            }}>
+
+              {/* INNER GLOW */}
+              <div style={{
+                position: 'absolute',
+                top: '-40px',
+                right: '-40px',
+                width: '120px',
+                height: '120px',
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(0,255,200,0.12), transparent 70%)'
+              }} />
+
+              <span style={{
+                fontSize: '9px',
+                color: '#00ffd5',
+                fontWeight: '900',
+                display: 'flex',
+                alignItems: 'center',
+                justify: 'center',
+                gap: '6px',
+                marginBottom: '6px',
+                letterSpacing: '1px',
+                textTransform: 'uppercase'
+              }}>
+                ⚡ Next Visit Voucher Code Inside
+              </span>
+
+              <div style={{
+                display: 'inline-block',
+                padding: '12px',
+                background: '#ffffff',
+                borderRadius: '18px',
+                border: '1px solid rgba(0,255,200,0.15)',
+                boxShadow: `
+                  0 12px 25px rgba(0,0,0,0.35),
+                  0 0 20px rgba(0,255,200,0.15)
+                `,
+                marginBottom: '5px'
+              }}>
+                <img
+                  src={qrCodeUrl}
+                  alt="Voucher Token QR"
+                  style={{
+                    width: '80px',
+                    height: '80px',
+                    display: 'block'
+                  }}
+                />
+              </div>
+
+              <div style={{
+                fontSize: '9px',
+                color: 'rgba(255,255,255,0.9)',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                fontWeight: '900',
+                marginBottom: '4px'
+              }}>
+                Claim Discount
+              </div>
+
+              <div style={{
+                fontSize: '11px',
+                color: 'rgba(220,255,250,0.7)',
+                lineHeight: '1.6',
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                padding: '0 6px'
+              }}>
+                Scan to instantly claim your{' '}
+                <strong style={{ color: '#00ffd5', fontWeight: '900' }}>
+                  {business?.discount_percentage ?? 10}% discount
+                </strong>{' '}
+                balance.
+              </div>
+            </div>
+
+            {/* ACTION BUTTON */}
+            <div style={{
+              marginTop: '28px',
+              textAlign: 'center'
+            }}>
+              <button
+                onClick={triggerDownload}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  background: 'linear-gradient(90deg, #00e0b8 0%, #00ffd5 50%, #00b8ff 100%)',
+                  color: '#041014',
+                  border: 'none',
+                  padding: '16px',
+                  borderRadius: '16px',
+                  fontSize: '12px',
+                  fontWeight: '900',
+                  fontFamily: 'system-ui, sans-serif',
+                  letterSpacing: '0.8px',
+                  textTransform: 'uppercase',
+                  boxShadow: `
+                    0 12px 30px rgba(0,255,200,0.25),
+                    0 0 24px rgba(0,255,200,0.15)
+                  `,
+                  cursor: 'pointer',
+                  transition: 'all 0.25s ease'
+                }}
+              >
+                Download Official Invoice PDF
+              </button>
+            </div>
           </div>
-          <p style={{ fontSize: "11px", margin: "0 0 12px 0", lineHeight: "1.4" }}>
-            Thanks for shopping at {business.business_name}! Retain this token to get <strong style={{fontSize: "12px"}}>{business.discount_percentage}% OFF</strong> your next layout checkout session.
-          </p>
-          
-          <div style={{ margin: "15px 0" }}>
-            <img src={qrCodeUrl} alt="RuachAgent AI Token QR" style={{ width: "100px", height: "100px", border: "4px solid #111827" }} />
-          </div>
-          <div style={{ fontSize: "10px", color: "#6b7280", letterSpacing: "1px" }}>SCAN CODE OR USE AT CHECKOUT:</div>
-          <div style={{ fontSize: "15px", fontWeight: "bold", background: "#111827", color: "#fff", padding: "6px", borderRadius: "4px", marginTop: "5px", letterSpacing: "2px" }}>
-            {rewardCode}
-          </div>
-        </div>
-
-        <div style={{ textAlign: "center", fontSize: "9px", color: "#6b7280", marginTop: "20px", letterSpacing: "0.5px" }}>
-          Powered by  Engine<br />Node ID: {id.slice(0,8)}
         </div>
       </div>
     </div>
