@@ -1140,20 +1140,6 @@ const activeCurrencySymbol =
                 RUACHAGENT
               </text>
             </svg>
-
-            <span
-              style={{
-                fontSize: '9px',
-                border: '1px solid #262626',
-                color: '#a3a3a3',
-                padding: '3px 8px',
-                borderRadius: '4px',
-                fontWeight: '500',
-                letterSpacing: '2.5px'
-              }}
-            >
-              PRODUCTION NODE
-            </span>
           </div>
         )}
 
@@ -1480,7 +1466,7 @@ const activeCurrencySymbol =
     >
       <div
         style={{
-          fontSize: '24px',
+          fontSize: '12px',
           fontWeight: '900',
           color: '#ffffff',
           fontFamily: 'monospace',
@@ -1498,7 +1484,7 @@ const activeCurrencySymbol =
           borderRadius: '999px',
           background: 'rgba(16,185,129,0.12)',
           color: '#10b981',
-          fontSize: '10px',
+          fontSize: '5px',
           fontWeight: '700',
           letterSpacing: '0.4px'
         }}
@@ -1558,7 +1544,7 @@ const activeCurrencySymbol =
     >
       <div
         style={{
-          fontSize: '24px',
+          fontSize: '12px',
           fontWeight: '900',
           color: '#3b82f6',
           fontFamily: 'monospace',
@@ -1576,7 +1562,7 @@ const activeCurrencySymbol =
           borderRadius: '999px',
           background: 'rgba(59,130,246,0.12)',
           color: '#60a5fa',
-          fontSize: '10px',
+          fontSize: '5px',
           fontWeight: '700',
           letterSpacing: '0.4px'
         }}
