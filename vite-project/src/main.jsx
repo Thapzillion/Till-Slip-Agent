@@ -8,3 +8,16 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+// === PROGRESSIVE WEB APP (PWA) SERVICE WORKER REGISTRATION ===
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('RuachAgent PWA registered successfully on scope: ', registration.scope);
+      })
+      .catch((error) => {
+        console.error('RuachAgent PWA registration failed: ', error);
+      });
+  });
+}
