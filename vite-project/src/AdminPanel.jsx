@@ -45,8 +45,6 @@ export default function AdminPanel() {
   const [isAuthSyncing, setIsAuthSyncing] = useState(false);
 
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
-
-  const [user, setUser] = useState(null);
   
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
