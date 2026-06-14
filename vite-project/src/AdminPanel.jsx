@@ -46,6 +46,10 @@ export default function AdminPanel() {
 
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
 
+  const [user, setUser] = useState(null);
+  
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
+
 
   const [settings, setSettings] = useState({
 
@@ -382,23 +386,35 @@ const styles = {
 //    in your Supabase business_settings table for upsert to work.
 // ============================================================
 
+// --- NEW STATE HOOKS REQUIRED AT TOP OF COMPONENT ---
+// const [user, setUser] = useState(null);
+// const [isCheckingSession, setIsCheckingSession] = useState(true);
+
 useEffect(() => {
   let isMounted = true;
 
   // On initial load to handle page refreshes and direct navigation when a session already exists.
   async function bootstrapSession() {
-    const {
-      data: { session }
-    } = await supabase.auth.getSession();
+    try {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
 
-    if (!session?.user) return;
-
-    setUser(session.user);
-
-    await Promise.all([
-      fetchMerchantSettings(session.user.id),
-      fetchLiveAnalytics(session.user.id)
-    ]);
+      if (session?.user && isMounted) {
+        setUser(session.user);
+        await Promise.all([
+          fetchMerchantSettings(session.user.id),
+          fetchLiveAnalytics(session.user.id)
+        ]);
+      }
+    } catch (err) {
+      console.error("Critical bootstrap session failure:", err);
+    } finally {
+      if (isMounted) {
+        // Drop the checking gate to reveal the workspace or the login screen safely
+        setIsCheckingSession(false);
+      }
+    }
   }
 
   bootstrapSession();
@@ -438,6 +454,7 @@ useEffect(() => {
         fetchMerchantSettings(session.user.id),
         fetchLiveAnalytics(session.user.id)
       ]);
+      setIsCheckingSession(false);
     } else {
       // Graceful teardown when no active session is found (Signed Out)
       setUser(null);
@@ -452,6 +469,7 @@ useEffect(() => {
       setTxCount(0);
       setTxVolume(0);
       setGraphData(Array.from({ length: 28 }).map(() => 0));
+      setIsCheckingSession(false);
     }
   });
 
@@ -529,8 +547,6 @@ async function fetchLiveAnalytics(userId) {
 
     if (bizError) throw bizError;
 
-    // Fix 3: reset analytics to zero instead of silently returning,
-    // so the UI reflects "no data yet" rather than appearing broken.
     if (!biz?.id) {
       console.warn("No business profile found — resetting analytics to zero.");
       setTxCount(0);
@@ -573,7 +589,6 @@ async function fetchLiveAnalytics(userId) {
 
       setGraphData(paddedData);
     } else {
-      // Fix 3: also reset when receipts exist but are empty
       setTxCount(0);
       setTxVolume(0);
       setGraphData(Array.from({ length: 28 }).map(() => 0));
@@ -583,9 +598,7 @@ async function fetchLiveAnalytics(userId) {
   }
 }
 
-// SECURED NATIVE CREDENTIAL LIFE-CYCLE METHOD
 async function handleAuth(type, event = null) {
-  // Prevent native browser page reload if fired from an HTML form submission
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
   }
@@ -613,8 +626,6 @@ async function handleAuth(type, event = null) {
       return;
     }
 
-    // Fix 1: use the user returned directly from authResponse —
-    // no polling loop needed; onAuthStateChange handles session hydration.
     const activeUser = authResponse.data?.user;
 
     if (!activeUser?.id) {
@@ -639,92 +650,50 @@ async function handleAuth(type, event = null) {
 async function uploadBusinessLogo(file, webhookSlug) {
   try {
     console.log('--- uploadBusinessLogo fired ---');
-    console.log('file:', file);
-    console.log('webhookSlug:', webhookSlug);
-
-    // 1. Generate a unique file name to avoid overwriting existing files
     const fileExtension = file.name.split('.').pop();
     const fileName = `public/${webhookSlug}_${Date.now()}.${fileExtension}`;
 
-    console.log('fileName to upload:', fileName);
-
-    // TEMPORARY DIAGNOSTIC — remove after testing
     const { data: bucketTest, error: bucketError } = await supabase.storage.from('logos').list();
-    console.log('Bucket reachability test — data:', bucketTest);
-    console.log('Bucket reachability test — error:', bucketError);
-
-    // 2. Upload the raw file to your Supabase Storage bucket
     const { data: storageData, error: storageError } = await supabase
       .storage
-      .from('logos') // Replace 'logos' with your actual bucket name
-      .upload(fileName, file, {
-        upsert: true // Overwrites the file if it already exists
-      });
-
-    console.log('storageData:', storageData);
-    console.log('storageError:', storageError);
+      .from('logos')
+      .upload(fileName, file, { upsert: true });
 
     if (storageError) throw storageError;
 
-    // 3. Retrieve the permanent, public URL of the uploaded image
     const { data: publicUrlData } = supabase
       .storage
       .from('logos')
       .getPublicUrl(storageData.path);
 
-    console.log('publicUrlData:', publicUrlData);
-
     const permanentUrl = publicUrlData.publicUrl;
 
-    console.log('permanentUrl:', permanentUrl);
-
-    // 4. Update the business_settings table with the permanent URL
     const { data: dbData, error: dbError } = await supabase
       .from('business_settings')
       .update({ logo_url: permanentUrl })
       .eq('webhook_slug', webhookSlug);
 
-    console.log('dbData:', dbData);
-    console.log('dbError:', dbError);
-
     if (dbError) throw dbError;
 
-    console.log('Logo updated successfully:', permanentUrl);
     return permanentUrl;
-
   } catch (error) {
     console.error('uploadBusinessLogo caught error:', error.message);
-    console.error('full error object:', error);
     return null;
   }
 }
 
-// Unified, stabilized database sync function
 async function handleSave(e) {
   if (e && typeof e.preventDefault === 'function') {
     e.preventDefault();
   }
 
-  console.log('--- handleSave fired ---');
-  console.log('isSaveSyncing at entry:', isSaveSyncing);
-
-  if (isSaveSyncing) {
-    console.warn("Sync blocked: already syncing.");
-    return;
-  }
-
+  if (isSaveSyncing) return;
   setIsSaveSyncing(true);
 
   try {
-    // Fix 4: use user already in state; only call getActiveUser() as fallback.
-    // This avoids an unnecessary async round-trip on every save.
     const activeUser = user || await getActiveUser();
 
-    console.log('activeUser resolved:', activeUser);
-    console.log('activeUser.id:', activeUser?.id);
-
     if (!activeUser?.id) {
-      console.error('BLOCKED: No active user — save aborted before reaching Supabase.');
       alert("Sync Blocked: Active authentication session required.");
       return;
     }
@@ -732,29 +701,19 @@ async function handleSave(e) {
     const cleanBusinessName = settings?.business_name?.trim() || '';
     const cleanWebhookSlug = settings?.webhook_slug?.trim() || '';
 
-    console.log('cleanBusinessName:', cleanBusinessName);
-    console.log('cleanWebhookSlug:', cleanWebhookSlug);
-
     if (!cleanBusinessName || !cleanWebhookSlug) {
-      console.error('BLOCKED: Validation failed — one or both required fields are empty.');
       alert("Validation Failed: Required parameter fields cannot be left blank.");
       return;
     }
 
-    // Resolve logo URL: if the current value is a temporary blob (picked this
-    // session but not yet uploaded), upload it now and get the permanent URL.
-    // If it's already a permanent https URL, use it as-is.
     let resolvedLogoUrl = settings?.logo_url || '';
 
     if (resolvedLogoUrl.startsWith('blob:') && pendingLogoFile) {
-      console.log('Blob URL detected — uploading logo to Supabase Storage...');
       const uploadedUrl = await uploadBusinessLogo(pendingLogoFile, cleanWebhookSlug);
       if (uploadedUrl) {
         resolvedLogoUrl = uploadedUrl;
-        setPendingLogoFile(null); // Clear the pending file after successful upload
-        console.log('Logo uploaded, permanent URL:', resolvedLogoUrl);
+        setPendingLogoFile(null);
       } else {
-        console.warn('Logo upload failed — saving without logo update.');
         resolvedLogoUrl = settings?.logo_url?.startsWith('blob:') ? '' : (settings?.logo_url || '');
       }
     }
@@ -766,44 +725,33 @@ async function handleSave(e) {
       discount_percentage: Number(settings?.discount_percentage ?? 10),
       webhook_slug: cleanWebhookSlug,
       currency: settings?.currency || 'ZAR',
-      logo_url: resolvedLogoUrl  // Always a permanent URL or empty string, never a blob
+      logo_url: resolvedLogoUrl
     };
 
     if (settings?.id) {
       payload.id = settings.id;
     }
 
-    console.log('Payload being sent to Supabase:', payload);
-
-    // Fix 5 reminder: this upsert requires owner_id to have a UNIQUE
-    // CONSTRAINT in Supabase — verify this in Table Editor if saves fail silently.
     const { data, error } = await supabase
       .from('business_settings')
       .update(payload)
       .eq('owner_id', activeUser.id)
       .select();
 
-    console.log('Supabase upsert response — data:', data);
-    console.log('Supabase upsert response — error:', error);
-
     if (error) throw error;
-
-    console.log("Business profile synced successfully.");
     alert('Live Agent Settings Synced Successfully!');
 
     if (data && data[0]) {
       setSettings(data[0]);
     }
-
   } catch (error) {
     console.error("Profile synchronization failed:", error);
     alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
-  }  {
+  } finally {
     setIsSaveSyncing(false);
   }
 }
 
-// Fallback protection array in case it is declared down inside the layout markup
 const SAFE_CURRENCY_OPTIONS = typeof CURRENCY_OPTIONS !== 'undefined' ? CURRENCY_OPTIONS : [
   { code: 'ZAR', symbol: 'R' },
   { code: 'USD', symbol: '$' },
@@ -815,6 +763,29 @@ const activeCurrencySymbol =
   SAFE_CURRENCY_OPTIONS.find(
     c => c.code === (settings?.currency || 'ZAR')
   )?.symbol || 'R';
+
+  // --- CRITICAL PERSISTENT GATE CONDITIONAL RENDER ---
+  if (isCheckingSession) {
+    return (
+      <div style={{
+        ...styles.container,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#0a0a0a',
+        color: '#ffffff',
+        fontFamily: 'monospace',
+        fontSize: '13px',
+        letterSpacing: '1px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '12px', fontSize: '24px', animation: 'pulse 1.5s infinite' }}>⚡</div>
+          SYNCHRONIZING SECURE NODE IDENTITY...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
@@ -834,7 +805,7 @@ const activeCurrencySymbol =
         </div>
       )}
 
-{/* GLOBAL MODAL 2: EMAIL CONFIRMED SUCCESS POP-UP */}
+      {/* GLOBAL MODAL 2: EMAIL CONFIRMED SUCCESS POP-UP */}
       {showSuccessModal && (
         <div style={styles.modalOverlay}>
           <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center', borderColor: '#262626' }}>
@@ -882,57 +853,13 @@ const activeCurrencySymbol =
                 flexShrink: 0
               }}
             >
-              {/* Receipt Icon */}
-              <rect
-                x="5"
-                y="10"
-                width="52"
-                height="60"
-                rx="8"
-                stroke="#FFFFFF"
-                strokeWidth="2"
-              />
-
-              {/* Receipt Lines */}
+              <rect x="5" y="10" width="52" height="60" rx="8" stroke="#FFFFFF" strokeWidth="2" />
               <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
               <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
               <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
-
-              {/* AI Scan Line */}
-              <line
-                x1="12"
-                y1="56"
-                x2="50"
-                y2="56"
-                stroke="#FFFFFF"
-                strokeWidth="3"
-              />
-
-              {/* RA Monogram */}
-              <text
-                x="72"
-                y="38"
-                fill="#FFFFFF"
-                fontSize="28"
-                fontWeight="900"
-                fontFamily="Arial, sans-serif"
-                letterSpacing="2"
-              >
-                RA
-              </text>
-
-              {/* Brand Name */}
-              <text
-                x="72"
-                y="62"
-                fill="#FFFFFF"
-                fontSize="18"
-                fontWeight="700"
-                fontFamily="Arial, sans-serif"
-                letterSpacing="3"
-              >
-                RUACHAGENT
-              </text>
+              <line x1="12" y1="56" x2="50" y2="56" stroke="#FFFFFF" strokeWidth="3" />
+              <text x="72" y="38" fill="#FFFFFF" fontSize="28" fontWeight="900" fontFamily="Arial, sans-serif" letterSpacing="2">RA</text>
+              <text x="72" y="62" fill="#FFFFFF" fontSize="18" fontWeight="700" fontFamily="Arial, sans-serif" letterSpacing="3">RUACHAGENT</text>
             </svg>
           </div>
         )}
@@ -961,7 +888,6 @@ const activeCurrencySymbol =
             </button>
           </div>
         )}
-
       </header>
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
