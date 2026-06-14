@@ -24,3 +24,12 @@ dist-ssr
 *.sw?
 
 .vercel
+
+
+# Electron Desktop Build Artifacts
+dist/
+release/
+node_modules/
+*.zip
+
+ruach-desktop-wrapper/

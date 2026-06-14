@@ -385,23 +385,23 @@ const styles = {
 useEffect(() => {
   let isMounted = true;
 
-// On intitial load to handle page refreshes and direct navigation when a session already exists.
+  // On initial load to handle page refreshes and direct navigation when a session already exists.
   async function bootstrapSession() {
-  const {
-    data: { session }
-  } = await supabase.auth.getSession();
+    const {
+      data: { session }
+    } = await supabase.auth.getSession();
 
-  if (!session?.user) return;
+    if (!session?.user) return;
 
-  setUser(session.user);
+    setUser(session.user);
 
-  await Promise.all([
-    fetchMerchantSettings(session.user.id),
-    fetchLiveAnalytics(session.user.id)
-  ]);
-}
+    await Promise.all([
+      fetchMerchantSettings(session.user.id),
+      fetchLiveAnalytics(session.user.id)
+    ]);
+  }
 
-bootstrapSession();
+  bootstrapSession();
 
   // Detect if user landed via an email confirmation redirection link
   const hash = window.location.hash;
@@ -583,7 +583,13 @@ async function fetchLiveAnalytics(userId) {
   }
 }
 
-async function handleAuth(type) {
+// SECURED NATIVE CREDENTIAL LIFE-CYCLE METHOD
+async function handleAuth(type, event = null) {
+  // Prevent native browser page reload if fired from an HTML form submission
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+
   if (!email || !password) {
     alert("Please fill in all authorization fields.");
     return;
@@ -643,9 +649,9 @@ async function uploadBusinessLogo(file, webhookSlug) {
     console.log('fileName to upload:', fileName);
 
     // TEMPORARY DIAGNOSTIC — remove after testing
-const { data: bucketTest, error: bucketError } = await supabase.storage.from('logos').list();
-console.log('Bucket reachability test — data:', bucketTest);
-console.log('Bucket reachability test — error:', bucketError);
+    const { data: bucketTest, error: bucketError } = await supabase.storage.from('logos').list();
+    console.log('Bucket reachability test — data:', bucketTest);
+    console.log('Bucket reachability test — error:', bucketError);
 
     // 2. Upload the raw file to your Supabase Storage bucket
     const { data: storageData, error: storageError } = await supabase
@@ -773,7 +779,8 @@ async function handleSave(e) {
     // CONSTRAINT in Supabase — verify this in Table Editor if saves fail silently.
     const { data, error } = await supabase
       .from('business_settings')
-      .upsert(payload, { onConflict: 'owner_id' })
+      .update(payload)
+      .eq('owner_id', activeUser.id)
       .select();
 
     console.log('Supabase upsert response — data:', data);
@@ -790,18 +797,22 @@ async function handleSave(e) {
 
   } catch (error) {
     console.error("Profile synchronization failed:", error);
-    console.error("Error code:", error?.code);
-    console.error("Error message:", error?.message);
-    console.error("Error details:", error?.details);
-    console.error("Error hint:", error?.hint);
     alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
-  } finally {
+  }  {
     setIsSaveSyncing(false);
   }
 }
 
+// Fallback protection array in case it is declared down inside the layout markup
+const SAFE_CURRENCY_OPTIONS = typeof CURRENCY_OPTIONS !== 'undefined' ? CURRENCY_OPTIONS : [
+  { code: 'ZAR', symbol: 'R' },
+  { code: 'USD', symbol: '$' },
+  { code: 'EUR', symbol: '€' },
+  { code: 'GBP', symbol: '£' }
+];
+
 const activeCurrencySymbol =
-  CURRENCY_OPTIONS.find(
+  SAFE_CURRENCY_OPTIONS.find(
     c => c.code === (settings?.currency || 'ZAR')
   )?.symbol || 'R';
 
