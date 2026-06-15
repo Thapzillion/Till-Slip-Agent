@@ -121,7 +121,7 @@ export default function ReceiptView() {
           position: 'relative',
           zIndex: 2
         }}>
-          ⚡ Live Inbox Email Till Slip Mirror
+            Your Till Slip
         </h3>
 
         {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
