@@ -7,11 +7,13 @@ export default function ReceiptView() {
   const { id } = useParams();
   const [receipt, setReceipt] = useState(null);
   const [business, setBusiness] = useState(null);
+  const [voucher, setVoucher] = useState(null); // Added state to track token relation
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchReceiptData() {
       try {
+        // 1. Pull the receipt row data
         const { data: txData, error: txError } = await supabase
           .from("receipts")
           .select("*")
@@ -21,6 +23,7 @@ export default function ReceiptView() {
         if (txError || !txData) throw new Error("Receipt not found");
         setReceipt(txData);
 
+        // 2. Fetch business setting properties
         const { data: bizData, error: bizError } = await supabase
           .from("business_settings")
           .select("*")
@@ -29,10 +32,23 @@ export default function ReceiptView() {
 
         if (bizError || !bizData) throw new Error("Merchant configuration missing");
         setBusiness(bizData);
+
+        // 3. SECURE CONNECTION TRACE: Pull the pre-generated unique loyalty token node
+        const { data: voucherData, error: voucherError } = await supabase
+          .from("loyalty_vouchers")
+          .select("*")
+          .eq("receipt_id", txData.id)
+          .single();
+
+        // If no voucher exists yet for this older receipt, we handle gracefully or use fallback
+        if (!voucherError && voucherData) {
+          setVoucher(voucherData);
+        }
+
       } catch (err) {
         console.error(err.message);
       } finally {
-        loading(false);
+        setLoading(false); // FIXED typo: you wrote loading(false) instead of setLoading(false)
       }
     }
     fetchReceiptData();
@@ -53,11 +69,14 @@ export default function ReceiptView() {
   if (loading) return <div style={{ color: "#9ca3af", padding: "40px", textAlign: "center" }}>Reassembling encrypted tax payload...</div>;
   if (!receipt || !business) return <div style={{ color: "#ef4444", padding: "40px", textAlign: "center" }}>Invoice Node Invalid.</div>;
 
-  // Resolve dynamic currency notation (extract symbol or fallback to native config)
   const activeCurrencySymbol = business.currency === "ZAR" ? "R" : business.currency === "USD" ? "$" : (business.currency || "R");
 
-  const rewardCode = `FTC${business.discount_percentage}SAVE`;
-  const checkoutPayloadLink = `https://till-slip-agent.vercel.app/redeem?code=${rewardCode}&merchant=${business.webhook_slug}`;
+  // ─── SECURITY RECONCILIATION LAYER ───
+  // Fallback to receipt ID if the backend token node hasn't synchronized table slots completely yet
+  const referenceToken = voucher ? voucher.voucher_token : id;
+  
+  // Point the QR payload link exactly to your new RedeemView component endpoint parameter framework
+  const checkoutPayloadLink = `https://till-slip-agent.vercel.app/redeem?token=${referenceToken}&ticketId=${id}&email=${encodeURIComponent(receipt.customer_email || '')}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkoutPayloadLink)}&color=11161d&bgcolor=fff`;
 
   return (
@@ -162,7 +181,7 @@ export default function ReceiptView() {
             {/* TOP METADATA ROW */}
             <div style={{
               display: 'flex',
-              justify: 'space-between',
+              justifyContent: 'space-between',
               alignItems: 'flex-start',
               fontSize: '10px',
               color: '#64748b',
@@ -272,7 +291,7 @@ export default function ReceiptView() {
 
               <div style={{
                 fontSize: '11px',
-                color: 'rgba(220,255,250,0.5)',
+                color: 'rgba(220,255,220,0.5)',
                 marginTop: '6px',
                 fontFamily: 'system-ui, sans-serif'
               }}>
@@ -310,7 +329,7 @@ export default function ReceiptView() {
               {Array.isArray(receipt.items) ? receipt.items.map((item, idx) => (
                 <div key={idx} style={{
                   display: 'flex',
-                  justify: 'space-between',
+                  justifyContent: 'space-between',
                   marginBottom: '4px',
                   padding: '8px 0',
                   borderBottom: '1px dashed rgba(255,255,255,0.08)'
@@ -328,7 +347,7 @@ export default function ReceiptView() {
               )) : (
                 <div style={{
                   display: 'flex',
-                  justify: 'space-between',
+                  justifyContent: 'space-between',
                   marginBottom: '4px',
                   padding: '8px 0',
                   borderBottom: '1px dashed rgba(255,255,255,0.08)'
@@ -348,7 +367,7 @@ export default function ReceiptView() {
               {/* TOTAL DUE ROW */}
               <div style={{
                 display: 'flex',
-                justify: 'space-between',
+                justifyContent: 'space-between',
                 marginTop: '14px',
                 padding: '16px',
                 borderRadius: '16px',
@@ -399,7 +418,7 @@ export default function ReceiptView() {
                 fontWeight: '900',
                 display: 'flex',
                 alignItems: 'center',
-                justify: 'center',
+                justifyContent: 'center',
                 gap: '6px',
                 marginBottom: '6px',
                 letterSpacing: '1px',

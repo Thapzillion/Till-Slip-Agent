@@ -394,12 +394,14 @@ useEffect(() => {
   // On initial load to handle page refreshes and direct navigation when a session already exists.
   async function bootstrapSession() {
     try {
+      setIsCheckingSession(true);
       const {
         data: { session }
       } = await supabase.auth.getSession();
 
       if (session?.user && isMounted) {
         setUser(session.user);
+        // Safely pull configuration and live analytics in parallel
         await Promise.all([
           fetchMerchantSettings(session.user.id),
           fetchLiveAnalytics(session.user.id)
@@ -442,32 +444,40 @@ useEffect(() => {
 
     console.log(`Supabase Auth Event Triggered: [${event}]`);
 
-    if (session?.user) {
-      // Set user profile in state first
-      setUser(session.user);
-      setShowVerifyModal(false);
-      
-      // Execute non-blocking data fetching securely with verified session ID
-      await Promise.all([
-        fetchMerchantSettings(session.user.id),
-        fetchLiveAnalytics(session.user.id)
-      ]);
-      setIsCheckingSession(false);
-    } else {
-      // Graceful teardown when no active session is found (Signed Out)
-      setUser(null);
-      setSettings({
-        business_name: '',
-        store_address: '',
-        discount_percentage: 10,
-        webhook_slug: '',
-        currency: 'ZAR',
-        logo_url: ''
-      });
-      setTxCount(0);
-      setTxVolume(0);
-      setGraphData(Array.from({ length: 28 }).map(() => 0));
-      setIsCheckingSession(false);
+    try {
+      if (session?.user) {
+        // Set user profile in state first
+        setUser(session.user);
+        setShowVerifyModal(false);
+        
+        // Execute non-blocking data fetching securely with verified session ID
+        await Promise.all([
+          fetchMerchantSettings(session.user.id),
+          fetchLiveAnalytics(session.user.id)
+        ]);
+      } else {
+        // Graceful teardown when no active session is found (Signed Out)
+        setUser(null);
+        setSettings({
+          business_name: '',
+          store_address: '',
+          discount_percentage: 10,
+          webhook_slug: '',
+          currency: 'ZAR',
+          logo_url: ''
+        });
+        setTxCount(0);
+        setTxVolume(0);
+        setGraphData(Array.from({ length: 28 }).map(() => 0));
+      }
+    } catch (err) {
+      console.error("Auth state mutation engine caught failure:", err);
+    } finally {
+      // ─── THE ANTI-LOCK SAFETY GATEWAY ───
+      // Guarantees the loading screen drops on ANY change event, even if settings query is completely blank
+      if (isMounted) {
+        setIsCheckingSession(false);
+      }
     }
   });
 
@@ -480,7 +490,6 @@ useEffect(() => {
 async function fetchMerchantSettings(userId) {
   if (!userId) return;
   try {
-
     console.log("FETCH SETTINGS START");
     console.log("userId:", userId);
 
@@ -488,12 +497,13 @@ async function fetchMerchantSettings(userId) {
       .from('business_settings')
       .select('*')
       .eq('owner_id', userId)
-      .maybeSingle();
+      .maybeSingle(); // Gracefully returns null instead of throwing an error when no setup data exists yet
 
     console.log("SETTINGS DATA:", data);
     console.log("SETTINGS ERROR:", error);
 
     if (error) throw error;
+    
     if (data) {
       setSettings({
         id: data.id,
@@ -504,6 +514,16 @@ async function fetchMerchantSettings(userId) {
         webhook_slug: data.webhook_slug || '',
         currency: data.currency || 'ZAR',
         logo_url: data.logo_url || ''
+      });
+    } else {
+      // Fallback fallback: Keep default template values active so the initial registration form UI loads perfectly
+      setSettings({
+        business_name: '',
+        store_address: '',
+        discount_percentage: 10,
+        webhook_slug: '',
+        currency: 'ZAR',
+        logo_url: ''
       });
     }
   } catch (error) {
@@ -762,28 +782,28 @@ const activeCurrencySymbol =
     c => c.code === (settings?.currency || 'ZAR')
   )?.symbol || 'R';
 
-  // --- CRITICAL PERSISTENT GATE CONDITIONAL RENDER ---
-  if (isCheckingSession) {
-    return (
-      <div style={{
-        ...styles.container,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#0a0a0a',
-        color: '#ffffff',
-        fontFamily: 'monospace',
-        fontSize: '13px',
-        letterSpacing: '1px'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ marginBottom: '12px', fontSize: '24px', animation: 'pulse 1.5s infinite' }}>⚡</div>
-          SYNCHRONIZING SECURE NODE IDENTITY...
-        </div>
+// --- CRITICAL PERSISTENT GATE CONDITIONAL RENDER ---
+if (isCheckingSession) {
+  return (
+    <div style={{
+      ...styles.container,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      backgroundColor: '#0a0a0a',
+      color: '#ffffff',
+      fontFamily: 'monospace',
+      fontSize: '13px',
+      letterSpacing: '1px'
+    }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ marginBottom: '12px', fontSize: '24px', animation: 'pulse 1.5s infinite' }}>⚡</div>
+        SYNCHRONIZING SECURE NODE IDENTITY...
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
