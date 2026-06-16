@@ -391,7 +391,8 @@ const styles = {
 useEffect(() => {
   let isMounted = true;
 
-  // On initial load to handle page refreshes and direct navigation when a session already exists.
+  // ─── FIX 1: REMOVE CONCURRENT DATA LOADING FROM BOOTSTRAP ───
+  // On initial load to handle page refreshes and direct navigation safely.
   async function bootstrapSession() {
     try {
       setIsCheckingSession(true);
@@ -401,11 +402,8 @@ useEffect(() => {
 
       if (session?.user && isMounted) {
         setUser(session.user);
-        // Safely pull configuration and live analytics in parallel
-        await Promise.all([
-          fetchMerchantSettings(session.user.id),
-          fetchLiveAnalytics(session.user.id)
-        ]);
+        // We do NOT fetch settings or analytics here anymore. 
+        // Let the onAuthStateChange listener manage data fetching cleanly.
       }
     } catch (err) {
       console.error("Critical bootstrap session failure:", err);
@@ -450,11 +448,18 @@ useEffect(() => {
         setUser(session.user);
         setShowVerifyModal(false);
         
-        // Execute non-blocking data fetching securely with verified session ID
-        await Promise.all([
-          fetchMerchantSettings(session.user.id),
-          fetchLiveAnalytics(session.user.id)
-        ]);
+        // ─── FIX 3: SHOW ADMIN PANEL IMMEDIATELY & STREAM DATA IN BACKGROUND ───
+        // Drop the loading gate instantly. Do not await network queries before rendering the dashboard UI.
+        setIsCheckingSession(false);
+        
+        fetchMerchantSettings(session.user.id).catch(err => 
+          console.error("Asynchronous settings load background failure:", err)
+        );
+        
+        fetchLiveAnalytics(session.user.id).catch(err => 
+          console.error("Asynchronous analytics load background failure:", err)
+        );
+
       } else {
         // Graceful teardown when no active session is found (Signed Out)
         setUser(null);
@@ -469,12 +474,10 @@ useEffect(() => {
         setTxCount(0);
         setTxVolume(0);
         setGraphData(Array.from({ length: 28 }).map(() => 0));
+        setIsCheckingSession(false);
       }
     } catch (err) {
       console.error("Auth state mutation engine caught failure:", err);
-    } finally {
-      // ─── THE ANTI-LOCK SAFETY GATEWAY ───
-      // Guarantees the loading screen drops on ANY change event, even if settings query is completely blank
       if (isMounted) {
         setIsCheckingSession(false);
       }
@@ -490,15 +493,26 @@ useEffect(() => {
 async function fetchMerchantSettings(userId) {
   if (!userId) return;
   try {
+    // ─── DIAGNOSTIC DRILLDOWN LOGS ───
     console.log("FETCH SETTINGS START");
     console.log("userId:", userId);
+    console.log("QUERY START");
 
-    const { data, error } = await supabase
+    // ─── FIX 2: IMPLEMENT 10-SECOND FAILSAFE TIMEOUT ───
+    const timeout = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Settings timeout")), 10000)
+    );
+
+    const query = supabase
       .from('business_settings')
       .select('*')
       .eq('owner_id', userId)
-      .maybeSingle(); // Gracefully returns null instead of throwing an error when no setup data exists yet
+      .maybeSingle();
 
+    // Race the active query against our 10-second rejection timer
+    const { data, error } = await Promise.race([query, timeout]);
+
+    console.log("QUERY END");
     console.log("SETTINGS DATA:", data);
     console.log("SETTINGS ERROR:", error);
 
@@ -516,7 +530,6 @@ async function fetchMerchantSettings(userId) {
         logo_url: data.logo_url || ''
       });
     } else {
-      // Fallback fallback: Keep default template values active so the initial registration form UI loads perfectly
       setSettings({
         business_name: '',
         store_address: '',
@@ -528,6 +541,15 @@ async function fetchMerchantSettings(userId) {
     }
   } catch (error) {
     console.error("Profile load failure:", error.message);
+    // If a timeout or error happens, clear settings to standard defaults so the form still works
+    setSettings({
+      business_name: '',
+      store_address: '',
+      discount_percentage: 10,
+      webhook_slug: '',
+      currency: 'ZAR',
+      logo_url: ''
+    });
   }
 }
 
@@ -750,10 +772,11 @@ async function handleSave(e) {
       payload.id = settings.id;
     }
 
+    // ─── FIX 4: UPSERT SWITCH OVER REGULAR UPDATE ───
+    // Using upsert handles row registration safely whether it's a first time submission or modification profile write.
     const { data, error } = await supabase
       .from('business_settings')
-      .update(payload)
-      .eq('owner_id', activeUser.id)
+      .upsert(payload, { onConflict: 'owner_id' })
       .select();
 
     if (error) throw error;
