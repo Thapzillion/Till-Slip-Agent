@@ -1118,6 +1118,27 @@ if (isCheckingSession) {
         />
       </div>
 
+      {/* VOUCHER EXPIRATION POLICY (DAYS) */}
+      <div>
+        <label htmlFor="voucher-expiry-days" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
+          VOUCHER EXPIRATION POLICY (DAYS)
+        </label>
+        <input
+          id="voucher-expiry-days"
+          name="voucher_expiry_days"
+          type="number"
+          autoComplete="off"
+          placeholder="e.g., 7"
+          min="1"
+          value={settings?.voucher_expiry_days ?? 7}
+          onChange={(e) => {
+            const val = parseInt(e.target.value) || 0;
+            setSettings(prev => ({ ...prev, voucher_expiry_days: val }));
+          }}
+          style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+        />
+      </div>
+
       {/* TRIGGER LIVE HANDSHAKE SYNC */}
       <button
         type="button"
@@ -1787,6 +1808,20 @@ if (isCheckingSession) {
                           {settings?.discount_percentage ?? 10}% discount
                         </strong>{' '}
                         balance.
+                      </div>
+
+                      {/* EXPIRED IN POLICY NOTIFICATION MIRROR */}
+                      <div style={{
+                        fontSize: '10px',
+                        color: '#64748b',
+                        marginTop: '10px',
+                        paddingTop: '8px',
+                        borderTop: '1px dashed rgba(255,255,255,0.08)',
+                        fontFamily: '"Courier New", monospace',
+                        fontWeight: 'bold',
+                        letterSpacing: '0.5px'
+                      }}>
+                        EXPIRES IN: <span style={{ color: '#ef4444' }}>{settings?.voucher_expiry_days ?? 7} DAYS</span> FROM PRINT
                       </div>
                     </div>
 

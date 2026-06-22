@@ -9,6 +9,10 @@ export default function ReceiptView() {
   const [business, setBusiness] = useState(null);
   const [voucher, setVoucher] = useState(null); // Added state to track token relation
   const [loading, setLoading] = useState(true);
+  
+  // LIVE EXPIRATION STATE TRACKING NODES
+  const [isExpired, setIsExpired] = useState(false);
+  const [daysRemaining, setDaysRemaining] = useState(0);
 
   useEffect(() => {
     async function fetchReceiptData() {
@@ -43,6 +47,22 @@ export default function ReceiptView() {
         // If no voucher exists yet for this older receipt, we handle gracefully or use fallback
         if (!voucherError && voucherData) {
           setVoucher(voucherData);
+
+          // LIVE REAL-TIME EXPIRATION EVALUATION ENGINE (DYNAMIC DB DRIVEN)
+          const expirationDays = bizData.voucher_expiration_days || 30;
+          const createdTime = new Date(voucherData.created_at).getTime();
+          const expirationTime = createdTime + expirationDays * 24 * 60 * 60 * 1000;
+          const currentTime = new Date().getTime();
+
+          if (currentTime >= expirationTime) {
+            setIsExpired(true);
+            setDaysRemaining(0);
+          } else {
+            setIsExpired(false);
+            const msLeft = expirationTime - currentTime;
+            const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+            setDaysRemaining(daysLeft);
+          }
         }
 
       } catch (err) {
@@ -295,7 +315,7 @@ export default function ReceiptView() {
                 marginTop: '6px',
                 fontFamily: 'system-ui, sans-serif'
               }}>
-                {receipt.customer_email || 'info@merchantnode.com'}
+                {receipt.customer_email}
               </div>
             </div>
 
@@ -388,10 +408,10 @@ export default function ReceiptView() {
               </div>
             </div>
 
-            {/* VOUCHER SECTION BOX */}
+            {/* VOUCHER SECTION BOX WITH LIVE CONDITIONAL EXPIRED STATES */}
             <div style={{
-              background: 'rgba(10, 20, 28, 0.6)',
-              border: '1px solid rgba(0,255,200,0.15)',
+              background: isExpired ? 'rgba(239, 68, 68, 0.05)' : 'rgba(10, 20, 28, 0.6)',
+              border: isExpired ? '1px solid rgba(239, 68, 68, 0.35)' : '1px solid rgba(0,255,200,0.15)',
               borderRadius: '22px',
               padding: '12px',
               textAlign: 'center',
@@ -401,7 +421,7 @@ export default function ReceiptView() {
               boxShadow: '0 12px 30px rgba(0,0,0,0.25)'
             }}>
 
-              {/* INNER GLOW */}
+              {/* INNER GLOW CHANGE BASED ON VALIDITY STATUS */}
               <div style={{
                 position: 'absolute',
                 top: '-40px',
@@ -409,12 +429,14 @@ export default function ReceiptView() {
                 width: '120px',
                 height: '120px',
                 borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(0,255,200,0.12), transparent 70%)'
+                background: isExpired 
+                  ? 'radial-gradient(circle, rgba(239,68,68,0.15), transparent 70%)' 
+                  : 'radial-gradient(circle, rgba(0,255,200,0.12), transparent 70%)'
               }} />
 
               <span style={{
                 fontSize: '9px',
-                color: '#00ffd5',
+                color: isExpired ? '#ef4444' : '#00ffd5',
                 fontWeight: '900',
                 display: 'flex',
                 alignItems: 'center',
@@ -424,55 +446,77 @@ export default function ReceiptView() {
                 letterSpacing: '1px',
                 textTransform: 'uppercase'
               }}>
-                ⚡ Next Visit Voucher Code Inside
+                {isExpired ? '⚠️ VOUCHER NODE EXPIRED' : '⚡ Next Visit Voucher Code Inside'}
               </span>
 
-              <div style={{
-                display: 'inline-block',
-                padding: '12px',
-                background: '#ffffff',
-                borderRadius: '18px',
-                border: '1px solid rgba(0,255,200,0.15)',
-                boxShadow: `
-                  0 12px 25px rgba(0,0,0,0.35),
-                  0 0 20px rgba(0,255,200,0.15)
-                `,
-                marginBottom: '5px'
-              }}>
-                <img
-                  src={qrCodeUrl}
-                  alt="Voucher Token QR"
-                  style={{
-                    width: '80px',
-                    height: '80px',
-                    display: 'block'
-                  }}
-                />
-              </div>
+              {/* QR Code Container hides elements or transforms to flat placeholder variant if expired */}
+              {!isExpired ? (
+                <div style={{
+                  display: 'inline-block',
+                  padding: '12px',
+                  background: '#ffffff',
+                  borderRadius: '18px',
+                  border: '1px solid rgba(0,255,200,0.15)',
+                  boxShadow: '0 12px 25px rgba(0,0,0,0.35), 0 0 20px rgba(0,255,200,0.15)',
+                  marginBottom: '5px'
+                }}>
+                  <img
+                    src={qrCodeUrl}
+                    alt="Voucher Token QR"
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      display: 'block'
+                    }}
+                  />
+                </div>
+              ) : (
+                <div style={{
+                  display: 'inline-block',
+                  padding: '16px 20px',
+                  background: 'rgba(239, 68, 68, 0.1)',
+                  borderRadius: '14px',
+                  border: '1px dashed rgba(239, 68, 68, 0.4)',
+                  color: '#ef4444',
+                  fontSize: '12px',
+                  fontWeight: '900',
+                  letterSpacing: '2px',
+                  marginBottom: '8px',
+                  marginTop: '4px'
+                }}>
+                  EXPIRED
+                </div>
+              )}
 
               <div style={{
                 fontSize: '9px',
-                color: 'rgba(255,255,255,0.9)',
+                color: isExpired ? '#94a3b8' : 'rgba(255,255,255,0.9)',
                 textTransform: 'uppercase',
                 letterSpacing: '1px',
                 fontWeight: '900',
                 marginBottom: '4px'
               }}>
-                Claim Discount
+                {isExpired ? 'ACCESS CLOSED' : 'Claim Discount'}
               </div>
 
               <div style={{
                 fontSize: '11px',
-                color: 'rgba(220,255,250,0.7)',
+                color: isExpired ? '#94a3b8' : 'rgba(220,255,220,0.7)',
                 lineHeight: '1.6',
                 fontFamily: 'system-ui, -apple-system, sans-serif',
                 padding: '0 6px'
               }}>
-                Scan to instantly claim your{' '}
-                <strong style={{ color: '#00ffd5', fontWeight: '900' }}>
-                  {business?.discount_percentage ?? 10}% discount
-                </strong>{' '}
-                balance.
+                {isExpired ? (
+                  <span>This voucher window has closed ({business?.voucher_expiration_days || 30} days authorization cycle exceeded).</span>
+                ) : (
+                  <span>
+                    Scan to instantly claim your{' '}
+                    <strong style={{ color: '#00ffd5', fontWeight: '900' }}>
+                      {business?.discount_percentage ?? 10}% discount
+                    </strong>{' '}
+                    balance. <span style={{ color: '#00b8ff', display: 'block', fontSize: '9px', marginTop: '2px' }}>({daysRemaining} days left)</span>
+                  </span>
+                )}
               </div>
             </div>
 

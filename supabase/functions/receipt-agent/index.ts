@@ -23,9 +23,10 @@ serve(async (req: Request) => {
     );
 
     /* ==========================================================================
-       🛡️ PATHWAY B: REDEEMVIEW TOKEN VERIFICATION & SINGLE-USE LOCKDOWN
+        🛡️ PATHWAY B: REDEEMVIEW TOKEN VERIFICATION & SINGLE-USE LOCKDOWN
        ========================================================================== */
-    if (path.includes("/verify") || req.method === "POST" && !url.searchParams.get("slug")) {
+    // FIX: Explicitly check for the /verify path string to isolate execution threads cleanly
+    if (path.endsWith("/verify")) {
       const { voucherToken, customerEmail } = await req.json();
 
       if (!voucherToken) {
@@ -95,9 +96,16 @@ serve(async (req: Request) => {
     }
 
     /* ==========================================================================
-       📬 PATHWAY A: INCOMING HOOK TRANSACTION INGESTION (ORIGINAL LOGIC)
+        📬 PATHWAY A: INCOMING HOOK TRANSACTION INGESTION
        ========================================================================== */
     const slug = url.searchParams.get("slug"); 
+    if (!slug) {
+      return new Response(JSON.stringify({ error: "Routing parameter exception: Missing merchant webhook identification identifier." }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+      });
+    }
+
     const { customer_email, items, total_amount } = await req.json();
 
     const { data: settings, error: settingsError } = await supabase
@@ -181,13 +189,13 @@ serve(async (req: Request) => {
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), {
       status: 400,
-      headers: { "Access-Control-Allow-Origin": "*" }
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
     });
   }
 });
 
 /* ==========================================================================
-   🔧 UTILITY INTEGRATION SUB-ROUTINES (SHOPIFY & WOOCOMMERCE)
+    🔧 UTILITY INTEGRATION SUB-ROUTINES (SHOPIFY & WOOCOMMERCE)
    ========================================================================== */
 async function createShopifyCoupon(settings: any, code: string, value: number) {
   if (!settings.shopify_store_domain || !settings.shopify_access_token) return;
