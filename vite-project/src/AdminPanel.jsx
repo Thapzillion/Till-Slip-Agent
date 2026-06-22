@@ -469,7 +469,8 @@ useEffect(() => {
           discount_percentage: 10,
           webhook_slug: '',
           currency: 'ZAR',
-          logo_url: ''
+          logo_url: '',
+          voucher_expiration_days: 30 // Added column fallback tracking
         });
         setTxCount(0);
         setTxVolume(0);
@@ -527,7 +528,8 @@ async function fetchMerchantSettings(userId) {
         discount_percentage: data.discount_percentage ?? 10,
         webhook_slug: data.webhook_slug || '',
         currency: data.currency || 'ZAR',
-        logo_url: data.logo_url || ''
+        logo_url: data.logo_url || '',
+        voucher_expiration_days: data.voucher_expiration_days ?? 30 // Synced database value downstream
       });
     } else {
       setSettings({
@@ -536,7 +538,8 @@ async function fetchMerchantSettings(userId) {
         discount_percentage: 10,
         webhook_slug: '',
         currency: 'ZAR',
-        logo_url: ''
+        logo_url: '',
+        voucher_expiration_days: 30 // Default standard fallback configuration slot
       });
     }
   } catch (error) {
@@ -548,7 +551,8 @@ async function fetchMerchantSettings(userId) {
       discount_percentage: 10,
       webhook_slug: '',
       currency: 'ZAR',
-      logo_url: ''
+      logo_url: '',
+      voucher_expiration_days: 30 // Clear condition alignment sync
     });
   }
 }
@@ -765,7 +769,8 @@ async function handleSave(e) {
       discount_percentage: Number(settings?.discount_percentage ?? 10),
       webhook_slug: cleanWebhookSlug,
       currency: settings?.currency || 'ZAR',
-      logo_url: resolvedLogoUrl
+      logo_url: resolvedLogoUrl,
+      voucher_expiration_days: Number(settings?.voucher_expiration_days ?? 30) // Appended database column value to save payload
     };
 
     if (settings?.id) {
@@ -1119,25 +1124,25 @@ if (isCheckingSession) {
       </div>
 
       {/* VOUCHER EXPIRATION POLICY (DAYS) */}
-      <div>
-        <label htmlFor="voucher-expiry-days" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-          VOUCHER EXPIRATION POLICY (DAYS)
-        </label>
-        <input
-          id="voucher-expiry-days"
-          name="voucher_expiry_days"
-          type="number"
-          autoComplete="off"
-          placeholder="e.g., 7"
-          min="1"
-          value={settings?.voucher_expiry_days ?? 7}
-          onChange={(e) => {
-            const val = parseInt(e.target.value) || 0;
-            setSettings(prev => ({ ...prev, voucher_expiry_days: val }));
-          }}
-          style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-        />
-      </div>
+<div>
+  <label htmlFor="voucher-expiry-days" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
+    VOUCHER EXPIRATION POLICY (DAYS)
+  </label>
+  <input
+    id="voucher-expiry-days"
+    name="voucher_expiration_days" // Linked to DB column name
+    type="number"
+    autoComplete="off"
+    placeholder="e.g., 30"
+    min="1"
+    value={settings?.voucher_expiration_days ?? 30} // Reading right key with fallback to 30 matching your DB default
+    onChange={(e) => {
+      const val = parseInt(e.target.value) || 0;
+      setSettings(prev => ({ ...prev, voucher_expiration_days: val })); // Syncing right key to state
+    }}
+    style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
+  />
+</div>
 
       {/* TRIGGER LIVE HANDSHAKE SYNC */}
       <button
@@ -1821,7 +1826,7 @@ if (isCheckingSession) {
                         fontWeight: 'bold',
                         letterSpacing: '0.5px'
                       }}>
-                        EXPIRES IN: <span style={{ color: '#ef4444' }}>{settings?.voucher_expiry_days ?? 7} DAYS</span> FROM PRINT
+                        EXPIRES IN: <span style={{ color: '#ef4444' }}>{settings?.voucher_expiration_days ?? 30} DAYS</span> FROM PRINT
                       </div>
                     </div>
 
