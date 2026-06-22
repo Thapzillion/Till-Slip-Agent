@@ -61,6 +61,22 @@ serve(async (req: Request) => {
         });
       }
 
+      // ─── NEW: CRITICAL TIME-BASED EXPIRATION POLICY CHECKER ───
+      const settings = voucher.business_settings;
+      const expirationDays = settings?.voucher_expiration_days ?? 30; 
+      const voucherCreatedTime = new Date(voucher.created_at).getTime();
+      const currentServerTime = new Date().getTime();
+      const expirationWindowLimit = expirationDays * 24 * 60 * 60 * 1000;
+
+      if (currentServerTime - voucherCreatedTime > expirationWindowLimit) {
+        return new Response(JSON.stringify({ 
+          error: `Security Exception: This voucher link timeline has expired. Authorized ${expirationDays}-day redemption period exceeded.` 
+        }), {
+          status: 410, // HTTP 410 Gone matches your client error screen expectations
+          headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
+        });
+      }
+
       // 3. ATOMIC STATE MUTATION LOCK: Mark as used immediately BEFORE processing external requests
       const { error: updateError } = await supabase
         .from('loyalty_vouchers')
@@ -70,7 +86,6 @@ serve(async (req: Request) => {
       if (updateError) throw new Error("Database concurrency lock failure. Try again.");
 
       // 4. PLATFORM SUITE ROUTING ENGINE
-      const settings = voucher.business_settings;
       const storePlatform = settings.platform_type?.toLowerCase() || "custom_supabase";
       const discountValue = voucher.discount_value || 10;
       
