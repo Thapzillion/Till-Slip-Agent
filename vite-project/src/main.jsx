@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')).render(
 // === PROGRESSIVE WEB APP (PWA) SERVICE WORKER REGISTRATION ===
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('/service-worker.js') // <-- Updated from /sw.js to match file name
       .then((registration) => {
         console.log('RuachAgent PWA registered successfully on scope: ', registration.scope);
       })
