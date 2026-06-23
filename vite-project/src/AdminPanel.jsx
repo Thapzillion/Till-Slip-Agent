@@ -1553,7 +1553,7 @@ if (isCheckingSession) {
                           textTransform: 'uppercase',
                           letterSpacing: '0.5px'
                         }}>
-                          Transaction
+                        
                         </div>
 
                         <div style={{
