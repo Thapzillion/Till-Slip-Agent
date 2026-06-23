@@ -48,6 +48,8 @@ export default function AdminPanel() {
   
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
+  const [receipt, setReceipt] = useState(null);
+
 
   // --- COMPONENT RENDER-STATE ALIGNMENT LAYER ---
   const activeInboxesCount = user ? 1 : 0; // Tracks the primary active synchronized node
@@ -1569,8 +1571,8 @@ if (isCheckingSession) {
 
   {/* FIX: Renders the dynamic real-time date if available, otherwise defaults gracefully */}
   <div>
-    {receipt?.created_at ? (
-      new Date(receipt.created_at).toLocaleDateString('en-GB', {
+    {settings?.created_at ? (
+      new Date(settings.created_at).toLocaleDateString('en-GB', {
         day: '2-digit',
         month: 'short',
         year: '2-digit',
