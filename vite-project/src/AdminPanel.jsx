@@ -49,6 +49,13 @@ export default function AdminPanel() {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
 
+  // --- COMPONENT RENDER-STATE ALIGNMENT LAYER ---
+  const activeInboxesCount = user ? 1 : 0; // Tracks the primary active synchronized node
+  const totalParsedCount = txCount;       // Maps your optimized total count directly to your UI
+  const inboxGraphData = graphData;       // Routes your 28-day database matrix cleanly to the graph bars
+  const selectedDateRangeLabel = "PAST_28_DAYS"; // Synced to our server-side SQL aggregation constraint limit
+
+
   const [settings, setSettings] = useState({
 
     business_name: '',
@@ -583,6 +590,7 @@ async function fetchLiveAnalytics(userId) {
       return;
     }
 
+    // 1. Fetch the lightweight business ID link
     const { data: biz, error: bizError } = await supabase
       .from('business_settings')
       .select('id')
@@ -599,39 +607,42 @@ async function fetchLiveAnalytics(userId) {
       return;
     }
 
-    const { data: receipts, error: receiptsError } = await supabase
-      .from('receipts')
-      .select('total_amount, created_at')
-      .eq('business_id', biz.id)
-      .order('created_at', { ascending: true });
+    // 2. Execute server-side aggregation matrix via RPC
+    const { data: analytics, error: rpcError } = await supabase
+      .rpc('get_merchant_analytics', { target_business_id: biz.id });
 
-    if (receiptsError) throw receiptsError;
+    if (rpcError) throw rpcError;
 
-    if (receipts && receipts.length > 0) {
-      const totalVol = receipts.reduce(
-        (sum, rx) => sum + (Number(rx.total_amount) || 0),
-        0
-      );
+    if (analytics && analytics.length > 0) {
+      const stats = analytics[0];
+      const count = Number(stats.total_count) || 0;
+      const volume = Number(stats.total_volume) || 0;
+      const rawPoints = stats.graph_points || [];
 
-      setTxCount(receipts.length);
-      setTxVolume(totalVol);
+      setTxCount(count);
+      setTxVolume(volume);
 
-      const maxTx = Math.max(
-        ...receipts.map(r => Number(r.total_amount) || 1),
-        1
-      );
+      // 3. Scale and clean the graph points array securely for your layout viewport
+      if (rawPoints.length > 0) {
+        // Reverse because SQL gathered them via DESC order for the LIMIT constraint
+        const chronologicalPoints = [...rawPoints].reverse();
+        const maxTx = Math.max(...chronologicalPoints.map(v => Number(v) || 1), 1);
 
-      const historicalPrices = receipts.map(rx => {
-        const rawAmount = Number(rx.total_amount) || 0;
-        return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
-      });
+        const historicalPrices = chronologicalPoints.map(val => {
+          const rawAmount = Number(val) || 0;
+          return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
+        });
 
-      const paddedData = Array(28)
-        .fill(0)
-        .concat(historicalPrices)
-        .slice(-28);
+        // Maintain strict 28-point layout bounds padding
+        const paddedData = Array(28)
+          .fill(0)
+          .concat(historicalPrices)
+          .slice(-28);
 
-      setGraphData(paddedData);
+        setGraphData(paddedData);
+      } else {
+        setGraphData(Array.from({ length: 28 }).map(() => 0));
+      }
     } else {
       setTxCount(0);
       setTxVolume(0);
@@ -712,13 +723,7 @@ async function uploadBusinessLogo(file, webhookSlug) {
 
     const permanentUrl = publicUrlData.publicUrl;
 
-    const { data: dbData, error: dbError } = await supabase
-      .from('business_settings')
-      .update({ logo_url: permanentUrl })
-      .eq('webhook_slug', webhookSlug);
-
-    if (dbError) throw dbError;
-
+    // Database write successfully removed from here to eliminate the race condition.
     return permanentUrl;
   } catch (error) {
     console.error('uploadBusinessLogo caught error:', error.message);
@@ -777,8 +782,8 @@ async function handleSave(e) {
       payload.id = settings.id;
     }
 
-    // ─── FIX 4: UPSERT SWITCH OVER REGULAR UPDATE ───
-    // Using upsert handles row registration safely whether it's a first time submission or modification profile write.
+    // ─── ATOMIC UPSERT INTEGRATION ───
+    // This saves all changes simultaneously, writing the fresh logo_url alongside everything else safely
     const { data, error } = await supabase
       .from('business_settings')
       .upsert(payload, { onConflict: 'owner_id' })
@@ -1549,7 +1554,45 @@ if (isCheckingSession) {
                           Transaction
                         </div>
 
-                        <div>21. Jan 21 19:43:36</div>
+                        <div style={{
+  textAlign: 'right',
+  lineHeight: '1.5'
+}}>
+  <div style={{
+    fontWeight: '900',
+    color: '#c5ccda',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
+  }}>
+    Transaction
+  </div>
+
+  {/* FIX: Renders the dynamic real-time date if available, otherwise defaults gracefully */}
+  <div>
+    {receipt?.created_at ? (
+      new Date(receipt.created_at).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(/,/g, '') // Removes commas to match your premium look cleanly
+    ) : (
+      // Clean fallback using the exact current time if no record row is selected in preview mode
+      new Date().toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(/,/g, '')
+    )}
+  </div>
+</div>
                       </div>
                     </div>
 
