@@ -675,7 +675,16 @@ async function handleAuth(type, event = null) {
     if (type === 'login') {
       authResponse = await supabase.auth.signInWithPassword({ email, password });
     } else {
-      authResponse = await supabase.auth.signUp({ email, password });
+      // INJECTED REDIRECT OPTIONS HERE
+      authResponse = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          // This tells Supabase precisely where to drop the user back off 
+          // after they click the "Confirm" link in their email inbox.
+          redirectTo: window.location.origin
+        }
+      });
     }
 
     if (authResponse.error) {
