@@ -1,6 +1,6 @@
 import React from 'react';
-import dashboardImg from './dashboard-preview.png';
-import receiptviewImg from './receipt-preview.png';
+import dashboardImg from '.dashboard-preview.png';
+import receiptviewImg from '.receipt-preview.png';
 
 export default function LandingPage() {
   // Handles the smooth anchor link navigation behavior natively in React
