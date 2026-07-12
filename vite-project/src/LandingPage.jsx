@@ -64,7 +64,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="panel">
-          <img src={receiptviewImg} alt="RuachAgent Dashboard" />
+          <img src="/receipt-preview.png" alt="Receipt Preview" />
         </div>
       </section>
 
@@ -89,7 +89,7 @@ export default function LandingPage() {
       <section id="works">
         <h2>Inside the Merchant Dashboard</h2>
         <div className="panel" style={{ marginBottom: '20px' }}>
-          <img src={dashboardImg} alt="Dashboard Preview" style={{ width: '100%', borderRadius: '20px', display: 'block' }} />
+          <img src="/dashboard-preview.png" alt="Dashboard Preview" style={{ width: '100%', borderRadius: '20px', display: 'block' }} />
         </div>
         <div className="steps">
           <div className="panel">
