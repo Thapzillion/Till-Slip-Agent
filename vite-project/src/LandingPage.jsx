@@ -87,7 +87,7 @@ export default function LandingPage() {
       <section id="works">
         <h2>Inside the Merchant Dashboard</h2>
         <div className="panel" style={{ marginBottom: '20px' }}>
-          <img src="/Screenshot 2026-07-06 151618.png" alt="Dashboard Preview" style={{ width: '100%', borderRadius: '20px', display: 'block' }} />
+          <img src="/Screenshot%202026-07-06%20151618.png" alt="Dashboard Preview" style={{ width: '100%', borderRadius: '20px', display: 'block' }} />
         </div>
         <div className="steps">
           <div className="panel">
