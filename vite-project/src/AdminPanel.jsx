@@ -50,6 +50,10 @@ export default function AdminPanel() {
 
   const [receipt, setReceipt] = useState(null);
 
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
+
 
   // --- COMPONENT RENDER-STATE ALIGNMENT LAYER ---
   const activeInboxesCount = user ? 1 : 0; // Tracks the primary active synchronized node
@@ -655,6 +659,46 @@ async function fetchLiveAnalytics(userId) {
   }
 }
 
+async function checkSubscription(userId) {
+
+    setSubscriptionLoading(true);
+
+    const { data, error } = await supabase
+        .from("subscriptions")
+        .select(`
+            subscription_status,
+            trial_ends_at
+        `)
+        .eq("user_id", userId)
+        .single();
+
+    if(error){
+
+        console.error(error);
+        setSubscriptionLoading(false);
+        return;
+
+    }
+
+    const now = new Date();
+
+    const expiry = new Date(data.trial_ends_at);
+
+    const expired = now > expiry;
+
+    if(
+        expired &&
+        data.subscription_status !== "active"
+    ){
+
+        setShowSubscriptionModal(true);
+
+    }
+
+    setSubscriptionLoading(false);
+
+}
+
 async function handleAuth(type, event = null) {
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
@@ -698,6 +742,8 @@ async function handleAuth(type, event = null) {
       alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
       return;
     }
+
+    await checkSubscription(activeUser.id);
 
     console.log("Authenticated User:", activeUser.id);
 
@@ -826,6 +872,7 @@ const activeCurrencySymbol =
     c => c.code === (settings?.currency || 'ZAR')
   )?.symbol || 'R';
 
+  
 // --- CRITICAL PERSISTENT GATE CONDITIONAL RENDER ---
 if (isCheckingSession) {
   return (
@@ -851,6 +898,159 @@ if (isCheckingSession) {
 
   return (
     <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
+{
+showSubscriptionModal && (
+
+<div style={{
+
+position:"fixed",
+inset:0,
+background:"rgba(0,0,0,.82)",
+backdropFilter:"blur(14px)",
+display:"flex",
+justifyContent:"center",
+alignItems:"center",
+zIndex:999999
+
+}}>
+
+<div style={{
+
+width:"520px",
+maxWidth:"92%",
+background:"linear-gradient(180deg,#09131a,#081017)",
+border:"1px solid rgba(0,255,210,.18)",
+borderRadius:"28px",
+padding:"38px",
+boxShadow:"0 0 70px rgba(0,255,210,.12)"
+
+}}>
+
+<div style={{
+
+width:"82px",
+height:"82px",
+margin:"auto",
+borderRadius:"50%",
+display:"flex",
+justifyContent:"center",
+alignItems:"center",
+background:"rgba(0,255,210,.08)",
+fontSize:"42px",
+marginBottom:"25px"
+
+}}>
+
+💎
+
+</div>
+
+<h2 style={{
+
+textAlign:"center",
+fontSize:"28px",
+marginBottom:"12px",
+color:"#ffffff"
+
+}}>
+
+Your Free Trial Has Ended
+
+</h2>
+
+<p style={{
+
+textAlign:"center",
+color:"#97b2bb",
+lineHeight:"1.8",
+fontSize:"15px"
+
+}}>
+
+Your 3-day RuachAgent trial has expired.
+
+Continue automating receipts,
+AI discounts,
+digital till slips,
+and webhook synchronization
+for only
+
+</p>
+
+<div style={{
+
+textAlign:"center",
+fontSize:"54px",
+fontWeight:"900",
+marginTop:"20px",
+marginBottom:"8px",
+color:"#00FFD5"
+
+}}>
+
+$6.99
+
+</div>
+
+<div style={{
+
+textAlign:"center",
+color:"#7fd8d0",
+marginBottom:"32px"
+
+}}>
+
+per month
+
+</div>
+
+<button
+
+style={{
+
+width:"100%",
+padding:"18px",
+borderRadius:"18px",
+border:"none",
+fontWeight:"700",
+fontSize:"16px",
+cursor:"pointer",
+background:"linear-gradient(90deg,#00FFD5,#00B8FF)",
+color:"#051015"
+
+}}
+
+onClick={()=>{
+
+window.location.href="/billing";
+
+}}
+
+>
+
+Upgrade to RuachAgent Premium
+
+</button>
+
+<div style={{
+
+marginTop:"18px",
+fontSize:"12px",
+color:"#7b9098",
+textAlign:"center"
+
+}}>
+
+Secure payment • Cancel anytime
+
+</div>
+
+</div>
+
+</div>
+
+)
+}
       {/* GLOBAL MODAL 1: AWAITING VERIFICATION LINK */}
       {showVerifyModal && (
         <div style={styles.modalOverlay}>
