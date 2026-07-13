@@ -1,5 +1,4 @@
 import React from 'react';
-import RuachAgentLogo from "./assets/RuachAgentLogo.png";
 
 export default function LandingPage() {
   // Handles the smooth anchor link navigation behavior natively in React
