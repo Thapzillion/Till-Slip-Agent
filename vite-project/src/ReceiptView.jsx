@@ -100,19 +100,34 @@ export default function ReceiptView() {
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkoutPayloadLink)}&color=11161d&bgcolor=fff`;
 
   return (
-    <div style={{ background: "#090d16", minHeight: "100vh", padding: "40px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ background: "#02090d", minHeight: "100vh", padding: "40px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
       
       {/* GLOBAL BACKGROUND ENCLOSURE TO MATCH ADMIN WORKSPACE MIRROR FRAME */}
       <div style={{
         width: '100%',
         maxWidth: '440px',
-        border: '1px solid rgba(0,255,200,0.12)',
-        background: 'linear-gradient(180deg, rgba(8,18,24,0.95), rgba(4,10,14,0.98))',
-        boxShadow: '0 0 35px rgba(0,255,200,0.08)',
+        border: '2px solid #08E3D8',
+
+background: `
+linear-gradient(
+180deg,
+#031015 0%,
+#07181D 50%,
+#031015 100%
+)
+`,
+
+boxShadow: `
+0 0 8px rgba(8,227,216,.65),
+0 0 18px rgba(8,227,216,.35),
+0 0 45px rgba(8,227,216,.12)
+`,
+
+borderRadius:'32px',
         position: 'relative',
         overflow: 'hidden',
         padding: '24px 16px',
-        borderRadius: '16px'
+        /*borderRadius: '16px'*/
       }}>
 
         {/* TOP GLOW EFFECT */}
@@ -146,23 +161,31 @@ export default function ReceiptView() {
 
         {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
         <div id="till-slip-capture" style={{
-          background: 'linear-gradient(180deg, rgba(12, 22, 31, 0.85), rgba(8, 15, 22, 0.95))',
-          backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)
-          `,
-          backgroundSize: '100% 2px, 2px 100%',
+          background:`
+linear-gradient(
+180deg,
+#07141B 0%,
+#051017 100%
+)
+`,
+          backgroundImage:`
+linear-gradient(rgba(8,227,216,.06) 1px,transparent 1px),
+linear-gradient(90deg,rgba(8,227,216,.06) 1px,transparent 1px)
+`,
+
+backgroundSize:'24px 24px',
           color: '#ffffff',
           borderRadius: '26px',
           padding: '20px 16px',
-          boxShadow: `
-            0 25px 50px rgba(0,0,0,0.45),
-            0 0 40px rgba(0,255,200,0.08)
-          `,
+          boxShadow:`
+0 0 5px rgba(8,227,216,.8),
+0 0 18px rgba(8,227,216,.4),
+0 30px 60px rgba(0,0,0,.65)
+`,
           fontFamily: '"Courier New", monospace',
           position: 'relative',
           overflow: 'hidden',
-          border: '1px solid rgba(0, 255, 200, 0.15)'
+          border:'2px solid #08E3D8'
         }}>
 
           {/* RECEIPT CORNER LIGHT */}
@@ -210,9 +233,16 @@ export default function ReceiptView() {
               <div style={{
                 padding: '2px 5px',
                 borderRadius: '999px',
-                background: 'rgba(0,255,200,0.08)',
-                border: '1px solid rgba(0,255,200,0.15)',
-                color: '#089981',
+                background:'rgba(8,227,216,.10)',
+
+border:'2px solid #08E3D8',
+
+color:'#08E3D8',
+
+boxShadow:`
+0 0 8px rgba(8,227,216,.5),
+inset 0 0 10px rgba(8,227,216,.08)
+`,
                 fontWeight: '800',
                 letterSpacing: '0.5px'
               }}>
@@ -391,12 +421,21 @@ export default function ReceiptView() {
                 marginTop: '14px',
                 padding: '16px',
                 borderRadius: '16px',
-                background: 'linear-gradient(90deg, rgba(0,255,200,0.08), rgba(0,184,255,0.08))',
-                border: '1px solid rgba(0,255,200,0.15)',
+                background:`
+linear-gradient(
+90deg,
+rgba(8,227,216,.10),
+rgba(8,227,216,.05)
+)
+`,
+                border:'2px solid #08E3D8',
                 fontWeight: '900',
                 fontSize: '14px',
                 color: '#b1b5c6',
-                boxShadow: '0 6px 20px rgba(0,255,200,0.08)'
+                boxShadow:`
+0 0 10px rgba(8,227,216,.45),
+inset 0 0 18px rgba(8,227,216,.05)
+`
               }}>
                 <span>TOTAL DUE</span>
                 <span style={{
@@ -411,14 +450,17 @@ export default function ReceiptView() {
             {/* VOUCHER SECTION BOX WITH LIVE CONDITIONAL EXPIRED STATES */}
             <div style={{
               background: isExpired ? 'rgba(239, 68, 68, 0.05)' : 'rgba(10, 20, 28, 0.6)',
-              border: isExpired ? '1px solid rgba(239, 68, 68, 0.35)' : '1px solid rgba(0,255,200,0.15)',
+              border: isExpired ? '1px solid rgba(239, 68, 68, 0.35)' : '2px solid #08E3D8',
               borderRadius: '22px',
               padding: '12px',
               textAlign: 'center',
               marginTop: '24px',
               position: 'relative',
               overflow: 'hidden',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.25)'
+              boxShadow:`
+0 0 10px rgba(8,227,216,.30),
+0 15px 40px rgba(0,0,0,.45)
+`
             }}>
 
               {/* INNER GLOW CHANGE BASED ON VALIDITY STATUS */}
@@ -534,16 +576,16 @@ export default function ReceiptView() {
                   color: '#041014',
                   border: 'none',
                   padding: '16px',
-                  borderRadius: '16px',
+                  borderRadius:'26px',
                   fontSize: '12px',
                   fontWeight: '900',
                   fontFamily: 'system-ui, sans-serif',
                   letterSpacing: '0.8px',
                   textTransform: 'uppercase',
-                  boxShadow: `
-                    0 12px 30px rgba(0,255,200,0.25),
-                    0 0 24px rgba(0,255,200,0.15)
-                  `,
+                  boxShadow:`
+0 0 16px rgba(8,227,216,.55),
+0 10px 40px rgba(8,227,216,.22)
+`,
                   cursor: 'pointer',
                   transition: 'all 0.25s ease'
                 }}

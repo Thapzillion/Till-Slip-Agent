@@ -1588,7 +1588,7 @@ Secure payment • Cancel anytime
       </span>
     </div>
     
-    <div style={{ background: '#0a0b0d', height: '65px', borderRadius: '12px', boxShadow: 'inset 3px 3px 6px #000, inset -3px -3px 6px rgba(255,255,255,0.02)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '0 12px', gap: '5px' }}>
+    <div style={{ background: 'rgb(26, 30, 37) 30, 37)', height: '65px', borderRadius: '12px', boxShadow: 'inset 3px 3px 6px #000, inset -3px -3px 6px rgba(255,255,255,0.02)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '0 12px', gap: '5px' }}>
       {(typeof inboxGraphData !== 'undefined' ? inboxGraphData : Array(28).fill(0)).map((heightValue, idx, arr) => {
         const hasData = heightValue > 0;
         const isLatestPeriod = idx === arr.length - 1;
@@ -1641,7 +1641,11 @@ Secure payment • Cancel anytime
               {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
               <div style={{
                 ...styles.flatCard,
-                border: '1px solid rgba(0,255,200,0.12)',
+                border:'2px solid #08E3D8',
+boxShadow:`
+0 0 8px rgba(8,227,216,.6),
+0 0 22px rgba(8,227,216,.18)
+`,
                 background: 'linear-gradient(180deg, rgba(8,18,24,0.95), rgba(4,10,14,0.98))',
                 boxShadow: '0 0 35px rgba(0,255,200,0.08)',
                 position: 'relative',
@@ -1679,23 +1683,33 @@ Secure payment • Cancel anytime
 
                 {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
                 <div style={{
-                  background: 'linear-gradient(180deg, rgba(12, 22, 31, 0.85), rgba(8, 15, 22, 0.95))',
+                  background: `
+                linear-gradient(
+                180deg,
+              #041116 0%,
+              #07181E 45%,
+              #041116 100%
+                )
+                `,
                   backgroundImage: `
-                    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px)
+                  linear-gradient(rgba(8,227,216,.08) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(8,227,216,.08) 1px, transparent 1px)
                   `,
-                  backgroundSize: '100% 2px, 2px 100%',
+                  backgroundSize: '24px 24px',
+                  /*backgroundSize: '100% 2px, 2px 100%',*/
                   color: '#ffffff',
                   borderRadius: '26px',
                   padding: '9px 7px',
                   boxShadow: `
-                    0 25px 50px rgba(0,0,0,0.45),
-                    0 0 40px rgba(0,255,200,0.08)
+                  0 0 6px rgba(8,227,216,.75),
+                  0 0 16px rgba(8,227,216,.45),
+                  0 0 34px rgba(8,227,216,.18),
+                  0 25px 60px rgba(0,0,0,.65)
                   `,
                   fontFamily: '"Courier New", monospace',
                   position: 'relative',
                   overflow: 'hidden',
-                  border: '1px solid rgba(0, 255, 200, 0.15)'
+                  border: '2px solid #08E3D8',
                 }}>
 
                   {/* RECEIPT CORNER LIGHT */}
@@ -1743,9 +1757,13 @@ Secure payment • Cancel anytime
                       <div style={{
                         padding: '2px 5px',
                         borderRadius: '999px',
-                        background: 'rgba(0,255,200,0.08)',
-                        border: '1px solid rgba(0,255,200,0.15)',
-                        color: '#089981',
+                        background: 'rgba(8,227,216,.12)',
+                        border: '2px solid #08E3D8',
+                        boxShadow: `
+                        0 0 6px rgba(8,227,216,.6),
+                        inset 0 0 12px rgba(8,227,216,.18)
+                        `,
+                        color:'#08E3D8',
                         fontWeight: '800',
                         letterSpacing: '0.5px'
                       }}>
@@ -1962,8 +1980,18 @@ Secure payment • Cancel anytime
                         marginTop: '14px',
                         padding: '16px',
                         borderRadius: '16px',
-                        background: 'linear-gradient(90deg, rgba(0,255,200,0.08), rgba(0,184,255,0.08))',
-                        border: '1px solid rgba(0,255,200,0.15)',
+                        background: `
+linear-gradient(
+90deg,
+rgba(8,227,216,.10),
+rgba(8,227,216,.06)
+)
+`,
+border:'2px solid #08E3D8',
+boxShadow:`
+0 0 8px rgba(8,227,216,.45),
+inset 0 0 18px rgba(8,227,216,.06)
+`,
                         fontWeight: '900',
                         fontSize: '14px',
                         color: '#b1b5c6',
@@ -1983,14 +2011,18 @@ Secure payment • Cancel anytime
                     {/* VOUCHER SECTION BOX */}
                     <div style={{
                       background: 'rgba(10, 20, 28, 0.6)',
-                      border: '1px solid rgba(0,255,200,0.15)',
+                      border:'2px solid #08E3D8',
+boxShadow:`
+0 0 8px rgba(8,227,216,.35),
+inset 0 0 12px rgba(8,227,216,.06)
+`,
                       borderRadius: '22px',
                       padding: '12px',
                       textAlign: 'center',
                       marginTop: '24px',
                       position: 'relative',
                       overflow: 'hidden',
-                      boxShadow: '0 12px 30px rgba(0,0,0,0.25)'
+                      /*boxShadow: '0 12px 30px rgba(0,0,0,0.25)'*/
                     }}>
 
                       {/* INNER GLOW */}

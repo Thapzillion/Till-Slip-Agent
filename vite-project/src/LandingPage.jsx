@@ -127,6 +127,10 @@ export default function LandingPage() {
           <p>Yes.</p>
           <h3>Can it integrate with webhooks?</h3>
           <p>Yes, using generated endpoint URLs.</p>
+          <h3>How do customers access their receipts?</h3>
+          <p>Customers receive their receipts via email if the store's POS collects email addresses.</p>
+          <h3>How can customers scan their QR codes?</h3>
+          <p>Customers can scan the QR codes using their smartphone cameras.</p>
         </div>
       </section>
 
