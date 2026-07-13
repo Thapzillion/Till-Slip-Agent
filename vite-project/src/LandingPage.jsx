@@ -1,4 +1,5 @@
 import React from 'react';
+import RuachAgentLogo from "./assets/RuachAgentLogo.png";
 
 export default function LandingPage() {
   // Handles the smooth anchor link navigation behavior natively in React
@@ -42,7 +43,28 @@ export default function LandingPage() {
       `}</style>
 
       <header>
-        <div className="logo">RA RuachAgent</div>
+        <div
+  className="logo"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+  }}
+>
+  <img
+    src={RuachAgentLogo}
+    alt="RuachAgent"
+    style={{
+      height: "90px",
+      width: "auto",
+      objectFit: "contain",
+      filter: `
+        drop-shadow(0 0 6px rgba(8,227,216,.8))
+        drop-shadow(0 0 16px rgba(8,227,216,.35))
+      `
+    }}
+  />
+</div>
         <nav>
           <a href="#features" onClick={(e) => handleScroll(e, 'features')}>Features</a>
           <a href="#works" onClick={(e) => handleScroll(e, 'works')}>How It Works</a>

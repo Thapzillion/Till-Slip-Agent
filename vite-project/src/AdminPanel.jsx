@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 import { supabase } from './supabaseClient';
 
+import RuachAgentLogo from "./assets/RuachAgentLogo.png";
+
 
 
 // Static reference data available instantly globally
@@ -1103,28 +1105,32 @@ Secure payment • Cancel anytime
         
         {/* Logo + badge — only visible when user is logged in */}
         {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <svg
-              width="220"
-              height="80"
-              viewBox="0 0 220 80"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              style={{
-                filter: 'drop-shadow(0 0 6px rgba(255,255,255,0.8))',
-                flexShrink: 0
-              }}
-            >
-              <rect x="5" y="10" width="52" height="60" rx="8" stroke="#FFFFFF" strokeWidth="2" />
-              <line x1="15" y1="24" x2="47" y2="24" stroke="#FFFFFF" strokeWidth="2" />
-              <line x1="15" y1="34" x2="42" y2="34" stroke="#FFFFFF" strokeWidth="2" />
-              <line x1="15" y1="44" x2="47" y2="44" stroke="#FFFFFF" strokeWidth="2" />
-              <line x1="12" y1="56" x2="50" y2="56" stroke="#FFFFFF" strokeWidth="3" />
-              <text x="72" y="38" fill="#FFFFFF" fontSize="28" fontWeight="900" fontFamily="Arial, sans-serif" letterSpacing="2">RA</text>
-              <text x="72" y="62" fill="#FFFFFF" fontSize="18" fontWeight="700" fontFamily="Arial, sans-serif" letterSpacing="3">RUACHAGENT</text>
-            </svg>
-          </div>
-        )}
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      flexShrink: 0,
+    }}
+  >
+    <img
+      src={RuachAgentLogo}
+      alt="RuachAgent"
+      style={{
+        height: "72px",
+        width: "auto",
+        objectFit: "contain",
+        filter: `
+          drop-shadow(0 0 4px rgba(8,227,216,.85))
+          drop-shadow(0 0 10px rgba(8,227,216,.45))
+          drop-shadow(0 0 20px rgba(8,227,216,.20))
+        `,
+        userSelect: "none",
+        pointerEvents: "none"
+      }}
+    />
+  </div>
+)}
 
         {/* User email + disconnect — pushed to the far right */}
         {user && (
@@ -1588,7 +1594,7 @@ Secure payment • Cancel anytime
       </span>
     </div>
     
-    <div style={{ background: 'rgb(26, 30, 37) 30, 37)', height: '65px', borderRadius: '12px', boxShadow: 'inset 3px 3px 6px #000, inset -3px -3px 6px rgba(255,255,255,0.02)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '0 12px', gap: '5px' }}>
+    <div style={{ background: 'rgba(56, 65, 80, 0.61) 30, 37)', height: '65px', borderRadius: '12px', boxShadow: 'inset 3px 3px 6px #000, inset -3px -3px 6px rgba(255,255,255,0.02)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '0 12px', gap: '5px' }}>
       {(typeof inboxGraphData !== 'undefined' ? inboxGraphData : Array(28).fill(0)).map((heightValue, idx, arr) => {
         const hasData = heightValue > 0;
         const isLatestPeriod = idx === arr.length - 1;
@@ -1599,7 +1605,7 @@ Secure payment • Cancel anytime
               flex: 1,
               height: hasData ? `${Math.min(heightValue, 100)}%` : '2px',
               background: !hasData
-                ? 'rgba(255, 255, 255, 0.03)'
+                ? 'rgba(61, 84, 118, 0.3)'
                 : isLatestPeriod
                   ? 'linear-gradient(to top, #10b981, #6ee7b7)'
                   : 'linear-gradient(to top, rgba(16, 185, 129, 0.05), #10b981)',
