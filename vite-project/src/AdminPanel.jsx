@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 
 import { supabase } from './supabaseClient';
 
-import RuachAgentLogo from "./public/RuachAgentLogo.png";
-
 
 
 // Static reference data available instantly globally
@@ -1114,7 +1112,7 @@ Secure payment • Cancel anytime
     }}
   >
     <img
-      src={RuachAgentLogo}
+  src="/RuachAgentLogo.png"
       alt="RuachAgent"
       style={{
         height: "72px",
