@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { supabase } from './supabaseClient';
 
-import RuachAgentLogo from "./assets/RuachAgentLogo.png";
+import RuachAgentLogo from "./public/RuachAgentLogo.png";
 
 
 
