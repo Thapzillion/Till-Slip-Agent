@@ -51,18 +51,18 @@ export default function LandingPage() {
   }}
 >
   <img
-    src={RuachAgentLogo}
-    alt="RuachAgent"
-    style={{
-      height: "90px",
-      width: "auto",
-      objectFit: "contain",
-      filter: `
-        drop-shadow(0 0 6px rgba(8,227,216,.8))
-        drop-shadow(0 0 16px rgba(8,227,216,.35))
-      `
-    }}
-  />
+  src="/RuachAgentLogo.png"
+  alt="RuachAgent"
+  style={{
+    height: "90px",
+    width: "auto",
+    objectFit: "contain",
+    filter: `
+      drop-shadow(0 0 6px rgba(8,227,216,.8))
+      drop-shadow(0 0 16px rgba(8,227,216,.35))
+    `
+  }}
+/>
 </div>
         <nav>
           <a href="#features" onClick={(e) => handleScroll(e, 'features')}>Features</a>
