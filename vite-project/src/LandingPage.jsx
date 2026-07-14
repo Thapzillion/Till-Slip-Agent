@@ -21,8 +21,8 @@ export default function LandingPage() {
     }}>
       {/* Scope original CSS rules explicitly within this component layout view */}
       <style>{`
-        header { position: sticky; top: 0; background: rgba(5,7,10,.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 18px 8%; border-bottom: 1px solid rgba(0,255,213,.15); z-index: 100; }
-        .logo { font-size: 28px; font-weight: 700; color: #00ffd5; }
+        header { position: sticky; top: 0; background: rgba(5,7,10,.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 14px 8%; border-bottom: 1px solid rgba(0,255,213,.15); z-index: 100; }
+        .logo { font-size: 24px; font-weight: 700; color: #00ffd5; }
         nav a { color: #cfe; text-decoration: none; margin: 0 12px; cursor: pointer; }
         .btn { padding: 14px 24px; border-radius: 40px; background: linear-gradient(90deg, #00ffd5, #00bfff); color: #001; font-weight: bold; text-decoration: none; display: inline-block; }
         .btn-secondary { padding: 14px 24px; border-radius: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #cfe; font-weight: bold; text-decoration: none; display: inline-block; cursor: not-allowed; }
