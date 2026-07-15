@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Link } from "react-router-dom";
+
 export default function LandingPage() {
   // Handles the smooth anchor link navigation behavior natively in React
   const handleScroll = (e, targetId) => {
@@ -38,7 +40,48 @@ export default function LandingPage() {
         .card:hover { transform: translateY(-8px); }
         .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
         footer { padding: 40px; text-align: center; border-top: 1px solid rgba(255,255,255,.08); color: #9fb; }
-        @media(max-width: 900px) { .hero { grid-template-columns: 1fr; } h1 { font-size: 42px; } }
+        @media (max-width: 900px) {
+
+  header {
+    padding: 12px 4%;
+    gap: 10px;
+  }
+
+  .logo img {
+    height: 55px !important;
+  }
+
+  nav {
+    display: flex;
+    gap: 12px;
+  }
+
+  nav a {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 15px;
+    border-radius: 28px;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 45px 6%;
+  }
+
+  h1 {
+    font-size: 32px;
+    line-height: 1.15;
+  }
+
+  p {
+    font-size: 18px;
+  }
+}
       `}</style>
 
       <header>
@@ -155,7 +198,15 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer>© 2026 RuachAgent. All rights reserved. | Privacy Policy | Terms | Support</footer>
+<footer>
+  © 2026 RuachAgent. All rights reserved. |
+
+  <Link to="/privacy">Privacy Policy</Link> |
+
+  <Link to="/terms">Terms</Link> |
+
+  <Link to="/support">Support</Link>
+</footer>
     </div>
   );
 }

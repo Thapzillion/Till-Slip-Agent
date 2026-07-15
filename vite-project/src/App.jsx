@@ -4,6 +4,10 @@ import LandingPage from './LandingPage';
 import AdminPanel from './AdminPanel';
 import ReceiptView from './ReceiptView';
 
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import Terms from './pages/Terms';
+import Support from './pages/Support';
+
 export default function App() {
   return (
     <Router>
@@ -19,6 +23,11 @@ export default function App() {
         {/* The Standalone Customer Document Engine Route */}
         <Route path="/receipt/:id" element={<ReceiptView />} />
         
+        {/*Pages for Privacy Policy, Terms and Support*/}
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/support" element={<Support />} />
+
         {/* Clean, safe default fallback routing */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
