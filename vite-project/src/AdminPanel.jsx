@@ -62,7 +62,6 @@ export default function AdminPanel() {
   const selectedDateRangeLabel = "PAST_28_DAYS"; // Synced to our server-side SQL aggregation constraint limit
 
   const [showTrialModal, setShowTrialModal] = useState(false);
-  const [showVerifyModal, setShowVerifyModal] = useState(false);
 
 
   const [settings, setSettings] = useState({
