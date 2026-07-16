@@ -122,7 +122,7 @@ export default function LandingPage() {
           <p>RuachAgent seamlessly integrates with your POS or webhook setup to instantly send beautiful, fully customized digital till slips the moment a transaction clears.</p>
           <div className="actions">
             <span className="btn-secondary">💻 Desktop App (Coming Soon)</span>
-            <span className="btn-secondary">📱 Mobile Version (Coming Soon)</span>
+            <span className="btn-secondary">📱 Mobile App (Coming Soon)</span>
           </div>
         </div>
         <div className="panel">

@@ -23,14 +23,14 @@ export default function Terms() {
           boxShadow: "0 0 30px rgba(0,255,213,.08)",
         }}
       >
-        <h1
+        <h2
           style={{
             color: "#00ffd5",
             marginBottom: "10px",
           }}
         >
           RuachAgent Merchant Terms of Service
-        </h1>
+        </h2>
 
         <p style={{ color: "#b8d7dc" }}>
           <strong>Effective Date:</strong> July 15, 2026

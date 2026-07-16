@@ -61,6 +61,9 @@ export default function AdminPanel() {
   const inboxGraphData = graphData;       // Routes your 28-day database matrix cleanly to the graph bars
   const selectedDateRangeLabel = "PAST_28_DAYS"; // Synced to our server-side SQL aggregation constraint limit
 
+  const [showTrialModal, setShowTrialModal] = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+
 
   const [settings, setSettings] = useState({
 
@@ -714,41 +717,57 @@ async function handleAuth(type, event = null) {
   setIsAuthSyncing(true);
 
   try {
-    let authResponse;
-
     if (type === 'login') {
-      authResponse = await supabase.auth.signInWithPassword({ email, password });
+      // ==========================================
+      // 1. THE LOGIN PATH (Unchanged flow)
+      // ==========================================
+      const authResponse = await supabase.auth.signInWithPassword({ email, password });
+
+      if (authResponse.error) {
+        alert(authResponse.error.message);
+        return;
+      }
+
+      const activeUser = authResponse.data?.user;
+
+      if (!activeUser?.id) {
+        alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
+        return;
+      }
+
+      await checkSubscription(activeUser.id);
+      console.log("Authenticated User:", activeUser.id);
+
     } else {
-      // INJECTED REDIRECT OPTIONS HERE
-      authResponse = await supabase.auth.signUp({ 
+      // ==========================================
+      // 2. THE REGISTER PATH (Clean Separation)
+      // ==========================================
+      const authResponse = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
-          // This tells Supabase precisely where to drop the user back off 
-          // after they click the "Confirm" link in their email inbox.
-          redirectTo: window.location.origin
+          // Redirects the user right back to the site origin upon verification confirmation
+          emailRedirectTo: window.location.origin
         }
       });
-    }
 
-    if (authResponse.error) {
-      alert(authResponse.error.message);
-      return;
-    }
+      if (authResponse.error) {
+    alert(authResponse.error.message);
+    return;
+}
 
-    const activeUser = authResponse.data?.user;
+if (!authResponse.data?.user) {
+    alert("Your account could not be created.");
+    return;
+}
 
-    if (!activeUser?.id) {
-      alert("Authentication succeeded, but session is still initializing. Please wait a moment.");
-      return;
-    }
+setShowTrialModal(true);
+return;
 
-    await checkSubscription(activeUser.id);
-
-    console.log("Authenticated User:", activeUser.id);
-
-    if (type !== 'login') {
-      setShowVerifyModal(true);
+      // Pop up the Trial Modal and exit immediately.
+      // This stops JS from running any post-auth dashboard checks!
+      setShowTrialModal(true);
+      return; 
     }
 
   } catch (err) {
@@ -1051,7 +1070,69 @@ Secure payment • Cancel anytime
 
 )
 }
-      {/* GLOBAL MODAL 1: AWAITING VERIFICATION LINK */}
+      {/* GLOBAL MODAL 1: 3-DAY PREMIUM TRIAL */}
+{showTrialModal && (
+  <div style={styles.modalOverlay}>
+    <div
+      style={{
+        ...styles.flatCard,
+        maxWidth: "430px",
+        width: "90%",
+        textAlign: "center",
+      }}
+    >
+      <div style={{ fontSize: "36px", marginBottom: "16px" }}>
+        🎉
+      </div>
+
+      <h3
+        style={{
+          margin: "0 0 10px 0",
+          fontSize: "18px",
+          color: "#ffffff",
+          fontWeight: "600",
+        }}
+      >
+        Welcome to RuachAgent
+      </h3>
+
+      <p
+        style={{
+          fontSize: "13px",
+          color: "#a3a3a3",
+          lineHeight: "1.7",
+          marginBottom: "24px",
+        }}
+      >
+        Your merchant node has been created successfully.
+        <br /><br />
+        After verifying your email you'll receive a
+        <strong style={{ color: "#08E3D8" }}>
+          {" "}3-Day Premium Trial
+        </strong>
+        {" "}with full access to RuachAgent.
+      </p>
+
+      <button
+        onClick={() => {
+          setShowTrialModal(false);
+          setShowVerifyModal(true);
+        }}
+        style={{
+          ...styles.button,
+          padding: "10px 24px",
+          width: "auto",
+          display: "inline-block",
+          margin: "0 auto",
+        }}
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+)}
+
+      {/* GLOBAL MODAL 2: AWAITING VERIFICATION LINK */}
       {showVerifyModal && (
         <div style={styles.modalOverlay}>
           <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center' }}>
@@ -1060,14 +1141,32 @@ Secure payment • Cancel anytime
             <p style={{ fontSize: '13px', color: '#a3a3a3', lineHeight: '1.6', margin: '0 0 20px 0' }}>
               We have sent a confirmation email to <strong style={{ color: '#ffffff', fontWeight: '500' }}>{email}</strong>. Please check your inbox and click the activation link to configure your system node.
             </p>
-            <button onClick={() => setShowVerifyModal(false)} style={{ ...styles.button, padding: '10px 20px', fontSize: '12px', width: 'auto', display: 'inline-block', margin: '0 auto' }}>
-              Acknowledge
-            </button>
+            <button
+  onClick={() => {
+    setShowVerifyModal(false);
+
+    setEmail("");
+    setPassword("");
+
+    // If you later introduce authMode, switch back here.
+    // setAuthMode("login");
+  }}
+  style={{
+    ...styles.button,
+    padding: "10px 20px",
+    fontSize: "12px",
+    width: "auto",
+    display: "inline-block",
+    margin: "0 auto"
+  }}
+>
+  Return to Login
+</button>
           </div>
         </div>
       )}
 
-      {/* GLOBAL MODAL 2: EMAIL CONFIRMED SUCCESS POP-UP */}
+      {/* GLOBAL MODAL 3: EMAIL CONFIRMED SUCCESS POP-UP */}
       {showSuccessModal && (
         <div style={styles.modalOverlay}>
           <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center', borderColor: '#262626' }}>
@@ -1167,7 +1266,7 @@ Secure payment • Cancel anytime
                 <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={styles.input} />
                 <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={styles.input} />
                 <button onClick={() => handleAuth('login')} style={styles.button} disabled={isAuthSyncing}>
-                  {isAuthSyncing ? 'Verifying Node...' : 'Authenticate Identity'}
+                  {isAuthSyncing ? 'Verifying Node...' : 'Login'}
                 </button>
                 <button 
                   onClick={() => handleAuth('register')} 
@@ -1180,7 +1279,7 @@ Secure payment • Cancel anytime
                   }} 
                   disabled={isAuthSyncing}
                 >
-                  Register New Node
+                  Sign Up
                 </button>
               </div>
             </div>
