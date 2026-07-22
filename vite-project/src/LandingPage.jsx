@@ -48,7 +48,7 @@ export default function LandingPage() {
   }
 
   .logo img {
-    height: 55px !important;
+    height: 25px !important;
   }
 
   nav {

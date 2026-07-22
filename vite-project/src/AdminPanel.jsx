@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 import { supabase } from './supabaseClient';
 
+import { useNavigate } from "react-router-dom";
+
 
 
 // Static reference data available instantly globally
@@ -29,10 +31,6 @@ export default function AdminPanel() {
   const [email, setEmail] = useState('');
 
   const [password, setPassword] = useState('');
-
-  const [showVerifyModal, setShowVerifyModal] = useState(false);
-
-  const [showSuccessModal, setShowSuccessModal] = useState(false); // New state for confirmation feedback
 
   const [txCount, setTxCount] = useState(0);
 
@@ -63,6 +61,13 @@ export default function AdminPanel() {
 
   const [showTrialModal, setShowTrialModal] = useState(false);
 
+  const [showTrialWelcomeModal, setShowTrialWelcomeModal] = useState(false);
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(0);
+  const [trialExpiryDate, setTrialExpiryDate] = useState(null);
+
+  const [signupSuccessMessage, setSignupSuccessMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const [settings, setSettings] = useState({
 
@@ -435,7 +440,7 @@ useEffect(() => {
   // Detect if user landed via an email confirmation redirection link
   const hash = window.location.hash;
   if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-    setShowSuccessModal(true);
+    setShowTrialModal(true);
     // Clean the URL fragments up so it looks professional and tidy
     window.history.replaceState(null, null, window.location.pathname);
   }
@@ -461,7 +466,6 @@ useEffect(() => {
       if (session?.user) {
         // Set user profile in state first
         setUser(session.user);
-        setShowVerifyModal(false);
         
         // ─── FIX 3: SHOW ADMIN PANEL IMMEDIATELY & STREAM DATA IN BACKGROUND ───
         // Drop the loading gate instantly. Do not await network queries before rendering the dashboard UI.
@@ -662,43 +666,64 @@ async function fetchLiveAnalytics(userId) {
 }
 
 async function checkSubscription(userId) {
+  setSubscriptionLoading(true);
 
-    setSubscriptionLoading(true);
-
+  try {
     const { data, error } = await supabase
-        .from("subscriptions")
-        .select(`
-            subscription_status,
-            trial_ends_at
-        `)
-        .eq("user_id", userId)
-        .single();
+      .from("subscriptions")
+      .select(`
+        subscription_status,
+        trial_ends_at
+        trial_welcome_seen
+      `)
+      .eq("user_id", userId)
+      .single();
 
-    if(error){
-
-        console.error(error);
-        setSubscriptionLoading(false);
-        return;
-
+    if (error) {
+      throw error;
     }
 
     const now = new Date();
-
     const expiry = new Date(data.trial_ends_at);
 
-    const expired = now > expiry;
+    const msRemaining = expiry.getTime() - now.getTime();
 
-    if(
-        expired &&
-        data.subscription_status !== "active"
-    ){
+    const daysRemaining = Math.max(
+      0,
+      Math.ceil(msRemaining / (1000 * 60 * 60 * 24))
+    );
 
-        setShowSubscriptionModal(true);
+    setTrialDaysRemaining(daysRemaining);
+    setTrialExpiryDate(expiry);
 
+    const expired = msRemaining <= 0;
+
+    // ---------------------------------------
+    // ACTIVE PREMIUM TRIAL
+    // ---------------------------------------
+    if (
+    data.subscription_status === "trial" &&
+    !expired &&
+    !data.trial_welcome_seen
+) {
+    setShowTrialWelcomeModal(true);
+}
+
+    // ---------------------------------------
+    // TRIAL EXPIRED
+    // ---------------------------------------
+    if (
+      expired &&
+      data.subscription_status !== "active"
+    ) {
+      setShowSubscriptionModal(true);
     }
 
+  } catch (err) {
+    console.error("Subscription check failed:", err);
+  } finally {
     setSubscriptionLoading(false);
-
+  }
 }
 
 async function handleAuth(type, event = null) {
@@ -746,7 +771,7 @@ async function handleAuth(type, event = null) {
         password,
         options: {
           // Redirects the user right back to the site origin upon verification confirmation
-          emailRedirectTo: window.location.origin
+          emailRedirectTo: `${window.location.origin}/admin`
         }
       });
 
@@ -755,18 +780,12 @@ async function handleAuth(type, event = null) {
     return;
 }
 
-if (!authResponse.data?.user) {
-    alert("Your account could not be created.");
-    return;
-}
+setSignupSuccessMessage(
+    "Sign up request successful. Check your email to verify your account."
+);
 
-setShowTrialModal(true);
-return;
-
-      // Pop up the Trial Modal and exit immediately.
-      // This stops JS from running any post-auth dashboard checks!
-      setShowTrialModal(true);
-      return; 
+setEmail("");
+setPassword("");
     }
 
   } catch (err) {
@@ -1040,7 +1059,7 @@ color:"#051015"
 
 onClick={()=>{
 
-window.location.href="/billing";
+navigate("/billing");
 
 }}
 
@@ -1070,6 +1089,62 @@ Secure payment • Cancel anytime
 )
 }
       {/* GLOBAL MODAL 1: 3-DAY PREMIUM TRIAL */}
+       {showTrialWelcomeModal && (
+  <div style={styles.modalOverlay}>
+    <div
+      style={{
+        ...styles.flatCard,
+        maxWidth: "460px",
+        width: "90%",
+        textAlign: "center"
+      }}
+    >
+      <div style={{ fontSize: "42px", marginBottom: "18px" }}>
+        🎉
+      </div>
+
+      <h2 style={{ color: "#ffffff", marginBottom: "12px" }}>
+        Welcome to Your Premium Trial
+      </h2>
+
+      <p
+        style={{
+          color: "#a3a3a3",
+          lineHeight: "1.8",
+          marginBottom: "24px"
+        }}
+      >
+        Your merchant workspace is now active.
+
+        <br /><br />
+
+        You currently have access to all Premium features for the next
+        <strong style={{ color: "#08E3D8" }}>
+          {" "}{trialDaysRemaining} day{trialDaysRemaining !== 1 ? "s" : ""}
+        </strong>.
+      </p>
+
+      <button
+  onClick={async () => {
+
+    await supabase
+      .from("subscriptions")
+      .update({
+        trial_welcome_seen: true
+      })
+      .eq("user_id", user.id);
+
+    setShowTrialWelcomeModal(false);
+
+  }}
+  style={styles.button}
+>
+  Enter Workspace
+</button>
+    </div>
+  </div>
+)}
+
 {showTrialModal && (
   <div style={styles.modalOverlay}>
     <div
@@ -1092,7 +1167,7 @@ Secure payment • Cancel anytime
           fontWeight: "600",
         }}
       >
-        Welcome to RuachAgent
+        Welcome!
       </h3>
 
       <p
@@ -1103,20 +1178,41 @@ Secure payment • Cancel anytime
           marginBottom: "24px",
         }}
       >
-        Your merchant node has been created successfully.
+        Your email has been successfully verified.
         <br /><br />
-        After verifying your email you'll receive a
+        You're about to begin your
         <strong style={{ color: "#08E3D8" }}>
-          {" "}3-Day Premium Trial
+          {" "}FREE 3-Day Premium Trial [No creidit card required]
         </strong>
-        {" "}with full access to RuachAgent.
+        {" "}with full access to RuachAgent premium features.
       </p>
 
       <button
-        onClick={() => {
-          setShowTrialModal(false);
-          setShowVerifyModal(true);
-        }}
+        onClick={async () => {
+
+    const activeUser = user || await getActiveUser();
+
+    if (!activeUser?.id) {
+        alert("Unable to start your free trial.");
+        return;
+    }
+
+    const trialEnds = new Date();
+    trialEnds.setDate(trialEnds.getDate() + 3);
+
+    await supabase
+        .from("subscriptions")
+        .upsert({
+            user_id: activeUser.id,
+            subscription_status: "trial",
+            trial_ends_at: trialEnds.toISOString(),
+            trial_welcome_seen: false
+        });
+
+    setShowTrialModal(false);
+
+    await checkSubscription(activeUser.id);
+}}
         style={{
           ...styles.button,
           padding: "10px 24px",
@@ -1125,71 +1221,16 @@ Secure payment • Cancel anytime
           margin: "0 auto",
         }}
       >
-        Continue
+        Proceed
       </button>
     </div>
   </div>
 )}
 
       {/* GLOBAL MODAL 2: AWAITING VERIFICATION LINK */}
-      {showVerifyModal && (
-        <div style={styles.modalOverlay}>
-          <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center' }}>
-            <div style={{ fontSize: '32px', marginBottom: '16px' }}>✉️</div>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#ffffff', letterSpacing: '0.3px', fontWeight: '500' }}>Verification Link Dispatched</h3>
-            <p style={{ fontSize: '13px', color: '#a3a3a3', lineHeight: '1.6', margin: '0 0 20px 0' }}>
-              We have sent a confirmation email to <strong style={{ color: '#ffffff', fontWeight: '500' }}>{email}</strong>. Please check your inbox and click the activation link to configure your system node.
-            </p>
-            <button
-  onClick={() => {
-    setShowVerifyModal(false);
-
-    setEmail("");
-    setPassword("");
-
-    // If you later introduce authMode, switch back here.
-    // setAuthMode("login");
-  }}
-  style={{
-    ...styles.button,
-    padding: "10px 20px",
-    fontSize: "12px",
-    width: "auto",
-    display: "inline-block",
-    margin: "0 auto"
-  }}
->
-  Return to Login
-</button>
-          </div>
-        </div>
-      )}
+      
 
       {/* GLOBAL MODAL 3: EMAIL CONFIRMED SUCCESS POP-UP */}
-      {showSuccessModal && (
-        <div style={styles.modalOverlay}>
-          <div style={{ ...styles.flatCard, maxWidth: '400px', width: '90%', textAlign: 'center', borderColor: '#262626' }}>
-            <div style={{ fontSize: '32px', marginBottom: '16px' }}>⚡</div>
-            <h3 style={{ margin: '0 0 10px 0', fontSize: '17px', color: '#ffffff', fontWeight: '500', letterSpacing: '0.3px' }}>Email Confirmed Successfully!</h3>
-            <p style={{ fontSize: '13px', color: '#a3a3a3', lineHeight: '1.6', margin: '0 0 24px 0' }}>
-              Your merchant node identity has been verified by the authentication gateway. Welcome to RuachAgent.
-            </p>
-            <button 
-              onClick={() => setShowSuccessModal(false)} 
-              style={{ 
-                ...styles.button, 
-                padding: '10px 24px', 
-                fontSize: '12px', 
-                width: 'auto',
-                display: 'inline-block',
-                margin: '0 auto'
-              }}
-            >
-              Enter Workspace
-            </button>
-          </div>
-        </div>
-      )}
 
       <header style={{ 
         ...styles.header, 
@@ -1262,6 +1303,22 @@ Secure payment • Cancel anytime
             <div style={styles.flatCard}>
               <h2 style={{ textAlign: 'center', fontSize: '18px', fontWeight: '500', margin: '0 0 24px 0', color: '#ffffff', letterSpacing: '0.3px' }}>Master Portal Login</h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {signupSuccessMessage && (
+    <div
+        style={{
+            background: "#06281d",
+            color: "#00FFD5",
+            border: "1px solid rgba(0,255,210,.25)",
+            padding: "12px",
+            borderRadius: "10px",
+            marginBottom: "16px",
+            textAlign: "center",
+            fontSize: "13px"
+        }}
+    >
+        ✅ {signupSuccessMessage}
+    </div>
+)}
                 <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={styles.input} />
                 <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={styles.input} />
                 <button onClick={() => handleAuth('login')} style={styles.button} disabled={isAuthSyncing}>
