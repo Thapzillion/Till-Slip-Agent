@@ -408,10 +408,10 @@ const styles = {
 // const [user, setUser] = useState(null);
 // const [isCheckingSession, setIsCheckingSession] = useState(true);
 
+// ─── 1. BOOTSTRAP INITIAL SESSION ───
 useEffect(() => {
   let isMounted = true;
 
-  // ─── FIX 1: REMOVE CONCURRENT DATA LOADING FROM BOOTSTRAP ───
   // On initial load to handle page refreshes and direct navigation safely.
   async function bootstrapSession() {
     try {
@@ -422,14 +422,13 @@ useEffect(() => {
 
       if (session?.user && isMounted) {
         setUser(session.user);
-        // We do NOT fetch settings or analytics here anymore. 
-        // Let the onAuthStateChange listener manage data fetching cleanly.
+        // Run subscription check to verify trial status upon session restoration
+        await checkSubscription(session.user.id);
       }
     } catch (err) {
       console.error("Critical bootstrap session failure:", err);
     } finally {
       if (isMounted) {
-        // Drop the checking gate to reveal the workspace or the login screen safely
         setIsCheckingSession(false);
       }
     }
@@ -441,11 +440,17 @@ useEffect(() => {
   const hash = window.location.hash;
   if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
     setShowTrialModal(true);
-    // Clean the URL fragments up so it looks professional and tidy
     window.history.replaceState(null, null, window.location.pathname);
   }
 
-  // Temporary connectivity diagnostics check
+  return () => {
+    isMounted = false;
+  };
+}, []);
+
+
+// ─── 2. SUPABASE REACHABILITY CHECK ON MOUNT ───
+useEffect(() => {
   async function checkSupabaseReachability() {
     try {
       const { data, error } = await supabase.from('business_settings').select('count');
@@ -454,9 +459,15 @@ useEffect(() => {
       console.error('Reachability network check failed:', e);
     }
   }
-  checkSupabaseReachability();
 
-  // Unified Single-Source Auth Listener Engine
+  checkSupabaseReachability();
+}, []);
+
+
+// ─── 3. UNIFIED SINGLE-SOURCE AUTH LISTENER ENGINE ───
+useEffect(() => {
+  let isMounted = true;
+
   const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
     if (!isMounted) return;
 
@@ -464,11 +475,12 @@ useEffect(() => {
 
     try {
       if (session?.user) {
-        // Set user profile in state first
         setUser(session.user);
+
+        // Check subscription status (Triggers Trial / Expiry Modals)
+        await checkSubscription(session.user.id);
         
-        // ─── FIX 3: SHOW ADMIN PANEL IMMEDIATELY & STREAM DATA IN BACKGROUND ───
-        // Drop the loading gate instantly. Do not await network queries before rendering the dashboard UI.
+        // Show admin panel immediately & stream data in background
         setIsCheckingSession(false);
         
         fetchMerchantSettings(session.user.id).catch(err => 
@@ -480,7 +492,7 @@ useEffect(() => {
         );
 
       } else {
-        // Graceful teardown when no active session is found (Signed Out)
+        // Teardown when signed out
         setUser(null);
         setSettings({
           business_name: '',
@@ -489,7 +501,7 @@ useEffect(() => {
           webhook_slug: '',
           currency: 'ZAR',
           logo_url: '',
-          voucher_expiration_days: 30 // Added column fallback tracking
+          voucher_expiration_days: 30
         });
         setTxCount(0);
         setTxVolume(0);
@@ -669,18 +681,27 @@ async function checkSubscription(userId) {
   setSubscriptionLoading(true);
 
   try {
+    // Replaced .single() with .maybeSingle() so it doesn't throw an error when a user has no row yet
     const { data, error } = await supabase
       .from("subscriptions")
       .select(`
         subscription_status,
-        trial_ends_at
+        trial_ends_at,
         trial_welcome_seen
       `)
       .eq("user_id", userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       throw error;
+    }
+
+    // ---------------------------------------
+    // NO SUBSCRIPTION RECORD FOUND (BRAND NEW VERIFIED USER)
+    // ---------------------------------------
+    if (!data) {
+      setShowTrialModal(true);
+      return;
     }
 
     const now = new Date();
@@ -702,12 +723,12 @@ async function checkSubscription(userId) {
     // ACTIVE PREMIUM TRIAL
     // ---------------------------------------
     if (
-    data.subscription_status === "trial" &&
-    !expired &&
-    !data.trial_welcome_seen
-) {
-    setShowTrialWelcomeModal(true);
-}
+      data.subscription_status === "trial" &&
+      !expired &&
+      !data.trial_welcome_seen
+    ) {
+      setShowTrialWelcomeModal(true);
+    }
 
     // ---------------------------------------
     // TRIAL EXPIRED
