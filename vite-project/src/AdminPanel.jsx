@@ -408,11 +408,19 @@ const styles = {
 // const [user, setUser] = useState(null);
 // const [isCheckingSession, setIsCheckingSession] = useState(true);
 
-// ─── 1. BOOTSTRAP INITIAL SESSION ───
 useEffect(() => {
   let isMounted = true;
 
-  // On initial load to handle page refreshes and direct navigation safely.
+  // ─── FAILSAFE SAFETY TIMEOUT ───
+  // Guarantees the loading gate MUST drop after 4 seconds maximum, no matter what happens.
+  const loadingFailsafe = setTimeout(() => {
+    if (isMounted) {
+      console.warn("Session check exceeded safety threshold — forcing workspace entry.");
+      setIsCheckingSession(false);
+    }
+  }, 4000);
+
+  // ─── 1. BOOTSTRAP INITIAL SESSION ───
   async function bootstrapSession() {
     try {
       setIsCheckingSession(true);
@@ -422,7 +430,7 @@ useEffect(() => {
 
       if (session?.user && isMounted) {
         setUser(session.user);
-        // Run subscription check to verify trial status upon session restoration
+        // Verify trial status upon session restoration
         await checkSubscription(session.user.id);
       }
     } catch (err) {
@@ -430,6 +438,7 @@ useEffect(() => {
     } finally {
       if (isMounted) {
         setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe); // Clear timer if session resolves quickly
       }
     }
   }
@@ -443,8 +452,67 @@ useEffect(() => {
     window.history.replaceState(null, null, window.location.pathname);
   }
 
+  // Temporary connectivity diagnostics check
+  async function checkSupabaseReachability() {
+    try {
+      const { data, error } = await supabase.from('business_settings').select('count');
+      console.log('Supabase reachability check:', data, error);
+    } catch (e) {
+      console.error('Reachability network check failed:', e);
+    }
+  }
+  checkSupabaseReachability();
+
+  // Unified Single-Source Auth Listener Engine
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (!isMounted) return;
+
+    console.log(`Supabase Auth Event Triggered: [${event}]`);
+
+    try {
+      if (session?.user) {
+        setUser(session.user);
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe);
+
+        fetchMerchantSettings(session.user.id).catch(err =>
+          console.error("Asynchronous settings load background failure:", err)
+        );
+
+        fetchLiveAnalytics(session.user.id).catch(err =>
+          console.error("Asynchronous analytics load background failure:", err)
+        );
+
+      } else {
+        setUser(null);
+        setSettings({
+          business_name: '',
+          store_address: '',
+          discount_percentage: 10,
+          webhook_slug: '',
+          currency: 'ZAR',
+          logo_url: '',
+          voucher_expiration_days: 30
+        });
+        setTxCount(0);
+        setTxVolume(0);
+        setGraphData(Array.from({ length: 28 }).map(() => 0));
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe);
+      }
+    } catch (err) {
+      console.error("Auth state mutation engine caught failure:", err);
+      if (isMounted) {
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe);
+      }
+    }
+  });
+
   return () => {
     isMounted = false;
+    clearTimeout(loadingFailsafe);
+    subscription.unsubscribe();
   };
 }, []);
 
