@@ -681,7 +681,6 @@ async function checkSubscription(userId) {
   setSubscriptionLoading(true);
 
   try {
-    // Replaced .single() with .maybeSingle() so it doesn't throw an error when a user has no row yet
     const { data, error } = await supabase
       .from("subscriptions")
       .select(`
@@ -697,7 +696,8 @@ async function checkSubscription(userId) {
     }
 
     // ---------------------------------------
-    // NO SUBSCRIPTION RECORD FOUND (BRAND NEW VERIFIED USER)
+    // NO SUBSCRIPTION RECORD FOUND
+    // Open modal and exit. DO NOT insert anything into DB here.
     // ---------------------------------------
     if (!data) {
       setShowTrialModal(true);
@@ -706,7 +706,6 @@ async function checkSubscription(userId) {
 
     const now = new Date();
     const expiry = new Date(data.trial_ends_at);
-
     const msRemaining = expiry.getTime() - now.getTime();
 
     const daysRemaining = Math.max(
@@ -1221,7 +1220,7 @@ Secure payment • Cancel anytime
     const trialEnds = new Date();
     trialEnds.setDate(trialEnds.getDate() + 3);
 
-    await supabase
+    const { error } = await supabase
         .from("subscriptions")
         .upsert({
             user_id: activeUser.id,
@@ -1229,6 +1228,12 @@ Secure payment • Cancel anytime
             trial_ends_at: trialEnds.toISOString(),
             trial_welcome_seen: false
         });
+
+      if (error) {
+  console.error("Failed to start trial:", error);
+  alert("Could not start trial. Please try again.");
+  return; // Stop execution if DB write fails
+}
 
     setShowTrialModal(false);
 
