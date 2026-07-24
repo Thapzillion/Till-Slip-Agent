@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LandingPage from './LandingPage';
 import AdminPanel from './AdminPanel';
 import ReceiptView from './ReceiptView';
-import Billing from "./Billing";
 
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
@@ -23,8 +22,6 @@ export default function App() {
         
         {/* The Standalone Customer Document Engine Route */}
         <Route path="/receipt/:id" element={<ReceiptView />} />
-
-        <Route path="/billing" element={<Billing />} />
         
         {/*Pages for Privacy Policy, Terms and Support*/}
         <Route path="/privacy" element={<PrivacyPolicy />} />

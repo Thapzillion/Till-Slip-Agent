@@ -23,11 +23,13 @@ export default function LandingPage() {
     }}>
       {/* Scope original CSS rules explicitly within this component layout view */}
       <style>{`
-        header { position: sticky; top: 0; background: rgba(5,7,10,.8); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 14px 8%; border-bottom: 1px solid rgba(0,255,213,.15); z-index: 100; }
-        .logo { font-size: 24px; font-weight: 700; color: #00ffd5; }
-        nav a { color: #cfe; text-decoration: none; margin: 0 12px; cursor: pointer; }
-        .btn { padding: 14px 24px; border-radius: 40px; background: linear-gradient(90deg, #00ffd5, #00bfff); color: #001; font-weight: bold; text-decoration: none; display: inline-block; }
-        .btn-secondary { padding: 14px 24px; border-radius: 40px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #cfe; font-weight: bold; text-decoration: none; display: inline-block; cursor: not-allowed; }
+        header { position: sticky; top: 0; background: rgba(5,7,10,.85); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 8px 6%; border-bottom: 1px solid rgba(0,255,213,.15); z-index: 100; gap: 16px; }
+.logo { font-size: 20px; font-weight: 700; color: #00ffd5; }
+nav { display: flex; gap: 16px; align-items: center; }
+nav a { color: #cfe; text-decoration: none; font-size: 14px; cursor: pointer; transition: color 0.2s; white-space: nowrap; }
+nav a:hover { color: #00ffd5; }
+.btn { padding: 7px 16px; border-radius: 20px; background: linear-gradient(90deg, #00ffd5, #00bfff); color: #001; font-size: 13px; font-weight: bold; text-decoration: none; display: inline-block; white-space: nowrap; }
+.btn-secondary { padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #cfe; font-size: 13px; font-weight: bold; text-decoration: none; display: inline-block; cursor: not-allowed; }
         .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; padding: 70px 8%; align-items: center; }
         h1 { font-size: 58px; line-height: 1.05; margin: 0 0 20px; }
         p { color: #c9d4dd; line-height: 1.7; }
@@ -40,31 +42,23 @@ export default function LandingPage() {
         .card:hover { transform: translateY(-8px); }
         .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
         footer { padding: 40px; text-align: center; border-top: 1px solid rgba(255,255,255,.08); color: #9fb; }
-        @media (max-width: 900px) {
-
+      @media (max-width: 900px) {
   header {
-    padding: 12px 4%;
-    gap: 10px;
-  }
-
-  .logo img {
-    height: 25px !important;
+    padding: 6px 4%;
+    gap: 8px;
   }
 
   nav {
-    display: flex;
-    gap: 12px;
+    gap: 10px;
   }
 
   nav a {
-    margin: 0;
-    font-size: 14px;
+    font-size: 12px;
   }
 
   .btn {
-    padding: 10px 16px;
-    font-size: 15px;
-    border-radius: 28px;
+    padding: 6px 12px;
+    font-size: 12px;
   }
 
   .hero {
@@ -79,34 +73,44 @@ export default function LandingPage() {
   }
 
   p {
-    font-size: 18px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  nav a {
+    font-size: 11px;
+  }
+  .btn {
+    padding: 5px 10px;
+    font-size: 11px;
   }
 }
       `}</style>
 
       <header>
         <div
-  className="logo"
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center"
-  }}
->
-  <img
-  src="/RuachAgentLogo.png"
-  alt="RuachAgent"
-  style={{
-    height: "90px",
-    width: "auto",
-    objectFit: "contain",
-    filter: `
-      drop-shadow(0 0 6px rgba(8,227,216,.8))
-      drop-shadow(0 0 16px rgba(8,227,216,.35))
-    `
-  }}
-/>
-</div>
+          className="logo"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <img
+            src="/RuachAgentLogo.png"
+            alt="RuachAgent"
+            style={{
+              height: "38px",
+              width: "auto",
+              objectFit: "contain",
+              filter: `
+                drop-shadow(0 0 4px rgba(8,227,216,.8))
+                drop-shadow(0 0 10px rgba(8,227,216,.35))
+              `
+            }}
+          />
+        </div>
         <nav>
           <a href="#features" onClick={(e) => handleScroll(e, 'features')}>Features</a>
           <a href="#works" onClick={(e) => handleScroll(e, 'works')}>How It Works</a>

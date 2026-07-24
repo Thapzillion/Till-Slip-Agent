@@ -445,10 +445,10 @@ useEffect(() => {
   bootstrapSession();
 
   // Clean up email confirmation redirection hash parameters from the URL
-const hash = window.location.hash;
-if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-  window.history.replaceState(null, null, window.location.pathname);
-}
+  const hash = window.location.hash;
+  if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
+    window.history.replaceState(null, null, window.location.pathname);
+  }
 
   // Temporary connectivity diagnostics check
   async function checkSupabaseReachability() {
@@ -470,6 +470,11 @@ if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
     try {
       if (session?.user) {
         setUser(session.user);
+
+        // Check subscription status (Triggers Trial / Expiry Modals)
+        await checkSubscription(session.user.id);
+
+        // Show admin panel immediately & stream data in background
         setIsCheckingSession(false);
         clearTimeout(loadingFailsafe);
 
@@ -482,6 +487,7 @@ if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
         );
 
       } else {
+        // Teardown when signed out
         setUser(null);
         setSettings({
           business_name: '',
@@ -514,143 +520,113 @@ if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
   };
 }, []);
 
+async function checkSubscription(userId) {
+  setSubscriptionLoading(true);
 
-// ─── 2. SUPABASE REACHABILITY CHECK ON MOUNT ───
-useEffect(() => {
-  async function checkSupabaseReachability() {
-    try {
-      const { data, error } = await supabase.from('business_settings').select('count');
-      console.log('Supabase reachability check:', data, error);
-    } catch (e) {
-      console.error('Reachability network check failed:', e);
-    }
-  }
+  // ─── ABORT CONTROLLER SETUP ───
+  // Instantiates native signal with an 8-second timeout threshold
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-  checkSupabaseReachability();
-}, []);
-
-
-// ─── 3. UNIFIED SINGLE-SOURCE AUTH LISTENER ENGINE ───
-useEffect(() => {
-  let isMounted = true;
-
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-    if (!isMounted) return;
-
-    console.log(`Supabase Auth Event Triggered: [${event}]`);
-
-    try {
-      if (session?.user) {
-        setUser(session.user);
-
-        // Check subscription status (Triggers Trial / Expiry Modals)
-        await checkSubscription(session.user.id);
-        
-        // Show admin panel immediately & stream data in background
-        setIsCheckingSession(false);
-        
-        fetchMerchantSettings(session.user.id).catch(err => 
-          console.error("Asynchronous settings load background failure:", err)
-        );
-        
-        fetchLiveAnalytics(session.user.id).catch(err => 
-          console.error("Asynchronous analytics load background failure:", err)
-        );
-
-      } else {
-        // Teardown when signed out
-        setUser(null);
-        setSettings({
-          business_name: '',
-          store_address: '',
-          discount_percentage: 10,
-          webhook_slug: '',
-          currency: 'ZAR',
-          logo_url: '',
-          voucher_expiration_days: 30
-        });
-        setTxCount(0);
-        setTxVolume(0);
-        setGraphData(Array.from({ length: 28 }).map(() => 0));
-        setIsCheckingSession(false);
-      }
-    } catch (err) {
-      console.error("Auth state mutation engine caught failure:", err);
-      if (isMounted) {
-        setIsCheckingSession(false);
-      }
-    }
-  });
-
-  return () => {
-    isMounted = false;
-    subscription.unsubscribe();
-  };
-}, []);
-
-async function fetchMerchantSettings(userId) {
-  if (!userId) return;
   try {
     // ─── DIAGNOSTIC DRILLDOWN LOGS ───
     console.log("FETCH SETTINGS START");
     console.log("userId:", userId);
     console.log("QUERY START");
 
-    // ─── FIX 2: IMPLEMENT 10-SECOND FAILSAFE TIMEOUT ───
-    const timeout = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Settings timeout")), 10000)
+    let { data, error } = await supabase
+      .from("subscriptions")
+      .select(`
+        subscription_status,
+        trial_ends_at,
+        trial_welcome_seen
+      `)
+      .eq("user_id", userId)
+      .maybeSingle()
+      .abortSignal(controller.signal); // Attaches signal to cancel initial fetch on timeout
+
+    if (error) {
+      throw error;
+    }
+
+    // ---------------------------------------
+    // NO SUBSCRIPTION RECORD FOUND
+    // Auto-create 3-Day Trial and welcome user directly
+    // ---------------------------------------
+    if (!data) {
+      const trialEnds = new Date();
+      trialEnds.setDate(trialEnds.getDate() + 3);
+
+      const { data: newSub, error: insertError } = await supabase
+        .from("subscriptions")
+        .upsert({
+          user_id: userId,
+          subscription_status: "trial",
+          trial_ends_at: trialEnds.toISOString(),
+          trial_welcome_seen: false
+        })
+        .select(`
+          subscription_status,
+          trial_ends_at,
+          trial_welcome_seen
+        `)
+        .single()
+        .abortSignal(controller.signal); // Attaches signal to cancel upsert on timeout
+
+      if (insertError) {
+        throw insertError;
+      }
+
+      data = newSub;
+    }
+
+    // ---------------------------------------
+    // CALCULATE DATES & EXPIRATION
+    // ---------------------------------------
+    const now = new Date();
+    const expiry = new Date(data.trial_ends_at);
+    const msRemaining = expiry.getTime() - now.getTime();
+
+    const daysRemaining = Math.max(
+      0,
+      Math.ceil(msRemaining / (1000 * 60 * 60 * 24))
     );
 
-    const query = supabase
-      .from('business_settings')
-      .select('*')
-      .eq('owner_id', userId)
-      .maybeSingle();
+    setTrialDaysRemaining(daysRemaining);
+    setTrialExpiryDate(expiry);
 
-    // Race the active query against our 10-second rejection timer
-    const { data, error } = await Promise.race([query, timeout]);
+    const expired = msRemaining <= 0;
 
-    console.log("QUERY END");
-    console.log("SETTINGS DATA:", data);
-    console.log("SETTINGS ERROR:", error);
-
-    if (error) throw error;
-    
-    if (data) {
-      setSettings({
-        id: data.id,
-        owner_id: data.owner_id,
-        business_name: data.business_name || '',
-        store_address: data.store_address || '',
-        discount_percentage: data.discount_percentage ?? 10,
-        webhook_slug: data.webhook_slug || '',
-        currency: data.currency || 'ZAR',
-        logo_url: data.logo_url || '',
-        voucher_expiration_days: data.voucher_expiration_days ?? 30 // Synced database value downstream
-      });
-    } else {
-      setSettings({
-        business_name: '',
-        store_address: '',
-        discount_percentage: 10,
-        webhook_slug: '',
-        currency: 'ZAR',
-        logo_url: '',
-        voucher_expiration_days: 30 // Default standard fallback configuration slot
-      });
+    // ---------------------------------------
+    // ACTIVE PREMIUM TRIAL WELCOME
+    // ---------------------------------------
+    if (
+      data.subscription_status === "trial" &&
+      !expired &&
+      !data.trial_welcome_seen
+    ) {
+      setShowTrialWelcomeModal(true);
     }
-  } catch (error) {
-    console.error("Profile load failure:", error.message);
-    // If a timeout or error happens, clear settings to standard defaults so the form still works
-    setSettings({
-      business_name: '',
-      store_address: '',
-      discount_percentage: 10,
-      webhook_slug: '',
-      currency: 'ZAR',
-      logo_url: '',
-      voucher_expiration_days: 30 // Clear condition alignment sync
-    });
+
+    // ---------------------------------------
+    // TRIAL EXPIRED
+    // ---------------------------------------
+    if (
+      expired &&
+      data.subscription_status !== "active"
+    ) {
+      setShowSubscriptionModal(true);
+    }
+
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      console.warn("checkSubscription network query aborted due to timeout threshold.");
+    } else {
+      console.error("Subscription check failed:", err);
+    }
+  } finally {
+    clearTimeout(timeoutId); // Guarantees cleanup of the timer memory handle
+    setSubscriptionLoading(false);
   }
 }
 
@@ -1045,160 +1021,246 @@ if (isCheckingSession) {
 
   return (
     <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
-{
-showSubscriptionModal && (
 
-<div style={{
+{/* GLOBAL MODAL 3: Premium Payment Negotiation */}
+{showSubscriptionModal && (
+  <div
+    style={{
+      ...styles.modalOverlay,
+      background:
+        "radial-gradient(circle at top, rgba(0,255,170,0.08), rgba(0,0,0,0.94) 45%, #000000 100%)",
+      backdropFilter: "blur(12px)",
+    }}
+  >
+    <div
+      style={{
+        ...styles.flatCard,
+        maxWidth: "460px",
+        width: "90%",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+        border: "1px solid rgba(0,255,170,0.25)",
+        borderRadius: "24px",
+        background:
+          "linear-gradient(145deg, #050505 0%, #071822 55%, #02110d 100%)",
+        boxShadow:
+          "0 0 20px rgba(0,255,170,0.18), 0 0 45px rgba(0,198,255,0.12)",
+      }}
+    >
+      {/* Neon Background Glow */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-90px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "260px",
+          height: "260px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(0,255,170,0.28) 0%, rgba(0,198,255,0.12) 45%, transparent 75%)",
+          filter: "blur(30px)",
+          pointerEvents: "none",
+        }}
+      />
 
-position:"fixed",
-inset:0,
-background:"rgba(0,0,0,.82)",
-backdropFilter:"blur(14px)",
-display:"flex",
-justifyContent:"center",
-alignItems:"center",
-zIndex:999999
+      {/* Lock Icon */}
+      <div
+        style={{
+          width: "82px",
+          height: "82px",
+          margin: "0 auto 22px",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "40px",
+          background:
+            "linear-gradient(135deg, #00F5A0, #00C6FF)",
+          boxShadow:
+            "0 0 20px rgba(0,255,170,0.45), 0 0 45px rgba(0,198,255,0.35)",
+        }}
+      >
+        🔒
+      </div>
 
-}}>
+      <div
+        style={{
+          color: "#00F5A0",
+          fontSize: "12px",
+          fontWeight: 700,
+          letterSpacing: "3px",
+          marginBottom: "12px",
+        }}
+      >
+        PREMIUM MEMBERSHIP REQUIRED
+      </div>
 
-<div style={{
+      <h2
+        style={{
+          color: "#ffffff",
+          marginBottom: "14px",
+          fontSize: "28px",
+          fontWeight: 700,
+          textShadow: "0 0 12px rgba(0,198,255,0.35)",
+        }}
+      >
+        Your Free Trial Has Expired
+      </h2>
 
-width:"520px",
-maxWidth:"92%",
-background:"linear-gradient(180deg,#09131a,#081017)",
-border:"1px solid rgba(0,255,210,.18)",
-borderRadius:"28px",
-padding:"38px",
-boxShadow:"0 0 70px rgba(0,255,210,.12)"
+      <p
+        style={{
+          color: "#b9c7cf",
+          fontSize: "15px",
+          lineHeight: "1.8",
+          marginBottom: "28px",
+        }}
+      >
+        To continue using <strong style={{ color: "#00F5A0" }}>RuachAgent</strong>
+        {" "}Premium features and maintain uninterrupted access to your merchant
+        dashboard, please upgrade your subscription.
+      </p>
 
-}}>
+      {/* Plan Details Card */}
+      <div
+        style={{
+          background:
+            "linear-gradient(145deg, rgba(0,198,255,0.08), rgba(0,255,170,0.06))",
+          borderRadius: "18px",
+          padding: "22px",
+          marginBottom: "28px",
+          border: "1px solid rgba(0,255,170,0.25)",
+          boxShadow:
+            "0 0 20px rgba(0,198,255,0.08)",
+        }}
+      >
+        <div
+          style={{
+            color: "#ffffff",
+            fontWeight: "700",
+            fontSize: "18px",
+            marginBottom: "8px",
+          }}
+        >
+          Merchant Pro Plan
+        </div>
 
-<div style={{
+        <div
+          style={{
+            color: "#00F5A0",
+            fontSize: "34px",
+            fontWeight: "800",
+            textShadow: "0 0 15px rgba(0,255,170,.45)",
+          }}
+        >
+          $6.99 [R129.00]
+          <span
+            style={{
+              fontSize: "14px",
+              color: "#9ca3af",
+              fontWeight: "500",
+            }}
+          >
+            {" "}
+            / month
+          </span>
+        </div>
 
-width:"82px",
-height:"82px",
-margin:"auto",
-borderRadius:"50%",
-display:"flex",
-justifyContent:"center",
-alignItems:"center",
-background:"rgba(0,255,210,.08)",
-fontSize:"42px",
-marginBottom:"25px"
+        <div
+          style={{
+            marginTop: "14px",
+            color: "#8fdcff",
+            fontSize: "13px",
+          }}
+        >
+          ✓ Unlimited premium access
+          <br />
+          ✓ Merchant dashboard
+          <br />
+          ✓ Future premium updates included
+        </div>
+      </div>
 
-}}>
+      <button
+        onClick={() => {
+          if (!window.PaystackPop) {
+            alert("Paystack SDK failed to load. Please check your network connection.");
+            return;
+          }
 
-💎
+          const handler = window.PaystackPop.setup({
+            key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY || "pk_live_870272ce5b082f6522a2f9d130c368284664c7f4",
+            email: user?.email,
+            amount: 12900,
+            currency: "ZAR",
+            ref: "RUACH_" + Math.floor(Math.random() * 1000000000 + 1),
+            metadata: {
+              custom_fields: [
+                {
+                  display_name: "User ID",
+                  variable_name: "user_id",
+                  value: user?.id,
+                },
+                {
+                  display_name: "Plan",
+                  variable_name: "plan_type",
+                  value: "pro_monthly",
+                },
+              ],
+              user_id: user?.id,
+              plan_type: "pro_monthly",
+            },
+            onClose: () => {
+              console.log("Paystack modal closed by user.");
+            },
+            callback: async (response) => {
+              console.log("Paystack Payment Successful, Reference:", response.reference);
+              alert("Payment successful! Updating your workspace access...");
 
-</div>
+              setTimeout(async () => {
+                await checkSubscription(user.id);
+                setShowSubscriptionModal(false);
+              }, 2000);
+            },
+          });
 
-<h2 style={{
+          handler.openIframe();
+        }}
+        style={{
+          ...styles.button,
+          width: "100%",
+          padding: "16px",
+          fontSize: "16px",
+          fontWeight: "700",
+          border: "none",
+          borderRadius: "14px",
+          cursor: "pointer",
+          color: "#ffffff",
+          background:
+            "linear-gradient(90deg, #00F5A0 0%, #00C6FF 100%)",
+          boxShadow:
+            "0 0 18px rgba(0,255,170,0.35), 0 0 30px rgba(0,198,255,0.25)",
+          transition: "all .25s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow =
+            "0 0 28px rgba(0,255,170,.55),0 0 45px rgba(0,198,255,.4)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow =
+            "0 0 18px rgba(0,255,170,.35),0 0 30px rgba(0,198,255,.25)";
+        }}
+      >
+        Upgrade Now with Paystack →
+      </button>
+    </div>
+  </div>
+)}
 
-textAlign:"center",
-fontSize:"28px",
-marginBottom:"12px",
-color:"#ffffff"
-
-}}>
-
-Your Free Trial Has Ended
-
-</h2>
-
-<p style={{
-
-textAlign:"center",
-color:"#97b2bb",
-lineHeight:"1.8",
-fontSize:"15px"
-
-}}>
-
-Your 3-day RuachAgent trial has expired.
-
-Continue automating receipts,
-AI discounts,
-digital till slips,
-and webhook synchronization
-for only
-
-</p>
-
-<div style={{
-
-textAlign:"center",
-fontSize:"54px",
-fontWeight:"900",
-marginTop:"20px",
-marginBottom:"8px",
-color:"#00FFD5"
-
-}}>
-
-$6.99
-
-</div>
-
-<div style={{
-
-textAlign:"center",
-color:"#7fd8d0",
-marginBottom:"32px"
-
-}}>
-
-per month
-
-</div>
-
-<button
-
-style={{
-
-width:"100%",
-padding:"18px",
-borderRadius:"18px",
-border:"none",
-fontWeight:"700",
-fontSize:"16px",
-cursor:"pointer",
-background:"linear-gradient(90deg,#00FFD5,#00B8FF)",
-color:"#051015"
-
-}}
-
-onClick={()=>{
-
-navigate("/billing");
-
-}}
-
->
-
-Upgrade to RuachAgent Premium
-
-</button>
-
-<div style={{
-
-marginTop:"18px",
-fontSize:"12px",
-color:"#7b9098",
-textAlign:"center"
-
-}}>
-
-Secure payment • Cancel anytime
-
-</div>
-
-</div>
-
-</div>
-
-)
-}
-     {/* GLOBAL MODAL: 3-DAY PREMIUM TRIAL WELCOME */}
+     {/* GLOBAL MODAL 2: 3-DAY PREMIUM TRIAL WELCOME */}
 {showTrialWelcomeModal && (
   <div
     style={{
@@ -1357,10 +1419,8 @@ Secure payment • Cancel anytime
     </div>
   </div>
 )}
-      {/* GLOBAL MODAL 2: AWAITING VERIFICATION LINK */}
       
-
-      {/* GLOBAL MODAL 3: EMAIL CONFIRMED SUCCESS POP-UP */}
+      {/* GLOBAL MODAL 1: EMAIL CONFIRMED SUCCESS POP-UP */}
 
       <header style={{ 
         ...styles.header, 

@@ -1,6 +1,9 @@
 {
   "deno.enable": true,
-  "deno.enablePaths": ["supabase/functions/receipt-agent"],
+  "deno.enablePaths": [
+    "supabase/functions/receipt-agent",
+    "supabase/functions/paystack-webhook"
+  ],
   "deno.lint": true,
   "deno.unstable": ["kv", "cron"] 
 }
