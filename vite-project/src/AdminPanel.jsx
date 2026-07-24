@@ -407,228 +407,6 @@ const styles = {
 // const [user, setUser] = useState(null);
 // const [isCheckingSession, setIsCheckingSession] = useState(true);
 
-useEffect(() => {
-  let isMounted = true;
-
-  // ─── FAILSAFE SAFETY TIMEOUT ───
-  // Guarantees the loading gate MUST drop after 4 seconds maximum, no matter what happens.
-  const loadingFailsafe = setTimeout(() => {
-    if (isMounted) {
-      console.warn("Session check exceeded safety threshold — forcing workspace entry.");
-      setIsCheckingSession(false);
-    }
-  }, 4000);
-
-  // ─── 1. BOOTSTRAP INITIAL SESSION ───
-  async function bootstrapSession() {
-    try {
-      setIsCheckingSession(true);
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
-
-      if (session?.user && isMounted) {
-        setUser(session.user);
-        // Verify trial status upon session restoration
-        await checkSubscription(session.user.id);
-      }
-    } catch (err) {
-      console.error("Critical bootstrap session failure:", err);
-    } finally {
-      if (isMounted) {
-        setIsCheckingSession(false);
-        clearTimeout(loadingFailsafe); // Clear timer if session resolves quickly
-      }
-    }
-  }
-
-  bootstrapSession();
-
-  // Clean up email confirmation redirection hash parameters from the URL
-  const hash = window.location.hash;
-  if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-    window.history.replaceState(null, null, window.location.pathname);
-  }
-
-  // Temporary connectivity diagnostics check
-  async function checkSupabaseReachability() {
-    try {
-      const { data, error } = await supabase.from('business_settings').select('count');
-      console.log('Supabase reachability check:', data, error);
-    } catch (e) {
-      console.error('Reachability network check failed:', e);
-    }
-  }
-  checkSupabaseReachability();
-
-  // Unified Single-Source Auth Listener Engine
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-    if (!isMounted) return;
-
-    console.log(`Supabase Auth Event Triggered: [${event}]`);
-
-    try {
-      if (session?.user) {
-        setUser(session.user);
-
-        // Check subscription status (Triggers Trial / Expiry Modals)
-        await checkSubscription(session.user.id);
-
-        // Show admin panel immediately & stream data in background
-        setIsCheckingSession(false);
-        clearTimeout(loadingFailsafe);
-
-        fetchMerchantSettings(session.user.id).catch(err =>
-          console.error("Asynchronous settings load background failure:", err)
-        );
-
-        fetchLiveAnalytics(session.user.id).catch(err =>
-          console.error("Asynchronous analytics load background failure:", err)
-        );
-
-      } else {
-        // Teardown when signed out
-        setUser(null);
-        setSettings({
-          business_name: '',
-          store_address: '',
-          discount_percentage: 10,
-          webhook_slug: '',
-          currency: 'ZAR',
-          logo_url: '',
-          voucher_expiration_days: 30
-        });
-        setTxCount(0);
-        setTxVolume(0);
-        setGraphData(Array.from({ length: 28 }).map(() => 0));
-        setIsCheckingSession(false);
-        clearTimeout(loadingFailsafe);
-      }
-    } catch (err) {
-      console.error("Auth state mutation engine caught failure:", err);
-      if (isMounted) {
-        setIsCheckingSession(false);
-        clearTimeout(loadingFailsafe);
-      }
-    }
-  });
-
-  return () => {
-    isMounted = false;
-    clearTimeout(loadingFailsafe);
-    subscription.unsubscribe();
-  };
-}, []);
-
-async function checkSubscription(userId) {
-  setSubscriptionLoading(true);
-
-  // ─── ABORT CONTROLLER SETUP ───
-  // Instantiates native signal with an 8-second timeout threshold
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-  try {
-    // ─── DIAGNOSTIC DRILLDOWN LOGS ───
-    console.log("FETCH SETTINGS START");
-    console.log("userId:", userId);
-    console.log("QUERY START");
-
-    let { data, error } = await supabase
-      .from("subscriptions")
-      .select(`
-        subscription_status,
-        trial_ends_at,
-        trial_welcome_seen
-      `)
-      .eq("user_id", userId)
-      .maybeSingle()
-      .abortSignal(controller.signal); // Attaches signal to cancel initial fetch on timeout
-
-    if (error) {
-      throw error;
-    }
-
-    // ---------------------------------------
-    // NO SUBSCRIPTION RECORD FOUND
-    // Auto-create 3-Day Trial and welcome user directly
-    // ---------------------------------------
-    if (!data) {
-      const trialEnds = new Date();
-      trialEnds.setDate(trialEnds.getDate() + 3);
-
-      const { data: newSub, error: insertError } = await supabase
-        .from("subscriptions")
-        .upsert({
-          user_id: userId,
-          subscription_status: "trial",
-          trial_ends_at: trialEnds.toISOString(),
-          trial_welcome_seen: false
-        })
-        .select(`
-          subscription_status,
-          trial_ends_at,
-          trial_welcome_seen
-        `)
-        .single()
-        .abortSignal(controller.signal); // Attaches signal to cancel upsert on timeout
-
-      if (insertError) {
-        throw insertError;
-      }
-
-      data = newSub;
-    }
-
-    // ---------------------------------------
-    // CALCULATE DATES & EXPIRATION
-    // ---------------------------------------
-    const now = new Date();
-    const expiry = new Date(data.trial_ends_at);
-    const msRemaining = expiry.getTime() - now.getTime();
-
-    const daysRemaining = Math.max(
-      0,
-      Math.ceil(msRemaining / (1000 * 60 * 60 * 24))
-    );
-
-    setTrialDaysRemaining(daysRemaining);
-    setTrialExpiryDate(expiry);
-
-    const expired = msRemaining <= 0;
-
-    // ---------------------------------------
-    // ACTIVE PREMIUM TRIAL WELCOME
-    // ---------------------------------------
-    if (
-      data.subscription_status === "trial" &&
-      !expired &&
-      !data.trial_welcome_seen
-    ) {
-      setShowTrialWelcomeModal(true);
-    }
-
-    // ---------------------------------------
-    // TRIAL EXPIRED
-    // ---------------------------------------
-    if (
-      expired &&
-      data.subscription_status !== "active"
-    ) {
-      setShowSubscriptionModal(true);
-    }
-
-  } catch (err) {
-    if (err.name === 'AbortError') {
-      console.warn("checkSubscription network query aborted due to timeout threshold.");
-    } else {
-      console.error("Subscription check failed:", err);
-    }
-  } finally {
-    clearTimeout(timeoutId); // Guarantees cleanup of the timer memory handle
-    setSubscriptionLoading(false);
-  }
-}
 
 async function getActiveUser() {
   try {
@@ -716,6 +494,80 @@ async function fetchLiveAnalytics(userId) {
     }
   } catch (err) {
     console.error("Analytics stream catch handled:", err.message);
+  }
+}
+
+async function fetchMerchantSettings(userId) {
+  if (!userId) return;
+
+  // ─── ABORT CONTROLLER SETUP ───
+  // Instantiates native signal with a 10-second timeout threshold
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    // ─── DIAGNOSTIC DRILLDOWN LOGS ───
+    console.log("FETCH SETTINGS START");
+    console.log("userId:", userId);
+    console.log("QUERY START");
+
+    const query = supabase
+      .from('business_settings')
+      .select('*')
+      .eq('owner_id', userId)
+      .maybeSingle()
+      .abortSignal(controller.signal); // Attaches signal to physically cancel hanging HTTP network request
+
+    const { data, error } = await query;
+
+    console.log("QUERY END");
+    console.log("SETTINGS DATA:", data);
+    console.log("SETTINGS ERROR:", error);
+
+    if (error) throw error;
+    
+    if (data) {
+      setSettings({
+        id: data.id,
+        owner_id: data.owner_id,
+        business_name: data.business_name || '',
+        store_address: data.store_address || '',
+        discount_percentage: data.discount_percentage ?? 10,
+        webhook_slug: data.webhook_slug || '',
+        currency: data.currency || 'ZAR',
+        logo_url: data.logo_url || '',
+        voucher_expiration_days: data.voucher_expiration_days ?? 30 // Synced database value downstream
+      });
+    } else {
+      setSettings({
+        business_name: '',
+        store_address: '',
+        discount_percentage: 10,
+        webhook_slug: '',
+        currency: 'ZAR',
+        logo_url: '',
+        voucher_expiration_days: 30 // Default standard fallback configuration slot
+      });
+    }
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      console.warn("fetchMerchantSettings query aborted due to 10s timeout threshold.");
+    } else {
+      console.error("Profile load failure:", error.message);
+    }
+
+    // If a timeout or error happens, clear settings to standard defaults so the form still works
+    setSettings({
+      business_name: '',
+      store_address: '',
+      discount_percentage: 10,
+      webhook_slug: '',
+      currency: 'ZAR',
+      logo_url: '',
+      voucher_expiration_days: 30 // Clear condition alignment sync
+    });
+  } finally {
+    clearTimeout(timeoutId); // Guarantees timer handle is cleared when complete
   }
 }
 
@@ -811,6 +663,117 @@ async function checkSubscription(userId) {
     setSubscriptionLoading(false);
   }
 }
+
+useEffect(() => {
+  let isMounted = true;
+
+  // ─── FAILSAFE SAFETY TIMEOUT ───
+  // Guarantees the loading gate MUST drop after 4 seconds maximum, no matter what happens.
+  const loadingFailsafe = setTimeout(() => {
+    if (isMounted) {
+      console.warn("Session check exceeded safety threshold — forcing workspace entry.");
+      setIsCheckingSession(false);
+    }
+  }, 4000);
+
+  // ─── 1. BOOTSTRAP INITIAL SESSION ───
+  async function bootstrapSession() {
+    try {
+      setIsCheckingSession(true);
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
+
+      if (session?.user && isMounted) {
+        setUser(session.user);
+      }
+    } catch (err) {
+      console.error("Critical bootstrap session failure:", err);
+    } finally {
+      if (isMounted) {
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe); // Clear timer if session resolves quickly
+      }
+    }
+  }
+
+  bootstrapSession();
+
+  // Clean up email confirmation redirection hash parameters from the URL
+  const hash = window.location.hash;
+  if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
+    window.history.replaceState(null, null, window.location.pathname);
+  }
+
+  // Temporary connectivity diagnostics check
+  async function checkSupabaseReachability() {
+    try {
+      const { data, error } = await supabase.from('business_settings').select('count');
+      console.log('Supabase reachability check:', data, error);
+    } catch (e) {
+      console.error('Reachability network check failed:', e);
+    }
+  }
+  checkSupabaseReachability();
+
+  // Unified Single-Source Auth Listener Engine
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (!isMounted) return;
+
+    console.log(`Supabase Auth Event Triggered: [${event}]`);
+
+    try {
+      if (session?.user) {
+        setUser(session.user);
+
+        // Check subscription status (Triggers Trial / Expiry Modals)
+        await checkSubscription(session.user.id);
+
+        // Show admin panel immediately & stream data in background
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe);
+
+        fetchMerchantSettings(session.user.id).catch(err =>
+          console.error("Asynchronous settings load background failure:", err)
+        );
+
+        fetchLiveAnalytics(session.user.id).catch(err =>
+          console.error("Asynchronous analytics load background failure:", err)
+        );
+
+      } else {
+        // Teardown when signed out
+        setUser(null);
+        setSettings({
+          business_name: '',
+          store_address: '',
+          discount_percentage: 10,
+          webhook_slug: '',
+          currency: 'ZAR',
+          logo_url: '',
+          voucher_expiration_days: 30
+        });
+        setTxCount(0);
+        setTxVolume(0);
+        setGraphData(Array.from({ length: 28 }).map(() => 0));
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe);
+      }
+    } catch (err) {
+      console.error("Auth state mutation engine caught failure:", err);
+      if (isMounted) {
+        setIsCheckingSession(false);
+        clearTimeout(loadingFailsafe);
+      }
+    }
+  });
+
+  return () => {
+    isMounted = false;
+    clearTimeout(loadingFailsafe);
+    subscription.unsubscribe();
+  };
+}, []);
 
 async function handleAuth(type, event = null) {
   if (event && typeof event.preventDefault === 'function') {
