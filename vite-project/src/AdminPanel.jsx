@@ -59,7 +59,6 @@ export default function AdminPanel() {
   const inboxGraphData = graphData;       // Routes your 28-day database matrix cleanly to the graph bars
   const selectedDateRangeLabel = "PAST_28_DAYS"; // Synced to our server-side SQL aggregation constraint limit
 
-  const [showTrialModal, setShowTrialModal] = useState(false);
 
   const [showTrialWelcomeModal, setShowTrialWelcomeModal] = useState(false);
   const [trialDaysRemaining, setTrialDaysRemaining] = useState(0);
@@ -445,12 +444,11 @@ useEffect(() => {
 
   bootstrapSession();
 
-  // Detect if user landed via an email confirmation redirection link
-  const hash = window.location.hash;
-  if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-    setShowTrialModal(true);
-    window.history.replaceState(null, null, window.location.pathname);
-  }
+  // Clean up email confirmation redirection hash parameters from the URL
+const hash = window.location.hash;
+if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
+  window.history.replaceState(null, null, window.location.pathname);
+}
 
   // Temporary connectivity diagnostics check
   async function checkSupabaseReachability() {
@@ -749,7 +747,7 @@ async function checkSubscription(userId) {
   setSubscriptionLoading(true);
 
   try {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from("subscriptions")
       .select(`
         subscription_status,
@@ -765,13 +763,37 @@ async function checkSubscription(userId) {
 
     // ---------------------------------------
     // NO SUBSCRIPTION RECORD FOUND
-    // Open modal and exit. DO NOT insert anything into DB here.
+    // Auto-create 3-Day Trial and welcome user directly
     // ---------------------------------------
     if (!data) {
-      setShowTrialModal(true);
-      return;
+      const trialEnds = new Date();
+      trialEnds.setDate(trialEnds.getDate() + 3);
+
+      const { data: newSub, error: insertError } = await supabase
+        .from("subscriptions")
+        .upsert({
+          user_id: userId,
+          subscription_status: "trial",
+          trial_ends_at: trialEnds.toISOString(),
+          trial_welcome_seen: false
+        })
+        .select(`
+          subscription_status,
+          trial_ends_at,
+          trial_welcome_seen
+        `)
+        .single();
+
+      if (insertError) {
+        throw insertError;
+      }
+
+      data = newSub;
     }
 
+    // ---------------------------------------
+    // CALCULATE DATES & EXPIRATION
+    // ---------------------------------------
     const now = new Date();
     const expiry = new Date(data.trial_ends_at);
     const msRemaining = expiry.getTime() - now.getTime();
@@ -787,7 +809,7 @@ async function checkSubscription(userId) {
     const expired = msRemaining <= 0;
 
     // ---------------------------------------
-    // ACTIVE PREMIUM TRIAL
+    // ACTIVE PREMIUM TRIAL WELCOME
     // ---------------------------------------
     if (
       data.subscription_status === "trial" &&
@@ -1176,151 +1198,165 @@ Secure payment • Cancel anytime
 
 )
 }
-      {/* GLOBAL MODAL 1: 3-DAY PREMIUM TRIAL */}
-       {showTrialWelcomeModal && (
-  <div style={styles.modalOverlay}>
+     {/* GLOBAL MODAL: 3-DAY PREMIUM TRIAL WELCOME */}
+{showTrialWelcomeModal && (
+  <div
+    style={{
+      ...styles.modalOverlay,
+      background:
+        "radial-gradient(circle at top, rgba(0,255,170,0.08), rgba(0,0,0,0.94) 45%, #000000 100%)",
+      backdropFilter: "blur(12px)"
+    }}
+  >
     <div
       style={{
         ...styles.flatCard,
         maxWidth: "460px",
         width: "90%",
-        textAlign: "center"
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
+        border: "1px solid rgba(0,255,170,0.25)",
+        borderRadius: "24px",
+        background:
+          "linear-gradient(145deg, #050505 0%, #071822 55%, #02110d 100%)",
+        boxShadow:
+          "0 0 20px rgba(0,255,170,0.18), 0 0 45px rgba(0,180,255,0.12)"
       }}
     >
-      <div style={{ fontSize: "42px", marginBottom: "18px" }}>
+      {/* Decorative Glow */}
+      <div
+        style={{
+          position: "absolute",
+          top: "-90px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "260px",
+          height: "260px",
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle, rgba(0,255,170,0.28) 0%, rgba(0,180,255,0.12) 45%, transparent 75%)",
+          filter: "blur(30px)",
+          pointerEvents: "none"
+        }}
+      />
+
+      {/* Neon Badge */}
+      <div
+        style={{
+          width: "82px",
+          height: "82px",
+          margin: "0 auto 22px",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "42px",
+          background:
+            "linear-gradient(135deg, #00F5A0, #00C6FF)",
+          boxShadow:
+            "0 0 20px rgba(0,255,170,0.45), 0 0 45px rgba(0,198,255,0.35)"
+        }}
+      >
         🎉
       </div>
 
-      <h2 style={{ color: "#ffffff", marginBottom: "12px" }}>
+      <div
+        style={{
+          color: "#00F5A0",
+          fontSize: "12px",
+          letterSpacing: "3px",
+          fontWeight: 700,
+          marginBottom: "12px"
+        }}
+      >
+        PREMIUM ACCESS ACTIVATED
+      </div>
+
+      <h2
+        style={{
+          color: "#ffffff",
+          marginBottom: "16px",
+          fontSize: "30px",
+          fontWeight: 700,
+          textShadow: "0 0 12px rgba(0,198,255,0.35)"
+        }}
+      >
         Welcome to Your Premium Trial
       </h2>
 
       <p
         style={{
-          color: "#a3a3a3",
-          lineHeight: "1.8",
-          marginBottom: "24px"
+          color: "#b9c7cf",
+          lineHeight: "1.9",
+          marginBottom: "28px",
+          fontSize: "15px"
         }}
       >
-        Your merchant workspace is now active.
-
-        <br /><br />
-
-        You currently have access to all Premium features for the next
-        <strong style={{ color: "#08E3D8" }}>
-          {" "}{trialDaysRemaining} day{trialDaysRemaining !== 1 ? "s" : ""}
-        </strong>.
-      </p>
-
-      <button
-  onClick={async () => {
-
-    await supabase
-      .from("subscriptions")
-      .update({
-        trial_welcome_seen: true
-      })
-      .eq("user_id", user.id);
-
-    setShowTrialWelcomeModal(false);
-
-  }}
-  style={styles.button}
->
-  Enter Workspace
-</button>
-    </div>
-  </div>
-)}
-
-{showTrialModal && (
-  <div style={styles.modalOverlay}>
-    <div
-      style={{
-        ...styles.flatCard,
-        maxWidth: "430px",
-        width: "90%",
-        textAlign: "center",
-      }}
-    >
-      <div style={{ fontSize: "36px", marginBottom: "16px" }}>
-        🎉
-      </div>
-
-      <h3
-        style={{
-          margin: "0 0 10px 0",
-          fontSize: "18px",
-          color: "#ffffff",
-          fontWeight: "600",
-        }}
-      >
-        Welcome!
-      </h3>
-
-      <p
-        style={{
-          fontSize: "13px",
-          color: "#a3a3a3",
-          lineHeight: "1.7",
-          marginBottom: "24px",
-        }}
-      >
-        Your email has been successfully verified.
-        <br /><br />
-        You're about to begin your
-        <strong style={{ color: "#08E3D8" }}>
-          {" "}FREE 3-Day Premium Trial [No creidit card required]
+        Your email has been successfully verified and your merchant
+        workspace is now online.
+        <br />
+        <br />
+        You now have unrestricted access to every Premium feature for the
+        next
+        <strong
+          style={{
+            color: "#00F5A0",
+            textShadow: "0 0 10px rgba(0,255,170,0.55)"
+          }}
+        >
+          {" "}
+          {trialDaysRemaining} day
+          {trialDaysRemaining !== 1 ? "s" : ""}
         </strong>
-        {" "}with full access to RuachAgent premium features.
+        .
       </p>
 
       <button
         onClick={async () => {
+          if (user?.id) {
+            await supabase
+              .from("subscriptions")
+              .update({
+                trial_welcome_seen: true
+              })
+              .eq("user_id", user.id);
+          }
 
-    const activeUser = user || await getActiveUser();
-
-    if (!activeUser?.id) {
-        alert("Unable to start your free trial.");
-        return;
-    }
-
-    const trialEnds = new Date();
-    trialEnds.setDate(trialEnds.getDate() + 3);
-
-    const { error } = await supabase
-        .from("subscriptions")
-        .upsert({
-            user_id: activeUser.id,
-            subscription_status: "trial",
-            trial_ends_at: trialEnds.toISOString(),
-            trial_welcome_seen: false
-        });
-
-      if (error) {
-  console.error("Failed to start trial:", error);
-  alert("Could not start trial. Please try again.");
-  return; // Stop execution if DB write fails
-}
-
-    setShowTrialModal(false);
-
-    await checkSubscription(activeUser.id);
-}}
+          setShowTrialWelcomeModal(false);
+        }}
         style={{
           ...styles.button,
-          padding: "10px 24px",
-          width: "auto",
-          display: "inline-block",
-          margin: "0 auto",
+          width: "100%",
+          padding: "16px",
+          fontSize: "16px",
+          fontWeight: 700,
+          border: "none",
+          borderRadius: "14px",
+          cursor: "pointer",
+          color: "#ffffff",
+          background:
+            "linear-gradient(90deg, #00F5A0 0%, #00C6FF 100%)",
+          boxShadow:
+            "0 0 18px rgba(0,255,170,0.35), 0 0 30px rgba(0,198,255,0.25)",
+          transition: "all .25s ease"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-2px)";
+          e.currentTarget.style.boxShadow =
+            "0 0 28px rgba(0,255,170,.55),0 0 45px rgba(0,198,255,.4)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow =
+            "0 0 18px rgba(0,255,170,.35),0 0 30px rgba(0,198,255,.25)";
         }}
       >
-        Proceed
+        Enter Workspace →
       </button>
     </div>
   </div>
 )}
-
       {/* GLOBAL MODAL 2: AWAITING VERIFICATION LINK */}
       
 
