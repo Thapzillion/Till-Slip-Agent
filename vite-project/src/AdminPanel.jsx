@@ -1153,23 +1153,6 @@ useEffect(() => {
   };
 }, []);
 
-return (
-    <div style={styles.container}>
-      {/* Sidebar + Main Grid Content */}
-      <div style={{ display: 'flex', gap: '20px', width: '100%', alignItems: 'flex-start' }}>
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        
-        <div style={{ flex: 1, width: '100%' }}>
-          {/* Dashboard grid cards go here */}
-        </div>
-      </div>
-
-      {/* FULL ADMIN PANEL GEMINI-STYLE PROMPT CHAT */}
-      <AdminPromptChat appState={{ settings, txCount, txVolume, user, trialDaysRemaining }} />
-    </div>
-  );
-}
-
 async function handleAuth(type, event = null) {
   if (event && typeof event.preventDefault === 'function') {
     event.preventDefault();
@@ -1267,7 +1250,7 @@ async function uploadBusinessLogo(file, webhookSlug) {
     console.error('uploadBusinessLogo caught error:', error.message);
     return null;
   }
-
+}
 
 async function handleSave(e) {
   if (e && typeof e.preventDefault === 'function') {
