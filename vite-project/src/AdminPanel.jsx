@@ -39,19 +39,20 @@ export default function AdminPanel() {
     logo_url: ''
   });
 
-  // --- NEW CHAT UI STATE ---
-  const [activeTab, setActiveTab] = useState('settings');
+  // --- CHAT UI STATE ---
+  const [activeTab, setActiveTab] = useState('ai-prompts');
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([
     {
       id: 1,
       sender: 'ai',
-      text: "Hello! 👋 I'll help you design and automate your digital till slips. Tell me what you'd like to change or create.",
+      text: "Hello! 👋 I'm your RuachAgent AI assistant. I can help you configure webhooks, customize till slips, interpret analytics, and automate your receipt workflows. Ask me anything about your merchant workspace.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
   const [isChatTyping, setIsChatTyping] = useState(false);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [activeBlockModal, setActiveBlockModal] = useState(null); // NEW: tracks which block modal is open
   const chatEndRef = useRef(null);
 
   const activeInboxesCount = user ? 1 : 0;
@@ -102,106 +103,92 @@ export default function AdminPanel() {
     },
     appLayout: {
       display: 'grid',
-      gridTemplateColumns: isDesktop ? '260px 1fr 380px' : isTablet ? '220px 1fr' : '1fr',
+      gridTemplateColumns: isDesktop ? '78px 1fr 380px' : isTablet ? '70px 1fr' : '1fr',
       height: '100vh',
       gap: 0,
     },
+    // --- THIN LEFT SIDEBAR ---
     sidebar: {
       background: 'linear-gradient(180deg, #0a0f1a 0%, #0d1320 100%)',
       borderRight: `1px solid ${theme.border}`,
       display: 'flex',
       flexDirection: 'column',
-      padding: '20px 16px',
+      padding: '16px 10px',
       overflowY: 'auto',
-    },
-    logoSection: {
-      display: 'flex',
       alignItems: 'center',
-      gap: '12px',
-      marginBottom: '32px',
-      paddingBottom: '20px',
-      borderBottom: `1px solid ${theme.border}`,
+      gap: '6px',
     },
-    logoIcon: {
-      width: '42px',
-      height: '42px',
+    sidebarLogo: {
+      width: '44px',
+      height: '44px',
       background: 'linear-gradient(135deg, #00e3d8, #00b4d8)',
       borderRadius: '12px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       fontWeight: '900',
-      fontSize: '18px',
+      fontSize: '15px',
       color: '#0a0e17',
-      boxShadow: `0 0 20px ${theme.cyanGlow}`,
+      boxShadow: `0 0 18px ${theme.cyanGlow}`,
+      marginBottom: '18px',
+      flexShrink: 0,
     },
-    logoText: {
-      fontSize: '16px',
-      fontWeight: '800',
-      color: theme.white,
-      letterSpacing: '1px',
-    },
-    logoSubtext: {
-      fontSize: '8px',
-      color: theme.textMuted,
-      letterSpacing: '2px',
-      textTransform: 'uppercase',
-      marginTop: '2px',
-    },
-    navItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      padding: '14px 16px',
+    thinNavItem: {
+      width: '56px',
+      padding: '10px 6px',
       borderRadius: '12px',
       cursor: 'pointer',
       transition: 'all 0.2s ease',
-      marginBottom: '4px',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '4px',
       border: '1px solid transparent',
+      position: 'relative',
     },
-    navItemActive: {
-      background: 'rgba(0, 227, 216, 0.08)',
+    thinNavItemActive: {
+      background: 'rgba(0, 227, 216, 0.10)',
       border: `1px solid ${theme.borderActive}`,
     },
-    navIcon: {
+    thinNavIcon: {
+      fontSize: '18px',
+      lineHeight: 1,
+    },
+    thinNavLabel: {
+      fontSize: '8px',
+      fontWeight: '700',
+      color: theme.textMuted,
+      letterSpacing: '0.3px',
+      textTransform: 'uppercase',
+      textAlign: 'center',
+      lineHeight: '1.1',
+    },
+    thinNavLabelActive: {
+      color: theme.cyan,
+    },
+    sidebarDivider: {
       width: '36px',
-      height: '36px',
-      borderRadius: '10px',
+      height: '1px',
+      background: theme.border,
+      margin: '8px 0',
+    },
+    sidebarBottomAvatar: {
+      marginTop: 'auto',
+      width: '40px',
+      height: '40px',
+      borderRadius: '50%',
+      background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '16px',
-      flexShrink: 0,
+      fontWeight: '800',
+      fontSize: '14px',
+      color: '#fff',
+      cursor: 'pointer',
+      boxShadow: `0 0 12px ${theme.purpleGlow}`,
     },
-    navLabel: {
-      fontSize: '11px',
-      fontWeight: '700',
-      color: theme.white,
-      letterSpacing: '0.5px',
-      textTransform: 'uppercase',
-    },
-    navSublabel: {
-      fontSize: '10px',
-      color: theme.textMuted,
-      marginTop: '2px',
-    },
-    sidebarBottom: {
-      marginTop: 'auto',
-      padding: '16px',
-      background: 'linear-gradient(135deg, rgba(0,227,216,0.06), rgba(168,85,247,0.04))',
-      borderRadius: '16px',
-      border: `1px solid ${theme.border}`,
-      textAlign: 'center',
-    },
-    sidebarBottomLogo: {
-      fontSize: '32px',
-      fontWeight: '900',
-      background: 'linear-gradient(135deg, #00e3d8, #a855f7)',
-      WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent',
-      marginBottom: '8px',
-    },
-    // Main Chat Area
+
+    // --- MAIN CHAT AREA ---
     mainArea: {
       display: 'flex',
       flexDirection: 'column',
@@ -213,13 +200,14 @@ export default function AdminPanel() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '16px 24px',
+      padding: '14px 22px',
       borderBottom: `1px solid ${theme.border}`,
       background: 'rgba(10, 14, 23, 0.8)',
       backdropFilter: 'blur(12px)',
+      flexShrink: 0,
     },
     chatTitle: {
-      fontSize: '14px',
+      fontSize: '13px',
       fontWeight: '800',
       color: theme.white,
       letterSpacing: '1.5px',
@@ -235,13 +223,90 @@ export default function AdminPanel() {
       background: theme.green,
       boxShadow: `0 0 8px ${theme.green}`,
     },
+
+    // --- TOP GRAPHIC BLOCKS (disguised clickable graphics) ---
+    topBlocksRow: {
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr 1fr',
+      gap: '12px',
+      padding: '16px 22px 12px',
+      flexShrink: 0,
+    },
+    graphicCard: {
+      position: 'relative',
+      borderRadius: '18px',
+      padding: '16px',
+      cursor: 'pointer',
+      overflow: 'hidden',
+      border: '1px solid transparent',
+      transition: 'all 0.25s ease',
+      minHeight: '110px',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
+    graphicCardTop: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    graphicIconWrap: {
+      width: '40px',
+      height: '40px',
+      borderRadius: '12px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: '18px',
+      backdropFilter: 'blur(8px)',
+    },
+    graphicBadge: {
+      fontSize: '9px',
+      fontWeight: '700',
+      padding: '3px 8px',
+      borderRadius: '20px',
+      letterSpacing: '0.5px',
+      textTransform: 'uppercase',
+    },
+    graphicTitle: {
+      fontSize: '11px',
+      fontWeight: '800',
+      letterSpacing: '1.2px',
+      textTransform: 'uppercase',
+      marginBottom: '2px',
+    },
+    graphicSub: {
+      fontSize: '10px',
+      opacity: 0.75,
+      lineHeight: '1.4',
+    },
+    graphicMetric: {
+      fontSize: '20px',
+      fontWeight: '900',
+      fontFamily: 'monospace',
+      letterSpacing: '0.5px',
+    },
+    graphicMiniGraph: {
+      display: 'flex',
+      alignItems: 'flex-end',
+      gap: '2px',
+      height: '28px',
+      marginTop: '6px',
+    },
+    graphicMiniBar: {
+      flex: 1,
+      borderRadius: '2px',
+      minWidth: '3px',
+    },
+
+    // --- CHAT MESSAGES ---
     chatMessages: {
       flex: 1,
       overflowY: 'auto',
-      padding: '24px',
+      padding: '18px 22px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '20px',
+      gap: '18px',
     },
     messageRow: {
       display: 'flex',
@@ -258,13 +323,13 @@ export default function AdminPanel() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize: '14px',
+      fontSize: '13px',
       fontWeight: '700',
       flexShrink: 0,
     },
     messageBubble: {
-      maxWidth: '70%',
-      padding: '14px 18px',
+      maxWidth: '75%',
+      padding: '13px 17px',
       borderRadius: '16px',
       fontSize: '13px',
       lineHeight: '1.6',
@@ -281,119 +346,75 @@ export default function AdminPanel() {
       color: theme.white,
       borderTopRightRadius: '4px',
     },
-    messageTime: {
-      fontSize: '10px',
-      color: theme.textMuted,
-      marginTop: '6px',
-    },
-    // Design Plan Blocks
-    blocksSection: {
-      padding: '0 24px 16px',
-    },
-    blocksTitle: {
-      fontSize: '11px',
-      fontWeight: '800',
-      color: theme.cyan,
-      letterSpacing: '1.5px',
-      textTransform: 'uppercase',
-      marginBottom: '12px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-    },
-    blocksGrid: {
-      display: 'grid',
-      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-      gap: '10px',
-    },
-    blockCard: {
-      background: theme.bgCard,
-      border: `1px solid ${theme.border}`,
-      borderRadius: '14px',
-      padding: '14px 16px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease',
-    },
-    blockIcon: {
-      width: '40px',
-      height: '40px',
-      borderRadius: '10px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize: '18px',
+
+    // --- WIDE AI INPUT ---
+    chatInputArea: {
+      padding: '14px 22px 18px',
+      borderTop: `1px solid ${theme.border}`,
+      background: 'rgba(10, 14, 23, 0.92)',
+      backdropFilter: 'blur(10px)',
       flexShrink: 0,
     },
-    blockLabel: {
-      fontSize: '11px',
-      fontWeight: '700',
-      color: theme.white,
-      letterSpacing: '0.5px',
-      textTransform: 'uppercase',
-    },
-    blockSublabel: {
-      fontSize: '10px',
-      color: theme.textMuted,
-      marginTop: '2px',
-    },
-    // Chat Input
-    chatInputArea: {
-      padding: '16px 24px 20px',
-      borderTop: `1px solid ${theme.border}`,
-      background: 'rgba(10, 14, 23, 0.9)',
-    },
-    chatInputBox: {
-      width: '100%',
-      padding: '14px 18px',
-      background: theme.bgTertiary,
-      border: `1px solid ${theme.border}`,
-      borderRadius: '14px',
-      color: theme.white,
-      fontSize: '13px',
-      outline: 'none',
-      boxSizing: 'border-box',
-      marginBottom: '12px',
-    },
-    actionButtons: {
+    quickPrompts: {
       display: 'flex',
-      flexWrap: 'wrap',
       gap: '8px',
-      alignItems: 'center',
+      overflowX: 'auto',
+      marginBottom: '10px',
+      paddingBottom: '4px',
     },
-    actionBtn: {
-      padding: '8px 14px',
-      background: 'rgba(0, 227, 216, 0.08)',
+    quickPromptChip: {
+      padding: '7px 12px',
+      background: 'rgba(0, 227, 216, 0.06)',
       border: `1px solid ${theme.border}`,
-      borderRadius: '10px',
+      borderRadius: '20px',
       color: theme.cyan,
       fontSize: '11px',
       fontWeight: '600',
       cursor: 'pointer',
+      whiteSpace: 'nowrap',
       transition: 'all 0.2s ease',
+      flexShrink: 0,
+    },
+    chatInputWrap: {
+      display: 'flex',
+      gap: '10px',
+      alignItems: 'center',
+      background: theme.bgTertiary,
+      border: `1px solid ${theme.border}`,
+      borderRadius: '16px',
+      padding: '6px 6px 6px 16px',
+    },
+    chatInputBox: {
+      flex: 1,
+      background: 'transparent',
+      border: 'none',
+      color: theme.white,
+      fontSize: '13px',
+      outline: 'none',
+      padding: '10px 0',
     },
     sendBtn: {
       padding: '10px 18px',
       background: 'linear-gradient(135deg, #a855f7, #7c3aed)',
       border: 'none',
-      borderRadius: '10px',
+      borderRadius: '12px',
       color: theme.white,
       fontSize: '14px',
       cursor: 'pointer',
-      marginLeft: 'auto',
       boxShadow: `0 0 15px ${theme.purpleGlow}`,
+      fontWeight: '700',
     },
     chatFooter: {
       fontSize: '10px',
       color: theme.textDim,
-      marginTop: '10px',
+      marginTop: '8px',
       display: 'flex',
       alignItems: 'center',
       gap: '6px',
+      justifyContent: 'center',
     },
-    // Right Panel - Receipt Mirror
+
+    // --- RIGHT PANEL (Receipt) ---
     rightPanel: {
       background: 'linear-gradient(180deg, #0a0f1a 0%, #0d1320 100%)',
       overflowY: 'auto',
@@ -408,141 +429,115 @@ export default function AdminPanel() {
       position: 'relative',
       overflow: 'hidden',
     },
-    receiptHeader: {
-      textAlign: 'center',
-      marginBottom: '16px',
-    },
+    receiptHeader: { textAlign: 'center', marginBottom: '16px' },
     receiptLogoCircle: {
-      width: '80px',
-      height: '80px',
-      borderRadius: '50%',
-      border: `2px solid ${theme.purple}`,
-      margin: '0 auto 12px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      overflow: 'hidden',
-      boxShadow: `0 0 15px ${theme.purpleGlow}`,
-    },
-    receiptTitle: {
-      fontSize: '22px',
-      fontWeight: '900',
-      color: theme.purple,
-      letterSpacing: '1px',
-      textShadow: `0 0 10px ${theme.purpleGlow}`,
+      width: '80px', height: '80px', borderRadius: '50%',
+      border: `2px solid ${theme.purple}`, margin: '0 auto 12px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      overflow: 'hidden', boxShadow: `0 0 15px ${theme.purpleGlow}`,
     },
     receiptMeta: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: '16px',
-      padding: '8px 12px',
-      background: 'rgba(168,85,247,0.06)',
-      borderRadius: '10px',
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      marginBottom: '16px', padding: '8px 12px',
+      background: 'rgba(168,85,247,0.06)', borderRadius: '10px',
       border: `1px solid rgba(168,85,247,0.2)`,
     },
     receiptItem: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      padding: '12px',
-      background: 'rgba(168,85,247,0.04)',
-      borderRadius: '12px',
-      border: `1px solid rgba(168,85,247,0.12)`,
-      marginBottom: '8px',
+      display: 'flex', alignItems: 'center', gap: '12px', padding: '12px',
+      background: 'rgba(168,85,247,0.04)', borderRadius: '12px',
+      border: `1px solid rgba(168,85,247,0.12)`, marginBottom: '8px',
     },
     receiptTotal: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       padding: '14px 16px',
       background: 'linear-gradient(135deg, rgba(168,85,247,0.12), rgba(168,85,247,0.06))',
-      borderRadius: '12px',
-      border: `2px solid ${theme.purple}`,
-      marginTop: '12px',
-      marginBottom: '16px',
+      borderRadius: '12px', border: `2px solid ${theme.purple}`,
+      marginTop: '12px', marginBottom: '16px',
     },
     voucherBox: {
-      background: 'rgba(10, 20, 28, 0.7)',
-      border: `2px solid ${theme.cyan}`,
-      borderRadius: '16px',
-      padding: '16px',
-      textAlign: 'center',
-      marginBottom: '12px',
-      boxShadow: `0 0 12px ${theme.cyanGlow}`,
+      background: 'rgba(10, 20, 28, 0.7)', border: `2px solid ${theme.cyan}`,
+      borderRadius: '16px', padding: '16px', textAlign: 'center',
+      marginBottom: '12px', boxShadow: `0 0 12px ${theme.cyanGlow}`,
     },
     qrBox: {
-      display: 'inline-block',
-      padding: '10px',
-      background: theme.white,
-      borderRadius: '12px',
-      marginBottom: '10px',
+      display: 'inline-block', padding: '10px', background: theme.white,
+      borderRadius: '12px', marginBottom: '10px',
     },
     promoBanner: {
       background: 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05))',
-      border: `1px solid rgba(239,68,68,0.3)`,
-      borderRadius: '10px',
-      padding: '10px 14px',
-      textAlign: 'center',
-      fontSize: '11px',
-      fontWeight: '700',
-      color: '#fca5a5',
-      marginBottom: '12px',
+      border: `1px solid rgba(239,68,68,0.3)`, borderRadius: '10px',
+      padding: '10px 14px', textAlign: 'center', fontSize: '11px',
+      fontWeight: '700', color: '#fca5a5', marginBottom: '12px',
     },
     downloadBtn: {
-      width: '100%',
-      padding: '12px',
+      width: '100%', padding: '12px',
       background: 'linear-gradient(135deg, rgba(0,227,216,0.12), rgba(0,227,216,0.06))',
-      border: `1px solid ${theme.borderActive}`,
-      borderRadius: '12px',
-      color: theme.cyan,
-      fontSize: '12px',
-      fontWeight: '700',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '8px',
+      border: `1px solid ${theme.borderActive}`, borderRadius: '12px',
+      color: theme.cyan, fontSize: '12px', fontWeight: '700',
+      cursor: 'pointer', display: 'flex', alignItems: 'center',
+      justifyContent: 'center', gap: '8px',
     },
-    // Modal styles (preserved)
+
+    // --- BLOCK DETAIL MODAL ---
+    blockModalOverlay: {
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(2, 8, 12, 0.85)', backdropFilter: 'blur(12px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 1000, padding: isMobile ? '14px' : '22px', boxSizing: 'border-box',
+    },
+    blockModalCard: {
+      maxWidth: '520px', width: '92%',
+      position: 'relative', overflow: 'hidden',
+      border: `1px solid ${theme.borderActive}`,
+      borderRadius: '22px',
+      background: 'linear-gradient(145deg, #050a14 0%, #0a1220 55%, #050a14 100%)',
+      boxShadow: `0 0 30px ${theme.cyanGlow}, 0 0 60px rgba(168,85,247,0.12)`,
+      padding: '28px 24px',
+    },
+    blockModalClose: {
+      position: 'absolute', top: '14px', right: '14px',
+      width: '32px', height: '32px', borderRadius: '50%',
+      background: 'rgba(255,255,255,0.06)', border: `1px solid ${theme.border}`,
+      color: theme.textMuted, cursor: 'pointer',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: '14px', fontWeight: '700',
+    },
+    blockModalHeader: {
+      display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '20px',
+    },
+    blockModalIcon: {
+      width: '52px', height: '52px', borderRadius: '14px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: '24px',
+    },
+    blockModalRow: {
+      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+      padding: '12px 14px', background: 'rgba(0,227,216,0.04)',
+      border: `1px solid ${theme.border}`, borderRadius: '10px',
+      marginBottom: '8px',
+    },
+
+    // --- GLOBAL MODAL (preserved) ---
     modalOverlay: {
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(2, 8, 12, 0.85)',
-      backdropFilter: 'blur(12px)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000,
-      padding: isMobile ? '14px' : '22px',
-      boxSizing: 'border-box',
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+      background: 'rgba(2, 8, 12, 0.85)', backdropFilter: 'blur(12px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      zIndex: 1000, padding: isMobile ? '14px' : '22px', boxSizing: 'border-box',
     },
     modalCard: {
-      maxWidth: '460px',
-      width: '90%',
-      textAlign: 'center',
-      position: 'relative',
-      overflow: 'hidden',
-      border: '1px solid rgba(0,255,170,0.25)',
+      maxWidth: '460px', width: '90%', textAlign: 'center', position: 'relative',
+      overflow: 'hidden', border: '1px solid rgba(0,255,170,0.25)',
       borderRadius: '24px',
       background: 'linear-gradient(145deg, #050505 0%, #071822 55%, #02110d 100%)',
       boxShadow: '0 0 20px rgba(0,255,170,0.18), 0 0 45px rgba(0,198,255,0.12)',
       padding: '32px 24px',
     },
     primaryBtn: {
-      width: '100%',
-      padding: '16px',
-      fontSize: '14px',
-      fontWeight: '700',
-      border: 'none',
-      borderRadius: '14px',
-      cursor: 'pointer',
-      color: '#ffffff',
+      width: '100%', padding: '16px', fontSize: '14px', fontWeight: '700',
+      border: 'none', borderRadius: '14px', cursor: 'pointer', color: '#ffffff',
       background: 'linear-gradient(90deg, #00F5A0 0%, #00C6FF 100%)',
       boxShadow: '0 0 18px rgba(0,255,170,0.35), 0 0 30px rgba(0,198,255,0.25)',
-      transition: 'all .25s ease',
-      textTransform: 'uppercase',
-      letterSpacing: '0.5px',
+      transition: 'all .25s ease', textTransform: 'uppercase', letterSpacing: '0.5px',
     },
   };
 
@@ -782,7 +777,7 @@ export default function AdminPanel() {
     finally { setIsSaveSyncing(false); }
   }
 
-  // --- CHAT HANDLER ---
+  // --- ENHANCED AI CHAT HANDLER ---
   const handleSendMessage = async () => {
     if (!chatInput.trim()) return;
     const userMsg = {
@@ -792,27 +787,57 @@ export default function AdminPanel() {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     setChatMessages(prev => [...prev, userMsg]);
+    const currentInput = chatInput;
     setChatInput('');
     setIsChatTyping(true);
 
-    // Simulate AI response based on keywords
     setTimeout(() => {
-      let aiText = "I've noted your request. Let me process that for you.";
-      const lower = chatInput.toLowerCase();
-      if (lower.includes('color') || lower.includes('purple') || lower.includes('blue')) {
-        aiText = "Design updated successfully ✅ I've applied your color changes to the till slip template.";
-      } else if (lower.includes('logo') || lower.includes('brand')) {
-        aiText = "Logo updated! Your brand identity is now reflected on the receipt preview. ";
-      } else if (lower.includes('promo') || lower.includes('banner') || lower.includes('discount')) {
-        aiText = "Promo banner added! Your customers will now see the discount offer at the bottom of their receipts. 🎉";
-      } else if (lower.includes('qr') || lower.includes('review')) {
-        aiText = "QR code for reviews has been added to the receipt footer. Customers can scan to leave feedback! ⭐";
-      } else if (lower.includes('save') || lower.includes('sync')) {
-        handleSave();
-        aiText = "Settings saved and synced successfully! Your live profile is now updated. ✅";
-      } else if (lower.includes('hello') || lower.includes('hi')) {
-        aiText = `Hello ${settings?.business_name || 'there'}! 👋 How can I help you customize your till slip today?`;
+      const lower = currentInput.toLowerCase();
+      let aiText = "";
+
+      // Webhook guidance
+      if (lower.includes('webhook') || lower.includes('endpoint') || lower.includes('integration')) {
+        const slug = settings.webhook_slug;
+        if (!slug) {
+          aiText = `🔗 **Webhook Setup Guide**\n\nYour integration endpoint isn't configured yet. Here's how to set it up:\n\n1. Go to **Settings** in the sidebar\n2. Enter a unique **Webhook Slug** (e.g., "brandie-karate-01")\n3. Save your settings\n4. Your webhook URL will be generated automatically\n\nThe webhook receives incoming till slip data from your POS system and triggers automatic receipt generation. Need me to walk you through a specific integration?`;
+        } else {
+          aiText = `🔗 **Your Webhook is Live**\n\n• **URL:** \`https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${slug}\`\n• **Status:** ✅ Active\n• **Method:** POST (JSON payload)\n\nSend till slip data to this endpoint and RuachAgent will auto-generate branded digital receipts. The payload should include items, totals, and customer info. Want me to show you a sample payload?`;
+        }
       }
+      // Settings / personalization
+      else if (lower.includes('setting') || lower.includes('business name') || lower.includes('logo') || lower.includes('brand')) {
+        aiText = `⚙️ **Settings & Personalization**\n\nYou can customize these in the Settings panel:\n\n• **Business Name** — appears on every till slip\n• **Store Address** — shown in receipt header\n• **Logo** — upload via Settings (PNG/JPG)\n• **Currency** — ${settings.currency} currently\n• **Discount %** — ${settings.discount_percentage}% voucher default\n• **Webhook Slug** — your integration key\n• **Voucher Expiry** — ${settings.voucher_expiration_days} days\n\nClick **Settings** in the left sidebar to edit. All changes reflect instantly on the till slip preview →`;
+      }
+      // Analytics / transactions
+      else if (lower.includes('analytic') || lower.includes('transaction') || lower.includes('volume') || lower.includes('report') || lower.includes('stat')) {
+        aiText = `📊 **Analytics Overview**\n\n• **Total Transactions:** ${txCount.toLocaleString()}\n• **Total Volume:** ${settings.currency === 'ZAR' ? 'R' : '$'}${txVolume.toLocaleString()}\n• **Active Inboxes:** ${activeInboxesCount}\n• **Parsed Slips:** ${totalParsedCount.toLocaleString()}\n\nClick the **Analytics** card at the top to see the 28-day density graph. Data refreshes automatically from your merchant account.`;
+      }
+      // Till slip / receipt design
+      else if (lower.includes('till slip') || lower.includes('receipt') || lower.includes('design') || lower.includes('color') || lower.includes('template')) {
+        aiText = `🎨 **Till Slip Design**\n\nYour live preview is on the right →. You can customize:\n\n• **Colors** — "change primary color to blue"\n• **Logo** — upload via Settings\n• **Items** — auto-parsed from webhook payload\n• **Voucher code** — auto-generated per transaction\n• **Promo banner** — edit in Settings\n• **QR code** — links to your redemption page\n\nTry telling me something like *"add a summer promo banner"* or *"make the header purple"* and I'll guide you.`;
+      }
+      // Stores connected
+      else if (lower.includes('store') || lower.includes('connect') || lower.includes('pos')) {
+        aiText = `🏪 **Connected Stores**\n\nEach store connects via its unique webhook slug. Currently you have **${activeInboxesCount}** active inbox.\n\nTo add a new store:\n1. Generate a new webhook slug in Settings\n2. Point your POS system to that webhook URL\n3. Incoming slips auto-route to the correct store\n\nEach store keeps its own branding, currency, and voucher settings.`;
+      }
+      // Greeting
+      else if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey')) {
+        aiText = `Hello${settings.business_name ? ` — welcome back to ${settings.business_name}'s workspace` : ''}! 👋\n\nI can help you with:\n• 🔗 Setting up webhooks & integrations\n• 🎨 Customizing till slip designs\n• 📊 Reading your analytics\n• ⚙️ Configuring business settings\n• 🏪 Managing connected stores\n\nWhat would you like to work on?`;
+      }
+      // Save / sync
+      else if (lower.includes('save') || lower.includes('sync')) {
+        handleSave();
+        aiText = `✅ **Syncing your settings...**\n\nI'm pushing your latest configuration to the live agent. You'll see changes reflected on the till slip preview momentarily.`;
+      }
+      // Subscription / pricing
+      else if (lower.includes('price') || lower.includes('plan') || lower.includes('subscription') || lower.includes('upgrade')) {
+        aiText = `💎 **Merchant Pro Plan**\n\n• **$6.99 / R129.00 per month**\n• Unlimited till slips\n• Advanced analytics\n• Multi-store support\n• Priority webhook processing\n• Custom branding\n\nYour trial has **${trialDaysRemaining} day${trialDaysRemaining !== 1 ? 's' : ''}** remaining. Click your avatar in the sidebar to upgrade.`;
+      }
+      // Default helpful response
+      else {
+        aiText = `I've noted your request. Here's what I can help with in your workspace:\n\n• Say **"webhook"** — setup & endpoint info\n• Say **"settings"** — configure business details\n• Say **"analytics"** — view transaction data\n• Say **"design"** — customize till slips\n• Say **"stores"** — manage connected POS\n\nOr click any of the 3 graphic cards at the top to explore detailed views.`;
+      }
+
       const aiMsg = {
         id: Date.now() + 1,
         sender: 'ai',
@@ -821,51 +846,62 @@ export default function AdminPanel() {
       };
       setChatMessages(prev => [...prev, aiMsg]);
       setIsChatTyping(false);
-    }, 1200);
+    }, 900);
   };
 
+  // --- BLOCK CLICK → opens modal ---
   const handleBlockClick = (blockName) => {
-    const msg = {
-      id: Date.now(),
-      sender: 'user',
-      text: `Show me the ${blockName} details`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-    setChatMessages(prev => [...prev, msg]);
-    setIsChatTyping(true);
-    setTimeout(() => {
-      let aiText = '';
-      switch(blockName) {
-        case 'Agent Parameters':
-          aiText = ` **Agent Parameters**\n\n• Business: ${settings.business_name || 'Not set'}\n• Currency: ${settings.currency}\n• Discount: ${settings.discount_percentage}%\n• Webhook: ${settings.webhook_slug || 'Not configured'}\n• Voucher Expiry: ${settings.voucher_expiration_days} days\n\nWould you like to modify any of these?`;
-          break;
-        case 'Inbox Overview':
-          aiText = `📬 **Inbox Overview**\n\n• Active Inboxes: ${activeInboxesCount}\n• Parsed Slips: ${totalParsedCount.toLocaleString()}\n• Status: All systems operational\n\nYour inbox is synchronized and processing receipts.`;
-          break;
-        case 'Inbox Slip Density':
-          aiText = `📊 **Inbox Slip Density**\n\nLast 28 days analytics loaded. Transaction volume trending upward. Would you like a detailed breakdown?`;
-          break;
-        case 'Integration Endpoint':
-          aiText = `🔗 **Integration Endpoint**\n\nWebhook URL: ${settings.webhook_slug ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}` : 'Configure webhook slug first'}\n\nStatus: ${settings.webhook_slug ? 'Active' : 'Pending configuration'}`;
-          break;
-        case 'Transaction Volume':
-          aiText = ` **Transaction Volume**\n\nThis Month: ${txVolume.toLocaleString()}\nTotal Transactions: ${txCount.toLocaleString()}\n\nYour merchant dashboard is tracking all activity.`;
-          break;
-        case 'System Status':
-          aiText = `⚡ **System Status**\n\nAll Systems: Operational ✅\nAPI Connection: Stable\nDatabase: Connected\nAuth Session: Active\n\nEverything is running smoothly!`;
-          break;
-        default:
-          aiText = `Here are the details for ${blockName}. How would you like to proceed?`;
-      }
-      const aiMsg = {
-        id: Date.now() + 1,
-        sender: 'ai',
-        text: aiText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setChatMessages(prev => [...prev, aiMsg]);
-      setIsChatTyping(false);
-    }, 800);
+    setActiveBlockModal(blockName);
+  };
+
+  const getBlockModalContent = (blockName) => {
+    switch (blockName) {
+      case 'Agent Parameters':
+        return {
+          icon: '⚙️',
+          color: theme.cyan,
+          title: 'Agent Parameters',
+          subtitle: 'Your AI Till Slip Agent configuration',
+          rows: [
+            { label: 'Business Name', value: settings.business_name || 'Not set' },
+            { label: 'Currency', value: settings.currency },
+            { label: 'Discount', value: `${settings.discount_percentage}%` },
+            { label: 'Webhook Slug', value: settings.webhook_slug || 'Not configured' },
+            { label: 'Voucher Expiry', value: `${settings.voucher_expiration_days} days` },
+          ],
+          footer: 'Modify these in Settings →'
+        };
+      case 'Integration Endpoint':
+        return {
+          icon: '🔗',
+          color: theme.purple,
+          title: 'Integration Endpoint',
+          subtitle: 'Your webhook configuration',
+          rows: [
+            { label: 'Webhook URL', value: settings.webhook_slug ? `https://...?slug=${settings.webhook_slug}` : 'Configure webhook slug first', mono: true },
+            { label: 'Status', value: settings.webhook_slug ? '✅ Active' : '⏳ Pending' },
+            { label: 'Method', value: 'POST (JSON)' },
+            { label: 'Auth', value: 'Slug-based (header-free)' },
+          ],
+          footer: 'Send till slip payloads to this URL to trigger auto-receipts.'
+        };
+      case 'Inbox Slip Density':
+        return {
+          icon: '📊',
+          color: theme.green,
+          title: 'Inbox Slip Density',
+          subtitle: 'Last 28 days analytics',
+          rows: [
+            { label: 'Total Transactions', value: txCount.toLocaleString() },
+            { label: 'Total Volume', value: `${settings.currency === 'ZAR' ? 'R' : '$'}${txVolume.toLocaleString()}` },
+            { label: 'Active Inboxes', value: activeInboxesCount },
+            { label: 'Parsed Slips', value: totalParsedCount.toLocaleString() },
+          ],
+          footer: 'Data refreshes automatically from your merchant account.'
+        };
+      default:
+        return null;
+    }
   };
 
   const SAFE_CURRENCY_OPTIONS = typeof CURRENCY_OPTIONS !== 'undefined' ? CURRENCY_OPTIONS : [
@@ -879,7 +915,7 @@ export default function AdminPanel() {
     return (
       <div style={{ ...styles.container, display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
         <div style={{ textAlign: 'center' }}>
-          <div style={{ marginBottom: '12px', fontSize: '32px', animation: 'pulse 1.5s infinite' }}></div>
+          <div style={{ marginBottom: '12px', fontSize: '32px', animation: 'pulse 1.5s infinite' }}>⚡</div>
           <div style={{ color: theme.cyan, fontSize: '13px', letterSpacing: '2px', fontWeight: '700' }}>SYNCHRONIZING SECURE NODE IDENTITY...</div>
         </div>
       </div>
@@ -892,7 +928,7 @@ export default function AdminPanel() {
       <div style={{ ...styles.container, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div style={{ maxWidth: '380px', width: '90%', padding: '32px', background: theme.bgCard, border: `1px solid ${theme.border}`, borderRadius: '20px', boxShadow: `0 0 30px ${theme.cyanGlow}` }}>
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div style={{ ...styles.logoIcon, width: '56px', height: '56px', fontSize: '24px', margin: '0 auto 12px' }}>RA</div>
+            <div style={{ ...styles.sidebarLogo, width: '56px', height: '56px', fontSize: '22px', margin: '0 auto 12px' }}>RA</div>
             <div style={{ fontSize: '20px', fontWeight: '800', color: theme.white, letterSpacing: '1px' }}>RUACH AGENT</div>
             <div style={{ fontSize: '10px', color: theme.textMuted, letterSpacing: '2px', marginTop: '4px' }}>MASTER PORTAL</div>
           </div>
@@ -902,8 +938,8 @@ export default function AdminPanel() {
             </div>
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={{ ...styles.chatInputBox, marginBottom: 0 }} />
-            <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={{ ...styles.chatInputBox, marginBottom: 0 }} />
+            <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={{ ...styles.chatInputBox, background: theme.bgTertiary, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '14px 16px', marginBottom: 0 }} />
+            <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={{ ...styles.chatInputBox, background: theme.bgTertiary, border: `1px solid ${theme.border}`, borderRadius: '12px', padding: '14px 16px', marginBottom: 0 }} />
             <button onClick={() => handleAuth('login')} style={{ ...styles.primaryBtn, background: 'linear-gradient(90deg, #00e3d8, #00b4d8)' }} disabled={isAuthSyncing}>
               {isAuthSyncing ? 'Verifying Node...' : 'Login'}
             </button>
@@ -915,6 +951,52 @@ export default function AdminPanel() {
       </div>
     );
   }
+
+  // --- BUILD GRAPHIC CARDS DATA ---
+  const graphicCards = [
+    {
+      name: 'Agent Parameters',
+      icon: '⚙️',
+      gradient: 'linear-gradient(135deg, rgba(0,227,216,0.18), rgba(0,180,216,0.05))',
+      borderColor: 'rgba(0,227,216,0.35)',
+      iconBg: 'rgba(0,227,216,0.15)',
+      color: theme.cyan,
+      badge: 'CONFIG',
+      badgeBg: 'rgba(0,227,216,0.18)',
+      badgeColor: theme.cyan,
+      metric: settings.business_name ? settings.business_name.slice(0, 14) : 'NOT SET',
+      sub: settings.currency + ' • ' + settings.discount_percentage + '% discount',
+    },
+    {
+      name: 'Integration Endpoint',
+      icon: '🔗',
+      gradient: 'linear-gradient(135deg, rgba(168,85,247,0.18), rgba(124,58,237,0.05))',
+      borderColor: 'rgba(168,85,247,0.35)',
+      iconBg: 'rgba(168,85,247,0.15)',
+      color: theme.purple,
+      badge: settings.webhook_slug ? 'LIVE' : 'SETUP',
+      badgeBg: settings.webhook_slug ? 'rgba(16,185,129,0.18)' : 'rgba(239,68,68,0.18)',
+      badgeColor: settings.webhook_slug ? theme.green : theme.red,
+      metric: settings.webhook_slug ? settings.webhook_slug.slice(0, 16) : 'NO SLUG',
+      sub: 'Webhook endpoint',
+    },
+    {
+      name: 'Inbox Slip Density',
+      icon: '📊',
+      gradient: 'linear-gradient(135deg, rgba(16,185,129,0.18), rgba(5,150,105,0.05))',
+      borderColor: 'rgba(16,185,129,0.35)',
+      iconBg: 'rgba(16,185,129,0.15)',
+      color: theme.green,
+      badge: '28 DAYS',
+      badgeBg: 'rgba(16,185,129,0.18)',
+      badgeColor: theme.green,
+      metric: txCount.toLocaleString(),
+      sub: 'transactions • ' + activeCurrencySymbol + txVolume.toLocaleString(),
+      showMiniGraph: true,
+    },
+  ];
+
+  const blockModalData = activeBlockModal ? getBlockModalContent(activeBlockModal) : null;
 
   // --- MAIN APP ---
   return (
@@ -931,7 +1013,7 @@ export default function AdminPanel() {
             </p>
             <div style={{ background: 'linear-gradient(145deg, rgba(0,198,255,0.08), rgba(0,255,170,0.06))', borderRadius: '16px', padding: '20px', marginBottom: '24px', border: '1px solid rgba(0,255,170,0.25)' }}>
               <div style={{ color: '#ffffff', fontWeight: '700', fontSize: '16px', marginBottom: '8px' }}>Merchant Pro Plan</div>
-              <div style={{ color: '#00F5A0', fontSize: '30px', fontWeight: '800' }}>$6.99 [R129.00]<span style={{ fontSize: '13px', color: '#9ca3af', fontWeight: '500' }}> / month</span></div>
+              <div style={{ color: '#00F5A0', fontSize: '30px', fontWeight: '800' }}>$6.99 [R129.00] <span style={{ fontSize: '13px', color: '#9ca3af', fontWeight: '500' }}> / month</span></div>
             </div>
             <button onClick={() => {
               if (!window.PaystackPop) { alert("Paystack SDK failed to load."); return; }
@@ -957,7 +1039,7 @@ export default function AdminPanel() {
       {showTrialWelcomeModal && (
         <div style={styles.modalOverlay}>
           <div style={styles.modalCard}>
-            <div style={{ width: '72px', height: '72px', margin: '0 auto 20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', background: 'linear-gradient(135deg, #00F5A0, #00C6FF)', boxShadow: '0 0 20px rgba(0,255,170,0.45)' }}></div>
+            <div style={{ width: '72px', height: '72px', margin: '0 auto 20px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', background: 'linear-gradient(135deg, #00F5A0, #00C6FF)', boxShadow: '0 0 20px rgba(0,255,170,0.45)' }}>🎉</div>
             <div style={{ color: '#00F5A0', fontSize: '11px', letterSpacing: '3px', fontWeight: 700, marginBottom: '12px' }}>PREMIUM ACCESS ACTIVATED</div>
             <h2 style={{ color: '#ffffff', marginBottom: '14px', fontSize: '26px', fontWeight: 700 }}>Welcome to Your Premium Trial</h2>
             <p style={{ color: '#b9c7cf', lineHeight: '1.8', marginBottom: '24px', fontSize: '14px' }}>
@@ -971,48 +1053,89 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* APP LAYOUT */}
-      <div style={styles.appLayout}>
-        {/* LEFT SIDEBAR */}
-        <aside style={styles.sidebar}>
-          <div style={styles.logoSection}>
-            <div style={styles.logoIcon}>RA</div>
+      {/* BLOCK DETAIL MODAL */}
+      {blockModalData && (
+        <div style={styles.blockModalOverlay} onClick={() => setActiveBlockModal(null)}>
+          <div style={styles.blockModalCard} onClick={e => e.stopPropagation()}>
+            <button style={styles.blockModalClose} onClick={() => setActiveBlockModal(null)}>✕</button>
+            <div style={styles.blockModalHeader}>
+              <div style={{ ...styles.blockModalIcon, background: `${blockModalData.color}20`, color: blockModalData.color, border: `1px solid ${blockModalData.color}40` }}>
+                {blockModalData.icon}
+              </div>
+              <div>
+                <div style={{ fontSize: '16px', fontWeight: '800', color: theme.white, letterSpacing: '0.5px' }}>{blockModalData.title}</div>
+                <div style={{ fontSize: '11px', color: theme.textMuted, marginTop: '2px' }}>{blockModalData.subtitle}</div>
+              </div>
+            </div>
             <div>
-              <div style={styles.logoText}>RUACH AGENT</div>
-              <div style={styles.logoSubtext}>Automate. Analyze. Accelerate.</div>
+              {blockModalData.rows.map((row, i) => (
+                <div key={i} style={styles.blockModalRow}>
+                  <span style={{ fontSize: '11px', color: theme.textMuted, fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>{row.label}</span>
+                  <span style={{ fontSize: '13px', color: theme.white, fontWeight: '700', fontFamily: row.mono ? 'monospace' : 'inherit', maxWidth: '60%', textAlign: 'right', wordBreak: 'break-all' }}>{row.value}</span>
+                </div>
+              ))}
+            </div>
+            {blockModalData.name === 'Inbox Slip Density' && (
+              <div style={{ marginTop: '14px', padding: '12px', background: 'rgba(16,185,129,0.06)', border: `1px solid rgba(16,185,129,0.2)`, borderRadius: '12px' }}>
+                <div style={{ fontSize: '10px', color: theme.green, fontWeight: '700', letterSpacing: '1px', marginBottom: '8px', textTransform: 'uppercase' }}>28-Day Density Graph</div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '2px', height: '60px' }}>
+                  {graphData.slice(-28).map((val, i) => (
+                    <div key={i} style={{ flex: 1, background: `linear-gradient(180deg, ${theme.green}, rgba(16,185,129,0.3))`, height: `${Math.max(4, val)}%`, borderRadius: '2px', minHeight: '2px' }} />
+                  ))}
+                </div>
+              </div>
+            )}
+            <div style={{ marginTop: '16px', padding: '10px 12px', background: 'rgba(0,227,216,0.05)', border: `1px solid ${theme.border}`, borderRadius: '10px', fontSize: '11px', color: theme.textMuted, lineHeight: '1.5' }}>
+              💡 {blockModalData.footer}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* APP LAYOUT */}
+      <div style={styles.appLayout}>
+        {/* THIN LEFT SIDEBAR */}
+        <aside style={styles.sidebar}>
+          <div style={styles.sidebarLogo} title="RuachAgent">RA</div>
 
           {[
-            { id: 'saved', icon: '', label: 'Saved Designs', sub: 'Your till slip templates' },
-            { id: 'stores', icon: '🔗', label: 'Connected Stores', sub: 'By Webhook Integration' },
-            { id: 'slips', icon: '📤', label: 'Till Slips Sent', sub: 'Delivery & Analytics' },
-            { id: 'settings', icon: '⚙️', label: 'Settings', sub: 'Admin & Personal' },
+            { id: 'till-slips', icon: '📤', label: 'Slips' },
+            { id: 'stores', icon: '🔗', label: 'Stores' },
+            { id: 'settings', icon: '⚙️', label: 'Settings' },
           ].map(item => (
             <div
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               style={{
-                ...styles.navItem,
-                ...(activeTab === item.id ? styles.navItemActive : {}),
+                ...styles.thinNavItem,
+                ...(activeTab === item.id ? styles.thinNavItemActive : {}),
               }}
+              title={item.label}
               onMouseEnter={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'rgba(0,227,216,0.04)'; }}
               onMouseLeave={e => { if (activeTab !== item.id) e.currentTarget.style.background = 'transparent'; }}
             >
-              <div style={{ ...styles.navIcon, background: activeTab === item.id ? 'rgba(0,227,216,0.12)' : 'rgba(255,255,255,0.04)' }}>
-                {item.icon}
-              </div>
-              <div>
-                <div style={styles.navLabel}>{item.label}</div>
-                <div style={styles.navSublabel}>{item.sub}</div>
-              </div>
+              <div style={styles.thinNavIcon}>{item.icon}</div>
+              <div style={{ ...styles.thinNavLabel, ...(activeTab === item.id ? styles.thinNavLabelActive : {}) }}>{item.label}</div>
             </div>
           ))}
 
-          <div style={styles.sidebarBottom}>
-            <div style={styles.sidebarBottomLogo}>RA</div>
-            <div style={{ fontSize: '11px', fontWeight: '700', color: theme.white, marginBottom: '4px' }}>RUACH AGENT AI</div>
-            <div style={{ fontSize: '10px', color: theme.textMuted, lineHeight: '1.5' }}>Your Intelligent Design Partner. Always here to help you automate and grow your business.</div>
+          <div style={styles.sidebarDivider} />
+
+          <div
+            onClick={() => setActiveTab('ai-prompts')}
+            style={{
+              ...styles.thinNavItem,
+              ...(activeTab === 'ai-prompts' ? styles.thinNavItemActive : {}),
+              background: activeTab === 'ai-prompts' ? 'linear-gradient(135deg, rgba(168,85,247,0.15), rgba(0,227,216,0.08))' : undefined,
+            }}
+            title="AI Prompts"
+          >
+            <div style={{ ...styles.thinNavIcon, fontSize: '20px' }}>✨</div>
+            <div style={{ ...styles.thinNavLabel, ...(activeTab === 'ai-prompts' ? styles.thinNavLabelActive : {}), color: activeTab === 'ai-prompts' ? theme.purple : undefined }}>AI</div>
+          </div>
+
+          <div style={styles.sidebarBottomAvatar} title={user?.email || 'Account'} onClick={() => supabase.auth.signOut()}>
+            {user?.email?.charAt(0).toUpperCase() || 'U'}
           </div>
         </aside>
 
@@ -1021,18 +1144,60 @@ export default function AdminPanel() {
           {/* Chat Header */}
           <div style={styles.chatHeader}>
             <div style={styles.chatTitle}>
-              AI DESIGN CHAT
+              RUACH AGENT AI
               <span style={styles.onlineDot}></span>
               <span style={{ fontSize: '11px', color: theme.green, fontWeight: '600' }}>ONLINE</span>
             </div>
             <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <button onClick={() => setRightPanelOpen(!rightPanelOpen)} style={{ ...styles.actionBtn, fontSize: '10px' }}>
-                {rightPanelOpen ? 'Hide Preview' : 'Show Preview'}
-              </button>
-              <button onClick={() => supabase.auth.signOut()} style={{ ...styles.actionBtn, color: theme.red, borderColor: 'rgba(239,68,68,0.3)' }}>
-                Disconnect
+              <button onClick={() => setRightPanelOpen(!rightPanelOpen)} style={{ padding: '7px 12px', background: 'rgba(0, 227, 216, 0.08)', border: `1px solid ${theme.border}`, borderRadius: '10px', color: theme.cyan, fontSize: '10px', fontWeight: '600', cursor: 'pointer' }}>
+                {rightPanelOpen ? '◀ Hide Preview' : 'Show Preview ▶'}
               </button>
             </div>
+          </div>
+
+          {/* TOP GRAPHIC BLOCKS (disguised clickable graphics) */}
+          <div style={styles.topBlocksRow}>
+            {graphicCards.map(card => (
+              <div
+                key={card.name}
+                onClick={() => handleBlockClick(card.name)}
+                style={{
+                  ...styles.graphicCard,
+                  background: card.gradient,
+                  border: `1px solid ${card.borderColor}`,
+                  boxShadow: `0 4px 20px ${card.borderColor.replace('0.35', '0.15')}`,
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = `0 8px 28px ${card.borderColor.replace('0.35', '0.3')}`;
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 4px 20px ${card.borderColor.replace('0.35', '0.15')}`;
+                }}
+              >
+                <div style={styles.graphicCardTop}>
+                  <div style={{ ...styles.graphicIconWrap, background: card.iconBg, color: card.color }}>
+                    {card.icon}
+                  </div>
+                  <div style={{ ...styles.graphicBadge, background: card.badgeBg, color: card.badgeColor, border: `1px solid ${card.badgeColor}40` }}>
+                    {card.badge}
+                  </div>
+                </div>
+                <div>
+                  <div style={{ ...styles.graphicTitle, color: card.color }}>{card.name}</div>
+                  <div style={styles.graphicMetric}>{card.metric}</div>
+                  <div style={styles.graphicSub}>{card.sub}</div>
+                  {card.showMiniGraph && (
+                    <div style={styles.graphicMiniGraph}>
+                      {graphData.slice(-14).map((val, i) => (
+                        <div key={i} style={{ ...styles.graphicMiniBar, background: `linear-gradient(180deg, ${card.color}, ${card.color}40)`, height: `${Math.max(10, val)}%` }} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Chat Messages */}
@@ -1048,7 +1213,7 @@ export default function AdminPanel() {
                 }}>
                   {msg.sender === 'ai' ? 'RA' : user?.email?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <div>
+                <div style={{ maxWidth: '75%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                     <span style={{ fontSize: '11px', fontWeight: '700', color: msg.sender === 'ai' ? theme.cyan : theme.purple }}>
                       {msg.sender === 'ai' ? 'RuachAgent AI' : 'You'}
@@ -1084,74 +1249,41 @@ export default function AdminPanel() {
             <div ref={chatEndRef}></div>
           </div>
 
-          {/* Design Plan Blocks */}
-          <div style={styles.blocksSection}>
-            <div style={styles.blocksTitle}>
-              DESIGN PLAN BLOCKS <span style={{ fontSize: '9px', color: theme.textMuted, fontWeight: '500' }}>(Live Editable)</span>
-            </div>
-            <div style={styles.blocksGrid}>
-              {[
-                { name: 'Agent Parameters', icon: '⚙️', sub: 'Configure your AI Till Slip Agent', color: theme.cyan },
-                { name: 'Inbox Overview', icon: '📬', sub: 'Real-time inbox & parsed slips', color: theme.purple, badge: '24' },
-                { name: 'Inbox Slip Density', icon: '📊', sub: 'Last 28 Days', color: theme.green, badge: '↑ 12.4%' },
-                { name: 'Integration Endpoint', icon: '🔗', sub: 'Webhook Configuration', color: theme.cyan, badge: 'Active' },
-                { name: 'Transaction Volume', icon: '💰', sub: 'This Month', color: theme.purple, badge: `${txCount.toLocaleString()}` },
-                { name: 'System Status', icon: '⚡', sub: 'All Systems Operational', color: theme.green, badge: 'Online' },
-              ].map(block => (
+          {/* WIDE AI INPUT */}
+          <div style={styles.chatInputArea}>
+            <div style={styles.quickPrompts}>
+              {['How do I set up a webhook?', 'Show my analytics', 'Customize my till slip', 'Connect a new store', 'Change business logo'].map(prompt => (
                 <div
-                  key={block.name}
-                  onClick={() => handleBlockClick(block.name)}
-                  style={{ ...styles.blockCard, borderColor: `${block.color}33` }}
-                  onMouseEnter={e => { e.currentTarget.style.background = theme.bgCardHover; e.currentTarget.style.borderColor = `${block.color}66`; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = theme.bgCard; e.currentTarget.style.borderColor = `${block.color}33`; }}
+                  key={prompt}
+                  style={styles.quickPromptChip}
+                  onClick={() => { setChatInput(prompt); }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,227,216,0.15)'; e.currentTarget.style.borderColor = theme.borderActive; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,227,216,0.06)'; e.currentTarget.style.borderColor = theme.border; }}
                 >
-                  <div style={{ ...styles.blockIcon, background: `${block.color}15`, color: block.color }}>
-                    {block.icon}
-                    {block.badge && <span style={{ position: 'absolute', top: '-4px', right: '-4px', fontSize: '8px', padding: '2px 5px', background: block.color, color: '#0a0e17', borderRadius: '6px', fontWeight: '700' }}>{block.badge}</span>}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ ...styles.blockLabel, color: block.color }}>{block.name}</div>
-                    <div style={styles.blockSublabel}>{block.sub}</div>
-                  </div>
+                  {prompt}
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Chat Input */}
-          <div style={styles.chatInputArea}>
-            <input
-              type="text"
-              placeholder="Ask RuachAgent anything..."
-              value={chatInput}
-              onChange={e => setChatInput(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') handleSendMessage(); }}
-              style={styles.chatInputBox}
-            />
-            <div style={styles.actionButtons}>
-              <button style={{ ...styles.actionBtn, width: '32px', height: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px' }}>+</button>
-              {['Change Colors', 'Add Logo', 'Edit Items', 'Add Promo', 'Adjust Layout'].map(action => (
-                <button
-                  key={action}
-                  style={styles.actionBtn}
-                  onClick={() => { setChatInput(action.toLowerCase() + ' on my till slip'); }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(0,227,216,0.15)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(0,227,216,0.08)'; }}
-                >
-                  {action}
-                </button>
-              ))}
+            <div style={styles.chatInputWrap}>
+              <input
+                type="text"
+                placeholder="Ask RuachAgent anything — webhooks, design, analytics, settings..."
+                value={chatInput}
+                onChange={e => setChatInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleSendMessage(); }}
+                style={styles.chatInputBox}
+              />
               <button
                 onClick={handleSendMessage}
                 style={styles.sendBtn}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = `0 0 20px ${theme.purpleGlow}`; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = `0 0 15px ${theme.purpleGlow}`; }}
               >
-                ➤
+                Send ➤
               </button>
             </div>
             <div style={styles.chatFooter}>
-              <span></span> RuachAgent can modify everything on your till slip design in real-time.
+              <span>⚡</span> RuachAgent AI can configure webhooks, design till slips, and interpret analytics in real-time.
             </div>
           </div>
         </main>
@@ -1160,11 +1292,9 @@ export default function AdminPanel() {
         {rightPanelOpen && isDesktop && (
           <aside style={styles.rightPanel}>
             <div style={{ fontSize: '11px', fontWeight: '800', color: theme.purple, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '16px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              <span></span> LIVE INBOX EMAIL TILL SLIP MIRROR
+              <span>📧</span> LIVE INBOX TILL SLIP MIRROR
             </div>
-
             <div style={styles.receiptCard}>
-              {/* Receipt Header */}
               <div style={styles.receiptHeader}>
                 <div style={styles.receiptLogoCircle}>
                   {settings?.logo_url ? (
@@ -1178,8 +1308,6 @@ export default function AdminPanel() {
                 </div>
                 <div style={{ fontSize: '11px', color: theme.purple, letterSpacing: '2px', marginTop: '4px' }}>KARATE CLUB</div>
               </div>
-
-              {/* Meta Row */}
               <div style={styles.receiptMeta}>
                 <span style={{ fontSize: '10px', fontWeight: '700', color: theme.cyan, padding: '4px 10px', background: 'rgba(0,227,216,0.1)', borderRadius: '8px', border: `1px solid ${theme.borderActive}` }}>
                   VERIFIED MODE
@@ -1191,8 +1319,6 @@ export default function AdminPanel() {
                   </div>
                 </div>
               </div>
-
-              {/* Business Info */}
               <div style={{ textAlign: 'center', marginBottom: '16px' }}>
                 <div style={{ fontSize: '14px', fontWeight: '800', color: theme.purple, marginBottom: '4px' }}>
                   {settings?.business_name || 'BRANDIE\'S KARATE CLUB'}
@@ -1204,15 +1330,12 @@ export default function AdminPanel() {
                   {user?.email || 'info@merchant.com'}
                 </div>
               </div>
-
-              {/* Items */}
               <div style={{ fontSize: '10px', fontWeight: '800', color: theme.purple, letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '10px', textAlign: 'center' }}>
                 ITEMS PURCHASED
               </div>
-
               {[
                 { name: '1x Premium Simple Merchandise Item', price: `$120.00`, icon: '👕' },
-                { name: '1x Standard Agent Automation Mode Addon', price: `$80.00`, icon: '' },
+                { name: '1x Standard Agent Automation Mode Addon', price: `$80.00`, icon: '🤖' },
                 { name: '1x Digital Support & Setup Guide', price: `$0.00`, icon: '📦' },
               ].map((item, i) => (
                 <div key={i} style={styles.receiptItem}>
@@ -1221,17 +1344,13 @@ export default function AdminPanel() {
                   <div style={{ fontSize: '13px', fontWeight: '800', color: theme.purple, fontFamily: 'monospace' }}>{item.price}</div>
                 </div>
               ))}
-
-              {/* Total */}
               <div style={styles.receiptTotal}>
                 <span style={{ fontSize: '13px', fontWeight: '800', color: theme.white, letterSpacing: '1px' }}>TOTAL DUE</span>
                 <span style={{ fontSize: '22px', fontWeight: '900', color: theme.purple, fontFamily: 'monospace', textShadow: `0 0 10px ${theme.purpleGlow}` }}>$200.00</span>
               </div>
-
-              {/* Voucher */}
               <div style={styles.voucherBox}>
                 <div style={{ fontSize: '10px', fontWeight: '800', color: theme.cyan, letterSpacing: '1px', marginBottom: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                  <span></span> NEXT TIER! VOUCHER CODE INSIDE
+                  <span>🎟️</span> NEXT TIER! VOUCHER CODE INSIDE
                 </div>
                 <div style={styles.qrBox}>
                   <img
@@ -1248,15 +1367,11 @@ export default function AdminPanel() {
                   EXPIRES IN: <strong style={{ color: theme.red }}>{settings?.voucher_expiration_days ?? 30} DAYS</strong> FROM NOW!
                 </div>
               </div>
-
-              {/* Promo Banner */}
               <div style={styles.promoBanner}>
                 🔥 REFER A FRIEND & GET 10% OFF YOUR NEXT BILL!
               </div>
-
-              {/* Download */}
               <button style={styles.downloadBtn}>
-                <span></span> DOWNLOAD OFFICIAL INVOICE PDF
+                <span>📄</span> DOWNLOAD OFFICIAL INVOICE PDF
               </button>
             </div>
           </aside>
@@ -1274,7 +1389,7 @@ export default function AdminPanel() {
           50% { opacity: 0.5; }
         }
         * { box-sizing: border-box; }
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,227,216,0.2); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0,227,216,0.4); }
