@@ -444,6 +444,8 @@ export default function AdminPanel() {
 
   const navigate = useNavigate();
 
+  const [activeTab, setActiveTab] = useState('dashboard'); // or whatever default tab string
+
   const [settings, setSettings] = useState({
 
     business_name: '',
