@@ -4,6 +4,20 @@ import { supabase } from './supabaseClient';
 
 import { useNavigate } from "react-router-dom";
 
+import {
+  Paperclip,
+  Image as ImageIcon,
+  Mic,
+  Sparkles,
+  SendHorizonal,
+  ShieldCheck,
+  Cpu,
+  Activity,
+  Bot,
+  BarChart3,
+  Webhook,
+} from "lucide-react";
+
 
 
 // Static reference data available instantly globally
@@ -96,300 +110,2209 @@ const isMobile = window.innerWidth <= 768;
 const isTablet = window.innerWidth > 768 && window.innerWidth <= 1200;
 const isDesktop = window.innerWidth > 1200;
 
+/* ============================================================
+      RUACHAGENT AI CYBERPUNK THEME
+      PART 1
+      Container • AppShell • Sidebar • Chat Layout
+============================================================ */
+
 const styles = {
-  /* =========================
-     APP CONTAINER
-  ========================= */
-  container: {
-    minHeight: '100vh',
-    background: `
-      radial-gradient(circle at top left, rgba(0,255,200,0.08), transparent 30%),
-      radial-gradient(circle at bottom right, rgba(0,255,255,0.05), transparent 35%),
-      linear-gradient(135deg, #05070a 0%, #0b1118 40%, #07131a 100%)
-    `,
-    color: '#e8ffff',
-    fontFamily: `
-      -apple-system,
-      BlinkMacSystemFont,
+
+  /* ============================================================
+      ROOT CONTAINER
+  ============================================================ */
+
+  container:{
+
+      position:"relative",
+
+      minHeight:"100vh",
+
+      width:"100%",
+
+      overflow:"hidden",
+
+      overflowX:"hidden",
+
+      background:`
+
+      radial-gradient(circle at 12% 18%, rgba(0,255,255,.08), transparent 26%),
+
+      radial-gradient(circle at 85% 82%, rgba(0,255,170,.08), transparent 32%),
+
+      radial-gradient(circle at center, rgba(0,255,255,.04), transparent 50%),
+
+      linear-gradient(
+
+      180deg,
+
+      #02050b 0%,
+
+      #040913 22%,
+
+      #06101a 60%,
+
+      #02060d 100%)
+
+      `,
+
+      color:"#ffffff",
+
+      fontFamily:`
+
+      Inter,
+
       "SF Pro Display",
+
       "Segoe UI",
+
       Roboto,
+
       sans-serif
-    `,
-    paddingBottom: isMobile ? '90px' : '32px',
-    paddingLeft: isDesktop ? '24px' : '14px',
-    paddingRight: isDesktop ? '24px' : '14px',
-    transition: 'all 0.25s ease',
-    position: 'relative',
-    overflowX: 'hidden',
-    boxSizing: 'border-box'
+
+      `,
+
+      transition:"all .35s ease",
+
+      display:"flex",
+
+      justifyContent:"center",
+
+      alignItems:"stretch",
+
+      padding:isMobile ? "0" : "20px",
+
+      boxSizing:"border-box"
+
   },
 
-  /* =========================
-     MAIN APP SHELL
-  ========================= */
-  appShell: {
-    display: 'grid',
-    gridTemplateColumns: isDesktop ? '230px 1fr' : '1fr',
-    gap: '22px',
-    width: '100%',
-    maxWidth: '1800px',
-    margin: '0 auto',
-    alignItems: 'start',
-    boxSizing: 'border-box'
+
+
+  /* ============================================================
+      APP SHELL
+  ============================================================ */
+
+  appShell:{
+
+      position:"relative",
+
+      display:"grid",
+
+      gridTemplateColumns:
+
+      isDesktop
+
+      ?
+
+      "290px minmax(0,1fr) 430px"
+
+      :
+
+      "1fr",
+
+      width:"100%",
+
+      maxWidth:"1900px",
+
+      minHeight:isDesktop
+
+      ?
+
+      "calc(100vh - 40px)"
+
+      :
+
+      "100vh",
+
+      overflow:"hidden",
+
+      borderRadius:isDesktop
+
+      ?
+
+      "32px"
+
+      :
+
+      "0px",
+
+      background:"rgba(7,15,28,.72)",
+
+      backdropFilter:"blur(24px)",
+
+      border:isDesktop
+
+      ?
+
+      "1px solid rgba(0,255,255,.14)"
+
+      :
+
+      "none",
+
+      boxShadow:`
+
+      0 0 0 1px rgba(255,255,255,.03),
+
+      0 35px 120px rgba(0,0,0,.55),
+
+      0 0 80px rgba(0,255,255,.06)
+
+      `
+
   },
 
-  /* =========================
-     CONTENT AREA
-  ========================= */
-  content: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '20px',
-    alignSelf: 'stretch',
-    boxSizing: 'border-box'
+
+
+  /* ============================================================
+      SIDEBAR
+  ============================================================ */
+
+  sidebar:{
+
+      display:
+
+      isDesktop
+
+      ?
+
+      "flex"
+
+      :
+
+      "none",
+
+      flexDirection:"column",
+
+      background:`
+
+      linear-gradient(
+
+      180deg,
+
+      rgba(10,18,34,.97),
+
+      rgba(5,10,20,.98)
+
+      )
+
+      `,
+
+      borderRight:"1px solid rgba(0,255,255,.10)",
+
+      overflow:"hidden",
+
+      position:"relative"
+
   },
 
-  /* =========================
-     HEADER
-  ========================= */
-  header: {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    justifyContent: 'space-between',
-    alignItems: isMobile ? 'flex-start' : 'center',
-    gap: isMobile ? '14px' : '24px', // Ensured spacing buffer
-    padding: isMobile ? '16px' : '20px 24px',
-    background: 'rgba(10, 18, 24, 0.72)',
-    backdropFilter: 'blur(18px)',
-    border: '1px solid rgba(0,255,200,0.10)',
-    borderRadius: '22px',
-    position: 'sticky',
-    top: '12px',
-    zIndex: 100,
-    boxShadow: '0 10px 35px rgba(0,0,0,0.35)',
-    boxSizing: 'border-box',
-    width: '100%'
+
+
+  sidebarGlow:{
+
+      position:"absolute",
+
+      top:"-160px",
+
+      left:"-160px",
+
+      width:"380px",
+
+      height:"380px",
+
+      borderRadius:"50%",
+
+      background:"rgba(0,255,255,.10)",
+
+      filter:"blur(130px)",
+
+      pointerEvents:"none"
+
   },
 
-  /* =========================
-     GRID SYSTEM (Main Layout Sections)
-  ========================= */
-  dashboardGrid: {
-    display: isDesktop ? 'grid' : 'flex',
-    flexDirection: isDesktop ? 'row' : 'column', // Set strict layout orientation bounds
-    gridTemplateColumns: isDesktop ? '1.1fr 1.1fr 1.2fr' : undefined,
-    gap: isDesktop ? '24px' : '20px', // Uniform gap sizing avoids spilling blocks out of view
-    width: '100%',
-    alignItems: 'start',
-    boxSizing: 'border-box'
+
+
+  sidebarHeader:{
+
+      display:"flex",
+
+      alignItems:"center",
+
+      gap:"16px",
+
+      padding:"28px",
+
+      borderBottom:"1px solid rgba(0,255,255,.10)"
+
   },
 
-  /* =========================
-     PERFORMANCE NODE METRICS SUB-GRID
-  ========================= */
-  analyticsSubGrid: {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    gap: isMobile ? '8px' : '12px', // Added breathing space to sub-cards
-    width: '100%',
-    boxSizing: 'border-box'
+
+
+  sidebarLogo:{
+
+      width:"58px",
+
+      height:"58px",
+
+      borderRadius:"18px",
+
+      display:"flex",
+
+      alignItems:"center",
+
+      justifyContent:"center",
+
+      background:"rgba(0,255,255,.10)",
+
+      border:"1px solid rgba(0,255,255,.18)",
+
+      boxShadow:`
+
+      0 0 30px rgba(0,255,255,.20),
+
+      inset 0 0 20px rgba(0,255,255,.06)
+
+      `
+
   },
 
-  /* =========================
-     CARDS
-  ========================= */
-  flatCard: {
-    background: 'linear-gradient(180deg, rgba(12, 20, 26, 0.96), rgba(8, 14, 18, 0.98))',
-    borderRadius: isMobile ? '18px' : '20px',
-    padding: isMobile ? '16px' : '20px', // Re-scaled default card padding values
-    border: '1px solid rgba(0,255,200,0.14)',
-    boxShadow: `
-      0 0 0 1px rgba(255,255,255,0.02),
-      0 12px 40px rgba(0,0,0,0.55),
-      0 0 25px rgba(0,255,200,0.08)
-    `,
-    backdropFilter: 'blur(18px)',
-    position: 'relative',
-    overflow: 'hidden',
-    transition: 'all 0.25s ease',
-    width: '100%', // Assures block stays pinned at native parent containers limits
-    boxSizing: 'border-box'
+
+
+  sidebarTitle:{
+
+      fontSize:"22px",
+
+      fontWeight:700,
+
+      color:"#79ffff",
+
+      letterSpacing:".08em"
+
   },
 
-  /* =========================
-     MINI CARD
-  ========================= */
-  concaveCard: {
-    flex: 1, // Let flex boxes auto-distribute cleanly
-    background: 'linear-gradient(145deg, rgba(10, 20, 26, 0.92), rgba(6, 12, 16, 0.98))',
-    borderRadius: '14px',
-    padding: '14px 16px',
-    border: '1px solid rgba(0,255,200,0.10)',
-    boxShadow: `
-      inset 0 1px 1px rgba(255,255,255,0.04),
-      inset 0 -8px 12px rgba(0,0,0,0.35)
-    `,
-    boxSizing: 'border-box'
+
+
+  sidebarSubtitle:{
+
+      marginTop:"4px",
+
+      color:"rgba(210,255,255,.55)",
+
+      fontSize:"12px",
+
+      letterSpacing:".14em",
+
+      textTransform:"uppercase"
+
   },
 
-  /* =========================
-     INPUTS
-  ========================= */
-  input: {
-    width: '100%',
-    boxSizing: 'border-box',
-    padding: isMobile ? '13px 14px' : '15px 16px',
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid rgba(0,255,200,0.12)',
-    borderRadius: '16px',
-    color: '#ffffff',
-    fontSize: isMobile ? '13px' : '14px',
-    outline: 'none',
-    transition: 'all 0.2s ease',
-    backdropFilter: 'blur(10px)',
-    boxSizing: 'border-box',
-    boxShadow: 'inset 0 0 12px rgba(0,0,0,0.3)'
+
+
+  sidebarBody:{
+
+      flex:1,
+
+      overflowY:"auto",
+
+      padding:"20px"
+
   },
 
-  /* =========================
-     BUTTONS
-  ========================= */
-  button: {
-    width: '100%',
-    background: 'linear-gradient(90deg, #00e0b8 0%, #00f5d4 50%, #00ffd5 100%)',
-    color: '#041014',
-    border: 'none',
-    padding: isMobile ? '13px 14px' : '15px 18px',
-    borderRadius: '16px',
-    fontWeight: '700',
-    fontSize: isMobile ? '13px' : '14px',
-    letterSpacing: '0.5px',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-    boxShadow: `
-      0 0 18px rgba(0,255,200,0.35),
-      0 8px 24px rgba(0,255,200,0.18)
-    `,
-    textTransform: 'uppercase',
-    boxSizing: 'border-box'
+
+
+  sidebarButton:{
+
+      width:"100%",
+
+      display:"flex",
+
+      alignItems:"center",
+
+      gap:"18px",
+
+      padding:"18px",
+
+      marginBottom:"12px",
+
+      borderRadius:"18px",
+
+      background:"transparent",
+
+      border:"1px solid transparent",
+
+      color:"#dfffff",
+
+      cursor:"pointer",
+
+      transition:"all .25s ease"
+
   },
 
-  /* =========================
-     RESPONSIVE TITLES
-  ========================= */
-  title: {
-    fontSize: isMobile ? '21px' : isTablet ? '25px' : '30px',
-    fontWeight: '700',
-    letterSpacing: '1px',
-    color: '#ffffff',
-    textShadow: '0 0 12px rgba(0,255,200,0.28)',
-    lineHeight: '1.1',
-    whiteSpace: 'nowrap', // Prevents logo layout drops or character truncation errors
-    minWidth: 'max-content'
+
+
+  sidebarButtonActive:{
+
+      background:"rgba(0,255,255,.08)",
+
+      border:"1px solid rgba(0,255,255,.20)",
+
+      boxShadow:"0 0 30px rgba(0,255,255,.12)"
+
   },
 
-  subtitle: {
-    fontSize: isMobile ? '11px' : '13px',
-    color: 'rgba(220, 255, 250, 0.71)',
-    letterSpacing: '1.2px',
-    textTransform: 'uppercase'
+
+
+  sidebarFooter:{
+
+      padding:"22px",
+
+      borderTop:"1px solid rgba(0,255,255,.10)"
+
   },
 
-  /* =========================
-     STATUS BADGES
-  ========================= */
-  statusBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: isMobile ? '7px 12px' : '8px 14px',
-    borderRadius: '999px',
-    background: 'rgba(0, 255, 200, 0)',
-    border: '1px solid rgba(0,255,200,0.18)',
-    color: '#00ffd5',
-    fontSize: isMobile ? '11px' : '12px',
-    fontWeight: '600',
-    letterSpacing: '0.5px'
+
+
+  /* ============================================================
+      CHAT AREA
+  ============================================================ */
+
+  chat:{
+
+      display:"flex",
+
+      flexDirection:"column",
+
+      minWidth:0,
+
+      background:`
+
+      linear-gradient(
+
+      180deg,
+
+      rgba(6,13,24,.80),
+
+      rgba(5,11,18,.95)
+
+      )
+
+      `,
+
+      position:"relative",
+
+      overflow:"hidden"
+
   },
 
-  /* =========================
-     RESPONSIVE DIVIDER
-  ========================= */
-  divider: {
-    width: '100%',
-    height: '1px',
-    background: 'linear-gradient(90deg, transparent, rgba(0,255,200,0.18), transparent)',
-    margin: isMobile ? '14px 0' : '18px 0'
+
+
+  chatGlowLeft:{
+
+      position:"absolute",
+
+      left:"-220px",
+
+      top:"-180px",
+
+      width:"520px",
+
+      height:"520px",
+
+      borderRadius:"50%",
+
+      background:"rgba(0,255,255,.08)",
+
+      filter:"blur(180px)",
+
+      pointerEvents:"none"
+
   },
 
-  /* =========================
-     MOBILE FLOATING ACTION BAR
-  ========================= */
-  mobileDock: {
-    position: 'fixed',
-    bottom: '18px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    width: 'calc(100% - 28px)',
-    maxWidth: '420px',
-    display: isMobile ? 'flex' : 'none',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    padding: '14px',
-    borderRadius: '22px',
-    background: 'rgba(8,18,24,0.88)',
-    backdropFilter: 'blur(18px)',
-    border: '1px solid rgba(0,255,200,0.14)',
-    zIndex: 500,
-    boxShadow: `
-      0 10px 35px rgba(0,0,0,0.45),
-      0 0 25px rgba(0,255,200,0.08)
-    `,
-    boxSizing: 'border-box'
+
+
+  chatGlowRight:{
+
+      position:"absolute",
+
+      right:"-250px",
+
+      bottom:"-220px",
+
+      width:"520px",
+
+      height:"520px",
+
+      borderRadius:"50%",
+
+      background:"rgba(0,255,180,.08)",
+
+      filter:"blur(190px)",
+
+      pointerEvents:"none"
+
   },
 
-  /* =========================
-     MODAL
-  ========================= */
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(2, 8, 12, 0.82)',
-    backdropFilter: 'blur(12px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-    padding: isMobile ? '14px' : '22px',
-    boxSizing: 'border-box'
+
+
+  chatHeader:{
+
+      display:"flex",
+
+      justifyContent:"space-between",
+
+      alignItems:"center",
+
+      padding:isMobile
+
+      ?
+
+      "18px"
+
+      :
+
+      "24px 34px",
+
+      borderBottom:"1px solid rgba(0,255,255,.10)",
+
+      backdropFilter:"blur(25px)",
+
+      background:"rgba(8,18,30,.65)",
+
+      position:"sticky",
+
+      top:0,
+
+      zIndex:40
+
   },
 
-  /* =========================
-     RESPONSIVE NEON CIRCLE
-  ========================= */
-  neonCircle: {
-    width: isMobile ? '140px' : '180px',
-    height: isMobile ? '140px' : '180px',
-    borderRadius: '50%',
-    border: '2px solid rgba(0,255,200,0.14)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '0 auto',
-    boxShadow: `
-      0 0 30px rgba(0,255,200,0.15),
-      inset 0 0 24px rgba(0,255,200,0.08)
-    `,
-    background: 'radial-gradient(circle, rgba(0,255,200,0.06), transparent)',
-    boxSizing: 'border-box'
-  }
+
+
+  chatTitle:{
+
+      fontSize:isMobile
+
+      ?
+
+      "20px"
+
+      :
+
+      "26px",
+
+      fontWeight:700,
+
+      color:"#8afcff"
+
+  },
+
+
+
+  chatSubtitle:{
+
+      marginTop:"6px",
+
+      color:"rgba(210,255,255,.55)",
+
+      fontSize:"13px"
+
+  },
+
+
+
+  chatBody:{
+
+      flex:1,
+
+      overflowY:"auto",
+
+      padding:isMobile
+
+      ?
+
+      "18px"
+
+      :
+
+      "34px",
+
+      display:"flex",
+
+      flexDirection:"column",
+
+      gap:"26px"
+
+  },
+
+
+
+  mobileSidebarButton:{
+
+      display:isDesktop
+
+      ?
+
+      "none"
+
+      :
+
+      "flex",
+
+      alignItems:"center",
+
+      justifyContent:"center",
+
+      width:"46px",
+
+      height:"46px",
+
+      borderRadius:"14px",
+
+      background:"rgba(0,255,255,.08)",
+
+      border:"1px solid rgba(0,255,255,.20)",
+
+      color:"#8afcff"
+
+  },
+
+/* ============================================================
+    PART 2
+    AI Messages • Prompt Composer • Inputs • Buttons
+============================================================ */
+
+  /* ============================================================
+      CHAT MESSAGE AREA
+  ============================================================ */
+
+  messagesContainer:{
+
+      flex:1,
+
+      display:"flex",
+
+      flexDirection:"column",
+
+      gap:"26px",
+
+      overflowY:"auto",
+
+      overflowX:"hidden",
+
+      paddingBottom:"25px",
+
+      scrollBehavior:"smooth"
+
+  },
+
+
+
+  /* ============================================================
+      ROWS
+  ============================================================ */
+
+  aiRow:{
+
+      display:"flex",
+
+      alignItems:"flex-start",
+
+      gap:"18px",
+
+      width:"100%"
+
+  },
+
+
+
+  userRow:{
+
+      display:"flex",
+
+      justifyContent:"flex-end",
+
+      width:"100%"
+
+  },
+
+
+
+  /* ============================================================
+      AVATAR
+  ============================================================ */
+
+  aiAvatar:{
+
+      width:"52px",
+
+      height:"52px",
+
+      minWidth:"52px",
+
+      borderRadius:"18px",
+
+      display:"flex",
+
+      alignItems:"center",
+
+      justifyContent:"center",
+
+      background:"rgba(0,255,255,.08)",
+
+      border:"1px solid rgba(0,255,255,.20)",
+
+      boxShadow:`
+
+      0 0 24px rgba(0,255,255,.20),
+
+      inset 0 0 18px rgba(0,255,255,.08)
+
+      `
+
+  },
+
+
+
+  /* ============================================================
+      AI MESSAGE
+  ============================================================ */
+
+  aiBubble:{
+
+      maxWidth:isMobile
+
+      ?
+
+      "100%"
+
+      :
+
+      "76%",
+
+      background:`
+
+      linear-gradient(
+
+      180deg,
+
+      rgba(15,28,42,.95),
+
+      rgba(8,16,28,.98)
+
+      )
+
+      `,
+
+      border:"1px solid rgba(0,255,255,.15)",
+
+      borderRadius:"26px",
+
+      padding:isMobile
+
+      ?
+
+      "18px"
+
+      :
+
+      "24px",
+
+      boxShadow:`
+
+      0 0 35px rgba(0,255,255,.08),
+
+      inset 0 0 20px rgba(255,255,255,.02)
+
+      `,
+
+      backdropFilter:"blur(20px)"
+
+  },
+
+
+
+  aiName:{
+
+      color:"#84ffff",
+
+      fontWeight:700,
+
+      marginBottom:"12px",
+
+      fontSize:"15px",
+
+      letterSpacing:".05em"
+
+  },
+
+
+
+  aiText:{
+
+      lineHeight:1.9,
+
+      fontSize:"15px",
+
+      color:"#f2ffff"
+
+  },
+
+
+
+  /* ============================================================
+      USER MESSAGE
+  ============================================================ */
+
+  userBubble:{
+
+      maxWidth:isMobile
+
+      ?
+
+      "100%"
+
+      :
+
+      "70%",
+
+      background:`
+
+      linear-gradient(
+
+      135deg,
+
+      rgba(0,255,255,.16),
+
+      rgba(0,180,255,.12)
+
+      )
+
+      `,
+
+      border:"1px solid rgba(0,255,255,.25)",
+
+      borderRadius:"24px",
+
+      padding:isMobile
+
+      ?
+
+      "18px"
+
+      :
+
+      "22px",
+
+      color:"#ffffff",
+
+      backdropFilter:"blur(16px)",
+
+      boxShadow:`
+
+      0 0 35px rgba(0,255,255,.10)
+
+      `
+
+  },
+
+
+
+  userName:{
+
+      color:"#7efeff",
+
+      fontWeight:700,
+
+      marginBottom:"10px"
+
+  },
+
+
+
+  messageTime:{
+
+      marginTop:"18px",
+
+      color:"rgba(220,255,255,.40)",
+
+      fontSize:"12px"
+
+  },
+
+
+
+  /* ============================================================
+      TYPING INDICATOR
+  ============================================================ */
+
+  typingBubble:{
+
+      display:"flex",
+
+      alignItems:"center",
+
+      gap:"8px",
+
+      padding:"20px",
+
+      width:"90px",
+
+      borderRadius:"18px",
+
+      background:"rgba(0,255,255,.06)",
+
+      border:"1px solid rgba(0,255,255,.15)"
+
+  },
+
+
+
+  typingDot:{
+
+      width:"10px",
+
+      height:"10px",
+
+      borderRadius:"50%",
+
+      background:"#62ffff",
+
+      boxShadow:"0 0 14px #00ffff"
+
+  },
+
+
+
+  /* ============================================================
+      PROMPT AREA
+  ============================================================ */
+
+  promptContainer:{
+
+      position:"relative",
+
+      padding:isMobile
+
+      ?
+
+      "18px"
+
+      :
+
+      "24px 34px",
+
+      borderTop:"1px solid rgba(0,255,255,.10)",
+
+      background:"rgba(7,15,26,.85)",
+
+      backdropFilter:"blur(25px)"
+
+  },
+
+
+
+  promptGlass:{
+
+      borderRadius:"28px",
+
+      background:`
+
+      linear-gradient(
+
+      180deg,
+
+      rgba(12,24,38,.98),
+
+      rgba(7,14,25,.98)
+
+      )
+
+      `,
+
+      border:"1px solid rgba(0,255,255,.18)",
+
+      boxShadow:`
+
+      0 0 50px rgba(0,255,255,.08),
+
+      inset 0 0 20px rgba(255,255,255,.02)
+
+      `,
+
+      padding:"20px"
+
+  },
+
+
+
+  promptInput:{
+
+      width:"100%",
+
+      minHeight:"65px",
+
+      maxHeight:"220px",
+
+      resize:"none",
+
+      background:"transparent",
+
+      border:"none",
+
+      outline:"none",
+
+      color:"#ffffff",
+
+      fontSize:"16px",
+
+      lineHeight:1.8,
+
+      fontFamily:"inherit"
+
+  },
+
+
+
+  promptToolbar:{
+
+      marginTop:"18px",
+
+      display:"flex",
+
+      justifyContent:"space-between",
+
+      alignItems:"center",
+
+      gap:"18px",
+
+      flexWrap:"wrap"
+
+  },
+
+
+
+  leftTools:{
+
+      display:"flex",
+
+      alignItems:"center",
+
+      gap:"12px",
+
+      flexWrap:"wrap"
+
+  },
+
+
+
+  rightTools:{
+
+      display:"flex",
+
+      alignItems:"center",
+
+      gap:"14px"
+
+  },
+
+
+
+  /* ============================================================
+      ICON BUTTONS
+  ============================================================ */
+
+  iconButton:{
+
+      width:"46px",
+
+      height:"46px",
+
+      borderRadius:"16px",
+
+      display:"flex",
+
+      alignItems:"center",
+
+      justifyContent:"center",
+
+      background:"rgba(0,255,255,.05)",
+
+      border:"1px solid rgba(0,255,255,.16)",
+
+      color:"#8effff",
+
+      cursor:"pointer",
+
+      transition:"all .25s ease"
+
+  },
+
+
+
+  iconButtonHover:{
+
+      background:"rgba(0,255,255,.12)",
+
+      transform:"translateY(-2px)",
+
+      boxShadow:"0 0 22px rgba(0,255,255,.18)"
+
+  },
+
+  /* ============================================================
+      SEND BUTTON
+  ============================================================ */
+
+  sendButton:{
+
+      display:"flex",
+
+      alignItems:"center",
+
+      gap:"12px",
+
+      padding:"15px 26px",
+
+      borderRadius:"18px",
+
+      border:"none",
+
+      cursor:"pointer",
+
+      color:"#031014",
+
+      fontWeight:700,
+
+      fontSize:"15px",
+
+      background:`
+
+      linear-gradient(
+
+      90deg,
+
+      #00fff2,
+
+      #00ffc8,
+
+      #00ffa8
+
+      )
+
+      `,
+
+      boxShadow:`
+
+      0 0 35px rgba(0,255,255,.30),
+
+      0 0 70px rgba(0,255,255,.10)
+
+      `,
+
+      transition:"all .25s ease"
+
+  },
+
+  sendButtonDisabled:{
+
+      opacity:.45,
+
+      cursor:"not-allowed",
+
+      filter:"grayscale(.4)"
+
+  },
+
+  /* ============================================================
+      SUGGESTED PROMPTS
+  ============================================================ */
+
+  suggestionsRow:{
+
+      display:"flex",
+
+      flexWrap:"wrap",
+
+      gap:"12px",
+
+      marginTop:"22px"
+
+  },
+
+  suggestionChip:{
+
+      padding:"12px 18px",
+
+      borderRadius:"999px",
+
+      background:"rgba(0,255,255,.05)",
+
+      border:"1px solid rgba(0,255,255,.14)",
+
+      color:"#baffff",
+
+      fontSize:"13px",
+
+      cursor:"pointer",
+
+      transition:"all .25s ease"
+
+  },
+
+  suggestionChipHover:{
+
+      background:"rgba(0,255,255,.12)",
+
+      boxShadow:"0 0 24px rgba(0,255,255,.18)"
+
+  },
+
+  /* ============================================================
+      CUSTOM SCROLLBAR
+  ============================================================ */
+
+  scrollbar:{
+
+      scrollbarWidth:"thin",
+
+      scrollbarColor:"#00ffff rgba(255,255,255,.04)"
+
+  },
+
+  /* ============================================================
+      GLASS PANEL
+  ============================================================ */
+
+  glassPanel:{
+
+      background:"rgba(10,18,30,.75)",
+
+      backdropFilter:"blur(22px)",
+
+      border:"1px solid rgba(0,255,255,.14)",
+
+      borderRadius:"24px",
+
+      boxShadow:`
+
+      0 0 45px rgba(0,255,255,.08),
+
+      inset 0 0 18px rgba(255,255,255,.02)
+
+      `
+  },
+
+/*==================== RIGHT SIDEBAR ====================*/
+
+rightSidebar:{
+display:isDesktop?"flex":"none",
+flexDirection:"column",
+width:"430px",
+minWidth:"430px",
+background:"linear-gradient(180deg,#08111d,#050c16)",
+borderLeft:"1px solid rgba(0,255,255,.12)",
+overflowY:"auto",
+overflowX:"hidden",
+position:"relative"
+},
+
+rightSidebarGlow:{
+position:"absolute",
+top:"-180px",
+right:"-180px",
+width:"450px",
+height:"450px",
+borderRadius:"50%",
+background:"rgba(0,255,255,.08)",
+filter:"blur(170px)",
+pointerEvents:"none"
+},
+
+rightSidebarInner:{
+position:"relative",
+zIndex:2,
+padding:"22px",
+display:"flex",
+flexDirection:"column",
+gap:"20px"
+},
+
+panelCard:{
+background:"linear-gradient(180deg,rgba(15,24,38,.95),rgba(7,13,24,.98))",
+border:"1px solid rgba(0,255,255,.14)",
+borderRadius:"24px",
+padding:"22px",
+backdropFilter:"blur(20px)",
+boxShadow:"0 0 45px rgba(0,255,255,.06)"
+},
+
+panelHeader:{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center",
+marginBottom:"20px"
+},
+
+panelTitle:{
+fontSize:"17px",
+fontWeight:700,
+color:"#82ffff",
+letterSpacing:".05em"
+},
+
+panelSubtitle:{
+fontSize:"12px",
+color:"rgba(220,255,255,.45)"
+},
+
+/*==================== AGENT PARAMETERS ====================*/
+
+parameterList:{
+display:"flex",
+flexDirection:"column",
+gap:"20px"
+},
+
+parameterRow:{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center",
+gap:"18px"
+},
+
+parameterLabel:{
+fontSize:"14px",
+fontWeight:600,
+color:"#eefefe"
+},
+
+parameterDescription:{
+fontSize:"12px",
+marginTop:"3px",
+color:"rgba(220,255,255,.45)"
+},
+
+parameterValue:{
+fontWeight:700,
+color:"#78ffff",
+fontSize:"14px"
+},
+
+slider:{
+width:"100%",
+marginTop:"10px",
+accentColor:"#00ffff",
+cursor:"pointer"
+},
+
+select:{
+width:"100%",
+padding:"13px 15px",
+borderRadius:"14px",
+background:"#101d2d",
+border:"1px solid rgba(0,255,255,.15)",
+color:"#fff",
+outline:"none"
+},
+
+toggle:{
+width:"52px",
+height:"28px",
+borderRadius:"999px",
+background:"rgba(0,255,255,.18)",
+position:"relative",
+cursor:"pointer"
+},
+
+toggleCircle:{
+position:"absolute",
+top:"3px",
+left:"3px",
+width:"22px",
+height:"22px",
+borderRadius:"50%",
+background:"#00ffff",
+boxShadow:"0 0 18px #00ffff"
+},
+
+/*==================== ANALYTICS ====================*/
+
+analyticsGrid:{
+display:"grid",
+gridTemplateColumns:"1fr 1fr",
+gap:"15px"
+},
+
+analyticsCard:{
+padding:"18px",
+borderRadius:"20px",
+background:"linear-gradient(180deg,rgba(0,255,255,.08),rgba(255,255,255,.02))",
+border:"1px solid rgba(0,255,255,.14)",
+boxShadow:"0 0 28px rgba(0,255,255,.06)"
+},
+
+analyticsIcon:{
+width:"42px",
+height:"42px",
+borderRadius:"14px",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+background:"rgba(0,255,255,.10)",
+color:"#78ffff",
+marginBottom:"15px"
+},
+
+analyticsLabel:{
+fontSize:"13px",
+color:"rgba(220,255,255,.55)"
+},
+
+analyticsValue:{
+marginTop:"8px",
+fontSize:"28px",
+fontWeight:700,
+color:"#ffffff"
+},
+
+analyticsChange:{
+marginTop:"6px",
+fontSize:"12px",
+fontWeight:600,
+color:"#35ffae"
+},
+
+progressSection:{
+marginTop:"22px"
+},
+
+progressHeader:{
+display:"flex",
+justifyContent:"space-between",
+marginBottom:"10px"
+},
+
+progressLabel:{
+fontSize:"13px",
+color:"rgba(220,255,255,.55)"
+},
+
+progressValue:{
+fontWeight:700,
+color:"#7dffff"
+},
+
+progressTrack:{
+height:"8px",
+borderRadius:"999px",
+background:"rgba(255,255,255,.05)",
+overflow:"hidden"
+},
+
+progressFill:{
+height:"100%",
+width:"78%",
+borderRadius:"999px",
+background:"linear-gradient(90deg,#00ffff,#00ffb7)",
+boxShadow:"0 0 20px rgba(0,255,255,.45)"
+},
+
+/*==================== SYSTEM STATUS ====================*/
+
+statusStack:{
+display:"flex",
+flexDirection:"column",
+gap:"14px",
+marginTop:"20px"
+},
+
+statusRow:{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center"
+},
+
+statusName:{
+fontSize:"13px",
+color:"rgba(220,255,255,.58)"
+},
+
+statusOnline:{
+fontWeight:700,
+color:"#4dffb0"
+},
+
+statusOffline:{
+fontWeight:700,
+color:"#ff8a8a"
+},
+
+/*==================== WEBHOOK ====================*/
+
+endpointBox:{
+marginTop:"18px",
+padding:"15px",
+borderRadius:"16px",
+background:"#0d1828",
+border:"1px solid rgba(0,255,255,.15)",
+fontSize:"12px",
+color:"#9fffff",
+wordBreak:"break-all"
+},
+
+endpointButton:{
+marginTop:"16px",
+width:"100%",
+padding:"14px",
+border:"none",
+borderRadius:"16px",
+background:"linear-gradient(90deg,#00ffff,#00ffbf)",
+fontWeight:700,
+color:"#041015",
+cursor:"pointer",
+boxShadow:"0 0 28px rgba(0,255,255,.28)"
+},
+
+outlineButton:{
+marginTop:"12px",
+width:"100%",
+padding:"14px",
+borderRadius:"16px",
+background:"transparent",
+border:"1px solid rgba(0,255,255,.15)",
+color:"#9fffff",
+cursor:"pointer"
+},
+
+dangerButton:{
+marginTop:"12px",
+width:"100%",
+padding:"14px",
+borderRadius:"16px",
+background:"rgba(255,70,70,.08)",
+border:"1px solid rgba(255,70,70,.22)",
+color:"#ff8d8d",
+cursor:"pointer"
+},
+
+/*==================== AI STATUS ====================*/
+
+aiStatusCard:{
+marginTop:"10px",
+padding:"20px",
+borderRadius:"22px",
+background:"linear-gradient(135deg,rgba(0,255,255,.10),rgba(0,255,170,.05))",
+border:"1px solid rgba(0,255,255,.16)"
+},
+
+aiStatusHeader:{
+display:"flex",
+alignItems:"center",
+gap:"12px",
+marginBottom:"18px"
+},
+
+aiPulse:{
+width:"12px",
+height:"12px",
+borderRadius:"50%",
+background:"#00ffb7",
+boxShadow:"0 0 18px #00ffb7"
+},
+
+aiStatusTitle:{
+fontWeight:700,
+fontSize:"15px",
+color:"#8cffff"
+},
+
+aiStatusText:{
+fontSize:"13px",
+lineHeight:1.8,
+color:"rgba(220,255,255,.62)"
+},
+
+/*==================== MOBILE DRAWER ====================*/
+
+mobileOverlay:{
+position:"fixed",
+inset:0,
+background:"rgba(0,0,0,.55)",
+backdropFilter:"blur(10px)",
+zIndex:900,
+display:isDesktop?"none":"block"
+},
+
+mobileDrawer:{
+position:"fixed",
+top:0,
+left:0,
+bottom:0,
+width:"300px",
+maxWidth:"86%",
+background:"linear-gradient(180deg,#07111d,#030811)",
+borderRight:"1px solid rgba(0,255,255,.15)",
+boxShadow:"25px 0 70px rgba(0,0,0,.65)",
+display:"flex",
+flexDirection:"column",
+zIndex:1000,
+overflow:"hidden"
+},
+
+mobileDrawerGlow:{
+position:"absolute",
+top:"-120px",
+left:"-120px",
+width:"320px",
+height:"320px",
+borderRadius:"50%",
+background:"rgba(0,255,255,.10)",
+filter:"blur(120px)",
+pointerEvents:"none"
+},
+
+mobileDrawerHeader:{
+display:"flex",
+alignItems:"center",
+justifyContent:"space-between",
+padding:"22px",
+borderBottom:"1px solid rgba(0,255,255,.12)",
+position:"relative",
+zIndex:2
+},
+
+mobileDrawerLogo:{
+display:"flex",
+alignItems:"center",
+gap:"14px"
+},
+
+mobileDrawerTitle:{
+fontSize:"20px",
+fontWeight:700,
+color:"#83ffff"
+},
+
+mobileDrawerSubtitle:{
+fontSize:"11px",
+letterSpacing:".12em",
+textTransform:"uppercase",
+color:"rgba(220,255,255,.45)"
+},
+
+mobileCloseButton:{
+width:"42px",
+height:"42px",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+borderRadius:"14px",
+background:"rgba(0,255,255,.08)",
+border:"1px solid rgba(0,255,255,.18)",
+cursor:"pointer",
+color:"#8bffff"
+},
+
+mobileDrawerBody:{
+flex:1,
+overflowY:"auto",
+padding:"18px",
+display:"flex",
+flexDirection:"column",
+gap:"10px"
+},
+
+mobileDrawerItem:{
+display:"flex",
+alignItems:"center",
+gap:"16px",
+padding:"15px 16px",
+borderRadius:"18px",
+background:"transparent",
+border:"1px solid transparent",
+cursor:"pointer",
+transition:"all .25s ease",
+color:"#ecffff",
+fontWeight:600
+},
+
+mobileDrawerItemActive:{
+background:"rgba(0,255,255,.08)",
+border:"1px solid rgba(0,255,255,.18)",
+boxShadow:"0 0 25px rgba(0,255,255,.12)"
+},
+
+mobileDrawerIcon:{
+width:"42px",
+height:"42px",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+borderRadius:"14px",
+background:"rgba(0,255,255,.08)",
+color:"#7effff"
+},
+
+mobileDrawerFooter:{
+padding:"20px",
+borderTop:"1px solid rgba(0,255,255,.12)"
+},
+
+mobilePlanCard:{
+padding:"18px",
+borderRadius:"18px",
+background:"linear-gradient(135deg,rgba(0,255,255,.10),rgba(0,255,180,.06))",
+border:"1px solid rgba(0,255,255,.16)"
+},
+
+mobilePlanTitle:{
+fontSize:"13px",
+fontWeight:600,
+color:"rgba(220,255,255,.65)"
+},
+
+mobilePlanValue:{
+marginTop:"8px",
+fontSize:"21px",
+fontWeight:700,
+color:"#83ffff"
+},
+
+mobilePlanButton:{
+marginTop:"16px",
+width:"100%",
+padding:"13px",
+border:"none",
+borderRadius:"14px",
+background:"linear-gradient(90deg,#00ffff,#00ffba)",
+color:"#021014",
+fontWeight:700,
+cursor:"pointer",
+boxShadow:"0 0 22px rgba(0,255,255,.28)"
+},
+
+/*==================== MOBILE NAVIGATION ====================*/
+
+mobileNavigation:{
+position:"fixed",
+left:"50%",
+bottom:"18px",
+transform:"translateX(-50%)",
+width:"calc(100% - 24px)",
+maxWidth:"430px",
+display:isDesktop?"none":"flex",
+justifyContent:"space-between",
+alignItems:"center",
+padding:"12px 14px",
+borderRadius:"24px",
+background:"rgba(7,14,24,.90)",
+backdropFilter:"blur(22px)",
+border:"1px solid rgba(0,255,255,.16)",
+boxShadow:"0 18px 45px rgba(0,0,0,.55),0 0 30px rgba(0,255,255,.08)",
+zIndex:850
+},
+
+mobileNavButton:{
+flex:1,
+display:"flex",
+flexDirection:"column",
+alignItems:"center",
+justifyContent:"center",
+gap:"7px",
+padding:"10px 0",
+borderRadius:"16px",
+cursor:"pointer",
+transition:"all .25s ease",
+color:"rgba(220,255,255,.55)"
+},
+
+mobileNavButtonActive:{
+background:"rgba(0,255,255,.10)",
+color:"#83ffff",
+boxShadow:"0 0 22px rgba(0,255,255,.18)"
+},
+
+mobileNavIcon:{
+fontSize:"21px"
+},
+
+mobileNavLabel:{
+fontSize:"11px",
+fontWeight:600,
+letterSpacing:".04em"
+},
+
+mobileFab:{
+position:"fixed",
+right:"22px",
+bottom:"105px",
+width:"64px",
+height:"64px",
+display:isDesktop?"none":"flex",
+alignItems:"center",
+justifyContent:"center",
+borderRadius:"50%",
+border:"none",
+cursor:"pointer",
+background:"linear-gradient(135deg,#00ffff,#00ffb8)",
+color:"#021015",
+boxShadow:"0 0 35px rgba(0,255,255,.35),0 12px 35px rgba(0,0,0,.45)",
+zIndex:860
+},
+
+mobileBadge:{
+position:"absolute",
+top:"-2px",
+right:"-2px",
+minWidth:"20px",
+height:"20px",
+padding:"0 6px",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+borderRadius:"999px",
+background:"#ff355e",
+color:"#fff",
+fontSize:"10px",
+fontWeight:700,
+boxShadow:"0 0 16px rgba(255,53,94,.35)"
+},
+
+mobileSafeArea:{
+paddingBottom:"calc(env(safe-area-inset-bottom) + 92px)"
+},
+
+hideDesktop:{
+display:isDesktop?"none":"block"
+},
+
+hideMobile:{
+display:isDesktop?"block":"none"
+},
+
+/*==================== ANIMATIONS ====================*/
+
+fadeIn:{
+animation:"fadeIn .35s ease"
+},
+
+fadeUp:{
+animation:"fadeUp .45s ease"
+},
+
+fadeDown:{
+animation:"fadeDown .45s ease"
+},
+
+fadeLeft:{
+animation:"fadeLeft .4s ease"
+},
+
+fadeRight:{
+animation:"fadeRight .4s ease"
+},
+
+scaleIn:{
+animation:"scaleIn .28s ease"
+},
+
+zoomIn:{
+animation:"zoomIn .35s ease"
+},
+
+slideUp:{
+animation:"slideUp .35s ease"
+},
+
+slideDown:{
+animation:"slideDown .35s ease"
+},
+
+slideLeft:{
+animation:"slideLeft .35s ease"
+},
+
+slideRight:{
+animation:"slideRight .35s ease"
+},
+
+pulse:{
+animation:"pulse 2s infinite"
+},
+
+glowPulse:{
+animation:"glowPulse 2.5s infinite"
+},
+
+spin:{
+animation:"spin 1s linear infinite"
+},
+
+bounce:{
+animation:"bounce 1.2s infinite"
+},
+
+float:{
+animation:"float 4s ease-in-out infinite"
+},
+
+blink:{
+animation:"blink 1s infinite"
+},
+
+typing:{
+animation:"typing 1.4s infinite"
+},
+
+hoverLift:{
+transition:"all .25s ease"
+},
+
+hoverLiftActive:{
+transform:"translateY(-4px)",
+boxShadow:"0 15px 35px rgba(0,255,255,.18)"
+},
+
+hoverScale:{
+transition:"all .25s ease"
+},
+
+hoverScaleActive:{
+transform:"scale(1.04)"
+},
+
+hoverGlow:{
+transition:"all .25s ease"
+},
+
+hoverGlowActive:{
+boxShadow:"0 0 35px rgba(0,255,255,.28)"
+},
+
+rotate:{
+transition:"transform .35s ease"
+},
+
+rotateActive:{
+transform:"rotate(180deg)"
+},
+
+/*==================== MODALS ====================*/
+
+modalOverlay:{
+position:"fixed",
+inset:0,
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+background:"rgba(0,0,0,.72)",
+backdropFilter:"blur(14px)",
+padding:isMobile?"18px":"35px",
+zIndex:5000
+},
+
+modal:{
+width:"100%",
+maxWidth:"760px",
+borderRadius:"28px",
+background:"linear-gradient(180deg,#0d1829,#08111e)",
+border:"1px solid rgba(0,255,255,.18)",
+overflow:"hidden",
+boxShadow:"0 35px 90px rgba(0,0,0,.55),0 0 60px rgba(0,255,255,.08)"
+},
+
+modalSmall:{
+maxWidth:"450px"
+},
+
+modalLarge:{
+maxWidth:"1100px"
+},
+
+modalHeader:{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center",
+padding:"22px 26px",
+borderBottom:"1px solid rgba(0,255,255,.12)"
+},
+
+modalTitle:{
+fontSize:"22px",
+fontWeight:700,
+color:"#84ffff"
+},
+
+modalClose:{
+width:"42px",
+height:"42px",
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+borderRadius:"14px",
+background:"rgba(0,255,255,.08)",
+border:"1px solid rgba(0,255,255,.16)",
+cursor:"pointer",
+color:"#8affff"
+},
+
+modalBody:{
+padding:"28px"
+},
+
+modalFooter:{
+display:"flex",
+justifyContent:"flex-end",
+gap:"14px",
+padding:"22px 26px",
+borderTop:"1px solid rgba(0,255,255,.12)"
+},
+
+modalCancel:{
+padding:"13px 22px",
+borderRadius:"14px",
+border:"1px solid rgba(0,255,255,.16)",
+background:"transparent",
+color:"#a8ffff",
+cursor:"pointer"
+},
+
+modalConfirm:{
+padding:"13px 24px",
+borderRadius:"14px",
+border:"none",
+background:"linear-gradient(90deg,#00ffff,#00ffb7)",
+color:"#041014",
+fontWeight:700,
+cursor:"pointer",
+boxShadow:"0 0 25px rgba(0,255,255,.25)"
+},
+
+/*==================== TOASTS ====================*/
+
+toastContainer:{
+position:"fixed",
+top:"22px",
+right:"22px",
+display:"flex",
+flexDirection:"column",
+gap:"14px",
+zIndex:6000
+},
+
+toast:{
+display:"flex",
+alignItems:"center",
+gap:"16px",
+minWidth:"320px",
+padding:"18px",
+borderRadius:"18px",
+background:"rgba(9,18,30,.95)",
+border:"1px solid rgba(0,255,255,.16)",
+boxShadow:"0 18px 45px rgba(0,0,0,.45)"
+},
+
+toastSuccess:{
+borderLeft:"4px solid #00ffb7"
+},
+
+toastError:{
+borderLeft:"4px solid #ff4b73"
+},
+
+toastWarning:{
+borderLeft:"4px solid #ffd44d"
+},
+
+toastInfo:{
+borderLeft:"4px solid #00ffff"
+},
+
+toastIcon:{
+fontSize:"24px",
+color:"#7effff"
+},
+
+toastContent:{
+flex:1
+},
+
+toastTitle:{
+fontWeight:700,
+fontSize:"15px",
+color:"#ffffff"
+},
+
+toastMessage:{
+marginTop:"4px",
+fontSize:"13px",
+lineHeight:1.6,
+color:"rgba(220,255,255,.62)"
+},
+
+toastClose:{
+cursor:"pointer",
+fontSize:"18px",
+color:"rgba(220,255,255,.55)"
+},
+
+/*==================== LOADER ====================*/
+
+loader:{
+display:"flex",
+alignItems:"center",
+justifyContent:"center",
+padding:"35px"
+},
+
+loaderRing:{
+width:"52px",
+height:"52px",
+borderRadius:"50%",
+border:"3px solid rgba(0,255,255,.12)",
+borderTop:"3px solid #00ffff",
+animation:"spin 1s linear infinite"
+},
+
+skeleton:{
+background:"linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03))",
+backgroundSize:"300% 100%",
+animation:"skeleton 1.5s infinite",
+borderRadius:"12px"
+},
+
+/*==================== UTILITIES ====================*/
+
+row:{
+display:"flex",
+alignItems:"center"
+},
+
+column:{
+display:"flex",
+flexDirection:"column"
+},
+
+center:{
+display:"flex",
+alignItems:"center",
+justifyContent:"center"
+},
+
+spaceBetween:{
+display:"flex",
+justifyContent:"space-between",
+alignItems:"center"
+},
+
+wrap:{
+flexWrap:"wrap"
+},
+
+gap8:{gap:"8px"},
+gap10:{gap:"10px"},
+gap12:{gap:"12px"},
+gap16:{gap:"16px"},
+gap20:{gap:"20px"},
+gap24:{gap:"24px"},
+
+w100:{width:"100%"},
+h100:{height:"100%"},
+
+textCenter:{
+textAlign:"center"
+},
+
+textRight:{
+textAlign:"right"
+},
+
+rounded:{
+borderRadius:"18px"
+},
+
+roundedLarge:{
+borderRadius:"28px"
+},
+
+shadow:{
+boxShadow:"0 15px 40px rgba(0,0,0,.45)"
+},
+
+glass:{
+background:"rgba(12,22,35,.72)",
+backdropFilter:"blur(20px)",
+border:"1px solid rgba(0,255,255,.14)"
+},
+
+glassStrong:{
+background:"rgba(12,22,35,.92)",
+backdropFilter:"blur(24px)",
+border:"1px solid rgba(0,255,255,.18)"
+},
+
+border:{
+border:"1px solid rgba(0,255,255,.14)"
+},
+
+borderGlow:{
+border:"1px solid rgba(0,255,255,.24)",
+boxShadow:"0 0 30px rgba(0,255,255,.14)"
+},
+
+hidden:{
+display:"none"
+},
+
+visible:{
+display:"block"
+},
+
+pointer:{
+cursor:"pointer"
+},
+
+disabled:{
+opacity:.45,
+pointerEvents:"none",
+filter:"grayscale(.45)"
+},
+
+successText:{
+color:"#32ffb5"
+},
+
+warningText:{
+color:"#ffd54f"
+},
+
+dangerText:{
+color:"#ff6d88"
+},
+
+infoText:{
+color:"#79ffff"
+},
+
+gradientText:{
+background:"linear-gradient(90deg,#00ffff,#00ffb8)",
+WebkitBackgroundClip:"text",
+WebkitTextFillColor:"transparent"
+},
+
+neonBorder:{
+border:"1px solid rgba(0,255,255,.18)",
+boxShadow:"0 0 22px rgba(0,255,255,.15)"
+},
+
+absoluteFill:{
+position:"absolute",
+top:0,
+right:0,
+bottom:0,
+left:0
+},
 };
-
 
  // ============================================================
 // FIXES APPLIED:
@@ -1452,7 +3375,6 @@ if (isCheckingSession) {
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
-      <main className="dashboard-layout">
   {!user ? (
     <section style={{ maxWidth: '360px', margin: '60px auto 0 auto' }}>
       <div style={styles.flatCard}>
@@ -1510,366 +3432,1920 @@ if (isCheckingSession) {
       </div>
     </section>
   ) : (
-    <section style={styles.dashboardGrid}>
+    
+<main className="relative flex h-screen w-full overflow-hidden bg-[#050816] text-white">
 
-      {/* COLUMN 1: AGENT PARAMETERS CONTROL BLOCK */}
-      <div style={{ ...styles.flatCard, width: '100%', padding: isDesktop ? '12px' : '18px' }}>
-        <h3 style={{ margin: '0 0 12px 0', fontSize: '11px', fontWeight: '600', color: '#ffffff', letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-          Agent Parameters
-        </h3>     
-        {/* Block 1 CORNER LIGHT */}
-        <div style={{
-          position: 'absolute',
-          top: '-80px',
-          left: '-80px',
-          width: '180px',
-          height: '180px',
-          background: 'radial-gradient(circle, rgba(0,255,200,0.08), transparent 70%)',
-          borderRadius: '50%'
-        }} />
+    {/* Animated Background */}
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {/* BRAND LOGO */}
-          <div>
-            <label htmlFor="logo-upload" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              BUSINESS BRAND LOGO (PICTURE PRINT)
-            </label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <label htmlFor="logo-upload" style={{ ...styles.button, display: 'inline-block', padding: '8px 12px', fontSize: '11px', background: 'transparent', border: '1px solid #067962db', color: '#ffffff', cursor: 'pointer', textAlign: 'center', flex: 1, boxShadow: 'none', textTransform: 'none' }}>
-                Choose Image File
-                <input
-                  id="logo-upload"
-                  name="logo_url"
-                  type="file"
-                  accept="image/*"
-                  autoComplete="off"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      const localUrl = URL.createObjectURL(file);
-                      setSettings(prev => ({ ...prev, logo_url: localUrl }));
-                      setPendingLogoFile(file);
-                    }
-                  }}
-                  style={{ display: 'none' }}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+
+        <div className="absolute -top-60 -left-60 h-[700px] w-[700px] rounded-full bg-cyan-500/10 blur-[170px]" />
+
+        <div className="absolute bottom-[-250px] right-[-150px] h-[650px] w-[650px] rounded-full bg-emerald-400/10 blur-[190px]" />
+
+        <div className="absolute left-1/2 top-1/2 h-[550px] w-[550px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/5 blur-[180px]" />
+
+    </div>
+
+
+
+{/* =======================================================
+                    LEFT SIDEBAR
+======================================================= */}
+
+<aside
+className="
+relative
+z-20
+hidden
+lg:flex
+flex-col
+w-[285px]
+border-r
+border-cyan-500/20
+bg-[#08111f]/90
+backdrop-blur-2xl
+">
+
+{/* Logo */}
+
+<div
+className="
+flex
+items-center
+gap-4
+px-6
+py-6
+border-b
+border-cyan-500/20
+">
+
+<div
+className="
+flex
+h-14
+w-14
+items-center
+justify-center
+rounded-2xl
+bg-cyan-500/10
+ring-1
+ring-cyan-400/30
+shadow-[0_0_25px_rgba(0,255,255,.25)]
+">
+
+<img
+
+src={RuachAgentLogo}
+
+alt="RuachAgent"
+
+className="h-10 w-10 object-contain"
+
+/>
+
+</div>
+
+<div>
+
+<h1
+className="
+text-xl
+font-bold
+tracking-wide
+text-cyan-300
+">
+
+RUACHAGENT
+
+</h1>
+
+<p
+className="
+text-sm
+text-slate-400
+">
+
+AI Till Slip Maker
+
+</p>
+
+</div>
+
+</div>
+
+
+
+{/* New Conversation */}
+
+<div className="px-5 pt-6">
+
+<button
+
+type="button"
+
+className="
+group
+flex
+w-full
+items-center
+justify-center
+gap-3
+rounded-2xl
+border
+border-cyan-400/20
+bg-gradient-to-r
+from-cyan-500
+to-emerald-500
+px-5
+py-4
+font-semibold
+text-black
+transition-all
+duration-300
+hover:scale-[1.02]
+hover:shadow-[0_0_35px_rgba(0,255,255,.45)]
+">
+
+<Plus size={21} />
+
+<span>
+
+New Conversation
+
+</span>
+
+</button>
+
+</div>
+
+
+
+{/* Navigation */}
+
+<nav className="mt-8 flex-1 px-4 space-y-2">
+
+<button
+
+className="
+flex
+w-full
+items-center
+gap-4
+rounded-2xl
+border
+border-cyan-500/20
+bg-cyan-500/10
+px-5
+py-4
+transition
+hover:bg-cyan-500/20
+">
+
+<MessageSquare size={20} />
+
+<div className="text-left">
+
+<p className="font-medium">
+
+Chat with AI
+
+</p>
+
+<p className="text-xs text-slate-400">
+
+Main Workspace
+
+</p>
+
+</div>
+
+</button>
+
+
+
+<button
+
+className="
+flex
+w-full
+items-center
+gap-4
+rounded-2xl
+px-5
+py-4
+transition
+hover:bg-cyan-500/10
+">
+
+<Bookmark size={20}/>
+
+<div className="text-left">
+
+<p>
+
+Saved Designs
+
+</p>
+
+<p className="text-xs text-slate-500">
+
+Templates
+
+</p>
+
+</div>
+
+</button>
+
+
+
+<button
+
+className="
+flex
+w-full
+items-center
+gap-4
+rounded-2xl
+px-5
+py-4
+transition
+hover:bg-cyan-500/10
+">
+
+<Store size={20}/>
+
+<div>
+
+<p>
+
+Connected Stores
+
+</p>
+
+<p className="text-xs text-slate-500">
+
+Webhooks
+
+</p>
+
+</div>
+
+</button>
+
+
+
+<button
+
+className="
+flex
+w-full
+items-center
+gap-4
+rounded-2xl
+px-5
+py-4
+transition
+hover:bg-cyan-500/10
+">
+
+<Receipt size={20}/>
+
+<div>
+
+<p>
+
+Till Slips Sent
+
+</p>
+
+<p className="text-xs text-slate-500">
+
+History
+
+</p>
+
+</div>
+
+</button>
+
+
+
+<button
+
+className="
+flex
+w-full
+items-center
+gap-4
+rounded-2xl
+px-5
+py-4
+transition
+hover:bg-cyan-500/10
+">
+
+<Settings size={20}/>
+
+<div>
+
+<p>
+
+Settings
+
+</p>
+
+<p className="text-xs text-slate-500">
+
+Admin & Personal
+
+</p>
+
+</div>
+
+</button>
+
+</nav>
+
+
+
+{/* Bottom User Card */}
+
+<div
+className="
+m-5
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#0b1628]
+p-4
+shadow-[0_0_35px_rgba(0,255,255,.08)]
+">
+
+<div className="flex items-center gap-4">
+
+<div
+className="
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-full
+bg-cyan-500
+font-bold
+text-black
+">
+
+{user?.email?.charAt(0).toUpperCase() || "U"}
+
+</div>
+
+<div className="flex-1">
+
+<p className="font-semibold">
+
+{profile?.full_name || "Merchant"}
+
+</p>
+
+<p className="text-xs text-slate-400">
+
+{user?.email}
+
+</p>
+
+</div>
+
+</div>
+
+<div className="mt-5">
+
+<div
+className="
+inline-flex
+rounded-full
+bg-emerald-500/20
+px-4
+py-2
+text-sm
+font-semibold
+text-emerald-300
+">
+
+PRO PLAN
+
+</div>
+
+</div>
+
+</div>
+
+</aside>
+
+
+
+{/* =======================================================
+                    CHAT SECTION
+======================================================= */}
+
+<section
+
+className="
+relative
+z-20
+flex
+min-w-0
+flex-1
+flex-col
+">
+
+  {/* =======================================================
+                    CHAT HEADER
+======================================================= */}
+
+<div
+    className="
+    border-b
+    border-cyan-500/20
+    bg-[#08111f]/70
+    backdrop-blur-xl
+    ">
+
+    <div className="flex items-center justify-between px-10 py-6">
+
+        <div className="flex items-center gap-5">
+
+            <div
+                className="
+                relative
+                flex
+                h-16
+                w-16
+                items-center
+                justify-center
+                rounded-2xl
+                bg-cyan-500/10
+                ring-1
+                ring-cyan-400/40
+                shadow-[0_0_30px_rgba(0,255,255,.35)]
+                ">
+
+                <img
+                    src={RuachAgentLogo}
+                    alt=""
+                    className="h-10 w-10 object-contain"
                 />
-              </label>
-              <div style={{ ...styles.concaveCard, padding: '2px', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderRadius: '4px' }}>
-                {settings?.logo_url ? (
-                  <img src={settings.logo_url} alt="Logo Mirror" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '3px' }} />
-                ) : (
-                  <span style={{ fontSize: '12px', color: '#404040' }}>🖼️</span>
-                )}
-              </div>
+
+                <span
+                    className="
+                    absolute
+                    bottom-1
+                    right-1
+                    h-3
+                    w-3
+                    rounded-full
+                    bg-emerald-400
+                    animate-ping
+                    "
+                />
+
+                <span
+                    className="
+                    absolute
+                    bottom-1
+                    right-1
+                    h-3
+                    w-3
+                    rounded-full
+                    bg-emerald-400
+                    "
+                />
+
             </div>
-          </div>
 
-          {/* LIVE WEBHOOK SLUG */}
-          <div>
-            <label htmlFor="webhook-slug" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              LIVE WEBHOOK SLUG
-            </label>
-            <input
-              id="webhook-slug"
-              name="webhook_slug"
-              type="text"
-              autoComplete="off"
-              placeholder="e.g., eddienetwork"
-              value={settings?.webhook_slug || ''}
-              onChange={(e) => {
-                const cleanValue = e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '');
-                setSettings(prev => ({ ...prev, webhook_slug: cleanValue }));
-              }}
-              style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-            />
-          </div>
+            <div>
 
-          {/* DYNAMIC CURRENCY SELECT SYSTEM */}
-          <div>
-            <label htmlFor="currency" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              OPERATIONAL CURRENCY
-            </label>
-            <div style={{ position: 'relative' }}>
-              <select
-                id="currency"
-                name="currency"
-                value={settings?.currency || 'ZAR'}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setSettings(prev => ({ ...prev, currency: val }));
-                }}
-                style={{ ...styles.input, padding: '10px 30px 10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px', appearance: 'none', cursor: 'pointer' }}
-              >
-                {CURRENCY_OPTIONS.map((curr) => (
-                  <option key={curr.code} value={curr.code} style={{ background: '#0b1118', color: '#ffffff', fontFamily: 'monospace' }}>
-                    {curr.name} ({curr.symbol})
-                  </option>
-                ))}
-              </select>
-              <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '9px', color: '#737373', pointerEvents: 'none', fontFamily: 'monospace' }}>▼</span>
-            </div>
-          </div>
+                <h2
+                    className="
+                    text-2xl
+                    font-bold
+                    tracking-wide
+                    text-cyan-300
+                    ">
 
-          {/* BUSINESS BRAND NAME */}
-          <div>
-            <label htmlFor="business-name" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              BUSINESS BRAND NAME
-            </label>
-            <input
-              id="business-name"
-              name="business_name"
-              type="text"
-              autoComplete="organization"
-              value={settings?.business_name || ''}
-              onChange={(e) => {
-                const val = e.target.value;
-                setSettings(prev => ({ ...prev, business_name: val }));
-              }}
-              style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-            />
-          </div>
+                    RuachAgent AI
 
-          {/* PHYSICAL OUTLET ADDRESS */}
-          <div>
-            <label htmlFor="store-address" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              PHYSICAL OUTLET ADDRESS
-            </label>
-            <textarea
-              id="store-address"
-              name="store_address"
-              autoComplete="street-address"
-              value={settings?.store_address || ''}
-              onChange={(e) => {
-                const val = e.target.value;
-                setSettings(prev => ({ ...prev, store_address: val }));
-              }}
-              style={{ ...styles.input, padding: '10px 12px', minHeight: '52px', resize: 'none', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px', lineHeight: '1.5' }}
-            />
-          </div>
+                </h2>
 
-          {/* AI DISCOUNT COMPILER VALUE (%) */}
-          <div>
-            <label htmlFor="discount-percentage" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              AI DISCOUNT COMPILER VALUE (%)
-            </label>
-            <input
-              id="discount-percentage"
-              name="discount_percentage"
-              type="number"
-              autoComplete="off"
-              value={settings?.discount_percentage ?? 10}
-              onChange={(e) => {
-                const val = parseInt(e.target.value) || 0;
-                setSettings(prev => ({ ...prev, discount_percentage: val }));
-              }}
-              style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-            />
-          </div>
+                <div className="flex items-center gap-2">
 
-          {/* VOUCHER EXPIRATION POLICY (DAYS) */}
-          <div>
-            <label htmlFor="voucher-expiry-days" style={{ fontSize: '9px', color: '#737373', fontWeight: '500', display: 'block', marginBottom: '6px', letterSpacing: '0.5px' }}>
-              VOUCHER EXPIRATION POLICY (DAYS)
-            </label>
-            <input
-              id="voucher-expiry-days"
-              name="voucher_expiration_days"
-              type="number"
-              autoComplete="off"
-              placeholder="e.g., 30"
-              min="1"
-              value={settings?.voucher_expiration_days ?? 30}
-              onChange={(e) => {
-                const val = parseInt(e.target.value) || 0;
-                setSettings(prev => ({ ...prev, voucher_expiration_days: val }));
-              }}
-              style={{ ...styles.input, padding: '10px 12px', fontSize: '11px', fontFamily: 'monospace', letterSpacing: '0.5px' }}
-            />
-          </div>
+                    <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"/>
 
-          {/* TRIGGER LIVE HANDSHAKE SYNC */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              if (!isSaveSyncing) handleSave(e);
-            }}
-            style={{
-              ...styles.button,
-              background: isSaveSyncing ? '#111827' : styles.button.background,
-              color: isSaveSyncing ? '#6b7280' : '#041014',
-              border: isSaveSyncing ? '1px solid rgba(255,255,255,0.05)' : 'none',
-              boxShadow: isSaveSyncing ? 'none' : styles.button.boxShadow,
-              marginTop: '6px',
-              padding: '11px 14px',
-              fontSize: '12px',
-              letterSpacing: '0.5px',
-              textTransform: 'uppercase',
-              cursor: isSaveSyncing ? 'not-allowed' : 'pointer'
-            }}
-            disabled={isSaveSyncing}
-          >
-            {isSaveSyncing ? 'Syncing Profile...' : 'Save & Sync Live Profile'}
-          </button>
-        </div>
-      </div>
+                    <p className="text-sm text-emerald-300">
 
-      {/* COLUMN 2: ANALYTICS & HUB BLOCK */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: isDesktop ? '1 1 0%' : '1 1 100%', width: '100%' }}>
-        <div style={{
-          ...styles.flatCard,
-          border: '1px solid rgba(16, 185, 129, 0.25)', 
-          background: 'linear-gradient(180deg, rgba(8, 18, 24, 0.95), rgba(4, 10, 14, 0.98))',
-          boxShadow: '0 0 35px rgba(16, 185, 129, 0.05)', 
-          position: 'relative',
-          overflow: 'hidden'
-        }}>
+                        Online
 
-          {/* Block 2 CORNER LIGHT */}
-          <div style={{
-            position: 'absolute',
-            top: '-80px',
-            left: '-80px',
-            width: '180px',
-            height: '180px',
-            background: 'radial-gradient(circle, rgba(116, 150, 234, 0.17), transparent 70%)', 
-            borderRadius: '50%'
-          }} />
+                    </p>
 
-          {/* ANALYTICS SUB-GRID */}
-          <div style={{ ...styles.analyticsSubGrid, gap: '14px', marginTop: '6px' }}>
-            {/* INBOXES SYNCHRONIZED */}
-            <div
-              style={{
-                ...styles.concaveCard,
-                padding: '18px',
-                display: 'flex',
-                flexDirection: 'column',
-                justify: 'space-between',
-                minHeight: '90px',
-                border: '1px solid rgba(16,185,129,0.08)',
-                background: 'linear-gradient(145deg, rgba(16,185,129,0.04), rgba(255,255,255,0.01))',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  width: '70px',
-                  height: '70px',
-                  borderRadius: '50%',
-                  background: 'rgba(16,185,129,0.05)'
-                }}
-              />
-              <div style={{ fontSize: '9px', color: '#8a99ad', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                Inboxes Synchronized
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-                <div style={{ fontSize: '12px', fontWeight: '900', color: '#ffffff', fontFamily: 'monospace', lineHeight: '1' }}>
-                  {typeof activeInboxesCount !== 'undefined' ? activeInboxesCount : 0}
                 </div>
-                <div style={{ padding: '4px 8px', borderRadius: '999px', background: 'rgba(16,185,129,0.12)', color: '#10b981', fontSize: '5px', fontWeight: '700', letterSpacing: '0.4px' }}>
-                  ACTIVE
-                </div>
-              </div>
+
+                <p className="mt-2 text-sm text-slate-400">
+
+                    I can help manage receipts, analytics, webhooks, business settings and everything inside your dashboard.
+
+                </p>
+
             </div>
 
-            {/* PARSED SLIPS */}
-            <div
-              style={{
-                ...styles.concaveCard,
-                padding: '18px',
-                display: 'flex',
-                flexDirection: 'column',
-                justify: 'space-between',
-                minHeight: '90px',
-                border: '1px solid rgba(59,130,246,0.08)',
-                background: 'linear-gradient(145deg, rgba(59,130,246,0.04), rgba(255,255,255,0.01))',
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  width: '70px',
-                  height: '70px',
-                  borderRadius: '50%',
-                  background: 'rgba(59,130,246,0.05)'
-                }}
-              />
-              <div style={{ fontSize: '9px', color: '#8a99ad', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                Parsed Slips Volume
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px' }}>
-                <div style={{ fontSize: '12px', fontWeight: '900', color: '#3b82f6', fontFamily: 'monospace', lineHeight: '1' }}>
-                  {(typeof totalParsedCount !== 'undefined' ? totalParsedCount : 0).toLocaleString()}
-                </div>
-                <div style={{ padding: '4px 8px', borderRadius: '999px', background: 'rgba(59,130,246,0.12)', color: '#60a5fa', fontSize: '5px', fontWeight: '700', letterSpacing: '0.4px' }}>
-                  DOCS
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* HISTOGRAM */}
-          <div style={{ marginTop: '24px', marginBottom: '5px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', fontSize: '9px', fontWeight: '700', color: '#8a99ad', letterSpacing: '0.5px', fontFamily: 'monospace' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ color: '#10b981' }}>●</span>
-                <span>INBOX SLIP DENSITY OVER TIME PERIOD</span>
-              </div>
-              <span style={{ color: '#10b981' }}>
-                RANGE: {typeof selectedDateRangeLabel !== 'undefined' ? selectedDateRangeLabel : 'PAST_30_DAYS'}
-              </span>
-            </div>
-            
-            <div style={{ background: 'rgba(56, 65, 80, 0.61)', height: '65px', borderRadius: '12px', boxShadow: 'inset 3px 3px 6px #000, inset -3px -3px 6px rgba(255,255,255,0.02)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '0 12px', gap: '5px' }}>
-              {(typeof inboxGraphData !== 'undefined' ? inboxGraphData : Array(28).fill(0)).map((heightValue, idx, arr) => {
-                const hasData = heightValue > 0;
-                const isLatestPeriod = idx === arr.length - 1;
-                return (
-                  <div
-                    key={idx}
-                    style={{
-                      flex: 1,
-                      height: hasData ? `${Math.min(heightValue, 100)}%` : '2px',
-                      background: !hasData
-                        ? 'rgba(61, 84, 118, 0.3)'
-                        : isLatestPeriod
-                          ? 'linear-gradient(to top, #10b981, #6ee7b7)'
-                          : 'linear-gradient(to top, rgba(16, 185, 129, 0.05), #10b981)',
-                      borderTopLeftRadius: '2px',
-                      borderTopRightRadius: '2px',
-                      opacity: hasData ? (isLatestPeriod ? 1 : 0.6) : 0.3,
-                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-                    }}
-                  />
-                );
-              })}
-              <div style={{ position: 'absolute', width: '100%', height: '1px', background: 'rgba(255,255,255,0.02)', top: '20px', left: 0 }} />
-              <div style={{ position: 'absolute', width: '100%', height: '1px', background: 'rgba(255,255,255,0.02)', top: '45px', left: 0 }} />
-            </div>
-          </div>
         </div>
 
-        {/* INTEGRATION ENDPOINT TARGET BLOCK */}
-        <div style={styles.flatCard}>
-          <h3 style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '800' }}>Integration Endpoint Target</h3>
-          <div style={{ ...styles.concaveCard, fontFamily: 'monospace', fontSize: '12px', color: '#3b82f6', wordBreak: 'break-all', padding: '15px', marginBottom: '14px' }}>
-            {settings?.webhook_slug ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}` : 'Define a unique webhook slug first...'}
-          </div>
-          <div style={{ fontSize: '11px', color: '#8a99ad', lineHeight: '1.5', paddingLeft: '2px', fontFamily: 'system-ui, sans-serif' }}>
-            💡 <span style={{ fontWeight: '600' }}>Deployment Action:</span> Paste this generated webhook link into your <strong style={{ color: '#fff' }}>[Inbound Email Webhook Configuration or POS Webhook Portal]</strong> to begin routing automated transaction slip payloads directly to your AI agent node.
-          </div>
+
+
+        <div className="flex items-center gap-5">
+
+            <div className="hidden xl:block text-right">
+
+                <p className="text-sm text-slate-500">
+
+                    Logged in as
+
+                </p>
+
+                <p className="font-medium">
+
+                    {user?.email}
+
+                </p>
+
+            </div>
+
+            <button
+                className="
+                rounded-xl
+                border
+                border-red-500/40
+                px-5
+                py-3
+                text-red-300
+                transition
+                hover:bg-red-500/10
+                ">
+
+                Disconnect
+
+            </button>
+
         </div>
-      </div>
+
+    </div>
+
+</div>
+
+
+
+{/* =======================================================
+                    CHAT BODY
+======================================================= */}
+
+<div className="relative flex-1 overflow-hidden">
+
+<div
+className="
+absolute
+inset-0
+bg-[radial-gradient(circle_at_center,rgba(0,255,255,.05),transparent_65%)]
+"/>
+
+<div
+ref={messagesEndRef}
+className="
+relative
+z-10
+flex
+h-full
+flex-col
+overflow-y-auto
+px-12
+py-10
+space-y-8
+scroll-smooth
+">
+
+
+
+
+{/* AI MESSAGE */}
+
+<div className="flex gap-5">
+
+<div
+className="
+flex
+h-14
+w-14
+items-center
+justify-center
+rounded-full
+bg-cyan-500/10
+ring-1
+ring-cyan-500/30
+">
+
+<img
+src={RuachAgentLogo}
+className="h-8 w-8"
+/>
+
+</div>
+
+<div
+className="
+max-w-3xl
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#101827]/80
+backdrop-blur-xl
+p-7
+shadow-[0_0_35px_rgba(0,255,255,.08)]
+">
+
+<p className="font-semibold text-cyan-300">
+
+RuachAgent AI
+
+</p>
+
+<p className="mt-3 leading-8 text-slate-300">
+
+Welcome back.
+
+Everything inside this dashboard can now be managed using natural language.
+
+I can:
+
+• Generate till slips
+
+• Connect stores
+
+• Upload logos
+
+• Edit business settings
+
+• View analytics
+
+• Sync webhooks
+
+• Search receipts
+
+• Explain dashboard features
+
+Simply ask me anything.
+
+</p>
+
+<p className="mt-5 text-xs text-slate-500">
+
+11:52 AM
+
+</p>
+
+</div>
+
+</div>
+
+
+
+
+
+{/* USER MESSAGE */}
+
+<div className="flex justify-end">
+
+<div
+className="
+max-w-xl
+rounded-3xl
+bg-[#182230]
+px-7
+py-6
+shadow-[0_0_25px_rgba(0,255,255,.06)]
+">
+
+<p className="font-medium">
+
+You
+
+</p>
+
+<p className="mt-3">
+
+How do I connect my Shopify store?
+
+</p>
+
+<p className="mt-4 text-right text-xs text-slate-500">
+
+11:53 AM
+
+</p>
+
+</div>
+
+</div>
+
+
+
+
+
+{/* AI RESPONSE */}
+
+<div className="flex gap-5">
+
+<div
+className="
+flex
+h-14
+w-14
+items-center
+justify-center
+rounded-full
+bg-cyan-500/10
+">
+
+<img
+src={RuachAgentLogo}
+className="h-8 w-8"
+/>
+
+</div>
+
+<div
+className="
+max-w-3xl
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#101827]/80
+p-7
+">
+
+<p className="font-semibold text-cyan-300">
+
+RuachAgent AI
+
+</p>
+
+<p className="mt-4 leading-8 text-slate-300">
+
+To connect Shopify:
+
+1. Open Connected Stores.
+
+2. Click Add Store.
+
+3. Copy your webhook URL.
+
+4. Paste it into Shopify → Notifications → Webhooks.
+
+5. Save.
+
+Your receipts will begin syncing automatically.
+
+</p>
+
+<p className="mt-5 text-xs text-slate-500">
+
+11:53 AM
+
+</p>
+
+</div>
+
+</div>
+
+
+
+
+
+
+{/* TYPING */}
+
+{isThinking && (
+
+<div className="flex gap-5">
+
+<div
+className="
+flex
+h-14
+w-14
+items-center
+justify-center
+rounded-full
+bg-cyan-500/10
+">
+
+<img
+src={RuachAgentLogo}
+className="h-8 w-8"
+/>
+
+</div>
+
+<div
+className="
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#101827]
+px-7
+py-6
+">
+
+<div className="flex gap-2">
+
+<div className="h-3 w-3 rounded-full bg-cyan-400 animate-bounce"/>
+
+<div className="h-3 w-3 rounded-full bg-cyan-400 animate-bounce delay-100"/>
+
+<div className="h-3 w-3 rounded-full bg-cyan-400 animate-bounce delay-200"/>
+
+</div>
+
+</div>
+
+</div>
+
+)}
+
+
+
+
+
+{/* Suggested Prompts */}
+
+<div className="flex flex-wrap gap-3 pt-6">
+
+{[
+"Generate today's till slips",
+"Explain analytics",
+"Upload business logo",
+"Connect my Shopify store",
+"Show today's receipts",
+"Change discount to 15%"
+].map((prompt)=>(
+
+<button
+
+key={prompt}
+
+onClick={()=>setPrompt(prompt)}
+
+className="
+rounded-full
+border
+border-cyan-500/20
+bg-cyan-500/5
+px-5
+py-3
+text-sm
+transition
+hover:border-cyan-400
+hover:bg-cyan-500/15
+hover:shadow-[0_0_20px_rgba(0,255,255,.2)]
+">
+
+{prompt}
+
+</button>
+
+))}
+
+</div>
+
+</div>
+
+</div>
+
+{/* =======================================================
+                    AI PROMPT COMPOSER
+======================================================= */}
+
+<div
+className="
+relative
+z-20
+border-t
+border-cyan-500/20
+bg-[#08111f]/90
+backdrop-blur-2xl
+">
+
+<div className="px-8 py-7">
+
+<div
+className="
+relative
+overflow-hidden
+rounded-[28px]
+border
+border-cyan-500/20
+bg-[#0b1628]
+shadow-[0_0_45px_rgba(0,255,255,.08)]
+">
+
+{/* Animated Neon Border */}
+
+<div
+className="
+pointer-events-none
+absolute
+inset-0
+rounded-[28px]
+bg-gradient-to-r
+from-cyan-400/0
+via-cyan-400/20
+to-emerald-400/0
+opacity-70
+animate-pulse
+"
+/>
+
+<div className="relative z-10 p-6">
+
+{/* INPUT */}
+
+<textarea
+
+value={prompt}
+
+onChange={(e)=>setPrompt(e.target.value)}
+
+rows={2}
+
+placeholder="Ask RuachAgent AI anything..."
+
+className="
+w-full
+resize-none
+border-none
+bg-transparent
+text-[16px]
+leading-8
+text-white
+placeholder:text-slate-500
+focus:outline-none
+"
+/>
+
+{/* Bottom Toolbar */}
+
+<div className="mt-6 flex flex-wrap items-center justify-between gap-5">
+
+{/* LEFT */}
+
+<div className="flex flex-wrap items-center gap-3">
+
+<button
+
+className="
+group
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-xl
+border
+border-cyan-500/20
+bg-cyan-500/5
+transition-all
+duration-300
+hover:border-cyan-400
+hover:bg-cyan-500/15
+hover:shadow-[0_0_25px_rgba(0,255,255,.25)]
+">
+
+<Paperclip
+size={20}
+className="transition group-hover:rotate-12"
+/>
+
+</button>
+
+<button
+
+className="
+group
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-xl
+border
+border-cyan-500/20
+bg-cyan-500/5
+transition-all
+duration-300
+hover:border-cyan-400
+hover:bg-cyan-500/15
+hover:shadow-[0_0_25px_rgba(0,255,255,.25)]
+">
+
+<ImageIcon
+size={20}
+className="transition group-hover:scale-110"
+/>
+
+</button>
+
+<button
+
+className="
+group
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-xl
+border
+border-cyan-500/20
+bg-cyan-500/5
+transition-all
+duration-300
+hover:border-cyan-400
+hover:bg-cyan-500/15
+hover:shadow-[0_0_25px_rgba(0,255,255,.25)]
+">
+
+<Mic
+size={20}
+className="transition group-hover:text-cyan-300"
+/>
+
+</button>
+
+<div
+className="
+hidden
+xl:flex
+items-center
+gap-3
+rounded-xl
+border
+border-cyan-500/20
+bg-cyan-500/5
+px-4
+py-3
+">
+
+<Sparkles
+size={18}
+className="text-cyan-300"
+/>
+
+<p className="text-sm text-slate-300">
+
+AI Agent Ready
+
+</p>
+
+</div>
+
+</div>
+
+{/* RIGHT */}
+
+<div className="flex items-center gap-4">
+
+<p className="hidden lg:block text-sm text-slate-500">
+
+Press Enter to send
+
+</p>
+
+<button
+
+onClick={handleSendMessage}
+
+disabled={!prompt.trim()}
+
+className="
+group
+flex
+items-center
+gap-3
+rounded-2xl
+bg-gradient-to-r
+from-cyan-400
+to-emerald-400
+px-7
+py-4
+font-semibold
+text-black
+transition-all
+duration-300
+hover:scale-[1.04]
+hover:shadow-[0_0_35px_rgba(0,255,255,.45)]
+disabled:cursor-not-allowed
+disabled:opacity-40
+">
+
+<SendHorizonal
+size={20}
+className="
+transition-transform
+group-hover:translate-x-1
+"/>
+
+<span>
+
+Send
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{/* FOOTER */}
+
+<div className="mt-5 flex flex-wrap items-center justify-between gap-4">
+
+<div className="flex flex-wrap items-center gap-5">
+
+<div className="flex items-center gap-2">
+
+<div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"/>
+
+<p className="text-sm text-slate-400">
+
+RuachAgent AI Online
+
+</p>
+
+</div>
+
+<div className="hidden md:flex items-center gap-2">
+
+<ShieldCheck
+size={16}
+className="text-cyan-300"
+/>
+
+<p className="text-sm text-slate-500">
+
+Encrypted Workspace
+
+</p>
+
+</div>
+
+<div className="hidden xl:flex items-center gap-2">
+
+<Cpu
+size={16}
+className="text-cyan-300"
+/>
+
+<p className="text-sm text-slate-500">
+
+Neural Receipt Engine
+
+</p>
+
+</div>
+
+</div>
+
+<div className="flex items-center gap-5">
+
+<div className="text-right">
+
+<p className="text-xs text-slate-500">
+
+Conversation Memory
+
+</p>
+
+<p className="font-medium text-cyan-300">
+
+Enabled
+
+</p>
+
+</div>
+
+<div className="text-right">
+
+<p className="text-xs text-slate-500">
+
+Current Model
+
+</p>
+
+<p className="font-medium text-emerald-300">
+
+RuachAgent AI v1
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+{/* =======================================================
+                    RIGHT SIDEBAR
+======================================================= */}
+
+<aside
+className="
+hidden
+2xl:flex
+w-[430px]
+flex-col
+border-l
+border-cyan-500/20
+bg-[#07101d]/95
+backdrop-blur-2xl
+overflow-y-auto
+">
+
+{/* ===============================
+        HEADER
+================================ */}
+
+<div
+className="
+sticky
+top-0
+z-30
+border-b
+border-cyan-500/20
+bg-[#07101d]/95
+backdrop-blur-xl
+px-7
+py-6
+">
+
+<div className="flex items-center justify-between">
+
+<div>
+
+<h2
+className="
+text-xl
+font-bold
+text-cyan-300
+tracking-wide
+">
+
+Workspace
+
+</h2>
+
+<p className="mt-2 text-sm text-slate-400">
+
+Everything updates live while you chat.
+
+</p>
+
+</div>
+
+<div
+className="
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-xl
+bg-cyan-500/10
+ring-1
+ring-cyan-500/30
+">
+
+<Activity size={22}/>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+{/* ==========================================
+        AGENT PARAMETERS
+========================================== */}
+
+<div className="p-7">
+
+<div
+className="
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#101827]/80
+backdrop-blur-xl
+shadow-[0_0_40px_rgba(0,255,255,.08)]
+">
+
+<div className="border-b border-cyan-500/20 px-6 py-5">
+
+<div className="flex items-center gap-3">
+
+<Bot
+size={21}
+className="text-cyan-300"
+/>
+
+<h3
+className="
+font-bold
+tracking-wide
+text-cyan-300
+">
+
+Agent Parameters
+
+</h3>
+
+</div>
+
+</div>
+
+<div className="space-y-6 p-6">
+
+{/* Temperature */}
+
+<div>
+
+<div className="flex justify-between">
+
+<p className="text-sm text-slate-400">
+
+Temperature
+
+</p>
+
+<p className="font-medium">
+
+0.8
+
+</p>
+
+</div>
+
+<input
+
+type="range"
+
+min="0"
+
+max="1"
+
+step="0.1"
+
+defaultValue="0.8"
+
+className="
+mt-3
+w-full
+accent-cyan-400
+cursor-pointer
+"
+
+/>
+
+</div>
+
+
+
+{/* Creativity */}
+
+<div>
+
+<div className="flex justify-between">
+
+<p className="text-sm text-slate-400">
+
+Creativity
+
+</p>
+
+<p>
+
+High
+
+</p>
+
+</div>
+
+<input
+
+type="range"
+
+defaultValue="80"
+
+className="
+mt-3
+w-full
+accent-emerald-400
+"
+
+/>
+
+</div>
+
+
+
+{/* AI Voice */}
+
+<div>
+
+<p className="mb-3 text-sm text-slate-400">
+
+Voice
+
+</p>
+
+<select
+
+className="
+w-full
+rounded-xl
+border
+border-cyan-500/20
+bg-[#162335]
+px-4
+py-3
+outline-none
+">
+
+<option>
+
+Ruach Female
+
+</option>
+
+<option>
+
+Ruach Male
+
+</option>
+
+</select>
+
+</div>
+
+
+
+{/* Memory */}
+
+<div className="flex items-center justify-between">
+
+<div>
+
+<p className="font-medium">
+
+Conversation Memory
+
+</p>
+
+<p className="text-sm text-slate-500">
+
+Remember previous chats
+
+</p>
+
+</div>
+
+<label className="relative inline-flex cursor-pointer">
+
+<input
+type="checkbox"
+defaultChecked
+className="peer sr-only"
+/>
+
+<div
+className="
+h-7
+w-14
+rounded-full
+bg-slate-700
+transition
+peer-checked:bg-cyan-500
+after:absolute
+after:left-1
+after:top-1
+after:h-5
+after:w-5
+after:rounded-full
+after:bg-white
+after:transition-all
+peer-checked:after:translate-x-7
+"
+/>
+
+</label>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+{/* ==========================================
+        ANALYTICS
+========================================== */}
+
+<div
+className="
+mt-7
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#101827]/80
+shadow-[0_0_40px_rgba(0,255,255,.08)]
+">
+
+<div className="border-b border-cyan-500/20 px-6 py-5">
+
+<div className="flex items-center gap-3">
+
+<BarChart3
+size={21}
+className="text-cyan-300"
+/>
+
+<h3
+className="
+font-bold
+tracking-wide
+text-cyan-300
+">
+
+Analytics Overview
+
+</h3>
+
+</div>
+
+</div>
+
+<div className="grid grid-cols-2 gap-5 p-6">
+
+<div
+className="
+rounded-2xl
+bg-cyan-500/10
+p-5
+">
+
+<p className="text-sm text-slate-400">
+
+Receipts
+
+</p>
+
+<h2 className="mt-2 text-3xl font-bold">
+
+{receipts?.length || 0}
+
+</h2>
+
+</div>
+
+<div
+className="
+rounded-2xl
+bg-emerald-500/10
+p-5
+">
+
+<p className="text-sm text-slate-400">
+
+Stores
+
+</p>
+
+<h2 className="mt-2 text-3xl font-bold">
+
+{stores?.length || 0}
+
+</h2>
+
+</div>
+
+<div
+className="
+rounded-2xl
+bg-violet-500/10
+p-5
+">
+
+<p className="text-sm text-slate-400">
+
+Sent Today
+
+</p>
+
+<h2 className="mt-2 text-3xl font-bold">
+
+243
+
+</h2>
+
+</div>
+
+<div
+className="
+rounded-2xl
+bg-orange-500/10
+p-5
+">
+
+<p className="text-sm text-slate-400">
+
+AI Accuracy
+
+</p>
+
+<h2 className="mt-2 text-3xl font-bold">
+
+99.8%
+
+</h2>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+{/* ==========================================
+        INTEGRATION ENDPOINT
+========================================== */}
+
+<div
+className="
+mt-7
+rounded-3xl
+border
+border-cyan-500/20
+bg-[#101827]/80
+shadow-[0_0_40px_rgba(0,255,255,.08)]
+">
+
+<div className="border-b border-cyan-500/20 px-6 py-5">
+
+<div className="flex items-center gap-3">
+
+<Webhook
+size={20}
+className="text-cyan-300"
+/>
+
+<h3
+className="
+font-bold
+tracking-wide
+text-cyan-300
+">
+
+Integration Endpoint
+
+</h3>
+
+</div>
+
+</div>
+
+<div className="space-y-6 p-6">
+
+<div>
+
+<p className="mb-2 text-sm text-slate-400">
+
+Webhook URL
+
+</p>
+
+<div
+className="
+rounded-xl
+border
+border-cyan-500/20
+bg-[#162335]
+p-4
+break-all
+text-sm
+">
+
+{webhookUrl ||
+"https://api.ruachagent.ai/webhook"}
+
+</div>
+
+</div>
+
+<button
+className="
+w-full
+rounded-xl
+bg-gradient-to-r
+from-cyan-400
+to-emerald-400
+py-4
+font-semibold
+text-black
+transition-all
+hover:scale-[1.02]
+hover:shadow-[0_0_35px_rgba(0,255,255,.35)]
+">
+
+Copy Endpoint
+
+</button>
+
+<button
+className="
+w-full
+rounded-xl
+border
+border-cyan-500/20
+bg-cyan-500/5
+py-4
+transition
+hover:bg-cyan-500/15
+">
+
+Test Connection
+
+</button>
+
+<button
+className="
+w-full
+rounded-xl
+border
+border-red-500/20
+bg-red-500/5
+py-4
+text-red-300
+transition
+hover:bg-red-500/10
+">
+
+Disconnect Store
+
+</button>
+
+</div>
+
+</div>
+
+
+
+{/* ==========================================
+        AI SYSTEM STATUS
+========================================== */}
+
+<div
+className="
+mt-7
+rounded-3xl
+border
+border-cyan-500/20
+bg-gradient-to-br
+from-cyan-500/10
+to-emerald-500/10
+p-6
+">
+
+<div className="flex items-center gap-3">
+
+<Cpu
+size={22}
+className="text-cyan-300"
+/>
+
+<div>
+
+<h3 className="font-semibold">
+
+RuachAgent Neural Core
+
+</h3>
+
+<p className="text-sm text-slate-400">
+
+Everything is synchronized
+
+</p>
+
+</div>
+
+</div>
+
+<div className="mt-6 space-y-4">
+
+<div className="flex justify-between">
+
+<span className="text-slate-400">
+
+Supabase
+
+</span>
+
+<span className="text-emerald-300">
+
+Connected
+
+</span>
+
+</div>
+
+<div className="flex justify-between">
+
+<span className="text-slate-400">
+
+Webhook
+
+</span>
+
+<span className="text-emerald-300">
+
+Online
+
+</span>
+
+</div>
+
+<div className="flex justify-between">
+
+<span className="text-slate-400">
+
+AI Engine
+
+</span>
+
+<span className="text-cyan-300">
+
+Running
+
+</span>
+
+</div>
+
+<div className="flex justify-between">
+
+<span className="text-slate-400">
+
+Receipt Generator
+
+</span>
+
+<span className="text-emerald-300">
+
+Ready
+
+</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</aside>
 
       {/* COLUMN 3: LIVE ENDPOINT & INVOICE MIRROR STACK */}
       <div style={{
@@ -2021,48 +5497,38 @@ boxShadow:`
                           textTransform: 'uppercase',
                           letterSpacing: '0.5px'
                         }}>
-                        
+                          Transaction
                         </div>
 
                         <div style={{
-  textAlign: 'right',
-  lineHeight: '1.5'
-}}>
-  <div style={{
-    fontWeight: '900',
-    color: '#c5ccda',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  }}>
-    Transaction
-  </div>
-
-  {/* FIX: Renders the dynamic real-time date if available, otherwise defaults gracefully */}
-  <div>
-    {settings?.created_at ? (
-      new Date(settings.created_at).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }).replace(/,/g, '') // Removes commas to match your premium look cleanly
-    ) : (
-      // Clean fallback using the exact current time if no record row is selected in preview mode
-      new Date().toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }).replace(/,/g, '')
-    )}
-  </div>
-</div>
+                          marginTop: '4px',
+                          fontSize: '11px',
+                          color: '#94a3b8',
+                          lineHeight: '1.5'
+                        }}>
+                          {settings?.created_at ? (
+                            new Date(settings.created_at).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: false
+                            }).replace(/,/g, '') // Removes commas to match your premium look cleanly
+                          ) : (
+                            // Clean fallback using the exact current time if no record row is selected in preview mode
+                            new Date().toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: false
+                            }).replace(/,/g, '')
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -2391,9 +5857,9 @@ inset 0 0 12px rgba(8,227,216,.06)
                 </div>
               </div>
             </div>
-          </section>
-        )}
-      </main>
+            </main>
+  )}
     </div>
   );
 }
+
