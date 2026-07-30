@@ -9,13 +9,14 @@ import {
   Image as ImageIcon,
   Mic,
   Sparkles,
-  SendHorizonal,
+  SendHorizontal,
   ShieldCheck,
   Cpu,
   Activity,
   Bot,
   BarChart3,
   Webhook,
+  Plus,
 } from "lucide-react";
 
 
@@ -4554,7 +4555,7 @@ disabled:cursor-not-allowed
 disabled:opacity-40
 ">
 
-<SendHorizonal
+<SendHorizontal
 size={20}
 className="
 transition-transform
