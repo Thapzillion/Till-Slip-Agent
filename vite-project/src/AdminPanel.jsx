@@ -22,6 +22,7 @@ import {
   Store,
   Settings,
   Receipt,
+  messagesEndRef,
 } from "lucide-react";
 
 
