@@ -3463,7 +3463,7 @@ if (isCheckingSession) {
     </section>
   ) : (
     
-<main className="relative flex h-screen w-full overflow-hidden bg-[#050816] text-white">
+<main className="flex h-screen min-h-0 w-full overflow-hidden bg-[#050816] text-white">
 
     {/* Animated Background */}
 
@@ -3487,10 +3487,10 @@ if (isCheckingSession) {
 className="
 relative
 z-20
-hidden
-lg:flex
-flex-col
+flex
 w-[285px]
+shrink-0
+flex-col
 border-r
 border-cyan-500/20
 bg-[#08111f]/90
@@ -4707,9 +4707,9 @@ RuachAgent AI v1
 
 <aside
 className="
-hidden
-2xl:flex
+flex
 w-[430px]
+shrink-0
 flex-col
 border-l
 border-cyan-500/20
@@ -5373,15 +5373,56 @@ Ready
 
 </div>
 
+<div className="mt-7 rounded-3xl border border-cyan-500/20 bg-[#101827]/80 p-6 shadow-[0_0_40px_rgba(0,255,255,.08)]">
+  <div className="flex items-center justify-between">
+    <div>
+      <h3 className="font-bold tracking-wide text-cyan-300">Till Slip Preview</h3>
+      <p className="mt-1 text-sm text-slate-400">Live receipt mirror</p>
+    </div>
+    <div className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">
+      Live
+    </div>
+  </div>
+
+  <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-[#061018] p-4">
+    <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-cyan-300">
+      <span>Verified Node</span>
+      <span>{settings?.business_name || 'My Business'}</span>
+    </div>
+
+    <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-[#08131d] p-4 text-sm text-slate-300">
+      <div className="flex items-center justify-between">
+        <span className="font-semibold text-white">Transaction</span>
+        <span className="text-cyan-300">{activeCurrencySymbol}200.00</span>
+      </div>
+      <div className="mt-3 h-px bg-cyan-500/20" />
+      <div className="mt-3 space-y-2 text-xs text-slate-400">
+        <div className="flex justify-between">
+          <span>Premium Sample Item</span>
+          <span>{activeCurrencySymbol}120.00</span>
+        </div>
+        <div className="flex justify-between">
+          <span>Automation Addon</span>
+          <span>{activeCurrencySymbol}80.00</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="mt-4 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-3 text-center text-xs text-cyan-200">
+      Voucher code: {settings?.webhook_slug || 'node-preview'}
+    </div>
+  </div>
+
+  <button className="mt-4 w-full rounded-xl border border-cyan-500/20 bg-cyan-500/10 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-500/20">
+    Download Preview
+  </button>
+</div>
+
 </aside>
 
       {/* COLUMN 3: LIVE ENDPOINT & INVOICE MIRROR STACK */}
       <div style={{
-        flex: isDesktop ? '1 1 0%' : '1 1 100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px'
+        display: 'none'
       }}>
               {/* LIVE INBOX EMAIL TILL SLIP MIRROR */}
               <div style={{
