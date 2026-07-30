@@ -190,14 +190,102 @@ export default function AdminPanel() {
           ======================= */}
 
           <section className="chat-panel">
+            <div className="chat-window">
+              <div className="hero">
+                <div className="hero-badge">
+                  <Sparkles size={16} />
+                  <span>RuachAgent AI</span>
+                </div>
 
-            {/* The welcome area,
-                feature cards,
-                conversation,
-                prompt input
-                will be added
-                in Part 2 */}
+                <h1>
+                  Welcome to
+                  <span> RuachAgent AI</span>
+                </h1>
 
+                <p>
+                  Your AI assistant for creating, managing and delivering
+                  intelligent digital till slips.
+                </p>
+              </div>
+
+              <div className="feature-grid">
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <Palette size={24} />
+                  </div>
+                  <h3>AI-Powered Design</h3>
+                  <p>
+                    Instantly generate beautiful till slips using AI while
+                    maintaining your brand identity.
+                  </p>
+                </div>
+
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <Cpu size={24} />
+                  </div>
+                  <h3>Smart Parameters</h3>
+                  <p>
+                    Fine tune receipt formatting, tax rules,
+                    merchant details and branding with AI.
+                  </p>
+                </div>
+
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <Store size={24} />
+                  </div>
+                  <h3>Store Integration</h3>
+                  <p>
+                    Connect POS systems and automatically
+                    synchronize digital till slips.
+                  </p>
+                </div>
+
+                <div className="feature-card">
+                  <div className="feature-icon">
+                    <ArrowUpRight size={24} />
+                  </div>
+                  <h3>Instant Delivery</h3>
+                  <p>
+                    Deliver digital receipts through SMS,
+                    WhatsApp or Email within seconds.
+                  </p>
+                </div>
+              </div>
+
+              <div className="conversation">
+                <div className="conversation-center">
+                  <div className="conversation-icon">
+                    <Sparkles size={42} />
+                  </div>
+                  <h2>Start a conversation</h2>
+                  <p>
+                    Ask RuachAgent AI to generate,
+                    redesign or analyse your till slips.
+                  </p>
+                </div>
+              </div>
+
+              <div className="prompt-section">
+                <div className="prompt-box">
+                  <input
+                    type="text"
+                    placeholder="Ask RuachAgent AI anything..."
+                  />
+                  <button>
+                    <Send size={18} />
+                  </button>
+                </div>
+
+                <div className="prompt-footer">
+                  <span>
+                    AI can make mistakes. Verify important information.
+                  </span>
+                  <span>Powered by RuachAgent AI</span>
+                </div>
+              </div>
+            </div>
           </section>
 
           {/* ======================
@@ -420,172 +508,3 @@ export default function AdminPanel() {
     </div>
   );
 }
-
-<section className="chat-panel">
-
-    {/* Main Glass Container */}
-
-    <div className="chat-window">
-
-        {/* Welcome */}
-
-        <div className="hero">
-
-            <div className="hero-badge">
-
-                <Sparkles size={16} />
-
-                <span>RuachAgent AI</span>
-
-            </div>
-
-            <h1>
-                Welcome to
-                <span> RuachAgent AI</span>
-            </h1>
-
-            <p>
-                Your AI assistant for creating, managing and delivering
-                intelligent digital till slips.
-            </p>
-
-        </div>
-
-        {/* Feature Cards */}
-
-        <div className="feature-grid">
-
-            <div className="feature-card">
-
-                <div className="feature-icon">
-                    <Palette size={24} />
-                </div>
-
-                <h3>AI-Powered Design</h3>
-
-                <p>
-                    Instantly generate beautiful till slips using AI while
-                    maintaining your brand identity.
-                </p>
-
-            </div>
-
-            <div className="feature-card">
-
-                <div className="feature-icon">
-
-                    <Cpu size={24} />
-
-                </div>
-
-                <h3>Smart Parameters</h3>
-
-                <p>
-                    Fine tune receipt formatting, tax rules,
-                    merchant details and branding with AI.
-                </p>
-
-            </div>
-
-            <div className="feature-card">
-
-                <div className="feature-icon">
-
-                    <Store size={24} />
-
-                </div>
-
-                <h3>Store Integration</h3>
-
-                <p>
-                    Connect POS systems and automatically
-                    synchronize digital till slips.
-                </p>
-
-            </div>
-
-            <div className="feature-card">
-
-                <div className="feature-icon">
-
-                    <ArrowUpRight size={24} />
-
-                </div>
-
-                <h3>Instant Delivery</h3>
-
-                <p>
-                    Deliver digital receipts through SMS,
-                    WhatsApp or Email within seconds.
-                </p>
-
-            </div>
-
-        </div>
-
-        {/* Empty Conversation */}
-
-        <div className="conversation">
-
-            <div className="conversation-center">
-
-                <div className="conversation-icon">
-
-                    <Sparkles size={42} />
-
-                </div>
-
-                <h2>
-                    Start a conversation
-                </h2>
-
-                <p>
-
-                    Ask RuachAgent AI to generate,
-                    redesign or analyse your till slips.
-
-                </p>
-
-            </div>
-
-        </div>
-
-        {/* Prompt Area */}
-
-        <div className="prompt-section">
-
-            <div className="prompt-box">
-
-                <input
-
-                    type="text"
-
-                    placeholder="Ask RuachAgent AI anything..."
-
-                />
-
-                <button>
-
-                    <Send size={18} />
-
-                </button>
-
-            </div>
-
-            <div className="prompt-footer">
-
-                <span>
-                    AI can make mistakes. Verify important information.
-                </span>
-
-                <span>
-                    Powered by RuachAgent AI
-                </span>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</section>

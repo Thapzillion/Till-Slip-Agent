@@ -128,7 +128,9 @@ body{
 
     color:var(--text);
 
-    overflow:hidden;
+    overflow-x:hidden;
+
+    overflow-y:auto;
 
     -webkit-font-smoothing:antialiased;
 
@@ -278,9 +280,13 @@ input{
 
     width:100vw;
 
-    height:100vh;
+    min-height:100vh;
+
+    height:auto;
 
     display:flex;
+
+    overflow-x:hidden;
 
     background:
         radial-gradient(
@@ -798,7 +804,11 @@ input::placeholder{
 
     flex-direction:column;
 
-    overflow:hidden;
+    min-height:100vh;
+
+    overflow-x:hidden;
+
+    overflow-y:auto;
 
 }
 
@@ -888,7 +898,7 @@ input::placeholder{
 
     padding:26px;
 
-    overflow:hidden;
+    overflow:visible;
 
 }
 
@@ -904,6 +914,8 @@ input::placeholder{
     display:flex;
 
     flex-direction:column;
+
+    min-height:0;
 
     animation:fadeUp .45s ease;
 
@@ -988,9 +1000,11 @@ input::placeholder{
 
     flex-direction:column;
 
-    height:100%;
+    height:auto;
 
-    overflow:hidden;
+    min-height:100%;
+
+    overflow:visible;
 
     padding:42px;
 
