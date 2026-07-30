@@ -17,6 +17,10 @@ import {
   BarChart3,
   Webhook,
   Plus,
+  MessageSquare,
+  Bookmark,
+  Store,
+  Settings,
 } from "lucide-react";
 
 
