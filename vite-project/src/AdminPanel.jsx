@@ -68,6 +68,16 @@ export default function AdminPanel() {
 
   const [receipt, setReceipt] = useState(null);
 
+  const [prompt, setPrompt] = useState('');
+
+  const [isThinking, setIsThinking] = useState(false);
+
+  const [receipts, setReceipts] = useState([]);
+
+  const [stores, setStores] = useState([]);
+
+  const [webhookUrl, setWebhookUrl] = useState('');
+
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
@@ -2878,6 +2888,18 @@ async function handleSave(e) {
     setIsSaveSyncing(false);
   }
 }
+
+const handleSendMessage = async () => {
+  if (!prompt.trim()) return;
+
+  setIsThinking(true);
+
+  try {
+    setPrompt('');
+  } finally {
+    setIsThinking(false);
+  }
+};
 
 const SAFE_CURRENCY_OPTIONS = typeof CURRENCY_OPTIONS !== 'undefined' ? CURRENCY_OPTIONS : [
   { code: 'ZAR', symbol: 'R' },
