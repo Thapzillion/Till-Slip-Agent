@@ -148,9 +148,15 @@ const styles = {
 
       width:"100%",
 
+      minWidth:0,
+
       overflow:"hidden",
 
       overflowX:"hidden",
+
+      fontSize:"16px",
+
+      lineHeight:1.5,
 
       background:`
 
@@ -194,11 +200,11 @@ const styles = {
 
       display:"flex",
 
-      justifyContent:"center",
+      justifyContent:"stretch",
 
       alignItems:"stretch",
 
-      padding:isMobile ? "0" : "20px",
+      padding:isMobile ? "0" : "12px",
 
       boxSizing:"border-box"
 
@@ -3340,69 +3346,6 @@ if (isCheckingSession) {
       
       {/* GLOBAL MODAL 1: EMAIL CONFIRMED SUCCESS POP-UP */}
 
-      <header style={{ 
-        ...styles.header, 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between',
-        gap: '12px'
-      }}>
-        
-        {/* Logo + badge — only visible when user is logged in */}
-        {user && (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "12px",
-      flexShrink: 0,
-    }}
-  >
-    <img
-  src="/RuachAgentLogo.png"
-      alt="RuachAgent"
-      style={{
-        height: "72px",
-        width: "auto",
-        objectFit: "contain",
-        filter: `
-          drop-shadow(0 0 4px rgba(8,227,216,.85))
-          drop-shadow(0 0 10px rgba(8,227,216,.45))
-          drop-shadow(0 0 20px rgba(8,227,216,.20))
-        `,
-        userSelect: "none",
-        pointerEvents: "none"
-      }}
-    />
-  </div>
-)}
-
-        {/* User email + disconnect — pushed to the far right */}
-        {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
-            <span style={{ fontSize: '12px', color: '#737373', fontFamily: 'monospace' }}>{user.email}</span>
-            <button 
-              onClick={() => supabase.auth.signOut()} 
-              style={{ 
-                background: 'transparent', 
-                border: '1px solid #262626', 
-                color: '#ef4444', 
-                padding: '6px 12px', 
-                borderRadius: '6px', 
-                fontSize: '11px', 
-                fontWeight: '500', 
-                cursor: 'pointer',
-                transition: 'border-color 0.15s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ef4444'}
-              onMouseLeave={(e) => e.currentTarget.style.borderColor = '#152d38'}
-            >
-              Disconnect
-            </button>
-          </div>
-        )}
-      </header>
-
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
   {!user ? (
@@ -3463,7 +3406,7 @@ if (isCheckingSession) {
     </section>
   ) : (
     
-<main className="flex h-screen min-h-0 w-full overflow-hidden bg-[#050816] text-white">
+<main style={{ display:'flex', flexDirection:'row', minHeight:'100vh', width:'100%', minWidth:0, overflow:'hidden', background:'#050816', color:'#ffffff' }}>
 
     {/* Animated Background */}
 
@@ -3484,6 +3427,18 @@ if (isCheckingSession) {
 ======================================================= */}
 
 <aside
+style={{
+  position:'relative',
+  zIndex:20,
+  flex:'0 0 280px',
+  width:'280px',
+  minWidth:'280px',
+  display:'flex',
+  flexDirection:'column',
+  borderRight:'1px solid rgba(0,255,255,0.2)',
+  background:'rgba(8,17,31,0.9)',
+  backdropFilter:'blur(24px)'
+}}
 className="
 relative
 z-20
@@ -3513,8 +3468,8 @@ border-cyan-500/20
 <div
 className="
 flex
-h-14
-w-14
+h-10
+w-10
 items-center
 justify-center
 rounded-2xl
@@ -3527,8 +3482,8 @@ shadow-[0_0_25px_rgba(0,255,255,.25)]
 <img
   src="/RuachAgentLogo.png"
       alt="RuachAgent"
-
-className="h-10 w-10 object-contain"
+  style={{ width: 32, height: 32, objectFit: 'contain' }}
+className="h-7 w-7 object-contain"
 
 />
 
@@ -3879,7 +3834,14 @@ PRO PLAN
 ======================================================= */}
 
 <section
-
+style={{
+  position:'relative',
+  zIndex:20,
+  flex:'1 1 auto',
+  minWidth:0,
+  display:'flex',
+  flexDirection:'column'
+}}
 className="
 relative
 z-20
@@ -3909,35 +3871,24 @@ flex-col
                 className="
                 relative
                 flex
-                h-16
-                w-16
-                items-center
-                justify-center
-                rounded-2xl
-                bg-cyan-500/10
-                ring-1
-                ring-cyan-400/40
-                shadow-[0_0_30px_rgba(0,255,255,.35)]
-                ">
+h-11
+w-11
+items-center
+justify-center
+rounded-2xl
+bg-cyan-500/10
+ring-1
+ring-cyan-400/40
+shadow-[0_0_30px_rgba(0,255,255,.35)]
+">
 
-                <img
+<img
   src="/RuachAgentLogo.png"
-                    alt=""
-                    className="h-10 w-10 object-contain"
-                />
+  alt=""
+  style={{ width: 32, height: 32, objectFit: 'contain' }}
+  className="h-8 w-8 object-contain"
+/>
 
-                <span
-                    className="
-                    absolute
-                    bottom-1
-                    right-1
-                    h-3
-                    w-3
-                    rounded-full
-                    bg-emerald-400
-                    animate-ping
-                    "
-                />
 
                 <span
                     className="
@@ -3976,7 +3927,6 @@ flex-col
                         Online
 
                     </p>
-
                 </div>
 
                 <p className="mt-2 text-sm text-slate-400">
@@ -4706,6 +4656,17 @@ RuachAgent AI v1
 ======================================================= */}
 
 <aside
+style={{
+  flex:'0 0 380px',
+  width:'380px',
+  minWidth:'320px',
+  display:'flex',
+  flexDirection:'column',
+  borderLeft:'1px solid rgba(0,255,255,0.2)',
+  background:'rgba(7,16,29,0.95)',
+  backdropFilter:'blur(24px)',
+  overflowY:'auto'
+}}
 className="
 flex
 w-[430px]
