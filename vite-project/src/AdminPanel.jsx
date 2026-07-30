@@ -22,7 +22,7 @@ import {
   Store,
   Settings,
   Receipt,
-  profile,
+  Profile,
 } from "lucide-react";
 
 
