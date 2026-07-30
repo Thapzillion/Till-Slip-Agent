@@ -1,0 +1,3970 @@
+/* ===========================================================
+   RUACHAGENT AI
+   PREMIUM SAAS DASHBOARD
+   PART 1
+   Variables • Reset • Global Styles
+=========================================================== */
+
+
+/* ===========================
+      CSS VARIABLES
+=========================== */
+
+:root{
+
+    /* Backgrounds */
+
+    --bg:#050608;
+    --bg-secondary:#0b0d11;
+    --panel:#11151b;
+    --panel-light:#171c24;
+
+    /* Borders */
+
+    --border:#1c2430;
+    --border-hover:#2ad4ff;
+    --divider:#222b37;
+
+    /* Accent */
+
+    --primary:#26d8ff;
+    --primary-soft:#6fe8ff;
+    --primary-dark:#1299b8;
+
+    /* Text */
+
+    --text:#f4f7fb;
+    --text-secondary:#b4bfcd;
+    --text-muted:#7d8795;
+
+    /* Success */
+
+    --success:#36d17b;
+
+    /* Shadows */
+
+    --shadow-sm:
+        0 6px 16px rgba(0,0,0,.18);
+
+    --shadow-md:
+        0 12px 32px rgba(0,0,0,.28);
+
+    --shadow-lg:
+        0 22px 60px rgba(0,0,0,.45);
+
+    /* Neon */
+
+    --neon:
+        0 0 10px rgba(38,216,255,.18),
+        0 0 24px rgba(38,216,255,.08);
+
+    /* Glass */
+
+    --glass:
+        rgba(255,255,255,.03);
+
+    --glass-border:
+        rgba(255,255,255,.05);
+
+    /* Radius */
+
+    --radius-xs:10px;
+    --radius-sm:14px;
+    --radius-md:18px;
+    --radius-lg:24px;
+    --radius-xl:34px;
+
+    /* Sidebar */
+
+    --sidebar-width:270px;
+
+    /* Preview */
+
+    --preview-width:390px;
+
+    /* Topbar */
+
+    --topbar-height:82px;
+
+    /* Transition */
+
+    --transition:
+        .22s cubic-bezier(.4,0,.2,1);
+
+}
+
+
+
+/* ===========================
+          RESET
+=========================== */
+
+*,
+*::before,
+*::after{
+
+    margin:0;
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+
+
+html{
+
+    scroll-behavior:smooth;
+
+}
+
+
+
+body{
+
+    font-family:"Inter",sans-serif;
+
+    background:var(--bg);
+
+    color:var(--text);
+
+    overflow:hidden;
+
+    -webkit-font-smoothing:antialiased;
+
+    text-rendering:optimizeLegibility;
+
+}
+
+
+
+/* Images */
+
+img{
+
+    display:block;
+
+    max-width:100%;
+
+}
+
+
+
+/* Links */
+
+a{
+
+    color:inherit;
+
+    text-decoration:none;
+
+}
+
+
+
+/* Lists */
+
+ul{
+
+    list-style:none;
+
+}
+
+
+
+/* Inputs */
+
+input,
+textarea,
+button{
+
+    font-family:inherit;
+
+}
+
+
+
+/* Buttons */
+
+button{
+
+    border:none;
+
+    outline:none;
+
+    cursor:pointer;
+
+    transition:var(--transition);
+
+}
+
+
+
+/* Inputs */
+
+input{
+
+    outline:none;
+
+    border:none;
+
+}
+
+
+
+/* ===========================
+      CUSTOM SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:#090b0e;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#202732;
+
+    border-radius:30px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#2ad4ff;
+
+}
+
+
+
+/* Firefox */
+
+*{
+
+    scrollbar-width:thin;
+
+    scrollbar-color:#202732 #090b0e;
+
+}
+
+
+
+/* ===========================
+      SELECTION
+=========================== */
+
+::selection{
+
+    background:rgba(38,216,255,.25);
+
+    color:white;
+
+}
+
+
+
+/* ===========================
+        GLOBAL PAGE
+=========================== */
+
+.admin-page{
+
+    width:100vw;
+
+    height:100vh;
+
+    display:flex;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(38,216,255,.05),
+            transparent 30%
+        ),
+
+        radial-gradient(
+            circle at bottom left,
+            rgba(38,216,255,.04),
+            transparent 35%
+        ),
+
+        var(--bg);
+
+}
+
+
+
+/* ===========================
+     GLASS PANEL TEMPLATE
+=========================== */
+
+.glass{
+
+    background:var(--glass);
+
+    backdrop-filter:blur(22px);
+
+    -webkit-backdrop-filter:blur(22px);
+
+    border:1px solid var(--glass-border);
+
+    box-shadow:var(--shadow-md);
+
+}
+
+
+
+/* ===========================
+      PREMIUM CARDS
+=========================== */
+
+.card{
+
+    background:linear-gradient(
+
+        180deg,
+
+        rgba(255,255,255,.035),
+
+        rgba(255,255,255,.02)
+
+    );
+
+    border:1px solid var(--border);
+
+    border-radius:var(--radius-md);
+
+    transition:var(--transition);
+
+}
+
+
+
+.card:hover{
+
+    border-color:rgba(42,212,255,.45);
+
+    box-shadow:var(--neon);
+
+}
+
+
+
+/* ===========================
+       ICON BUTTONS
+=========================== */
+
+.icon-button{
+
+    width:42px;
+
+    height:42px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:transparent;
+
+    border:1px solid var(--border);
+
+    border-radius:12px;
+
+    color:var(--text-secondary);
+
+}
+
+
+
+.icon-button:hover{
+
+    color:white;
+
+    border-color:var(--primary);
+
+    background:rgba(38,216,255,.06);
+
+    box-shadow:var(--neon);
+
+}
+
+
+
+/* ===========================
+      PREMIUM INPUT
+=========================== */
+
+input{
+
+    background:transparent;
+
+    color:white;
+
+}
+
+
+
+input::placeholder{
+
+    color:var(--text-muted);
+
+}
+
+
+
+/* ===========================
+     SUBTLE ANIMATIONS
+=========================== */
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+
+
+@keyframes glow{
+
+    0%{
+
+        box-shadow:0 0 0 rgba(38,216,255,0);
+
+    }
+
+    50%{
+
+        box-shadow:0 0 18px rgba(38,216,255,.22);
+
+    }
+
+    100%{
+
+        box-shadow:0 0 0 rgba(38,216,255,0);
+
+    }
+
+}
+
+/*==========================================================
+    PART 2
+    MAIN LAYOUT
+    Sidebar • Topbar • Main Layout
+==========================================================*/
+
+
+/*==========================================================
+    SIDEBAR
+==========================================================*/
+
+.sidebar{
+
+    width:var(--sidebar-width);
+
+    min-width:var(--sidebar-width);
+
+    height:100vh;
+
+    padding:28px 22px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(18,22,28,.98),
+            rgba(8,10,13,.98)
+        );
+
+    border-right:1px solid var(--border);
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+/* Neon edge */
+
+.sidebar::after{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    right:0;
+
+    width:1px;
+
+    height:100%;
+
+    background:rgba(38,216,255,.45);
+
+    box-shadow:
+        0 0 12px rgba(38,216,255,.25);
+
+}
+
+
+/*==========================================================
+    LOGO
+==========================================================*/
+
+.sidebar-logo{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    margin-bottom:42px;
+
+}
+
+.logo-icon{
+
+    width:56px;
+
+    height:56px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #26d8ff,
+            #1299b8
+        );
+
+    box-shadow:
+        0 0 25px rgba(38,216,255,.18);
+
+}
+
+.sidebar-logo h2{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    letter-spacing:-0.4px;
+
+}
+
+.sidebar-logo span{
+
+    display:block;
+
+    margin-top:4px;
+
+    font-size:12px;
+
+    color:var(--text-muted);
+
+}
+
+
+/*==========================================================
+    SECTION
+==========================================================*/
+
+.sidebar-section{
+
+    margin-bottom:36px;
+
+}
+
+.sidebar-title{
+
+    color:var(--text-muted);
+
+    font-size:11px;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+    margin-bottom:14px;
+
+    padding-left:14px;
+
+}
+
+
+/*==========================================================
+    SIDEBAR ITEMS
+==========================================================*/
+
+.sidebar-item{
+
+    width:100%;
+
+    height:52px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:0 16px;
+
+    margin-bottom:8px;
+
+    border-radius:14px;
+
+    background:transparent;
+
+    color:var(--text-secondary);
+
+    border:1px solid transparent;
+
+    transition:var(--transition);
+
+}
+
+.sidebar-item svg{
+
+    flex-shrink:0;
+
+}
+
+.sidebar-item span{
+
+    font-size:14px;
+
+    font-weight:500;
+
+}
+
+.sidebar-item:hover{
+
+    color:white;
+
+    background:rgba(255,255,255,.03);
+
+    border-color:rgba(38,216,255,.20);
+
+}
+
+.sidebar-item.active{
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            rgba(38,216,255,.14),
+
+            rgba(38,216,255,.03)
+
+        );
+
+    border:1px solid rgba(38,216,255,.25);
+
+    box-shadow:
+        inset 0 0 0 1px rgba(38,216,255,.08),
+        0 0 18px rgba(38,216,255,.08);
+
+}
+
+
+/*==========================================================
+    BOTTOM PROFILE
+==========================================================*/
+
+.sidebar-bottom{
+
+    margin-top:auto;
+
+}
+
+.bottom-profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.025);
+
+    border:1px solid var(--border);
+
+}
+
+.bottom-logo{
+
+    width:46px;
+
+    height:46px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:700;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #26d8ff,
+            #1299b8
+        );
+
+}
+
+.bottom-profile h4{
+
+    font-size:14px;
+
+}
+
+.bottom-profile p{
+
+    margin-top:3px;
+
+    font-size:12px;
+
+    color:var(--text-muted);
+
+}
+
+
+/*==========================================================
+    MAIN CONTENT
+==========================================================*/
+
+.main-content{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    overflow:hidden;
+
+}
+
+
+/*==========================================================
+    TOP BAR
+==========================================================*/
+
+.topbar{
+
+    height:var(--topbar-height);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 34px;
+
+    background:rgba(9,11,15,.82);
+
+    backdrop-filter:blur(18px);
+
+    -webkit-backdrop-filter:blur(18px);
+
+    border-bottom:1px solid var(--border);
+
+}
+
+.topbar-center{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.topbar-center h1{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    letter-spacing:-0.6px;
+
+}
+
+.topbar-center p{
+
+    margin-top:4px;
+
+    color:var(--text-muted);
+
+    font-size:13px;
+
+}
+
+.topbar-actions{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+
+/*==========================================================
+    CONTENT LAYOUT
+==========================================================*/
+
+.content-layout{
+
+    flex:1;
+
+    display:grid;
+
+    grid-template-columns:
+
+        minmax(0,1fr)
+
+        var(--preview-width);
+
+    gap:26px;
+
+    padding:26px;
+
+    overflow:hidden;
+
+}
+
+
+/*==========================================================
+    CHAT PANEL
+==========================================================*/
+
+.chat-panel{
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    animation:fadeUp .45s ease;
+
+}
+
+
+/*==========================================================
+    PREVIEW PANEL
+==========================================================*/
+
+.preview-panel{
+
+    width:100%;
+
+    animation:fadeUp .55s ease;
+
+}
+
+
+/*==========================================================
+    PREMIUM PANEL SURFACE
+==========================================================*/
+
+.chat-window,
+.preview-card{
+
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.035),
+
+            rgba(255,255,255,.018)
+
+        );
+
+    border:1px solid var(--border);
+
+    border-radius:26px;
+
+    backdrop-filter:blur(18px);
+
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+
+        var(--shadow-md);
+
+    transition:var(--transition);
+
+}
+
+.chat-window:hover,
+.preview-card:hover{
+
+    border-color:rgba(38,216,255,.18);
+
+}
+
+/*==========================================================
+    PART 3
+    CHAT PANEL
+    Hero • Feature Cards • Conversation
+==========================================================*/
+
+
+/*==========================================================
+    CHAT WINDOW
+==========================================================*/
+
+.chat-window{
+
+    padding:42px;
+
+    overflow-y:auto;
+
+}
+
+
+/*==========================================================
+    HERO
+==========================================================*/
+
+.hero{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    text-align:center;
+
+    margin-bottom:42px;
+
+}
+
+.hero-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:8px 16px;
+
+    border-radius:999px;
+
+    background:rgba(38,216,255,.07);
+
+    border:1px solid rgba(38,216,255,.18);
+
+    color:var(--primary-soft);
+
+    font-size:13px;
+
+    font-weight:600;
+
+    margin-bottom:24px;
+
+}
+
+.hero h1{
+
+    font-size:44px;
+
+    font-weight:800;
+
+    line-height:1.15;
+
+    letter-spacing:-1.5px;
+
+    color:var(--text);
+
+}
+
+.hero h1 span{
+
+    color:var(--primary);
+
+}
+
+.hero p{
+
+    margin-top:18px;
+
+    max-width:720px;
+
+    color:var(--text-secondary);
+
+    font-size:16px;
+
+    line-height:1.8;
+
+}
+
+
+/*==========================================================
+    FEATURE GRID
+==========================================================*/
+
+.feature-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:22px;
+
+    margin-bottom:52px;
+
+}
+
+
+/*==========================================================
+    FEATURE CARD
+==========================================================*/
+
+.feature-card{
+
+    padding:26px;
+
+    border-radius:22px;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.035),
+
+            rgba(255,255,255,.015)
+
+        );
+
+    border:1px solid var(--border);
+
+    transition:var(--transition);
+
+}
+
+.feature-card:hover{
+
+    transform:translateY(-5px);
+
+    border-color:rgba(38,216,255,.28);
+
+    box-shadow:
+        0 0 24px rgba(38,216,255,.10);
+
+}
+
+.feature-icon{
+
+    width:56px;
+
+    height:56px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-bottom:20px;
+
+    border-radius:18px;
+
+    color:var(--primary);
+
+    background:rgba(38,216,255,.08);
+
+    border:1px solid rgba(38,216,255,.16);
+
+}
+
+.feature-card h3{
+
+    font-size:18px;
+
+    font-weight:700;
+
+    margin-bottom:10px;
+
+    color:white;
+
+}
+
+.feature-card p{
+
+    color:var(--text-secondary);
+
+    font-size:14px;
+
+    line-height:1.8;
+
+}
+
+
+/*==========================================================
+    CONVERSATION AREA
+==========================================================*/
+
+.conversation{
+
+    flex:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-height:280px;
+
+    margin:10px 0 34px;
+
+}
+
+.conversation-center{
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    text-align:center;
+
+}
+
+.conversation-icon{
+
+    width:88px;
+
+    height:88px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-bottom:24px;
+
+    border-radius:50%;
+
+    background:
+
+        radial-gradient(
+
+            circle,
+
+            rgba(38,216,255,.15),
+
+            rgba(38,216,255,.04)
+
+        );
+
+    border:1px solid rgba(38,216,255,.18);
+
+    color:var(--primary);
+
+}
+
+.conversation-center h2{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+}
+
+.conversation-center p{
+
+    max-width:520px;
+
+    color:var(--text-secondary);
+
+    line-height:1.8;
+
+    font-size:15px;
+
+}
+
+
+/*==========================================================
+    SUBTLE DIVIDER
+==========================================================*/
+
+.chat-window::after{
+
+    content:"";
+
+    display:block;
+
+    width:100%;
+
+    height:1px;
+
+    margin-top:8px;
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            transparent,
+
+            rgba(38,216,255,.12),
+
+            transparent
+
+        );
+
+}
+
+
+/*==========================================================
+    PREMIUM HOVER EFFECTS
+==========================================================*/
+
+.hero,
+.feature-card,
+.conversation{
+
+    animation:fadeUp .5s ease;
+
+}
+
+/*==========================================================
+    PART 4
+    PROMPT BOX & CONVERSATION AREA
+==========================================================*/
+
+
+/*==========================================================
+    PROMPT SECTION
+==========================================================*/
+
+.prompt-section{
+
+    margin-top:auto;
+
+    padding-top:20px;
+
+}
+
+
+
+/*==========================================================
+    PROMPT CONTAINER
+==========================================================*/
+
+.prompt-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    width:100%;
+
+    min-height:72px;
+
+    padding:14px 16px 14px 24px;
+
+    border-radius:22px;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.045),
+
+            rgba(255,255,255,.02)
+
+        );
+
+    border:1px solid var(--border);
+
+    backdrop-filter:blur(18px);
+
+    transition:var(--transition);
+
+    box-shadow:
+
+        0 12px 32px rgba(0,0,0,.28);
+
+}
+
+
+
+/*==========================================================
+    FOCUS STATE
+==========================================================*/
+
+.prompt-box:focus-within{
+
+    border-color:rgba(38,216,255,.45);
+
+    box-shadow:
+
+        0 0 0 1px rgba(38,216,255,.18),
+
+        0 0 30px rgba(38,216,255,.12);
+
+}
+
+
+
+/*==========================================================
+    INPUT
+==========================================================*/
+
+.prompt-box input{
+
+    flex:1;
+
+    background:transparent;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    letter-spacing:.2px;
+
+}
+
+
+
+.prompt-box input::placeholder{
+
+    color:var(--text-muted);
+
+}
+
+
+
+/*==========================================================
+    SEND BUTTON
+==========================================================*/
+
+.prompt-box button{
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-shrink:0;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--primary),
+
+            var(--primary-dark)
+
+        );
+
+    transition:var(--transition);
+
+    box-shadow:
+
+        0 10px 24px rgba(38,216,255,.18);
+
+}
+
+
+
+.prompt-box button:hover{
+
+    transform:
+
+        translateY(-2px)
+
+        scale(1.04);
+
+    box-shadow:
+
+        0 0 22px rgba(38,216,255,.32);
+
+}
+
+
+
+.prompt-box button:active{
+
+    transform:scale(.96);
+
+}
+
+
+
+/*==========================================================
+    FOOTER
+==========================================================*/
+
+.prompt-footer{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:14px;
+
+    padding:0 6px;
+
+    font-size:12px;
+
+    color:var(--text-muted);
+
+}
+
+
+
+/*==========================================================
+    EMPTY CHAT TRANSITION
+==========================================================*/
+
+.conversation{
+
+    transition:var(--transition);
+
+}
+
+
+
+/*==========================================================
+    CHAT MESSAGE AREA
+    (used later when messages exist)
+==========================================================*/
+
+.messages{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:22px;
+
+}
+
+
+
+/*==========================================================
+    USER MESSAGE
+==========================================================*/
+
+.user-message{
+
+    align-self:flex-end;
+
+    max-width:72%;
+
+    padding:18px 22px;
+
+    border-radius:22px;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            rgba(38,216,255,.18),
+
+            rgba(38,216,255,.08)
+
+        );
+
+    border:1px solid rgba(38,216,255,.20);
+
+}
+
+
+
+/*==========================================================
+    AI MESSAGE
+==========================================================*/
+
+.ai-message{
+
+    align-self:flex-start;
+
+    max-width:78%;
+
+    padding:22px;
+
+    border-radius:22px;
+
+    background:
+
+        rgba(255,255,255,.03);
+
+    border:1px solid var(--border);
+
+    line-height:1.8;
+
+}
+
+
+
+/*==========================================================
+    MESSAGE AVATAR
+==========================================================*/
+
+.message-avatar{
+
+    width:40px;
+
+    height:40px;
+
+    border-radius:14px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--primary),
+
+            var(--primary-dark)
+
+        );
+
+}
+
+
+
+/*==========================================================
+    MESSAGE ROW
+==========================================================*/
+
+.message-row{
+
+    display:flex;
+
+    gap:14px;
+
+    align-items:flex-start;
+
+}
+
+
+
+/*==========================================================
+    TYPING INDICATOR
+==========================================================*/
+
+.typing{
+
+    display:flex;
+
+    gap:6px;
+
+    padding:18px 22px;
+
+    border-radius:18px;
+
+    background:
+
+        rgba(255,255,255,.03);
+
+    border:1px solid var(--border);
+
+}
+
+
+
+.typing span{
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    animation:typingBounce 1.2s infinite;
+
+}
+
+
+
+.typing span:nth-child(2){
+
+    animation-delay:.2s;
+
+}
+
+
+
+.typing span:nth-child(3){
+
+    animation-delay:.4s;
+
+}
+
+
+
+/*==========================================================
+    ANIMATION
+==========================================================*/
+
+@keyframes typingBounce{
+
+    0%{
+
+        transform:translateY(0);
+
+        opacity:.3;
+
+    }
+
+    50%{
+
+        transform:translateY(-6px);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+        opacity:.3;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    MOBILE
+==========================================================*/
+
+@media(max-width:900px){
+
+    .prompt-footer{
+
+        flex-direction:column;
+
+        gap:8px;
+
+        text-align:center;
+
+    }
+
+}
+
+/*==========================================================
+    PART 5
+    PREVIEW PANEL & TILL SLIP CARD
+==========================================================*/
+
+
+/*==========================================================
+    PREVIEW PANEL
+==========================================================*/
+
+.preview-panel{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+}
+
+
+
+/*==========================================================
+    PREVIEW CARD
+==========================================================*/
+
+.preview-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    height:100%;
+
+    padding:28px;
+
+    overflow:hidden;
+
+}
+
+
+
+/*==========================================================
+    HEADER
+==========================================================*/
+
+.preview-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    margin-bottom:28px;
+
+}
+
+.preview-header h2{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.preview-header p{
+
+    margin-top:6px;
+
+    color:var(--text-muted);
+
+    font-size:13px;
+
+}
+
+
+
+/*==========================================================
+    AI STATUS BADGE
+==========================================================*/
+
+.status-badge{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    background:rgba(54,209,123,.08);
+
+    border:1px solid rgba(54,209,123,.22);
+
+}
+
+.status-dot{
+
+    width:8px;
+
+    height:8px;
+
+    border-radius:50%;
+
+    background:var(--success);
+
+    box-shadow:
+
+        0 0 10px rgba(54,209,123,.7);
+
+}
+
+.status-badge span{
+
+    color:var(--success);
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+
+
+/*==========================================================
+    RECEIPT AREA
+==========================================================*/
+
+.receipt-preview{
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:18px;
+
+    border-radius:24px;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.02),
+
+            rgba(255,255,255,.01)
+
+        );
+
+    border:1px solid var(--border);
+
+}
+
+
+
+/*==========================================================
+    RECEIPT PAPER
+==========================================================*/
+
+.receipt-paper{
+
+    width:250px;
+
+    height:500px;
+
+    border-radius:18px;
+
+    background:white;
+
+    color:#111;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    padding:22px;
+
+    position:relative;
+
+    box-shadow:
+
+        0 30px 80px rgba(0,0,0,.45);
+
+}
+
+
+
+/*==========================================================
+    PAPER GLOW
+==========================================================*/
+
+.receipt-paper::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-2px;
+
+    border-radius:20px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            rgba(38,216,255,.55),
+
+            transparent,
+
+            rgba(38,216,255,.25)
+
+        );
+
+    z-index:-1;
+
+    filter:blur(12px);
+
+}
+
+
+
+/*==========================================================
+    RECEIPT TITLE
+==========================================================*/
+
+.receipt-title{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-bottom:26px;
+
+    color:#222;
+
+}
+
+
+
+/*==========================================================
+    IMAGE PLACEHOLDER
+==========================================================*/
+
+.receipt-image{
+
+    width:170px;
+
+    height:220px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#26d8ff;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #eefbff,
+
+            #f8fdff
+
+        );
+
+    border:2px dashed rgba(38,216,255,.45);
+
+}
+
+
+
+/*==========================================================
+    RECEIPT LINES
+==========================================================*/
+
+.receipt-lines{
+
+    width:100%;
+
+    margin-top:28px;
+
+}
+
+.receipt-lines div{
+
+    width:100%;
+
+    height:8px;
+
+    margin-bottom:12px;
+
+    border-radius:999px;
+
+    background:#e5e8ed;
+
+}
+
+.receipt-lines div:nth-child(1){
+
+    width:95%;
+
+}
+
+.receipt-lines div:nth-child(2){
+
+    width:82%;
+
+}
+
+.receipt-lines div:nth-child(3){
+
+    width:90%;
+
+}
+
+.receipt-lines div:nth-child(4){
+
+    width:72%;
+
+}
+
+.receipt-lines div:nth-child(5){
+
+    width:86%;
+
+}
+
+.receipt-lines div:nth-child(6){
+
+    width:68%;
+
+}
+
+.receipt-lines div:nth-child(7){
+
+    width:92%;
+
+}
+
+
+
+/*==========================================================
+    STATS
+==========================================================*/
+
+.preview-stats{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:14px;
+
+    margin-top:24px;
+
+}
+
+.stat-card{
+
+    padding:18px;
+
+    text-align:center;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid var(--border);
+
+}
+
+.stat-value{
+
+    display:block;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.stat-label{
+
+    display:block;
+
+    margin-top:6px;
+
+    font-size:12px;
+
+    color:var(--text-muted);
+
+}
+
+
+
+/*==========================================================
+    AI ENGINE
+==========================================================*/
+
+.ai-card{
+
+    display:flex;
+
+    gap:16px;
+
+    align-items:flex-start;
+
+    margin-top:22px;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid var(--border);
+
+}
+
+.ai-icon{
+
+    width:48px;
+
+    height:48px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-shrink:0;
+
+    border-radius:16px;
+
+    color:white;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--primary),
+
+            var(--primary-dark)
+
+        );
+
+}
+
+.ai-card h4{
+
+    margin-bottom:8px;
+
+    font-size:16px;
+
+}
+
+.ai-card p{
+
+    color:var(--text-secondary);
+
+    line-height:1.7;
+
+    font-size:13px;
+
+}
+
+
+
+/*==========================================================
+    ACTION BUTTONS
+==========================================================*/
+
+.preview-actions{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:14px;
+
+    margin-top:22px;
+
+}
+
+.primary-action{
+
+    height:52px;
+
+    border-radius:16px;
+
+    color:white;
+
+    font-weight:600;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            var(--primary),
+
+            var(--primary-dark)
+
+        );
+
+}
+
+.primary-action:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+
+        0 0 18px rgba(38,216,255,.28);
+
+}
+
+.secondary-action{
+
+    height:52px;
+
+    border-radius:16px;
+
+    color:white;
+
+    background:transparent;
+
+    border:1px solid var(--border);
+
+}
+
+.secondary-action:hover{
+
+    border-color:var(--primary);
+
+}
+
+
+
+/*==========================================================
+    EXPORT
+==========================================================*/
+
+.export-card{
+
+    margin-top:22px;
+
+    padding:22px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.03);
+
+    border:1px solid var(--border);
+
+}
+
+.export-card h3{
+
+    font-size:17px;
+
+}
+
+.export-card p{
+
+    margin:10px 0 18px;
+
+    color:var(--text-secondary);
+
+    line-height:1.7;
+
+    font-size:13px;
+
+}
+
+.export-button{
+
+    width:100%;
+
+    height:50px;
+
+    border-radius:14px;
+
+    color:white;
+
+    font-weight:600;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            #232d38,
+
+            #1a222b
+
+        );
+
+    border:1px solid rgba(38,216,255,.18);
+
+}
+
+.export-button:hover{
+
+    border-color:var(--primary);
+
+    box-shadow:
+
+        0 0 16px rgba(38,216,255,.18);
+
+}
+
+/*==========================================================
+    PART 5.5
+    AI LIVE RECEIPT CANVAS
+==========================================================*/
+
+
+.receipt-preview{
+
+    position:relative;
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:28px;
+
+    border-radius:26px;
+
+    overflow:hidden;
+
+    background:
+
+        radial-gradient(
+            circle at top,
+            rgba(38,216,255,.06),
+            transparent 60%
+        ),
+
+        linear-gradient(
+
+            180deg,
+
+            rgba(255,255,255,.025),
+
+            rgba(255,255,255,.01)
+
+        );
+
+    border:1px solid var(--border);
+
+}
+
+
+
+/*======================================
+      Floating Corner Guides
+======================================*/
+
+.receipt-preview::before,
+
+.receipt-preview::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:70px;
+
+    height:70px;
+
+    border:2px solid rgba(38,216,255,.55);
+
+    pointer-events:none;
+
+    animation:cornerPulse 4s infinite ease-in-out;
+
+}
+
+.receipt-preview::before{
+
+    top:22px;
+
+    left:22px;
+
+    border-right:none;
+
+    border-bottom:none;
+
+    border-radius:18px 0 0 0;
+
+}
+
+.receipt-preview::after{
+
+    right:22px;
+
+    bottom:22px;
+
+    border-left:none;
+
+    border-top:none;
+
+    border-radius:0 0 18px 0;
+
+}
+
+
+
+/*======================================
+      AI Receipt
+======================================*/
+
+.receipt-paper{
+
+    position:relative;
+
+    width:270px;
+
+    height:560px;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    background:
+
+        linear-gradient(
+
+            180deg,
+
+            #ffffff,
+
+            #fbfbfb
+
+        ),
+
+        repeating-linear-gradient(
+
+            0deg,
+
+            rgba(0,0,0,.012),
+
+            rgba(0,0,0,.012) 1px,
+
+            transparent 1px,
+
+            transparent 6px
+
+        );
+
+    box-shadow:
+
+        0 35px 90px rgba(0,0,0,.45),
+
+        0 0 28px rgba(38,216,255,.14);
+
+    animation:receiptAppear .65s ease;
+
+}
+
+
+
+/*======================================
+      Cyan Glow
+======================================*/
+
+.receipt-paper::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-2px;
+
+    border-radius:20px;
+
+    background:
+
+        linear-gradient(
+
+            135deg,
+
+            rgba(38,216,255,.35),
+
+            transparent,
+
+            rgba(38,216,255,.15)
+
+        );
+
+    filter:blur(16px);
+
+    z-index:-1;
+
+}
+
+
+
+/*======================================
+      AI Badge
+======================================*/
+
+.ai-preview-badge{
+
+    position:absolute;
+
+    top:18px;
+
+    right:18px;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:
+
+        rgba(38,216,255,.08);
+
+    border:1px solid rgba(38,216,255,.25);
+
+    color:#26d8ff;
+
+    font-size:11px;
+
+    font-weight:700;
+
+    letter-spacing:.8px;
+
+    text-transform:uppercase;
+
+    backdrop-filter:blur(8px);
+
+}
+
+
+
+/*======================================
+      Merchant
+======================================*/
+
+.receipt-merchant{
+
+    text-align:center;
+
+    margin-top:60px;
+
+}
+
+.receipt-merchant h2{
+
+    font-size:22px;
+
+    color:#111;
+
+    font-weight:800;
+
+}
+
+.receipt-merchant p{
+
+    color:#777;
+
+    font-size:12px;
+
+    margin-top:6px;
+
+}
+
+
+
+/*======================================
+      Divider
+======================================*/
+
+.receipt-divider{
+
+    height:1px;
+
+    margin:18px 22px;
+
+    background:#dddddd;
+
+}
+
+
+
+/*======================================
+      Items
+======================================*/
+
+.receipt-items{
+
+    padding:0 22px;
+
+}
+
+.receipt-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:12px;
+
+    font-size:13px;
+
+    color:#333;
+
+}
+
+
+
+/*======================================
+      Totals
+======================================*/
+
+.receipt-total{
+
+    margin:24px 22px 18px;
+
+    padding-top:14px;
+
+    border-top:2px dashed #cccccc;
+
+}
+
+.receipt-total-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin-bottom:10px;
+
+}
+
+.receipt-grand-total{
+
+    font-size:18px;
+
+    font-weight:800;
+
+}
+
+
+
+/*======================================
+      QR Placeholder
+======================================*/
+
+.receipt-qr{
+
+    width:95px;
+
+    height:95px;
+
+    margin:22px auto 0;
+
+    border-radius:10px;
+
+    background:
+
+        repeating-conic-gradient(
+
+            #222 0 25%,
+
+            white 0 50%
+
+        );
+
+    background-size:14px 14px;
+
+}
+
+
+
+/*======================================
+      Footer
+======================================*/
+
+.receipt-footer{
+
+    margin-top:18px;
+
+    text-align:center;
+
+    font-size:11px;
+
+    color:#777;
+
+}
+
+
+
+/*======================================
+      Animations
+======================================*/
+
+@keyframes receiptAppear{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+            translateY(16px)
+
+            scale(.96);
+
+        filter:blur(10px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+            translateY(0)
+
+            scale(1);
+
+        filter:none;
+
+    }
+
+}
+
+
+
+@keyframes cornerPulse{
+
+    0%{
+
+        opacity:.25;
+
+    }
+
+    50%{
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        opacity:.25;
+
+    }
+
+}
+
+/*==========================================================
+    PART 6
+    BUTTONS • HOVER EFFECTS • ANIMATIONS
+==========================================================*/
+
+
+/*==========================================================
+    GLOBAL BUTTON STYLES
+==========================================================*/
+
+button{
+
+    position:relative;
+
+    overflow:hidden;
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease,
+        background .22s ease,
+        color .22s ease;
+
+}
+
+button:disabled{
+
+    opacity:.55;
+
+    cursor:not-allowed;
+
+    transform:none !important;
+
+}
+
+
+
+/*==========================================================
+    RIPPLE EFFECT
+==========================================================*/
+
+button::after{
+
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    width:0;
+
+    height:0;
+
+    border-radius:50%;
+
+    background:
+
+        rgba(255,255,255,.14);
+
+    transform:
+
+        translate(-50%,-50%);
+
+    transition:
+
+        width .45s ease,
+        height .45s ease;
+
+}
+
+button:active::after{
+
+    width:240px;
+
+    height:240px;
+
+}
+
+
+
+/*==========================================================
+    PREMIUM PRIMARY BUTTON
+==========================================================*/
+
+.primary-action,
+
+.export-button,
+
+.prompt-box button{
+
+    font-weight:600;
+
+    letter-spacing:.2px;
+
+}
+
+.primary-action:hover,
+
+.export-button:hover,
+
+.prompt-box button:hover{
+
+    transform:
+
+        translateY(-2px);
+
+}
+
+
+
+/*==========================================================
+    SECONDARY BUTTON
+==========================================================*/
+
+.secondary-action{
+
+    transition:all .25s ease;
+
+}
+
+.secondary-action:hover{
+
+    background:
+
+        rgba(38,216,255,.05);
+
+}
+
+
+
+/*==========================================================
+    ICON BUTTONS
+==========================================================*/
+
+.icon-button{
+
+    transition:
+
+        transform .2s ease,
+
+        background .2s ease,
+
+        box-shadow .2s ease;
+
+}
+
+.icon-button:hover{
+
+    transform:
+
+        translateY(-2px);
+
+}
+
+.icon-button:active{
+
+    transform:
+
+        scale(.94);
+
+}
+
+
+
+/*==========================================================
+    FEATURE CARD HOVER
+==========================================================*/
+
+.feature-card{
+
+    cursor:pointer;
+
+}
+
+.feature-card:hover{
+
+    transform:
+
+        translateY(-5px);
+
+}
+
+.feature-card:hover .feature-icon{
+
+    transform:
+
+        rotate(-6deg)
+
+        scale(1.08);
+
+    box-shadow:
+
+        0 0 20px rgba(38,216,255,.18);
+
+}
+
+.feature-icon{
+
+    transition:
+
+        transform .25s ease,
+
+        box-shadow .25s ease;
+
+}
+
+
+
+/*==========================================================
+    SIDEBAR ITEMS
+==========================================================*/
+
+.sidebar-item{
+
+    position:relative;
+
+}
+
+.sidebar-item::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+
+    top:10px;
+
+    bottom:10px;
+
+    width:3px;
+
+    border-radius:999px;
+
+    background:
+
+        var(--primary);
+
+    transform:scaleY(0);
+
+    transition:.2s ease;
+
+}
+
+.sidebar-item:hover::before,
+
+.sidebar-item.active::before{
+
+    transform:scaleY(1);
+
+}
+
+
+
+/*==========================================================
+    RECEIPT GLOW
+==========================================================*/
+
+.receipt-paper{
+
+    transition:
+
+        transform .35s ease,
+
+        box-shadow .35s ease;
+
+}
+
+.receipt-paper:hover{
+
+    transform:
+
+        scale(1.02)
+
+        rotate(.2deg);
+
+    box-shadow:
+
+        0 40px 90px rgba(0,0,0,.45),
+
+        0 0 34px rgba(38,216,255,.18);
+
+}
+
+
+
+/*==========================================================
+    RECEIPT UPDATE FLASH
+==========================================================*/
+
+.receipt-paper.updated{
+
+    animation:
+
+        receiptUpdated .8s ease;
+
+}
+
+@keyframes receiptUpdated{
+
+    0%{
+
+        filter:blur(8px);
+
+        opacity:.5;
+
+    }
+
+    35%{
+
+        filter:blur(2px);
+
+    }
+
+    70%{
+
+        box-shadow:
+
+            0 0 32px rgba(38,216,255,.28);
+
+    }
+
+    100%{
+
+        filter:none;
+
+        opacity:1;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    STATUS BADGE
+==========================================================*/
+
+.status-badge{
+
+    transition:.25s ease;
+
+}
+
+.status-badge:hover{
+
+    transform:
+
+        scale(1.04);
+
+}
+
+
+
+/*==========================================================
+    LIVE DOT
+==========================================================*/
+
+.status-dot{
+
+    animation:
+
+        livePulse 2s infinite;
+
+}
+
+@keyframes livePulse{
+
+    0%{
+
+        transform:scale(1);
+
+        opacity:.7;
+
+    }
+
+    50%{
+
+        transform:scale(1.45);
+
+        opacity:1;
+
+    }
+
+    100%{
+
+        transform:scale(1);
+
+        opacity:.7;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    HERO
+==========================================================*/
+
+.hero{
+
+    animation:
+
+        heroFade .6s ease;
+
+}
+
+@keyframes heroFade{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+            translateY(16px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:none;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    STAGGERED FEATURE CARDS
+==========================================================*/
+
+.feature-card:nth-child(1){
+
+    animation:
+
+        fadeUp .45s ease;
+
+}
+
+.feature-card:nth-child(2){
+
+    animation:
+
+        fadeUp .55s ease;
+
+}
+
+.feature-card:nth-child(3){
+
+    animation:
+
+        fadeUp .65s ease;
+
+}
+
+.feature-card:nth-child(4){
+
+    animation:
+
+        fadeUp .75s ease;
+
+}
+
+
+
+/*==========================================================
+    GLASS PANELS
+==========================================================*/
+
+.chat-window,
+
+.preview-card{
+
+    transition:
+
+        border-color .25s ease,
+
+        transform .25s ease,
+
+        box-shadow .25s ease;
+
+}
+
+.chat-window:hover,
+
+.preview-card:hover{
+
+    border-color:
+
+        rgba(38,216,255,.16);
+
+}
+
+
+
+/*==========================================================
+    INPUT PLACEHOLDER
+==========================================================*/
+
+.prompt-box input{
+
+    transition:.25s ease;
+
+}
+
+.prompt-box input:focus{
+
+    color:white;
+
+}
+
+.prompt-box input:focus::placeholder{
+
+    opacity:.4;
+
+}
+
+
+
+/*==========================================================
+    SCROLL FADE
+==========================================================*/
+
+.chat-window{
+
+    mask-image:
+
+        linear-gradient(
+
+            black 94%,
+
+            transparent
+
+        );
+
+}
+
+
+
+/*==========================================================
+    PAGE LOAD
+==========================================================*/
+
+.admin-page{
+
+    animation:
+
+        appFade .5s ease;
+
+}
+
+@keyframes appFade{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+            scale(.992);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:none;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    FLOATING AI BADGE
+==========================================================*/
+
+.ai-preview-badge{
+
+    animation:
+
+        floatBadge 4s ease-in-out infinite;
+
+}
+
+@keyframes floatBadge{
+
+    0%{
+
+        transform:
+
+            translateY(0);
+
+    }
+
+    50%{
+
+        transform:
+
+            translateY(-3px);
+
+    }
+
+    100%{
+
+        transform:
+
+            translateY(0);
+
+    }
+
+}
+
+
+
+/*==========================================================
+    LOADING SHIMMER
+==========================================================*/
+
+.loading{
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+.loading::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    transform:
+
+        translateX(-100%);
+
+    background:
+
+        linear-gradient(
+
+            90deg,
+
+            transparent,
+
+            rgba(255,255,255,.08),
+
+            transparent
+
+        );
+
+    animation:
+
+        shimmer 1.6s infinite;
+
+}
+
+@keyframes shimmer{
+
+    to{
+
+        transform:
+
+            translateX(100%);
+
+    }
+
+}
+
+/*==========================================================
+    PART 7
+    SCROLLBARS & RESPONSIVE DESIGN
+==========================================================*/
+
+
+/*==========================================================
+    PREMIUM SCROLLBARS
+==========================================================*/
+
+.chat-window,
+.preview-card,
+.sidebar{
+
+    scrollbar-width:thin;
+
+    scrollbar-color:
+
+        rgba(38,216,255,.30)
+
+        transparent;
+
+}
+
+.chat-window::-webkit-scrollbar,
+.preview-card::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+.chat-window::-webkit-scrollbar-track,
+.preview-card::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+.chat-window::-webkit-scrollbar-thumb,
+.preview-card::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb{
+
+    border-radius:999px;
+
+    background:
+
+        rgba(38,216,255,.22);
+
+}
+
+.chat-window::-webkit-scrollbar-thumb:hover,
+.preview-card::-webkit-scrollbar-thumb:hover,
+.sidebar::-webkit-scrollbar-thumb:hover{
+
+    background:
+
+        rgba(38,216,255,.45);
+
+}
+
+
+
+/*==========================================================
+    LARGE DESKTOP
+==========================================================*/
+
+@media (min-width:1700px){
+
+    :root{
+
+        --sidebar-width:300px;
+
+        --preview-width:430px;
+
+    }
+
+    .chat-window{
+
+        padding:56px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    LAPTOP
+==========================================================*/
+
+@media (max-width:1500px){
+
+    :root{
+
+        --preview-width:350px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    SMALL LAPTOP
+==========================================================*/
+
+@media (max-width:1300px){
+
+    :root{
+
+        --sidebar-width:240px;
+
+        --preview-width:320px;
+
+    }
+
+    .feature-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .hero h1{
+
+        font-size:38px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    TABLET LANDSCAPE
+==========================================================*/
+
+@media (max-width:1150px){
+
+    .content-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .preview-panel{
+
+        display:none;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    TABLET
+==========================================================*/
+
+@media (max-width:900px){
+
+    .sidebar{
+
+        width:90px;
+
+        min-width:90px;
+
+        padding:22px 12px;
+
+    }
+
+    .sidebar-logo h2,
+    .sidebar-logo span,
+    .sidebar-title,
+    .sidebar-item span,
+    .bottom-profile h4,
+    .bottom-profile p{
+
+        display:none;
+
+    }
+
+    .sidebar-logo{
+
+        justify-content:center;
+
+    }
+
+    .sidebar-item{
+
+        justify-content:center;
+
+        padding:0;
+
+    }
+
+    .bottom-profile{
+
+        justify-content:center;
+
+    }
+
+    .topbar{
+
+        padding:0 20px;
+
+    }
+
+    .topbar-center h1{
+
+        font-size:21px;
+
+    }
+
+    .chat-window{
+
+        padding:28px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    LARGE MOBILE
+==========================================================*/
+
+@media (max-width:768px){
+
+    .admin-page{
+
+        flex-direction:column;
+
+    }
+
+    .sidebar{
+
+        width:100%;
+
+        min-width:100%;
+
+        height:auto;
+
+        padding:14px 18px;
+
+        flex-direction:row;
+
+        align-items:center;
+
+        justify-content:space-between;
+
+        border-right:none;
+
+        border-bottom:1px solid var(--border);
+
+    }
+
+    .sidebar::after{
+
+        display:none;
+
+    }
+
+    .sidebar-section{
+
+        display:none;
+
+    }
+
+    .sidebar-bottom{
+
+        margin-top:0;
+
+    }
+
+    .main-content{
+
+        width:100%;
+
+    }
+
+    .topbar{
+
+        height:72px;
+
+    }
+
+    .content-layout{
+
+        padding:18px;
+
+    }
+
+    .hero{
+
+        margin-bottom:30px;
+
+    }
+
+    .hero h1{
+
+        font-size:32px;
+
+    }
+
+    .conversation{
+
+        min-height:220px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    MOBILE
+==========================================================*/
+
+@media (max-width:600px){
+
+    .feature-grid{
+
+        gap:16px;
+
+    }
+
+    .feature-card{
+
+        padding:20px;
+
+    }
+
+    .hero p{
+
+        font-size:15px;
+
+    }
+
+    .conversation-center h2{
+
+        font-size:24px;
+
+    }
+
+    .prompt-box{
+
+        min-height:64px;
+
+        padding:12px 14px 12px 18px;
+
+    }
+
+    .prompt-box button{
+
+        width:44px;
+
+        height:44px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    SMALL MOBILE
+==========================================================*/
+
+@media (max-width:420px){
+
+    .chat-window{
+
+        padding:20px;
+
+    }
+
+    .hero h1{
+
+        font-size:28px;
+
+    }
+
+    .hero p{
+
+        font-size:14px;
+
+    }
+
+    .feature-card{
+
+        padding:18px;
+
+    }
+
+    .feature-icon{
+
+        width:50px;
+
+        height:50px;
+
+    }
+
+    .conversation{
+
+        min-height:180px;
+
+    }
+
+}
+
+
+
+/*==========================================================
+    REDUCED MOTION
+==========================================================*/
+
+@media (prefers-reduced-motion:reduce){
+
+    *{
+
+        animation:none !important;
+
+        transition:none !important;
+
+        scroll-behavior:auto !important;
+
+    }
+
+}
