@@ -3495,10 +3495,8 @@ shadow-[0_0_25px_rgba(0,255,255,.25)]
 ">
 
 <img
-
-src={RuachAgentLogo.png}
-
-alt="RuachAgent"
+  src="/RuachAgentLogo.png"
+      alt="RuachAgent"
 
 className="h-10 w-10 object-contain"
 
@@ -3893,7 +3891,7 @@ flex-col
                 ">
 
                 <img
-                    src={RuachAgentLogo.png}
+  src="/RuachAgentLogo.png"
                     alt=""
                     className="h-10 w-10 object-contain"
                 />
@@ -4054,7 +4052,7 @@ ring-cyan-500/30
 ">
 
 <img
-src={RuachAgentLogo.png}
+  src="/RuachAgentLogo.png"
 className="h-8 w-8"
 />
 
@@ -4176,7 +4174,7 @@ bg-cyan-500/10
 ">
 
 <img
-src={RuachAgentLogo.png}
+  src="/RuachAgentLogo.png"
 className="h-8 w-8"
 />
 
@@ -4249,7 +4247,7 @@ bg-cyan-500/10
 ">
 
 <img
-src={RuachAgentLogo.png}
+  src="/RuachAgentLogo.png"
 className="h-8 w-8"
 />
 
