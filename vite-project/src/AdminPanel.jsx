@@ -21,6 +21,7 @@ import {
   Bookmark,
   Store,
   Settings,
+  Receipt,
 } from "lucide-react";
 
 
