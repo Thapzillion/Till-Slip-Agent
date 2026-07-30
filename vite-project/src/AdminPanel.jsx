@@ -22,7 +22,6 @@ import {
   Store,
   Settings,
   Receipt,
-  messagesEndRef,
 } from "lucide-react";
 
 
@@ -88,6 +87,8 @@ export default function AdminPanel() {
   const [signupSuccessMessage, setSignupSuccessMessage] = useState("");
 
   const navigate = useNavigate();
+
+  const messagesEndRef = useRef(null);
 
   const [activeTab, setActiveTab] = useState('dashboard'); // or whatever default tab string
 
