@@ -22,7 +22,6 @@ import {
   Store,
   Settings,
   Receipt,
-  Profile,
 } from "lucide-react";
 
 
@@ -3811,7 +3810,7 @@ text-black
 
 <p className="font-semibold">
 
-{profile?.full_name || "Merchant"}
+{user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Merchant"}
 
 </p>
 
