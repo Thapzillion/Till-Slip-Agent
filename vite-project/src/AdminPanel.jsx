@@ -719,6 +719,61 @@ export default function AdminPanel() {
       c => c.code === (settings?.currency || 'ZAR')
     )?.symbol || 'R';
 
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      width: '100%',
+      background: '#050608',
+      color: '#ffffff',
+      boxSizing: 'border-box'
+    },
+    modalOverlay: {
+      position: 'fixed',
+      inset: 0,
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px'
+    },
+    flatCard: {
+      padding: '28px',
+      border: '1px solid rgba(38,216,255,0.2)',
+      borderRadius: '18px',
+      background: 'rgba(17,21,27,0.96)',
+      boxShadow: '0 22px 60px rgba(0,0,0,0.45)',
+      boxSizing: 'border-box'
+    },
+    button: {
+      minHeight: '44px',
+      padding: '10px 16px',
+      borderRadius: '10px',
+      border: '1px solid rgba(38,216,255,0.3)',
+      background: 'linear-gradient(135deg, #26d8ff, #1299b8)',
+      color: '#ffffff',
+      fontWeight: 600,
+      cursor: 'pointer'
+    },
+    header: {
+      width: '100%',
+      minHeight: '82px',
+      padding: '12px 24px',
+      boxSizing: 'border-box',
+      background: 'rgba(9,11,15,0.82)',
+      borderBottom: '1px solid #1c2430'
+    },
+    input: {
+      width: '100%',
+      minHeight: '44px',
+      padding: '10px 12px',
+      border: '1px solid #1c2430',
+      borderRadius: '10px',
+      background: '#0b0d11',
+      color: '#ffffff',
+      boxSizing: 'border-box'
+    }
+  };
+
   // --- CRITICAL PERSISTENT GATE CONDITIONAL RENDER ---
   if (isCheckingSession) {
     return (
