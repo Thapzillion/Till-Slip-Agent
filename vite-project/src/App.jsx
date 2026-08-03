@@ -5,7 +5,7 @@ import AdminPanel from './AdminPanel';
 import ReceiptView from './ReceiptView';
 
 // SIDEBAR NAVIGATION PAGES
-import Integrations from './Intergrations';
+//import Integrations from './Intergrations';
 import TillSlipsCollection from './TillSlipsCollection';
 import AgentParameters from './AgentParameters'
 
@@ -34,10 +34,10 @@ export default function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/support" element={<Support />} />
 
-        // SETTINGS PAGES
+        {/* SETTINGS PAGES */}
         <Route path="/agent-parameters" element={<AgentParameters />} />
         <Route path="/till-slips-collection" element={<TillSlipsCollection />} />
-        <Route path="/integrations" element={<Integrations />} />
+        {/*<Route path="/integrations" element={<Integrations />} />*/}
 
         {/* Clean, safe default fallback routing */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
