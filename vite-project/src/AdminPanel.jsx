@@ -1355,20 +1355,24 @@ export default function AdminPanel() {
               <div className="sidebar-section">
                 <p className="sidebar-title">SETTINGS</p>
 
-                <button className="sidebar-item">
-                  <SlidersHorizontal size={18} />
-
+                <button className="sidebar-item"
                   onClick={() => navigate("/agent-parameters")}
+                >
+                  <SlidersHorizontal size={18} />
                   <span>Agent Parameters</span>
                 </button>
 
-                <button className="sidebar-item">
+                <button className="sidebar-item"
+                  onClick={() => navigate("/till-slips-collwction")}
+                >
                   <FileText size={18} />
 
                   <span>Till Slips Collection</span>
                 </button>
 
-                <button className="sidebar-item">
+                <button className="sidebar-item"
+                  onClick={() => navigate("/integrations")}
+                >
                   <Plug size={18} />
 
                   <span>Integrations</span>

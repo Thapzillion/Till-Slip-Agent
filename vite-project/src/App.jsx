@@ -4,6 +4,8 @@ import LandingPage from './LandingPage';
 import AdminPanel from './AdminPanel';
 import ReceiptView from './ReceiptView';
 
+import Integrations from './pages/Intergrations';
+import TillSlipsCollection from './pages/TillSlipsCollection';
 import AgentParameters from './pages/AgentParameters';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
@@ -28,7 +30,11 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/support" element={<Support />} />
+
+        // SETTINGS PAGES
         <Route path="/agent-parameters" element={<AgentParameters />} />
+        <Route path="/till-slips-collection" element={<TillSlipsCollection />} />
+        <Route path="/integrations" element={<Integrations />} />
 
         {/* Clean, safe default fallback routing */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
