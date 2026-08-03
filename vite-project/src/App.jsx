@@ -4,9 +4,12 @@ import LandingPage from './LandingPage';
 import AdminPanel from './AdminPanel';
 import ReceiptView from './ReceiptView';
 
-import Integrations from './pages/Intergrations';
-import TillSlipsCollection from './pages/TillSlipsCollection';
-import AgentParameters from './pages/AgentParameters';
+// SIDEBAR NAVIGATION PAGES
+import Integrations from './Intergrations';
+import TillSlipsCollection from './TillSlipsCollection';
+import AgentParameters from './AgentParameters'
+
+  ;
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import Support from './pages/Support';
