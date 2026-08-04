@@ -31,6 +31,10 @@ export default function AgentParameters() {
 
   const [isCheckingSession, setIsCheckingSession] = useState(true);
 
+  const liveWebhookUrl = settings?.webhook_slug
+    ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
+    : "";
+
   const [settings, setSettings] = useState({
 
     business_name: '',

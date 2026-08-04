@@ -1207,60 +1207,6 @@ export default function AdminPanel() {
         justifyContent: 'space-between',
         gap: '12px'
       }}>
-
-        {/* Logo + badge — only visible when user is logged in */}
-        {user && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              flexShrink: 0,
-            }}
-          >
-            <img
-              src="/RuachAgentLogo.png"
-              alt="RuachAgent"
-              style={{
-                height: "72px",
-                width: "auto",
-                objectFit: "contain",
-                filter: `
-          drop-shadow(0 0 4px rgba(8,227,216,.85))
-          drop-shadow(0 0 10px rgba(8,227,216,.45))
-          drop-shadow(0 0 20px rgba(8,227,216,.20))
-        `,
-                userSelect: "none",
-                pointerEvents: "none"
-              }}
-            />
-          </div>
-        )}
-
-        {/* User email + disconnect — pushed to the far right */}
-        {user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
-            <span style={{ fontSize: '12px', color: '#737373', fontFamily: 'monospace' }}>{user.email}</span>
-            <button
-              onClick={() => supabase.auth.signOut()}
-              style={{
-                background: 'transparent',
-                border: '1px solid #262626',
-                color: '#ef4444',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                transition: 'border-color 0.15s ease'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#ef4444'}
-              onMouseLeave={(e) => e.currentTarget.style.borderColor = '#152d38'}
-            >
-              Disconnect
-            </button>
-          </div>
-        )}
       </header>
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
