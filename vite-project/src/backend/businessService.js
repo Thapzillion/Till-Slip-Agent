@@ -108,6 +108,19 @@ export function useBusiness() {
         themeColor: "#00f0ff"
     });
 
+    //Business table state
+    const [settings, setSettings] = useState({
+        business_name: "",
+        store_address: "",
+        discount_percentage: 10,
+        webhook_slug: "",
+        currency: "ZAR",
+        logo_url: "",
+        voucher_expiration_days: 30
+    });
+
+
+
     // Action Handler to call the backend API handler
     const handleSendPrompt = async () => {
         if (!inputPrompt.trim() || isLoading) return;
@@ -155,6 +168,7 @@ export function useBusiness() {
     const handleClear = () => {
         setMessages([]);
     };
+
 
     // ASYNC FUNCTIONS
     async function getActiveUser() {

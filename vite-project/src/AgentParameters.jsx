@@ -20,32 +20,14 @@ const CURRENCY_OPTIONS = [
 ];
 
 export default function AgentParameters() {
+  const {
+    user,
+    settings,
+    pendingLogoFile,
+    isSaveSyncing,
+    isLoadingSettings,
+  } = useBusiness();
 
-  // ===========================
-  // Component State
-  // ===========================
-
-  const [user, setUser] = useState(null);
-
-  const [settings, setSettings] = useState({
-    business_name: "",
-    store_address: "",
-    discount_percentage: 10,
-    webhook_slug: "",
-    currency: "ZAR",
-    logo_url: "",
-    voucher_expiration_days: 30
-  });
-
-  const [pendingLogoFile, setPendingLogoFile] = useState(null);
-
-  const [isSaveSyncing, setIsSaveSyncing] = useState(false);
-
-  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
-
-  // ===========================
-  // Derived values
-  // ===========================
 
   const liveWebhookUrl =
     settings.webhook_slug
