@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import { supabase } from '../supabaseClient';
 
 
@@ -17,7 +19,7 @@ const CURRENCY_OPTIONS = [
 
 ];
 
-export default function AdminPanel() {
+export function useBusiness() {
 
     const [user, setUser] = useState(null);
 
