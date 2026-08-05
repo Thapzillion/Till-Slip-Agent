@@ -4,7 +4,7 @@ import "./AdminPanel.css";
 
 import { supabase } from './supabaseClient';
 
-import { useBusiness } from "./backend/business";
+import { useBusiness } from "./backend/businessService";
 
 import { useNavigate } from "react-router-dom";
 
