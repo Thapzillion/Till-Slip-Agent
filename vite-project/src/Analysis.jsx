@@ -7,6 +7,27 @@
  * Supabase queries, async functions, and imported icons already
  * exist elsewhere in your project.
  ******************************************************************/
+import React, { useEffect, useState } from "react";
+import { supabase } from './supabaseClient';
+import { useBusiness } from "./backend/business";
+
+
+export default function AdminPanel() {
+  const {
+    // Authentication
+    user,
+
+    // Analytics
+    txCount,
+    txVolume,
+    graphData,
+    activeInboxesCount,
+    totalParsedCount,
+    inboxGraphData,
+    selectedDateRangeLabel
+
+  } = useBusiness();
+};
 
 /******************************************************************
  * Tesla Glass Panel
@@ -80,6 +101,7 @@ const MetricCard = ({
 }) => (
 
   <div
+    className="analysis-card glass"
     style={{
       ...styles.metricCard,
       borderTop: `2px solid ${accent}`
@@ -105,6 +127,7 @@ const MetricCard = ({
     </div>
 
     <div
+      className="stat-number kpiValue"
       style={{
         ...styles.metricValue,
         color: accent
@@ -132,7 +155,7 @@ const SectionTitle = ({ title }) => (
 );
 
 return (
-  <div style={styles.page}>
+  <div className="analysis-page" style={styles.page}>
 
     {/* Animated Background */}
     <div style={styles.backgroundGlowOne} />
@@ -142,7 +165,7 @@ return (
         PAGE HEADER
     ============================================================ */}
 
-    <div style={styles.headerCard}>
+    <div className="analysis-header" style={styles.headerCard}>
 
       <div style={styles.headerLeft}>
 
@@ -210,10 +233,10 @@ return (
 
 
     {/* ============================================================
-        MAIN DASHBOARD
+      MAIN DASHBOARD
     ============================================================ */}
 
-    <div style={styles.dashboardGrid}>
+    <div className="analysis-main-grid" style={styles.dashboardGrid}>
 
       {/* Left Content */}
 
@@ -225,7 +248,7 @@ return (
 
         <SectionTitle title="Business Overview" />
 
-        <div style={styles.metricsGrid}>
+        <div className="analysis-kpis" style={styles.metricsGrid}>
 
           {/* Till Slips Sent */}
           <MetricCard
@@ -333,7 +356,7 @@ return (
 
         <SectionTitle title="Business Intelligence" />
 
-        <div style={styles.analyticsGrid}>
+        <div className="business-grid" style={styles.analyticsGrid}>
 
           {/* ============================================================
       ACTIVITY TIMELINE
@@ -379,6 +402,7 @@ return (
                   >
 
                     <div
+                      className="graph-bar"
                       style={{
                         ...styles.timelineBar,
 
@@ -449,8 +473,8 @@ return (
                 style={{
                   ...styles.progressFill,
                   width: `${typeof deliveryHealth !== "undefined"
-                      ? deliveryHealth
-                      : 99.8
+                    ? deliveryHealth
+                    : 99.8
                     }%`,
                   background:
                     "linear-gradient(90deg,#10b981,#4ade80)"
@@ -501,8 +525,8 @@ return (
                 style={{
                   ...styles.progressFill,
                   width: `${typeof extractionAccuracy !== "undefined"
-                      ? extractionAccuracy
-                      : 98.7
+                    ? extractionAccuracy
+                    : 98.7
                     }%`,
                   background:
                     "linear-gradient(90deg,#3b82f6,#60a5fa)"
@@ -746,8 +770,8 @@ return (
                 style={{
                   ...styles.progressFill,
                   width: `${typeof discountUsageRate !== "undefined"
-                      ? Math.min(discountUsageRate, 100)
-                      : 0
+                    ? Math.min(discountUsageRate, 100)
+                    : 0
                     }%`,
                   background:
                     "linear-gradient(90deg,#22c55e,#10b981)"
@@ -787,8 +811,8 @@ return (
                 style={{
                   ...styles.progressFill,
                   width: `${typeof processingSuccessRate !== "undefined"
-                      ? Math.min(processingSuccessRate, 100)
-                      : 100
+                    ? Math.min(processingSuccessRate, 100)
+                    : 100
                     }%`,
                   background:
                     "linear-gradient(90deg,#3b82f6,#60a5fa)"
@@ -1098,8 +1122,8 @@ return (
               style={{
                 ...styles.progressFill,
                 width: `${typeof discountConversionRate !== "undefined"
-                    ? Math.min(discountConversionRate, 100)
-                    : 0
+                  ? Math.min(discountConversionRate, 100)
+                  : 0
                   }%`,
                 background:
                   "linear-gradient(90deg,#22c55e,#10b981)"

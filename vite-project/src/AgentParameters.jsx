@@ -1,370 +1,210 @@
 import React, { useEffect, useState } from "react";
+import { supabase } from "./supabaseClient";
 
-import { supabase } from './supabaseClient';
+import {
+  getActiveUser,
+  uploadBusinessLogo,
+  checkSupabaseReachability,
+  fetchMerchantSettings
+} from "./backend/businessService";
 
-
-// Static reference data available instantly globally
-
+// --------------------
+// Static data
+// --------------------
 const CURRENCY_OPTIONS = [
-
-  { code: 'ZAR', symbol: 'R', name: 'South African Rand' },
-
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
-
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-
-  { code: 'EUR', symbol: '€', name: 'Euro' },
-
-  { code: 'NGN', symbol: '₦', name: 'Nigerian Naira' }
-
+  { code: "ZAR", symbol: "R", name: "South African Rand" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+  { code: "GBP", symbol: "£", name: "British Pound" },
+  { code: "EUR", symbol: "€", name: "Euro" },
+  { code: "NGN", symbol: "₦", name: "Nigerian Naira" }
 ];
 
 export default function AgentParameters() {
 
+  // ===========================
+  // Component State
+  // ===========================
+
   const [user, setUser] = useState(null);
 
-  const [isSaveSyncing, setIsSaveSyncing] = useState(false);
-
-  const [isAuthSyncing, setIsAuthSyncing] = useState(false);
+  const [settings, setSettings] = useState({
+    business_name: "",
+    store_address: "",
+    discount_percentage: 10,
+    webhook_slug: "",
+    currency: "ZAR",
+    logo_url: "",
+    voucher_expiration_days: 30
+  });
 
   const [pendingLogoFile, setPendingLogoFile] = useState(null);
 
-  const [isCheckingSession, setIsCheckingSession] = useState(true);
+  const [isSaveSyncing, setIsSaveSyncing] = useState(false);
 
-  const liveWebhookUrl = settings?.webhook_slug
-    ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
-    : "";
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
-  const [settings, setSettings] = useState({
+  // ===========================
+  // Derived values
+  // ===========================
 
-    business_name: '',
+  const liveWebhookUrl =
+    settings.webhook_slug
+      ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
+      : "";
 
-    store_address: '',
+  const SAFE_CURRENCY_OPTIONS = CURRENCY_OPTIONS;
 
-    discount_percentage: 10,
+  const activeCurrencySymbol =
+    SAFE_CURRENCY_OPTIONS.find(
+      c => c.code === settings.currency
+    )?.symbol || "R";
 
-    webhook_slug: '',
-
-    currency: 'ZAR',
-
-    logo_url: ''
-
-  });
-
-  // ASYNC FUNCTIONS
-  async function getActiveUser() {
-    try {
-      const {
-        data: { session },
-        error
-      } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Session retrieval failed:", error.message);
-        return null;
-      }
-
-      return session?.user || null;
-    } catch (err) {
-      console.error("Auth session crash:", err.message);
-      return null;
-    }
-  }
-
-  async function fetchMerchantSettings(userId) {
-    if (!userId) return;
-
-    // ─── ABORT CONTROLLER SETUP ───
-    // Instantiates native signal with a 10-second timeout threshold
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    try {
-      // ─── DIAGNOSTIC DRILLDOWN LOGS ───
-      console.log("FETCH SETTINGS START");
-      console.log("userId:", userId);
-      console.log("QUERY START");
-
-      const query = supabase
-        .from('business_settings')
-        .select('*')
-        .eq('owner_id', userId)
-        .maybeSingle()
-        .abortSignal(controller.signal); // Attaches signal to physically cancel hanging HTTP network request
-
-      const { data, error } = await query;
-
-      console.log("QUERY END");
-      console.log("SETTINGS DATA:", data);
-      console.log("SETTINGS ERROR:", error);
-
-      if (error) throw error;
-
-      if (data) {
-        setSettings({
-          id: data.id,
-          owner_id: data.owner_id,
-          business_name: data.business_name || '',
-          store_address: data.store_address || '',
-          discount_percentage: data.discount_percentage ?? 10,
-          webhook_slug: data.webhook_slug || '',
-          currency: data.currency || 'ZAR',
-          logo_url: data.logo_url || '',
-          voucher_expiration_days: data.voucher_expiration_days ?? 30 // Synced database value downstream
-        });
-      } else {
-        setSettings({
-          business_name: '',
-          store_address: '',
-          discount_percentage: 10,
-          webhook_slug: '',
-          currency: 'ZAR',
-          logo_url: '',
-          voucher_expiration_days: 30 // Default standard fallback configuration slot
-        });
-      }
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        console.warn("fetchMerchantSettings query aborted due to 10s timeout threshold.");
-      } else {
-        console.error("Profile load failure:", error.message);
-      }
-
-      // If a timeout or error happens, clear settings to standard defaults so the form still works
-      setSettings({
-        business_name: '',
-        store_address: '',
-        discount_percentage: 10,
-        webhook_slug: '',
-        currency: 'ZAR',
-        logo_url: '',
-        voucher_expiration_days: 30 // Clear condition alignment sync
-      });
-    } finally {
-      clearTimeout(timeoutId); // Guarantees timer handle is cleared when complete
-    }
-  }
+  // ===========================
+  // Initial Load
+  // ===========================
 
   useEffect(() => {
-    let isMounted = true;
 
-    // ─── FAILSAFE SAFETY TIMEOUT ───
-    // Guarantees the loading gate MUST drop after 4 seconds maximum, no matter what happens.
-    const loadingFailsafe = setTimeout(() => {
-      if (isMounted) {
-        console.warn("Session check exceeded safety threshold — forcing workspace entry.");
-        setIsCheckingSession(false);
-      }
-    }, 4000);
+    async function initializePage() {
 
-    // ─── 1. BOOTSTRAP INITIAL SESSION ───
-    async function bootstrapSession() {
-      try {
-        setIsCheckingSession(true);
-        const {
-          data: { session }
-        } = await supabase.auth.getSession();
-
-        if (session?.user && isMounted) {
-          setUser(session.user);
-        }
-      } catch (err) {
-        console.error("Critical bootstrap session failure:", err);
-      } finally {
-        if (isMounted) {
-          setIsCheckingSession(false);
-          clearTimeout(loadingFailsafe); // Clear timer if session resolves quickly
-        }
-      }
-    }
-
-    bootstrapSession();
-
-    // Clean up email confirmation redirection hash parameters from the URL
-    const hash = window.location.hash;
-    if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-      window.history.replaceState(null, null, window.location.pathname);
-    }
-
-    // Temporary connectivity diagnostics check
-    async function checkSupabaseReachability() {
-      try {
-        const { data, error } = await supabase.from('business_settings').select('count');
-        console.log('Supabase reachability check:', data, error);
-      } catch (e) {
-        console.error('Reachability network check failed:', e);
-      }
-    }
-    checkSupabaseReachability();
-
-    // Unified Single-Source Auth Listener Engine
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (!isMounted) return;
-
-      console.log(`Supabase Auth Event Triggered: [${event}]`);
+      setIsLoadingSettings(true);
 
       try {
-        if (session?.user) {
-          setUser(session.user);
 
-          // Check subscription status (Triggers Trial / Expiry Modals)
-          await checkSubscription(session.user.id);
+        // Connectivity check
+        await checkSupabaseReachability();
 
-          // Show admin panel immediately & stream data in background
-          setIsCheckingSession(false);
-          clearTimeout(loadingFailsafe);
+        // Current authenticated user
+        const activeUser = await getActiveUser();
 
-          fetchMerchantSettings(session.user.id).catch(err =>
-            console.error("Asynchronous settings load background failure:", err)
-          );
-
-          fetchLiveAnalytics(session.user.id).catch(err =>
-            console.error("Asynchronous analytics load background failure:", err)
-          );
-
-        } else {
-          // Teardown when signed out
+        if (!activeUser) {
           setUser(null);
-          setSettings({
-            business_name: '',
-            store_address: '',
-            discount_percentage: 10,
-            webhook_slug: '',
-            currency: 'ZAR',
-            logo_url: '',
-            voucher_expiration_days: 30
-          });
-          setIsCheckingSession(false);
-          clearTimeout(loadingFailsafe);
+          return;
         }
-      } catch (err) {
-        console.error("Auth state mutation engine caught failure:", err);
-        if (isMounted) {
-          setIsCheckingSession(false);
-          clearTimeout(loadingFailsafe);
-        }
-      }
-    });
 
-    return () => {
-      isMounted = false;
-      clearTimeout(loadingFailsafe);
-      subscription.unsubscribe();
-    };
+        setUser(activeUser);
+
+        // Merchant settings
+        const merchantSettings =
+          await fetchMerchantSettings(activeUser.id);
+
+        if (merchantSettings) {
+          setSettings(merchantSettings);
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Agent Parameters initialization failed:",
+          error
+        );
+
+      } finally {
+
+        setIsLoadingSettings(false);
+
+      }
+
+    }
+
+    initializePage();
+
   }, []);
 
-  async function uploadBusinessLogo(file, webhookSlug) {
-    try {
-      console.log('--- uploadBusinessLogo fired ---');
-      const fileExtension = file.name.split('.').pop();
-      const fileName = `public/${webhookSlug}_${Date.now()}.${fileExtension}`;
-
-      const { data: bucketTest, error: bucketError } = await supabase.storage.from('logos').list();
-      const { data: storageData, error: storageError } = await supabase
-        .storage
-        .from('logos')
-        .upload(fileName, file, { upsert: true });
-
-      if (storageError) throw storageError;
-
-      const { data: publicUrlData } = supabase
-        .storage
-        .from('logos')
-        .getPublicUrl(storageData.path);
-
-      const permanentUrl = publicUrlData.publicUrl;
-
-      // Database write successfully removed from here to eliminate the race condition.
-      return permanentUrl;
-    } catch (error) {
-      console.error('uploadBusinessLogo caught error:', error.message);
-      return null;
-    }
-  }
+  // ===========================
+  // Save Settings
+  // ===========================
 
   async function handleSave(e) {
-    if (e && typeof e.preventDefault === 'function') {
-      e.preventDefault();
-    }
+
+    if (e) e.preventDefault();
 
     if (isSaveSyncing) return;
+
     setIsSaveSyncing(true);
 
     try {
+
       const activeUser = user || await getActiveUser();
 
       if (!activeUser?.id) {
-        alert("Sync Blocked: Active authentication session required.");
+        alert("Active session required.");
         return;
       }
 
-      const cleanBusinessName = settings?.business_name?.trim() || '';
-      const cleanWebhookSlug = settings?.webhook_slug?.trim() || '';
+      let logoUrl = settings.logo_url;
 
-      if (!cleanBusinessName || !cleanWebhookSlug) {
-        alert("Validation Failed: Required parameter fields cannot be left blank.");
-        return;
-      }
+      if (
+        logoUrl.startsWith("blob:") &&
+        pendingLogoFile
+      ) {
 
-      let resolvedLogoUrl = settings?.logo_url || '';
+        const uploadedUrl =
+          await uploadBusinessLogo(
+            pendingLogoFile,
+            settings.webhook_slug
+          );
 
-      if (resolvedLogoUrl.startsWith('blob:') && pendingLogoFile) {
-        const uploadedUrl = await uploadBusinessLogo(pendingLogoFile, cleanWebhookSlug);
         if (uploadedUrl) {
-          resolvedLogoUrl = uploadedUrl;
+          logoUrl = uploadedUrl;
           setPendingLogoFile(null);
-        } else {
-          resolvedLogoUrl = settings?.logo_url?.startsWith('blob:') ? '' : (settings?.logo_url || '');
         }
       }
 
       const payload = {
+
         owner_id: activeUser.id,
-        business_name: cleanBusinessName,
-        store_address: settings?.store_address?.trim() || '',
-        discount_percentage: Number(settings?.discount_percentage ?? 10),
-        webhook_slug: cleanWebhookSlug,
-        currency: settings?.currency || 'ZAR',
-        logo_url: resolvedLogoUrl,
-        voucher_expiration_days: Number(settings?.voucher_expiration_days ?? 30) // Appended database column value to save payload
+
+        business_name: settings.business_name,
+
+        store_address: settings.store_address,
+
+        discount_percentage:
+          Number(settings.discount_percentage),
+
+        webhook_slug: settings.webhook_slug,
+
+        currency: settings.currency,
+
+        logo_url: logoUrl,
+
+        voucher_expiration_days:
+          Number(settings.voucher_expiration_days)
+
       };
 
-      if (settings?.id) {
+      if (settings.id) {
         payload.id = settings.id;
       }
 
-      // ─── ATOMIC UPSERT INTEGRATION ───
-      // This saves all changes simultaneously, writing the fresh logo_url alongside everything else safely
-      const { data, error } = await supabase
-        .from('business_settings')
-        .upsert(payload, { onConflict: 'owner_id' })
-        .select();
+      const { data, error } =
+        await supabase
+          .from("business_settings")
+          .upsert(payload, {
+            onConflict: "owner_id"
+          })
+          .select()
+          .single();
 
       if (error) throw error;
-      alert('Live Agent Settings Synced Successfully!');
 
-      if (data && data[0]) {
-        setSettings(data[0]);
-      }
+      setSettings(data);
+
+      alert("Settings saved successfully.");
+
     } catch (error) {
-      console.error("Profile synchronization failed:", error);
-      alert('Error syncing live profile: ' + (error.message || 'Unknown error'));
+
+      console.error(error);
+
+      alert(error.message);
+
     } finally {
+
       setIsSaveSyncing(false);
+
     }
+
   }
-
-  const SAFE_CURRENCY_OPTIONS = typeof CURRENCY_OPTIONS !== 'undefined' ? CURRENCY_OPTIONS : [
-    { code: 'ZAR', symbol: 'R' },
-    { code: 'USD', symbol: '$' },
-    { code: 'EUR', symbol: '€' },
-    { code: 'GBP', symbol: '£' }
-  ];
-
-  const activeCurrencySymbol =
-    SAFE_CURRENCY_OPTIONS.find(
-      c => c.code === (settings?.currency || 'ZAR')
-    )?.symbol || 'R';
 
   return (
     <div

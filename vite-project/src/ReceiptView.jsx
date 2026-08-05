@@ -3,13 +3,15 @@ import { useParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import html2pdf from "html2pdf.js";
 
+// That means I'll have to also write code for each and every one of the till slips designs.
+
 export default function ReceiptView() {
   const { id } = useParams();
   const [receipt, setReceipt] = useState(null);
   const [business, setBusiness] = useState(null);
   const [voucher, setVoucher] = useState(null); // Added state to track token relation
   const [loading, setLoading] = useState(true);
-  
+
   // LIVE EXPIRATION STATE TRACKING NODES
   const [isExpired, setIsExpired] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(0);
@@ -94,21 +96,21 @@ export default function ReceiptView() {
   // ─── SECURITY RECONCILIATION LAYER ───
   // Fallback to receipt ID if the backend token node hasn't synchronized table slots completely yet
   const referenceToken = voucher ? voucher.voucher_token : id;
-  
+
   // Point the QR payload link exactly to your new RedeemView component endpoint parameter framework
   const checkoutPayloadLink = `https://till-slip-agent.vercel.app/redeem?token=${referenceToken}&ticketId=${id}&email=${encodeURIComponent(receipt.customer_email || '')}`;
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(checkoutPayloadLink)}&color=11161d&bgcolor=fff`;
 
   return (
     <div style={{ background: "#02090d", minHeight: "100vh", padding: "40px 20px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      
+
       {/* GLOBAL BACKGROUND ENCLOSURE TO MATCH ADMIN WORKSPACE MIRROR FRAME */}
       <div style={{
         width: '100%',
         maxWidth: '440px',
         border: '2px solid #08E3D8',
 
-background: `
+        background: `
 linear-gradient(
 180deg,
 #031015 0%,
@@ -117,13 +119,13 @@ linear-gradient(
 )
 `,
 
-boxShadow: `
+        boxShadow: `
 0 0 8px rgba(8,227,216,.65),
 0 0 18px rgba(8,227,216,.35),
 0 0 45px rgba(8,227,216,.12)
 `,
 
-borderRadius:'32px',
+        borderRadius: '32px',
         position: 'relative',
         overflow: 'hidden',
         padding: '24px 16px',
@@ -156,28 +158,28 @@ borderRadius:'32px',
           position: 'relative',
           zIndex: 2
         }}>
-            Your Till Slip
+          Your Till Slip
         </h3>
 
         {/* ADVANCED DIGITAL RECEIPT CONTAINER */}
         <div id="till-slip-capture" style={{
-          background:`
+          background: `
 linear-gradient(
 180deg,
 #07141B 0%,
 #051017 100%
 )
 `,
-          backgroundImage:`
+          backgroundImage: `
 linear-gradient(rgba(8,227,216,.06) 1px,transparent 1px),
 linear-gradient(90deg,rgba(8,227,216,.06) 1px,transparent 1px)
 `,
 
-backgroundSize:'24px 24px',
+          backgroundSize: '24px 24px',
           color: '#ffffff',
           borderRadius: '26px',
           padding: '20px 16px',
-          boxShadow:`
+          boxShadow: `
 0 0 5px rgba(8,227,216,.8),
 0 0 18px rgba(8,227,216,.4),
 0 30px 60px rgba(0,0,0,.65)
@@ -185,7 +187,7 @@ backgroundSize:'24px 24px',
           fontFamily: '"Courier New", monospace',
           position: 'relative',
           overflow: 'hidden',
-          border:'2px solid #08E3D8'
+          border: '2px solid #08E3D8'
         }}>
 
           {/* RECEIPT CORNER LIGHT */}
@@ -233,13 +235,13 @@ backgroundSize:'24px 24px',
               <div style={{
                 padding: '2px 5px',
                 borderRadius: '999px',
-                background:'rgba(8,227,216,.10)',
+                background: 'rgba(8,227,216,.10)',
 
-border:'2px solid #08E3D8',
+                border: '2px solid #08E3D8',
 
-color:'#08E3D8',
+                color: '#08E3D8',
 
-boxShadow:`
+                boxShadow: `
 0 0 8px rgba(8,227,216,.5),
 inset 0 0 10px rgba(8,227,216,.08)
 `,
@@ -421,18 +423,18 @@ inset 0 0 10px rgba(8,227,216,.08)
                 marginTop: '14px',
                 padding: '16px',
                 borderRadius: '16px',
-                background:`
+                background: `
 linear-gradient(
 90deg,
 rgba(8,227,216,.10),
 rgba(8,227,216,.05)
 )
 `,
-                border:'2px solid #08E3D8',
+                border: '2px solid #08E3D8',
                 fontWeight: '900',
                 fontSize: '14px',
                 color: '#b1b5c6',
-                boxShadow:`
+                boxShadow: `
 0 0 10px rgba(8,227,216,.45),
 inset 0 0 18px rgba(8,227,216,.05)
 `
@@ -457,7 +459,7 @@ inset 0 0 18px rgba(8,227,216,.05)
               marginTop: '24px',
               position: 'relative',
               overflow: 'hidden',
-              boxShadow:`
+              boxShadow: `
 0 0 10px rgba(8,227,216,.30),
 0 15px 40px rgba(0,0,0,.45)
 `
@@ -471,8 +473,8 @@ inset 0 0 18px rgba(8,227,216,.05)
                 width: '120px',
                 height: '120px',
                 borderRadius: '50%',
-                background: isExpired 
-                  ? 'radial-gradient(circle, rgba(239,68,68,0.15), transparent 70%)' 
+                background: isExpired
+                  ? 'radial-gradient(circle, rgba(239,68,68,0.15), transparent 70%)'
                   : 'radial-gradient(circle, rgba(0,255,200,0.12), transparent 70%)'
               }} />
 
@@ -576,13 +578,13 @@ inset 0 0 18px rgba(8,227,216,.05)
                   color: '#041014',
                   border: 'none',
                   padding: '16px',
-                  borderRadius:'26px',
+                  borderRadius: '26px',
                   fontSize: '12px',
                   fontWeight: '900',
                   fontFamily: 'system-ui, sans-serif',
                   letterSpacing: '0.8px',
                   textTransform: 'uppercase',
-                  boxShadow:`
+                  boxShadow: `
 0 0 16px rgba(8,227,216,.55),
 0 10px 40px rgba(8,227,216,.22)
 `,
