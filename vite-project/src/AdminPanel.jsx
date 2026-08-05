@@ -67,6 +67,30 @@ export default function AdminPanel() {
 
   const [subscriptionLoading, setSubscriptionLoading] = useState(true);
 
+  // ---------- AUTH MODES ----------
+  const [authMode, setAuthMode] = useState("signin");
+
+  // signin
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // signup
+  const [businessName, setBusinessName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [agreeTerms, setAgreeTerms] = useState(false);
+
+  // reset password
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  // loading
+  const [isSendingReset, setIsSendingReset] = useState(false);
+  const [isResendingVerification, setIsResendingVerification] = useState(false);
+  const [isSavingPassword, setIsSavingPassword] = useState(false);
+
+  // messages
+  const [authError, setAuthError] = useState("");
+  const [authSuccess, setAuthSuccess] = useState("");
+
 
   // --- COMPONENT RENDER-STATE ALIGNMENT LAYER ---
   const activeInboxesCount = user ? 1 : 0; // Tracks the primary active synchronized node
@@ -537,6 +561,7 @@ export default function AdminPanel() {
   }, []);
 
   async function handleAuth(type, event = null) {
+
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
     }
@@ -572,38 +597,171 @@ export default function AdminPanel() {
         await checkSubscription(activeUser.id);
         console.log("Authenticated User:", activeUser.id);
 
-      } else {
-        // ==========================================
-        // 2. THE REGISTER PATH (Clean Separation)
-        // ==========================================
-        const authResponse = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            // Redirects the user right back to the site origin upon verification confirmation
-            emailRedirectTo: `${window.location.origin}/admin`
-          }
-        });
+      } // ==========================================
+      // REGISTER
+      // ==========================================
 
-        if (authResponse.error) {
-          alert(authResponse.error.message);
-          return;
-        }
-
-        setSignupSuccessMessage(
-          "Sign up request successful. Check your email to verify your account."
-        );
-
-        setEmail("");
-        setPassword("");
+      if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
       }
 
+      if (!agreeTerms) {
+        alert("Please accept the Terms & Conditions.");
+        return;
+      }
+
+      const authResponse = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/admin`
+        }
+      });
+
+      if (authResponse.error) {
+        alert(authResponse.error.message);
+        return;
+      }
+
+      const newUser = authResponse.data.user;
+
+      if (!newUser) {
+        setSignupSuccessMessage(
+          "Check your email to verify your account."
+        );
+        return;
+      }
+
+      // Create business record
+
+      const { error: businessError } = await supabase
+        .from("business_settings")
+        .upsert({
+          user_id: newUser.id,
+          business_name: businessName
+        });
+
+      if (businessError) {
+        console.error(businessError);
+      }
+
+      // Create subscription record
+
+      const trialEnds = new Date();
+      trialEnds.setDate(trialEnds.getDate() + 3);
+
+      const { error: subscriptionError } = await supabase
+        .from("subscriptions")
+        .upsert({
+          user_id: newUser.id,
+          subscription_status: "trial",
+          trial_ends_at: trialEnds.toISOString(),
+          trial_welcome_seen: false
+        });
+
+      if (subscriptionError) {
+        console.error(subscriptionError);
+      }
+
+      setSignupSuccessMessage(
+        "Account created successfully. Please verify your email."
+      );
+
+      setAuthMode("verify");
+
+      setBusinessName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
+      if (authResponse.error) {
+        alert(authResponse.error.message);
+        return;
+      }
+
+      setSignupSuccessMessage(
+        "Sign up request successful. Check your email to verify your account."
+      );
+
+      setEmail("");
+      setPassword("");
     } catch (err) {
       console.error("Authentication crash:", err);
       alert(err.message || "Authentication failed.");
     } finally {
       setIsAuthSyncing(false);
     }
+  }
+
+  async function handleForgotPassword() {
+
+    if (!email) {
+      alert("Enter your email.");
+      return;
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      email,
+      {
+        redirectTo: `${window.location.origin}/admin`
+      }
+    );
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Password reset email sent.");
+
+  }
+
+  async function handleResetPassword() {
+
+    if (newPassword !== confirmNewPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Password updated.");
+
+    setAuthMode("signin");
+
+  }
+
+  async function handleResendVerification() {
+
+    if (!email) {
+      alert("Enter your email.");
+      return;
+    }
+
+    const { error } = await supabase.functions.invoke(
+      "resend-verification",
+      {
+        body: {
+          email
+        }
+      }
+    );
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Verification email sent.");
+
   }
 
   async function uploadBusinessLogo(file, webhookSlug) {
@@ -1198,59 +1356,505 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* GLOBAL MODAL 1: EMAIL CONFIRMED SUCCESS POP-UP */}
+      {/* ======================= TESLA AUTHENTICATION MODAL ======================= */}
 
-      <header style={{
-        ...styles.header,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '12px'
-      }}>
-      </header>
+      <header style={{ ...styles.header, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}></header>
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
       <main style={{ padding: '24px 12px', maxWidth: '1500px', margin: '0 auto' }}>
         {!user ? (
-          <section style={{ maxWidth: '360px', margin: '60px auto 0 auto' }}>
-            <div style={styles.flatCard}>
-              <h2 style={{ textAlign: 'center', fontSize: '18px', fontWeight: '500', margin: '0 0 24px 0', color: '#ffffff', letterSpacing: '0.3px' }}>Master Portal Login</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                {signupSuccessMessage && (
-                  <div
+          <section style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '85vh' }}>
+            <div style={{
+              width: '100%',
+              maxWidth: '470px',
+              background: 'linear-gradient(180deg,#111,#080808)',
+              border: '1px solid rgba(0,180,255,.35)',
+              borderRadius: '24px',
+              padding: '34px',
+              boxShadow: '0 0 40px rgba(0,180,255,.12),0 0 120px rgba(0,0,0,.7)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+
+              <div style={{
+                position: 'absolute',
+                top: -120,
+                right: -120,
+                width: 250,
+                height: 250,
+                background: 'rgba(0,170,255,.08)',
+                filter: 'blur(80px)',
+                borderRadius: '50%'
+              }} />
+
+              <div style={{
+                position: 'absolute',
+                bottom: -120,
+                left: -120,
+                width: 250,
+                height: 250,
+                background: 'rgba(0,120,255,.08)',
+                filter: 'blur(90px)',
+                borderRadius: '50%'
+              }} />
+
+              <div style={{ position: 'relative', zIndex: 2 }}>
+
+                <div style={{ textAlign: 'center', marginBottom: 30 }}>
+                  <div style={{
+                    width: 68,
+                    height: 68,
+                    margin: '0 auto 18px',
+                    borderRadius: '18px',
+                    background: 'linear-gradient(135deg,#0b0b0b,#171717)',
+                    border: '1px solid #00BFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 28,
+                    boxShadow: '0 0 25px rgba(0,180,255,.35)'
+                  }}>
+                    ⚡
+                  </div>
+
+                  <h2 style={{
+                    margin: 0,
+                    color: '#fff',
+                    fontWeight: 700,
+                    fontSize: '28px',
+                    letterSpacing: '1px'
+                  }}>
+                    RUACH AGENT
+                  </h2>
+
+                  <p style={{
+                    marginTop: 8,
+                    fontSize: 13,
+                    color: '#8d99a6'
+                  }}>
+                    Secure Business Authentication
+                  </p>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  background: '#0d0d0d',
+                  border: '1px solid #1d3d52',
+                  borderRadius: 14,
+                  padding: 4,
+                  marginBottom: 24
+                }}>
+
+                  <button
+                    onClick={() => setAuthMode('signin')}
                     style={{
-                      background: "#06281d",
-                      color: "#00FFD5",
-                      border: "1px solid rgba(0,255,210,.25)",
-                      padding: "12px",
-                      borderRadius: "10px",
-                      marginBottom: "16px",
-                      textAlign: "center",
-                      fontSize: "13px"
-                    }}
-                  >
+                      flex: 1,
+                      padding: '12px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: 10,
+                      background: authMode === 'signin' ? 'linear-gradient(90deg,#008CFF,#00D4FF)' : 'transparent',
+                      color: '#fff',
+                      fontWeight: 600
+                    }}>
+                    Sign In
+                  </button>
+
+                  <button
+                    onClick={() => setAuthMode('signup')}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      border: 'none',
+                      cursor: 'pointer',
+                      borderRadius: 10,
+                      background: authMode === 'signup' ? 'linear-gradient(90deg,#008CFF,#00D4FF)' : 'transparent',
+                      color: '#fff',
+                      fontWeight: 600
+                    }}>
+                    Sign Up
+                  </button>
+
+                </div>
+
+                {signupSuccessMessage && (
+                  <div style={{
+                    background: 'rgba(0,255,180,.08)',
+                    border: '1px solid rgba(0,255,180,.25)',
+                    color: '#7CFFE7',
+                    padding: 14,
+                    borderRadius: 12,
+                    marginBottom: 18,
+                    fontSize: 13,
+                    textAlign: 'center'
+                  }}>
                     ✅ {signupSuccessMessage}
                   </div>
                 )}
-                <input type="email" placeholder="Merchant Email" value={email} onChange={e => setEmail(e.target.value)} style={styles.input} />
-                <input type="password" placeholder="Access Password" value={password} onChange={e => setPassword(e.target.value)} style={styles.input} />
-                <button onClick={() => handleAuth('login')} style={styles.button} disabled={isAuthSyncing}>
-                  {isAuthSyncing ? 'Verifying Node...' : 'Login'}
-                </button>
-                <button
-                  onClick={() => handleAuth('register')}
-                  style={{
-                    ...styles.button,
-                    background: 'transparent',
-                    color: '#a3a3a3',
-                    border: '1px solid #262626',
-                    marginTop: '4px'
-                  }}
-                  disabled={isAuthSyncing}
-                >
-                  Sign Up
-                </button>
+
+                {/* ---------------- SIGN IN ---------------- */}
+
+                {authMode === 'signin' && (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <label style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        color: '#9da9b6',
+                        fontSize: 14
+                      }}>
+                        <input
+                          type="checkbox"
+                          checked={rememberMe}
+                          onChange={e => setRememberMe(e.target.checked)}
+                        />
+                        Remember Me
+                      </label>
+
+                      <button
+                        onClick={() => handleAuth('login')}
+                        disabled={isAuthSyncing}
+                        style={{
+                          padding: '14px',
+                          border: 'none',
+                          borderRadius: 12,
+                          fontWeight: 700,
+                          fontSize: 15,
+                          cursor: 'pointer',
+                          color: '#fff',
+                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
+                          boxShadow: '0 0 18px rgba(0,180,255,.4)'
+                        }}>
+                        {isAuthSyncing ? 'Signing In...' : 'Sign In'}
+                      </button>
+
+                      <button
+                        onClick={() => setAuthMode('forgot')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: '#59C8FF'
+                        }}>
+                        Forgot Password?
+                      </button>
+
+                      <button
+                        onClick={handleResendVerification}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: '#59C8FF'
+                        }}>
+                        Resend Verification Email
+                      </button>
+
+                      <div style={{
+                        textAlign: 'center',
+                        color: '#888',
+                        fontSize: 14
+                      }}>
+                        Don't have an account?{' '}
+                        <span
+                          onClick={() => setAuthMode('signup')}
+                          style={{
+                            color: '#00C8FF',
+                            cursor: 'pointer',
+                            fontWeight: 600
+                          }}>
+                          Sign Up
+                        </span>
+                      </div>
+
+                    </div>
+                  </>
+                )}
+
+                {/* ---------------- SIGN UP ---------------- */}
+
+                {authMode === 'signup' && (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                      <input
+                        placeholder="Business Name"
+                        value={businessName}
+                        onChange={e => setBusinessName(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <label style={{
+                        display: 'flex',
+                        gap: 10,
+                        alignItems: 'center',
+                        color: '#9da9b6',
+                        fontSize: 14
+                      }}>
+                        <input
+                          type="checkbox"
+                          checked={agreeTerms}
+                          onChange={e => setAgreeTerms(e.target.checked)}
+                        />
+                        I agree to the Terms & Conditions
+                      </label>
+
+                      <button
+                        onClick={() => handleAuth('register')}
+                        disabled={isAuthSyncing}
+                        style={{
+                          padding: '14px',
+                          border: 'none',
+                          borderRadius: 12,
+                          cursor: 'pointer',
+                          fontWeight: 700,
+                          color: '#fff',
+                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)'
+                        }}>
+                        {isAuthSyncing ? 'Creating Account...' : 'Create Account'}
+                      </button>
+
+                      <div style={{
+                        textAlign: 'center',
+                        color: '#888',
+                        fontSize: 14
+                      }}>
+                        Already have an account?{' '}
+                        <span
+                          onClick={() => setAuthMode('signin')}
+                          style={{
+                            cursor: 'pointer',
+                            fontWeight: 600,
+                            color: '#00C8FF'
+                          }}>
+                          Sign In
+                        </span>
+                      </div>
+
+                    </div>
+                  </>
+                )}
+
+                {/* ---------------- FORGOT PASSWORD ---------------- */}
+
+                {authMode === 'forgot' && (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                      <h3 style={{ color: '#fff', margin: 0 }}>Forgot Password</h3>
+
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <button
+                        onClick={handleForgotPassword}
+                        style={{
+                          padding: '14px',
+                          border: 'none',
+                          borderRadius: 12,
+                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
+                          color: '#fff',
+                          fontWeight: 700
+                        }}>
+                        Send Reset Email
+                      </button>
+
+                      <button
+                        onClick={() => setAuthMode('signin')}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          color: '#59C8FF',
+                          cursor: 'pointer'
+                        }}>
+                        ← Back to Sign In
+                      </button>
+
+                    </div>
+                  </>
+                )}
+
+                {/* ---------------- VERIFY EMAIL ---------------- */}
+
+                {authMode === 'verify' && (
+                  <>
+                    <div style={{ textAlign: 'center' }}>
+
+                      <h3 style={{ color: '#fff' }}>Verify Your Email</h3>
+
+                      <p style={{ color: '#98a7b7', lineHeight: 1.6 }}>
+                        We've sent you a verification email.
+                        <br />
+                        Please verify your account before signing in.
+                      </p>
+
+                      <button
+                        onClick={handleResendVerification}
+                        style={{
+                          width: '100%',
+                          padding: '14px',
+                          marginTop: 20,
+                          border: 'none',
+                          borderRadius: 12,
+                          fontWeight: 700,
+                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
+                          color: '#fff'
+                        }}>
+                        Resend Verification Email
+                      </button>
+
+                      <button
+                        onClick={() => setAuthMode('signin')}
+                        style={{
+                          marginTop: 12,
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: '#59C8FF'
+                        }}>
+                        Back to Sign In
+                      </button>
+
+                    </div>
+                  </>
+                )}
+
+                {/* ---------------- RESET PASSWORD ---------------- */}
+
+                {authMode === 'reset' && (
+                  <>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+                      <h3 style={{ color: '#fff', margin: 0 }}>
+                        Reset Password
+                      </h3>
+
+                      <input
+                        type="password"
+                        placeholder="New Password"
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <input
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={confirmNewPassword}
+                        onChange={e => setConfirmNewPassword(e.target.value)}
+                        style={{
+                          ...styles.input,
+                          background: '#090909',
+                          border: '1px solid #1d3d52',
+                          color: '#fff'
+                        }}
+                      />
+
+                      <button
+                        onClick={handleResetPassword}
+                        style={{
+                          padding: '14px',
+                          border: 'none',
+                          borderRadius: 12,
+                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
+                          fontWeight: 700,
+                          color: '#fff'
+                        }}>
+                        Save Password
+                      </button>
+
+                    </div>
+                  </>
+                )}
+
               </div>
             </div>
           </section>
