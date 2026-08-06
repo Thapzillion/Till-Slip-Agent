@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
 
-import {
-  getActiveUser,
-  uploadBusinessLogo,
-  checkSupabaseReachability,
-  fetchMerchantSettings
-} from "./backend/businessService";
+import { useBusiness } from "./backend/businessService";
 
 // --------------------
 // Static data
@@ -23,9 +18,13 @@ export default function AgentParameters() {
   const {
     user,
     settings,
+    setSettings,
     pendingLogoFile,
-    isSaveSyncing,
+    setPendingLogoFile,
     isLoadingSettings,
+    isSaveSyncing,
+    saveSettings,
+    uploadBusinessLogo
   } = useBusiness();
 
 
