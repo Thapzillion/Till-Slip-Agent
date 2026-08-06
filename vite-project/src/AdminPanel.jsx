@@ -1108,13 +1108,9 @@ export default function AdminPanel() {
                   <span>Analysis</span>
                 </button>
 
-                <button className="sidebar-item">
-                  <Receipt size={18} />
-
-                  <span>Till Slips Sent</span>
-                </button>
-
-                <button className="sidebar-item">
+                <button className="sidebar-item"
+                  onClick={() => navigate("/connected-stores")}
+                >
                   <Store size={18} />
 
                   <span>Connected Stores</span>

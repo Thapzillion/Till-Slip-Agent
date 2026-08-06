@@ -7,6 +7,7 @@ import ReceiptView from './ReceiptView';
 // SIDEBAR NAVIGATION PAGES
 //PREVIEW
 import Analysis from './Analysis';
+import ConnectedStores from './ConnectedStores';
 
 //SETTINGS
 import TillSlipsCollection from './TillSlipsCollection';
@@ -38,6 +39,7 @@ export default function App() {
 
         {/* PREVIEW PAGES */}
         <Route path="/analysis" element={<Analysis />} />
+        <Route path="/connected-stores" element={<ConnectedStores />} />
 
         {/* SETTINGS PAGES */}
         <Route path="/agent-parameters" element={<AgentParameters />} />

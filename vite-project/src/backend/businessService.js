@@ -424,7 +424,14 @@ export function useBusiness() {
             setSubscriptionLoading(false);
         }
     }
-
+    async function checkSupabaseReachability() {
+        try {
+            const { data, error } = await supabase.from('business_settings').select('count');
+            console.log('Supabase reachability check:', data, error);
+        } catch (e) {
+            console.error('Reachability network check failed:', e);
+        }
+    }
     useEffect(() => {
         let isMounted = true;
 
@@ -467,14 +474,6 @@ export function useBusiness() {
         }
 
         // Temporary connectivity diagnostics check
-        async function checkSupabaseReachability() {
-            try {
-                const { data, error } = await supabase.from('business_settings').select('count');
-                console.log('Supabase reachability check:', data, error);
-            } catch (e) {
-                console.error('Reachability network check failed:', e);
-            }
-        }
         checkSupabaseReachability();
 
         // Unified Single-Source Auth Listener Engine
