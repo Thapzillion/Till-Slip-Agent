@@ -879,5 +879,117 @@ export function useBusiness() {
             c => c.code === (settings?.currency || 'ZAR')
         )?.symbol || 'R';
 
-    return;
+
+
+    return {
+
+        // ---------------- AUTH ----------------
+        user,
+        setUser,
+        email,
+        setEmail,
+        password,
+        setPassword,
+
+        authMode,
+        setAuthMode,
+
+        rememberMe,
+        setRememberMe,
+
+        businessName,
+        setBusinessName,
+
+        confirmPassword,
+        setConfirmPassword,
+
+        agreeTerms,
+        setAgreeTerms,
+
+        newPassword,
+        setNewPassword,
+
+        confirmNewPassword,
+        setConfirmNewPassword,
+
+        signupSuccessMessage,
+
+        authError,
+        authSuccess,
+
+        isAuthSyncing,
+
+        // ---------------- SETTINGS ----------------
+        settings,
+        setSettings,
+
+        pendingLogoFile,
+        setPendingLogoFile,
+
+        isSaveSyncing,
+        isCheckingSession,
+
+        // ---------------- SUBSCRIPTION ----------------
+        showSubscriptionModal,
+        setShowSubscriptionModal,
+
+        subscriptionLoading,
+
+        showTrialWelcomeModal,
+        setShowTrialWelcomeModal,
+
+        trialDaysRemaining,
+        trialExpiryDate,
+
+        // ---------------- ANALYTICS ----------------
+        txCount,
+        txVolume,
+        graphData,
+
+        activeInboxesCount,
+        totalParsedCount,
+        inboxGraphData,
+        selectedDateRangeLabel,
+
+        // ---------------- AI ----------------
+        inputPrompt,
+        setInputPrompt,
+
+        messages,
+        setMessages,
+
+        isLoading,
+
+        handleSendPrompt,
+        handleClear,
+
+        receiptData,
+        setReceiptData,
+
+        receipt,
+        setReceipt,
+
+        // ---------------- BACKEND ----------------
+        getActiveUser,
+        fetchLiveAnalytics,
+        checkSubscription,
+
+        fetchMerchantSettings,
+
+        uploadBusinessLogo,
+
+        checkSupabaseReachability,
+
+        handleAuth,
+
+        handleForgotPassword,
+
+        handleResetPassword,
+
+        handleResendVerification,
+
+        handleSave
+
+    };
+
 }
