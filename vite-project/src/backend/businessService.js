@@ -85,8 +85,6 @@ export function useBusiness() {
 
     const [signupSuccessMessage, setSignupSuccessMessage] = useState("");
 
-    const navigate = useNavigate();
-
     // ==============================
     //       DYNAMIC STATE ENGINE
     // ==============================
