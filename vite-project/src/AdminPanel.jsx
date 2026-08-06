@@ -69,6 +69,7 @@ export default function AdminPanel() {
     uploadLogo,
 
     // Subscription
+    showTrialWelcomeModal,
     subscription,
     subscriptionLoading,
     trialDaysRemaining,
