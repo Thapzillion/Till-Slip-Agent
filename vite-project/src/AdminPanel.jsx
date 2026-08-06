@@ -597,8 +597,6 @@ export default function AdminPanel() {
 
       {/* ======================= TESLA AUTHENTICATION MODAL ======================= */}
 
-      <header style={{ ...styles.header, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}></header>
-
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
       <main style={{ padding: '24px 12px', maxWidth: '1500px', margin: '0 auto' }}>
@@ -1165,9 +1163,107 @@ export default function AdminPanel() {
                   <div className="bottom-logo">R</div>
 
                   <div>
-                    <h4>RuachAgent AI</h4>
+                    <div
+                      onClick={() => setShowAccountMenu(prev => !prev)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "14px",
+                        padding: "14px",
+                        borderRadius: "14px",
+                        cursor: "pointer",
+                        transition: "all .25s ease",
+                        border: "1px solid rgba(0,180,255,.18)",
+                        background: "rgba(15,18,24,.92)"
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "44px",
+                          height: "44px",
+                          borderRadius: "50%",
+                          background: "linear-gradient(135deg,#00C6FF,#0084FF)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          fontWeight: 700,
+                          fontSize: "17px"
+                        }}
+                      >
+                        {(settings?.business_name || user?.email || "R")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
 
-                    <p>Version 1.0.0</p>
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{
+                            color: "#fff",
+                            fontWeight: 600,
+                            fontSize: "14px"
+                          }}
+                        >
+                          {settings?.business_name || "RuachAgent AI"}
+                        </div>
+
+                        <div
+                          style={{
+                            color: "#7d8a99",
+                            fontSize: "12px"
+                          }}
+                        >
+                          {user?.email}
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          color: "#00C6FF",
+                          fontSize: "18px"
+                        }}
+                      >
+                        ⚙
+                      </div>
+                    </div>
+                    {showAccountMenu && (
+                      <div className="account-menu">
+
+                        <div className="account-header">
+
+                          <h3>{settings?.business_name || "Business"}</h3>
+
+                          <p>{user?.email}</p>
+
+                        </div>
+
+                        <button onClick={() => navigate("/agent-parameters")}>
+                          Account Settings
+                        </button>
+
+                        <button onClick={() => navigate("/billing")}>
+                          Billing
+                        </button>
+
+                        <button onClick={() => navigate("/security")}>
+                          Security
+                        </button>
+
+                        <button
+                          onClick={async () => {
+
+                            await supabase.auth.signOut();
+
+                            navigate("/");
+
+                          }}
+                        >
+                          Log Out
+                        </button>
+
+                      </div>
+                    )}
+
                   </div>
                 </div>
               </div>
