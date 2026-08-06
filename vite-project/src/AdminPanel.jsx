@@ -70,6 +70,7 @@ export default function AdminPanel() {
 
     // Subscription
     showTrialWelcomeModal,
+    setShowTrialWelcomeModal,
     subscription,
     subscriptionLoading,
     trialDaysRemaining,
@@ -86,9 +87,22 @@ export default function AdminPanel() {
     receiptTemplates,
 
     // Prompt Builder
-    prompts,
-    setPrompts,
-    handlePromptChange,
+    inputPrompt,
+    setInputPrompt,
+
+    messages,
+    setMessages,
+
+    isLoading,
+
+    handleSendPrompt,
+    handleClear,
+
+    receiptData,
+    setReceiptData,
+
+    receipt,
+    setReceipt,
 
     // Misc
     loading,
