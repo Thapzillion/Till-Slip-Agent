@@ -112,6 +112,8 @@ export default function AdminPanel() {
 
   } = useBusiness();
 
+  const navigate = useNavigate();
+
   const styles = {
     container: {
       minHeight: '100vh',
