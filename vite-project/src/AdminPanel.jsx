@@ -361,7 +361,7 @@ export default function AdminPanel() {
                 }
 
                 const handler = window.PaystackPop.setup({
-                  key: process.env.REACT_APP_PAYSTACK_PUBLIC_KEY || "pk_live_870272ce5b082f6522a2f9d130c368284664c7f4",
+                  key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "pk_live_870272ce5b082f6522a2f9d130c368284664c7f4",
                   email: user?.email,
                   amount: 12900,
                   currency: "ZAR",
@@ -385,14 +385,16 @@ export default function AdminPanel() {
                   onClose: () => {
                     console.log("Paystack modal closed by user.");
                   },
-                  callback: async (response) => {
-                    console.log("Paystack Payment Successful, Reference:", response.reference);
+                  callback: function (response) {
+                    console.log("Paystack Payment Successful:", response.reference);
+
                     alert("Payment successful! Updating your workspace access...");
 
-                    setTimeout(async () => {
-                      await checkSubscription(user.id);
-                      setShowSubscriptionModal(false);
-                    }, 2000);
+                    checkSubscription(user.id)
+                      .then(() => {
+                        setShowSubscriptionModal(false);
+                      })
+                      .catch(console.error);
                   },
                 });
 
