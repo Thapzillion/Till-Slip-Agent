@@ -92,6 +92,7 @@ export default function AdminPanel() {
     // Misc
     loading,
     error,
+    isCheckingSession,
     successMessage
 
   } = useBusiness();

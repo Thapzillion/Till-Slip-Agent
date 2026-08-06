@@ -85,6 +85,17 @@ export function useBusiness() {
 
     const [signupSuccessMessage, setSignupSuccessMessage] = useState("");
 
+    // Additional shared UI state expected by AdminPanel and other consumers
+    const [subscriptionRecord, setSubscriptionRecord] = useState(null);
+    const [analytics, setAnalytics] = useState(null);
+    const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+    const [receipts, setReceipts] = useState([]);
+    const [receiptTemplates, setReceiptTemplates] = useState([]);
+    const [prompts, setPrompts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+
     // ==============================
     //       DYNAMIC STATE ENGINE
     // ==============================
@@ -167,6 +178,15 @@ export function useBusiness() {
         setMessages([]);
     };
 
+    // Simple prompt builder helper used by AdminPanel
+    const handlePromptChange = (updater) => {
+        if (typeof updater === 'function') {
+            setPrompts(prev => updater(prev));
+        } else {
+            setPrompts(updater);
+        }
+    };
+
 
     // ASYNC FUNCTIONS
     async function getActiveUser() {
@@ -190,8 +210,11 @@ export function useBusiness() {
 
     async function fetchLiveAnalytics(userId) {
         try {
+            setLoadingAnalytics(true);
             if (!userId) {
                 console.warn("Analytics blocked: No authenticated user.");
+                setAnalytics(null);
+                setLoadingAnalytics(false);
                 return;
             }
 
@@ -220,6 +243,7 @@ export function useBusiness() {
 
             if (analytics && analytics.length > 0) {
                 const stats = analytics[0];
+                setAnalytics(stats);
                 const count = Number(stats.total_count) || 0;
                 const volume = Number(stats.total_volume) || 0;
                 const rawPoints = stats.graph_points || [];
@@ -252,9 +276,12 @@ export function useBusiness() {
                 setTxCount(0);
                 setTxVolume(0);
                 setGraphData(Array.from({ length: 28 }).map(() => 0));
+                setAnalytics(null);
             }
         } catch (err) {
             console.error("Analytics stream catch handled:", err.message);
+        } finally {
+            setLoadingAnalytics(false);
         }
     }
 
@@ -394,6 +421,13 @@ export function useBusiness() {
 
             setTrialDaysRemaining(daysRemaining);
             setTrialExpiryDate(expiry);
+
+            // Cache subscription record for UI consumers
+            try {
+                setSubscriptionRecord(data);
+            } catch (e) {
+                console.warn('Failed to cache subscription record', e);
+            }
 
             const expired = msRemaining <= 0;
 
@@ -927,6 +961,21 @@ export function useBusiness() {
 
         isSaveSyncing,
         isCheckingSession,
+        // backward-compatible aliases
+        saveSettings: handleSave,
+        uploadLogo: uploadBusinessLogo,
+        // shared UI state
+        subscription: subscriptionRecord,
+        analytics,
+        loadingAnalytics,
+        receipts,
+        receiptTemplates,
+        prompts,
+        setPrompts,
+        handlePromptChange,
+        loading,
+        error,
+        successMessage,
 
         // ---------------- SUBSCRIPTION ----------------
         showSubscriptionModal,
