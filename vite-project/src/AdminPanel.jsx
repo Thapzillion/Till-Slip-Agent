@@ -114,6 +114,8 @@ export default function AdminPanel() {
 
   const navigate = useNavigate();
 
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+
   const styles = {
     container: {
       minHeight: '100vh',
