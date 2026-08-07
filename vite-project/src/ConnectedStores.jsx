@@ -1196,6 +1196,5 @@ export default function ConnectedStores() {
             )}
 
         </div>
-        </div >
     );
 } 
