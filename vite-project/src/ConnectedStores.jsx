@@ -19,6 +19,12 @@ export default function ConnectedStores() {
 
     const [selectedStore, setSelectedStore] = useState(null);
 
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const [providerFilter, setProviderFilter] = useState("all");
+
+    const [statusFilter, setStatusFilter] = useState("all");
+
     const [form, setForm] = useState({
         provider: "",
         store_name: "",
@@ -113,6 +119,7 @@ export default function ConnectedStores() {
         } else {
             await fetchStores(business.id);
             resetForm();
+            setDrawerOpen(false);
         }
 
         setSaving(false);
@@ -142,6 +149,7 @@ export default function ConnectedStores() {
         } else {
             await fetchStores(business.id);
             resetForm();
+            setDrawerOpen(false);
         }
 
         setSaving(false);
@@ -153,24 +161,28 @@ export default function ConnectedStores() {
     // ============================
 
     const deleteStore = async (id) => {
+        if (!business) return;
 
         const confirmed = window.confirm(
-            "Disconnect this store?"
+            "Disconnect this store?\n\nThis will remove the integration from RuachAgent."
         );
 
         if (!confirmed) return;
 
+        setError("");
+
         const { error } = await supabase
             .from("connected_stores")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .eq("business_id", business.id);
 
         if (error) {
             setError(error.message);
-        } else {
-            await fetchStores(business.id);
+            return;
         }
 
+        await fetchStores(business.id);
     };
 
     // ============================
@@ -178,6 +190,9 @@ export default function ConnectedStores() {
     // ============================
 
     const toggleStatus = async (store) => {
+        if (!business || !store) return;
+
+        setError("");
 
         const nextStatus =
             store.status === "connected"
@@ -187,14 +202,18 @@ export default function ConnectedStores() {
         const { error } = await supabase
             .from("connected_stores")
             .update({
-                status: nextStatus
+                status: nextStatus,
+                last_sync_at: new Date().toISOString()
             })
-            .eq("id", store.id);
+            .eq("id", store.id)
+            .eq("business_id", business.id);
 
-        if (!error) {
-            fetchStores(business.id);
+        if (error) {
+            setError(error.message);
+            return;
         }
 
+        await fetchStores(business.id);
     };
 
     // ============================
@@ -202,6 +221,7 @@ export default function ConnectedStores() {
     // ============================
 
     const editStore = (store) => {
+        if (!store) return;
 
         setSelectedStore(store);
 
@@ -217,6 +237,7 @@ export default function ConnectedStores() {
             status: store.status || "connected"
         });
 
+        setDrawerOpen(true);
     };
 
     // ============================
@@ -224,9 +245,7 @@ export default function ConnectedStores() {
     // ============================
 
     const resetForm = () => {
-
         setSelectedStore(null);
-
         setForm({
             provider: "",
             store_name: "",
@@ -238,7 +257,11 @@ export default function ConnectedStores() {
             refresh_token_encrypted: "",
             status: "connected"
         });
+    };
 
+    const closeDrawer = () => {
+        setDrawerOpen(false);
+        resetForm();
     };
 
     // ============================
@@ -276,925 +299,2055 @@ export default function ConnectedStores() {
 
     }, [getBusiness, fetchStores]);
 
+    const startIntegration = (provider) => {
+        setSelectedStore(null);
+        setForm({
+            provider,
+            store_name: "",
+            store_identifier: "",
+            webhook_url: "",
+            webhook_secret: "",
+            api_key_encrypted: "",
+            access_token_encrypted: "",
+            refresh_token_encrypted: "",
+            status: "connected"
+        });
+        setDrawerOpen(true);
+    };
+
+    // Placed before the return just after useEffect.
+
+    const filteredStores = stores.filter((store) => {
+        const query = searchQuery.trim().toLowerCase();
+
+        const matchesSearch =
+            !query ||
+            (store.store_name || "").toLowerCase().includes(query) ||
+            (store.provider || "").toLowerCase().includes(query) ||
+            (store.store_identifier || "").toLowerCase().includes(query);
+
+        const matchesProvider =
+            providerFilter === "all" ||
+            store.provider === providerFilter;
+
+        const matchesStatus =
+            statusFilter === "all" ||
+            store.status === statusFilter;
+
+        return matchesSearch && matchesProvider && matchesStatus;
+    });
+
     // ============================
     // Return JSX Below
     // ============================ 
 
-    const styles = {
+    // ============================
+    // Tesla SaaS Styles
+    // ============================
 
-        container: {
+    const styles = {
+        page: {
             minHeight: "100vh",
             background: "#050608",
-            color: "#fff",
-            padding: "28px 32px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "24px",
-            overflowY: "auto"
+            color: "#ffffff",
+            padding: "28px 32px 60px",
+            fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            boxSizing: "border-box"
         },
 
-        pageHeader: {
+        shell: {
+            maxWidth: "1500px",
+            margin: "0 auto",
+            width: "100%"
+        },
+
+        header: {
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
-            paddingBottom: "18px",
-            borderBottom: "1px solid rgba(38,216,255,.12)"
+            justifyContent: "space-between",
+            gap: "24px",
+            paddingBottom: "26px",
+            borderBottom: "1px solid rgba(255,255,255,0.07)"
         },
 
-        titleSection: {
+        headerLeft: {
             display: "flex",
-            flexDirection: "column",
-            gap: "6px"
+            alignItems: "center",
+            gap: "16px"
+        },
+
+        headerIcon: {
+            width: "52px",
+            height: "52px",
+            borderRadius: "15px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "linear-gradient(145deg, #161b20, #090b0d)",
+            border: "1px solid rgba(38,216,255,0.22)",
+            boxShadow: "0 0 25px rgba(38,216,255,0.08)",
+            color: "#26d8ff",
+            fontSize: "22px",
+            fontWeight: 800
+        },
+
+        eyebrow: {
+            fontSize: "11px",
+            fontWeight: 700,
+            letterSpacing: "1.8px",
+            textTransform: "uppercase",
+            color: "#26d8ff",
+            marginBottom: "5px"
         },
 
         title: {
-            fontSize: "32px",
-            fontWeight: 800,
-            letterSpacing: "-0.5px"
+            margin: 0,
+            fontSize: "30px",
+            lineHeight: 1.15,
+            fontWeight: 750,
+            letterSpacing: "-0.7px"
         },
 
         subtitle: {
-            color: "#8d98a5",
-            fontSize: "14px"
+            margin: "7px 0 0",
+            color: "#7e8792",
+            fontSize: "13px",
+            lineHeight: 1.5
+        },
+
+        headerActions: {
+            display: "flex",
+            alignItems: "center",
+            gap: "10px"
+        },
+
+        secondaryButton: {
+            border: "1px solid rgba(255,255,255,0.10)",
+            background: "rgba(255,255,255,0.035)",
+            color: "#dce2e7",
+            borderRadius: "11px",
+            padding: "11px 16px",
+            fontSize: "13px",
+            fontWeight: 650,
+            cursor: "pointer"
         },
 
         primaryButton: {
-            background: "linear-gradient(135deg,#26d8ff,#00b7ff)",
-            color: "#000",
-            border: "none",
-            borderRadius: "14px",
-            padding: "12px 22px",
-            fontWeight: 700,
+            border: "1px solid rgba(38,216,255,0.45)",
+            background: "linear-gradient(135deg, #26d8ff, #1299b8)",
+            color: "#020507",
+            borderRadius: "11px",
+            padding: "11px 18px",
+            fontSize: "13px",
+            fontWeight: 750,
             cursor: "pointer",
-            boxShadow: "0 0 25px rgba(38,216,255,.25)"
-        }
+            boxShadow: "0 0 22px rgba(38,216,255,0.16)"
+        },
 
+        metrics: {
+            display: "grid",
+            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+            gap: "14px",
+            marginTop: "24px"
+        },
+
+        metricCard: {
+            position: "relative",
+            overflow: "hidden",
+            background: "linear-gradient(145deg, rgba(18,22,27,0.98), rgba(9,11,14,0.98))",
+            border: "1px solid rgba(255,255,255,0.075)",
+            borderRadius: "17px",
+            padding: "20px",
+            minHeight: "126px",
+            boxSizing: "border-box"
+        },
+
+        metricGlow: {
+            position: "absolute",
+            right: "-35px",
+            top: "-35px",
+            width: "100px",
+            height: "100px",
+            borderRadius: "50%",
+            background: "rgba(38,216,255,0.07)",
+            filter: "blur(30px)",
+            pointerEvents: "none"
+        },
+
+        metricTop: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            position: "relative",
+            zIndex: 1
+        },
+
+        metricLabel: {
+            color: "#7f8994",
+            fontSize: "12px",
+            fontWeight: 600
+        },
+
+        metricIndicator: {
+            width: "7px",
+            height: "7px",
+            borderRadius: "50%",
+            background: "#26d8ff",
+            boxShadow: "0 0 10px rgba(38,216,255,0.7)"
+        },
+
+        metricValue: {
+            marginTop: "14px",
+            fontSize: "29px",
+            lineHeight: 1,
+            fontWeight: 750,
+            letterSpacing: "-0.7px",
+            position: "relative",
+            zIndex: 1
+        },
+
+        metricDescription: {
+            marginTop: "10px",
+            color: "#59636d",
+            fontSize: "11px",
+            position: "relative",
+            zIndex: 1
+        },
+
+        content: {
+            marginTop: "24px"
+        },
+
+        // Added underneath the other styles section
+        controlPanel: {
+            background: "linear-gradient(145deg, rgba(17,21,27,.98), rgba(8,10,13,.98))",
+            border: "1px solid rgba(255,255,255,.075)",
+            borderRadius: "18px",
+            padding: "20px"
+        },
+        controlHeader: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "20px",
+            marginBottom: "18px"
+        },
+        sectionTitle: {
+            margin: 0,
+            fontSize: "16px",
+            fontWeight: 700,
+            letterSpacing: "-.2px"
+        },
+        sectionDescription: {
+            margin: "5px 0 0",
+            color: "#69737e",
+            fontSize: "12px"
+        },
+        controls: {
+            display: "grid",
+            gridTemplateColumns: "minmax(220px, 1fr) 180px 180px auto",
+            gap: "10px",
+            alignItems: "center"
+        },
+        searchWrapper: {
+            position: "relative"
+        },
+        searchIcon: {
+            position: "absolute",
+            left: "14px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            color: "#59636d",
+            fontSize: "15px",
+            pointerEvents: "none"
+        },
+        input: {
+            width: "100%",
+            boxSizing: "border-box",
+            background: "#07090b",
+            border: "1px solid rgba(255,255,255,.09)",
+            borderRadius: "11px",
+            color: "#fff",
+            padding: "12px 14px",
+            fontSize: "13px",
+            outline: "none"
+        },
+        searchInput: {
+            paddingLeft: "40px"
+        },
+        select: {
+            width: "100%",
+            boxSizing: "border-box",
+            background: "#07090b",
+            border: "1px solid rgba(255,255,255,.09)",
+            borderRadius: "11px",
+            color: "#cbd2d8",
+            padding: "12px 14px",
+            fontSize: "13px",
+            outline: "none",
+            cursor: "pointer"
+        },
+        clearButton: {
+            border: "1px solid rgba(255,255,255,.08)",
+            background: "rgba(255,255,255,.035)",
+            color: "#8b959f",
+            borderRadius: "11px",
+            padding: "11px 15px",
+            fontSize: "12px",
+            fontWeight: 650,
+            cursor: "pointer",
+            whiteSpace: "nowrap"
+        },
+        connectionStrip: {
+            marginTop: "18px",
+            paddingTop: "17px",
+            borderTop: "1px solid rgba(255,255,255,.055)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "15px"
+        },
+        connectionInfo: {
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            minWidth: 0
+        },
+        connectionDot: {
+            width: "8px",
+            height: "8px",
+            borderRadius: "50%",
+            background: "#31dc7e",
+            boxShadow: "0 0 10px rgba(49,220,126,.65)",
+            flexShrink: 0
+        },
+        connectionText: {
+            color: "#727d88",
+            fontSize: "11px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+        },
+        connectionValue: {
+            color: "#d6dce1",
+            fontWeight: 650
+        },
+
+        // Added to the existing styles object.
+        storesSection: {
+            marginTop: "18px"
+        },
+        storesHeader: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "12px"
+        },
+        storesHeaderTitle: {
+            fontSize: "14px",
+            fontWeight: 700,
+            color: "#dce2e7"
+        },
+        storesHeaderCount: {
+            fontSize: "11px",
+            color: "#59636d"
+        },
+        storeGrid: {
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: "14px"
+        },
+        storeCard: {
+            position: "relative",
+            overflow: "hidden",
+            background: "linear-gradient(145deg, rgba(17,21,27,.98), rgba(8,10,13,.98))",
+            border: "1px solid rgba(255,255,255,.075)",
+            borderRadius: "17px",
+            padding: "20px"
+        },
+        storeCardTop: {
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: "14px"
+        },
+        providerIcon: {
+            width: "44px",
+            height: "44px",
+            borderRadius: "13px",
+            background: "#0a0d10",
+            border: "1px solid rgba(38,216,255,.16)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#26d8ff",
+            fontSize: "14px",
+            fontWeight: 800,
+            flexShrink: 0
+        },
+        storeIdentity: {
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            minWidth: 0
+        },
+        providerName: {
+            color: "#69737e",
+            fontSize: "10px",
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "1.2px",
+            marginBottom: "4px"
+        },
+        storeName: {
+            color: "#f3f5f7",
+            fontSize: "15px",
+            fontWeight: 700,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+        },
+        statusBadge: {
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+            padding: "6px 9px",
+            borderRadius: "999px",
+            fontSize: "10px",
+            fontWeight: 700,
+            flexShrink: 0
+        },
+        statusDot: {
+            width: "6px",
+            height: "6px",
+            borderRadius: "50%"
+        },
+        storeDetails: {
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "10px",
+            marginTop: "20px"
+        },
+        detailBox: {
+            background: "rgba(255,255,255,.025)",
+            border: "1px solid rgba(255,255,255,.045)",
+            borderRadius: "10px",
+            padding: "11px 12px",
+            minWidth: 0
+        },
+        detailLabel: {
+            color: "#59636d",
+            fontSize: "9px",
+            fontWeight: 700,
+            letterSpacing: "1px",
+            textTransform: "uppercase",
+            marginBottom: "5px"
+        },
+        detailValue: {
+            color: "#bfc7ce",
+            fontSize: "11px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap"
+        },
+        webhookRow: {
+            marginTop: "10px",
+            background: "rgba(38,216,255,.025)",
+            border: "1px solid rgba(38,216,255,.07)",
+            borderRadius: "10px",
+            padding: "11px 12px"
+        },
+        storeFooter: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px",
+            marginTop: "16px",
+            paddingTop: "15px",
+            borderTop: "1px solid rgba(255,255,255,.055)"
+        },
+        syncText: {
+            color: "#59636d",
+            fontSize: "10px"
+        },
+        actionGroup: {
+            display: "flex",
+            alignItems: "center",
+            gap: "7px"
+        },
+        actionButton: {
+            border: "1px solid rgba(255,255,255,.08)",
+            background: "rgba(255,255,255,.035)",
+            color: "#aeb7bf",
+            borderRadius: "9px",
+            padding: "8px 11px",
+            fontSize: "10px",
+            fontWeight: 650,
+            cursor: "pointer"
+        },
+        dangerButton: {
+            border: "1px solid rgba(255,82,82,.15)",
+            background: "rgba(255,82,82,.035)",
+            color: "#ff7777",
+            borderRadius: "9px",
+            padding: "8px 11px",
+            fontSize: "10px",
+            fontWeight: 650,
+            cursor: "pointer"
+        },
+        emptyState: {
+            background: "linear-gradient(145deg, rgba(17,21,27,.98), rgba(8,10,13,.98))",
+            border: "1px dashed rgba(255,255,255,.10)",
+            borderRadius: "17px",
+            padding: "55px 25px",
+            textAlign: "center"
+        },
+        emptyIcon: {
+            width: "52px",
+            height: "52px",
+            margin: "0 auto 14px",
+            borderRadius: "15px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(38,216,255,.05)",
+            border: "1px solid rgba(38,216,255,.12)",
+            color: "#26d8ff",
+            fontSize: "20px"
+        },
+        emptyTitle: {
+            color: "#dce2e7",
+            fontSize: "15px",
+            fontWeight: 700
+        },
+        emptyDescription: {
+            maxWidth: "430px",
+            margin: "7px auto 18px",
+            color: "#626c76",
+            fontSize: "12px",
+            lineHeight: 1.6
+        },
+
+        // Added to the styles object.
+        marketplaceSection: {
+            marginTop: "28px"
+        },
+        marketplaceHeader: {
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            gap: "20px",
+            marginBottom: "14px"
+        },
+        marketplaceTitle: {
+            margin: 0,
+            fontSize: "18px",
+            fontWeight: 750,
+            letterSpacing: "-.3px"
+        },
+        marketplaceDescription: {
+            margin: "6px 0 0",
+            color: "#68727d",
+            fontSize: "12px",
+            lineHeight: 1.5
+        },
+        marketplaceCount: {
+            color: "#59636d",
+            fontSize: "11px",
+            whiteSpace: "nowrap"
+        },
+        integrationGrid: {
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: "12px"
+        },
+        integrationCard: {
+            position: "relative",
+            overflow: "hidden",
+            background: "linear-gradient(145deg, rgba(16,20,25,.98), rgba(8,10,13,.98))",
+            border: "1px solid rgba(255,255,255,.065)",
+            borderRadius: "16px",
+            padding: "18px",
+            transition: "border-color .2s ease, transform .2s ease"
+        },
+        integrationTop: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px"
+        },
+        integrationIdentity: {
+            display: "flex",
+            alignItems: "center",
+            gap: "11px",
+            minWidth: 0
+        },
+        integrationIcon: {
+            width: "42px",
+            height: "42px",
+            borderRadius: "12px",
+            background: "#090c0f",
+            border: "1px solid rgba(38,216,255,.12)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#26d8ff",
+            fontSize: "12px",
+            fontWeight: 800,
+            flexShrink: 0
+        },
+        integrationName: {
+            color: "#e3e7ea",
+            fontSize: "13px",
+            fontWeight: 700
+        },
+        integrationType: {
+            color: "#59636d",
+            fontSize: "10px",
+            marginTop: "3px"
+        },
+        availableBadge: {
+            color: "#68727d",
+            border: "1px solid rgba(255,255,255,.07)",
+            background: "rgba(255,255,255,.025)",
+            borderRadius: "999px",
+            padding: "5px 8px",
+            fontSize: "9px",
+            fontWeight: 700
+        },
+        integrationDescription: {
+            color: "#68727d",
+            fontSize: "11px",
+            lineHeight: 1.55,
+            margin: "14px 0 16px",
+            minHeight: "34px"
+        },
+        integrationButton: {
+            width: "100%",
+            border: "1px solid rgba(38,216,255,.14)",
+            background: "rgba(38,216,255,.035)",
+            color: "#26d8ff",
+            borderRadius: "9px",
+            padding: "9px 12px",
+            fontSize: "11px",
+            fontWeight: 700,
+            cursor: "pointer"
+        },
+        customIntegration: {
+            border: "1px dashed rgba(38,216,255,.18)",
+            background: "linear-gradient(145deg, rgba(13,24,29,.7), rgba(8,11,13,.98))"
+        },
+
+        drawerOverlay: {
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,.62)",
+            backdropFilter: "blur(7px)",
+            WebkitBackdropFilter: "blur(7px)",
+            zIndex: 999,
+            display: "flex",
+            justifyContent: "flex-end"
+        },
+        drawer: {
+            width: "min(480px, 92vw)",
+            height: "100vh",
+            background: "linear-gradient(160deg, #11151a 0%, #07090c 100%)",
+            borderLeft: "1px solid rgba(38,216,255,.14)",
+            boxShadow: "-20px 0 70px rgba(0,0,0,.55)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden"
+        },
+        drawerHeader: {
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            gap: "15px",
+            padding: "25px 25px 20px",
+            borderBottom: "1px solid rgba(255,255,255,.07)"
+        },
+        drawerEyebrow: {
+            color: "#26d8ff",
+            fontSize: "9px",
+            fontWeight: 750,
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            marginBottom: "6px"
+        },
+        drawerTitle: {
+            margin: 0,
+            color: "#f2f5f7",
+            fontSize: "20px",
+            fontWeight: 750,
+            letterSpacing: "-.4px"
+        },
+        drawerSubtitle: {
+            margin: "6px 0 0",
+            color: "#68727d",
+            fontSize: "11px",
+            lineHeight: 1.5
+        },
+        closeButton: {
+            width: "34px",
+            height: "34px",
+            borderRadius: "10px",
+            border: "1px solid rgba(255,255,255,.08)",
+            background: "rgba(255,255,255,.035)",
+            color: "#89939d",
+            cursor: "pointer",
+            fontSize: "17px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0
+        },
+        drawerBody: {
+            flex: 1,
+            overflowY: "auto",
+            padding: "22px 25px"
+        },
+        formSection: {
+            marginBottom: "22px"
+        },
+        formSectionTitle: {
+            color: "#aeb7bf",
+            fontSize: "10px",
+            fontWeight: 750,
+            letterSpacing: "1.1px",
+            textTransform: "uppercase",
+            marginBottom: "12px"
+        },
+        formGroup: {
+            marginBottom: "13px"
+        },
+        formLabel: {
+            display: "block",
+            color: "#77818b",
+            fontSize: "10px",
+            fontWeight: 650,
+            marginBottom: "6px"
+        },
+        formInput: {
+            width: "100%",
+            boxSizing: "border-box",
+            background: "#06080a",
+            border: "1px solid rgba(255,255,255,.09)",
+            borderRadius: "10px",
+            color: "#e5e9ec",
+            padding: "11px 12px",
+            fontSize: "12px",
+            outline: "none"
+        },
+        formSelect: {
+            width: "100%",
+            boxSizing: "border-box",
+            background: "#06080a",
+            border: "1px solid rgba(255,255,255,.09)",
+            borderRadius: "10px",
+            color: "#e5e9ec",
+            padding: "11px 12px",
+            fontSize: "12px",
+            outline: "none",
+            cursor: "pointer"
+        },
+        formHint: {
+            marginTop: "5px",
+            color: "#4f5963",
+            fontSize: "9px",
+            lineHeight: 1.45
+        },
+        drawerFooter: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            gap: "9px",
+            padding: "17px 25px",
+            borderTop: "1px solid rgba(255,255,255,.07)",
+            background: "rgba(5,7,9,.75)"
+        },
+        drawerCancel: {
+            border: "1px solid rgba(255,255,255,.09)",
+            background: "rgba(255,255,255,.035)",
+            color: "#9ba4ad",
+            borderRadius: "10px",
+            padding: "10px 16px",
+            fontSize: "11px",
+            fontWeight: 650,
+            cursor: "pointer"
+        },
+        drawerSave: {
+            border: "1px solid rgba(38,216,255,.35)",
+            background: "linear-gradient(135deg,#26d8ff,#1299b8)",
+            color: "#020507",
+            borderRadius: "10px",
+            padding: "10px 18px",
+            fontSize: "11px",
+            fontWeight: 750,
+            cursor: "pointer",
+            boxShadow: "0 0 20px rgba(38,216,255,.12)"
+        },
+        providerPreview: {
+            display: "flex",
+            alignItems: "center",
+            gap: "11px",
+            padding: "13px",
+            background: "rgba(38,216,255,.035)",
+            border: "1px solid rgba(38,216,255,.09)",
+            borderRadius: "12px",
+            marginBottom: "20px"
+        },
+        providerPreviewIcon: {
+            width: "38px",
+            height: "38px",
+            borderRadius: "10px",
+            background: "#080b0e",
+            border: "1px solid rgba(38,216,255,.14)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#26d8ff",
+            fontSize: "11px",
+            fontWeight: 800
+        },
+        providerPreviewName: {
+            color: "#dce2e7",
+            fontSize: "12px",
+            fontWeight: 700
+        },
+        providerPreviewStatus: {
+            color: "#5f6a74",
+            fontSize: "9px",
+            marginTop: "3px"
+        },
+
+        actionPanel: {
+            marginTop: "16px",
+            paddingTop: "15px",
+            borderTop: "1px solid rgba(255,255,255,.055)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "12px"
+        },
+        actionInfo: {
+            minWidth: 0
+        },
+        actionSync: {
+            color: "#59636d",
+            fontSize: "10px",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis"
+        },
+        actionButtons: {
+            display: "flex",
+            alignItems: "center",
+            gap: "7px",
+            flexShrink: 0
+        },
+        editAction: {
+            border: "1px solid rgba(255,255,255,.09)",
+            background: "rgba(255,255,255,.035)",
+            color: "#c5ccd2",
+            borderRadius: "9px",
+            padding: "8px 12px",
+            fontSize: "10px",
+            fontWeight: 700,
+            cursor: "pointer"
+        },
+        toggleAction: {
+            border: "1px solid rgba(38,216,255,.13)",
+            background: "rgba(38,216,255,.035)",
+            color: "#26d8ff",
+            borderRadius: "9px",
+            padding: "8px 12px",
+            fontSize: "10px",
+            fontWeight: 700,
+            cursor: "pointer"
+        },
+        deleteAction: {
+            border: "1px solid rgba(255,82,82,.13)",
+            background: "rgba(255,82,82,.035)",
+            color: "#ff7777",
+            borderRadius: "9px",
+            padding: "8px 12px",
+            fontSize: "10px",
+            fontWeight: 700,
+            cursor: "pointer"
+        },
+        disabledAction: {
+            opacity: .45,
+            cursor: "not-allowed"
+        },
+
+        skeletonGrid: {
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: "14px"
+        },
+        skeletonCard: {
+            background: "linear-gradient(145deg, rgba(17,21,27,.98), rgba(8,10,13,.98))",
+            border: "1px solid rgba(255,255,255,.055)",
+            borderRadius: "17px",
+            padding: "20px",
+            minHeight: "190px",
+            overflow: "hidden"
+        },
+        skeletonLine: {
+            height: "10px",
+            borderRadius: "6px",
+            background: "rgba(255,255,255,.055)"
+        },
+        skeletonIcon: {
+            width: "44px",
+            height: "44px",
+            borderRadius: "13px",
+            background: "rgba(255,255,255,.045)"
+        },
+        skeletonRow: {
+            display: "flex",
+            alignItems: "center",
+            gap: "12px"
+        },
+        errorBanner: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "15px",
+            marginBottom: "18px",
+            padding: "12px 15px",
+            background: "rgba(255,75,75,.055)",
+            border: "1px solid rgba(255,75,75,.15)",
+            borderRadius: "11px"
+        },
+        errorContent: {
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            minWidth: 0
+        },
+        errorIcon: {
+            width: "24px",
+            height: "24px",
+            borderRadius: "7px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "rgba(255,75,75,.09)",
+            color: "#ff7777",
+            fontSize: "11px",
+            fontWeight: 800,
+            flexShrink: 0
+        },
+        errorText: {
+            color: "#ff9a9a",
+            fontSize: "11px",
+            lineHeight: 1.45
+        },
+        dismissError: {
+            border: "none",
+            background: "transparent",
+            color: "#8f5d5d",
+            fontSize: "16px",
+            cursor: "pointer",
+            padding: "3px 6px",
+            flexShrink: 0
+        },
+        premiumEmptyState: {
+            position: "relative",
+            overflow: "hidden",
+            textAlign: "center",
+            padding: "65px 30px",
+            borderRadius: "19px",
+            background: "radial-gradient(circle at 50% 0%, rgba(38,216,255,.075), transparent 42%), linear-gradient(145deg, rgba(17,21,27,.99), rgba(7,9,12,.99))",
+            border: "1px solid rgba(38,216,255,.09)",
+            boxShadow: "inset 0 1px rgba(255,255,255,.025)"
+        },
+        emptyGlow: {
+            position: "absolute",
+            width: "180px",
+            height: "180px",
+            borderRadius: "50%",
+            background: "rgba(38,216,255,.045)",
+            filter: "blur(50px)",
+            top: "-100px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            pointerEvents: "none"
+        },
+        emptyOrb: {
+            position: "relative",
+            width: "64px",
+            height: "64px",
+            margin: "0 auto 18px",
+            borderRadius: "18px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "linear-gradient(145deg, #10171b, #070a0d)",
+            border: "1px solid rgba(38,216,255,.18)",
+            color: "#26d8ff",
+            fontSize: "24px",
+            boxShadow: "0 0 35px rgba(38,216,255,.07)"
+        },
+        emptyHeading: {
+            margin: 0,
+            color: "#edf1f4",
+            fontSize: "18px",
+            fontWeight: 750,
+            letterSpacing: "-.3px"
+        },
+        emptyText: {
+            maxWidth: "470px",
+            margin: "9px auto 22px",
+            color: "#626d77",
+            fontSize: "12px",
+            lineHeight: 1.65
+        },
+        emptyFeatures: {
+            display: "flex",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "7px",
+            marginBottom: "24px"
+        },
+        emptyFeature: {
+            padding: "6px 9px",
+            borderRadius: "999px",
+            background: "rgba(255,255,255,.025)",
+            border: "1px solid rgba(255,255,255,.055)",
+            color: "#737e88",
+            fontSize: "9px",
+            fontWeight: 650
+        },
+        primaryButton: {
+            border: "1px solid rgba(38,216,255,.32)",
+            background: "linear-gradient(135deg, #26d8ff, #119ab9)",
+            color: "#020608",
+            borderRadius: "10px",
+            padding: "11px 18px",
+            fontSize: "11px",
+            fontWeight: 800,
+            cursor: "pointer",
+            boxShadow: "0 0 25px rgba(38,216,255,.10)"
+        }
     };
+    // ============================
+    // Main Page
+    // ============================
 
     return (
+        <div style={styles.page}>
+            <div style={styles.shell}>
 
-        <div style={styles.container}>
+                {/* ========================================= */}
+                {/* Page Header */}
+                {/* ========================================= */}
 
-            <div style={styles.pageHeader}>
+                <header style={styles.header}>
+                    <div style={styles.headerLeft}>
 
-                <div style={styles.titleSection}>
-
-                    <div style={styles.title}>
-                        Connected Stores
-                    </div>
-
-                    <div style={styles.subtitle}>
-                        Manage Shopify, WooCommerce and POS integrations.
-                    </div>
-
-                </div>
-
-                <button
-                    style={styles.primaryButton}
-                    onClick={resetForm}
-                >
-                    + Connect Store
-                </button>
-
-            </div>
-
-            {/* ================================================= */}
-            {/* Top Navigation */}
-            {/* ================================================= */}
-
-            <header className="sticky top-0 z-40 border-b border-white/10 backdrop-blur-xl bg-black/45">
-
-                <div className="max-w-7xl mx-auto px-8">
-
-                    <div className="h-20 flex items-center justify-between">
-
-                        {/* Left */}
-
-                        <div className="flex items-center gap-4">
-
-                            <div className="w-12 h-12 rounded-2xl bg-white text-black flex items-center justify-center font-black text-lg shadow-xl">
-
-                                RA
-
-                            </div>
-
-                            <div>
-
-                                <h1 className="font-semibold tracking-wide text-lg">
-
-                                    Connected Stores
-
-                                </h1>
-
-                                <p className="text-xs text-zinc-400">
-
-                                    Connect Shopify, WooCommerce, POS systems and custom webhooks
-
-                                </p>
-
-                            </div>
-
+                        <div style={styles.headerIcon}>
+                            ⇄
                         </div>
 
-                        {/* Right */}
-
-                        <div className="flex items-center gap-4">
-
-                            <button
-                                onClick={() => fetchStores(business?.id)}
-                                className="px-5 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition"
-                            >
-
-                                Refresh
-
-                            </button>
-
-                            <button
-
-                                onClick={resetForm}
-
-                                className="px-6 py-2 rounded-xl bg-white text-black font-semibold hover:scale-105 transition"
-
-                            >
-
-                                + Connect Store
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </header>
-
-            {/* ================================================= */}
-            {/* Hero */}
-            {/* ================================================= */}
-
-            <section className="max-w-7xl mx-auto px-8 pt-10">
-
-                <div className="rounded-[32px] overflow-hidden border border-white/10 bg-gradient-to-br from-zinc-900 via-black to-zinc-900">
-
-                    <div className="px-10 py-12">
-
-                        <div className="max-w-3xl">
-
-                            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-1 text-cyan-300 text-sm">
-
-                                ● Live Integrations
-
+                        <div>
+                            <div style={styles.eyebrow}>
+                                RuachAgent / Integrations
                             </div>
 
-                            <h2 className="mt-5 text-5xl font-black leading-tight">
+                            <h1 style={styles.title}>
+                                Connected Stores
+                            </h1>
 
-                                Connect every
-
-                                <span className="text-white">
-
-                                    {" "}store{" "}
-
-                                </span>
-
-                                to RuachAgent
-
-                            </h2>
-
-                            <p className="mt-5 text-zinc-400 text-lg leading-8">
-
-                                Manage Shopify stores, WooCommerce websites,
-
-                                Square terminals, Clover POS systems and custom
-
-                                webhook integrations from one intelligent
-
-                                dashboard.
-
+                            <p style={styles.subtitle}>
+                                Connect and manage the stores and POS systems that
+                                power your RuachAgent receipt automation.
                             </p>
+                        </div>
 
-                            <div className="mt-8 flex flex-wrap gap-4">
+                    </div>
 
-                                <button
+                    <div style={styles.headerActions}>
 
-                                    className="px-7 py-3 rounded-2xl bg-white text-black font-semibold"
+                        <button
+                            type="button"
+                            style={styles.secondaryButton}
+                            onClick={() => business && fetchStores(business.id)}
+                            disabled={loading}
+                        >
+                            {loading ? "Syncing..." : "↻ Refresh"}
+                        </button>
 
-                                >
+                        <button
+                            type="button"
+                            style={styles.primaryButton}
+                            onClick={resetForm}
+                        >
+                            + Connect Store
+                        </button>
 
-                                    Connect New Store
+                    </div>
+                </header>
 
-                                </button>
+                {/* ========================================= */}
+                {/* KPI Metrics */}
+                {/* ========================================= */}
 
-                                <button
+                <section style={styles.metrics}>
 
-                                    className="px-7 py-3 rounded-2xl border border-white/10 hover:bg-white/5"
+                    <div style={styles.metricCard}>
+                        <div style={styles.metricGlow} />
 
-                                >
+                        <div style={styles.metricTop}>
+                            <span style={styles.metricLabel}>
+                                CONNECTED STORES
+                            </span>
+                            <span style={styles.metricIndicator} />
+                        </div>
 
-                                    View Documentation
+                        <div style={styles.metricValue}>
+                            {stores.length}
+                        </div>
 
-                                </button>
+                        <div style={styles.metricDescription}>
+                            Total store integrations
+                        </div>
+                    </div>
 
+                    <div style={styles.metricCard}>
+                        <div
+                            style={{
+                                ...styles.metricGlow,
+                                background: "rgba(49,220,126,0.07)"
+                            }}
+                        />
+
+                        <div style={styles.metricTop}>
+                            <span style={styles.metricLabel}>
+                                ACTIVE
+                            </span>
+
+                            <span
+                                style={{
+                                    ...styles.metricIndicator,
+                                    background: "#31dc7e",
+                                    boxShadow: "0 0 10px rgba(49,220,126,0.7)"
+                                }}
+                            />
+                        </div>
+
+                        <div style={styles.metricValue}>
+                            {
+                                stores.filter(
+                                    store => store.status === "connected"
+                                ).length
+                            }
+                        </div>
+
+                        <div style={styles.metricDescription}>
+                            Currently receiving transactions
+                        </div>
+                    </div>
+
+                    <div style={styles.metricCard}>
+                        <div
+                            style={{
+                                ...styles.metricGlow,
+                                background: "rgba(255,166,61,0.07)"
+                            }}
+                        />
+
+                        <div style={styles.metricTop}>
+                            <span style={styles.metricLabel}>
+                                ATTENTION
+                            </span>
+
+                            <span
+                                style={{
+                                    ...styles.metricIndicator,
+                                    background: "#ffa63d",
+                                    boxShadow: "0 0 10px rgba(255,166,61,0.65)"
+                                }}
+                            />
+                        </div>
+
+                        <div style={styles.metricValue}>
+                            {
+                                stores.filter(
+                                    store => store.status !== "connected"
+                                ).length
+                            }
+                        </div>
+
+                        <div style={styles.metricDescription}>
+                            Stores requiring attention
+                        </div>
+                    </div>
+
+                    <div style={styles.metricCard}>
+                        <div
+                            style={{
+                                ...styles.metricGlow,
+                                background: "rgba(151,103,255,0.07)"
+                            }}
+                        />
+
+                        <div style={styles.metricTop}>
+                            <span style={styles.metricLabel}>
+                                BUSINESS
+                            </span>
+
+                            <span
+                                style={{
+                                    ...styles.metricIndicator,
+                                    background: "#9b72ff",
+                                    boxShadow: "0 0 10px rgba(155,114,255,0.65)"
+                                }}
+                            />
+                        </div>
+
+                        <div
+                            style={{
+                                ...styles.metricValue,
+                                fontSize: "20px",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
+                            }}
+                            title={business?.business_name || ""}
+                        >
+                            {business?.business_name || "Loading..."}
+                        </div>
+
+                        <div style={styles.metricDescription}>
+                            Connected merchant account
+                        </div>
+                    </div>
+
+                </section>
+
+                {/* ========================================= */}
+                {/* Content continues in Part 2 */}
+                {/* ========================================= */}
+
+                <main style={styles.content}>
+                    {/* ========================================= */}
+                    {/* Store Control Center */}
+                    {/* ========================================= */}
+                    {error && (
+                        <div style={styles.errorBanner}>
+                            <div style={styles.errorContent}>
+                                <div style={styles.errorIcon}>
+                                    !
+                                </div>
+
+                                <div style={styles.errorText}>
+                                    {error}
+                                </div>
                             </div>
 
+                            <button
+                                type="button"
+                                style={styles.dismissError}
+                                onClick={() => setError("")}
+                                aria-label="Dismiss error"
+                            >
+                                ×
+                            </button>
+                        </div>
+                    )}
+
+                    <section style={styles.controlPanel}>
+                        <div style={styles.controlHeader}>
+                            <div>
+                                <h2 style={styles.sectionTitle}>
+                                    Store Infrastructure
+                                </h2>
+                                <p style={styles.sectionDescription}>
+                                    Search, filter and manage your merchant integrations.
+                                </p>
+                            </div>
+                            <div style={{ color: "#59636d", fontSize: "12px" }}>
+                                {stores.length} integration{stores.length === 1 ? "" : "s"}
+                            </div>
                         </div>
 
-                    </div>
-
-                </div>
-
-            </section>
-
-            {/* ================================================ */}
-            {/* KPI Cards */}
-            {/* ================================================ */}
-
-            <section className="max-w-7xl mx-auto px-8 mt-8">
-
-                <div className="grid xl:grid-cols-4 lg:grid-cols-2 gap-6">
-
-                    {/* Total Stores */}
-
-                    <div className="rounded-3xl border border-white/10 bg-zinc-950/70 p-7">
-
-                        <div className="text-sm text-zinc-500">
-
-                            Connected Stores
-
-                        </div>
-
-                        <div className="mt-4 text-5xl font-black">
-
-                            {stores.length}
-
-                        </div>
-
-                        <div className="mt-3 text-sm text-green-400">
-
-                            Active integrations
-
-                        </div>
-
-                    </div>
-
-                    {/* Connected */}
-
-                    <div className="rounded-3xl border border-white/10 bg-zinc-950/70 p-7">
-
-                        <div className="text-sm text-zinc-500">
-
-                            Online
-
-                        </div>
-
-                        <div className="mt-4 text-5xl font-black">
-
-                            {
-
-                                stores.filter(
-
-                                    s => s.status === "connected"
-
-                                ).length
-
-                            }
-
-                        </div>
-
-                        <div className="mt-3 text-sm text-cyan-400">
-
-                            Currently connected
-
-                        </div>
-
-                    </div>
-
-                    {/* Offline */}
-
-                    <div className="rounded-3xl border border-white/10 bg-zinc-950/70 p-7">
-
-                        <div className="text-sm text-zinc-500">
-
-                            Offline
-
-                        </div>
-
-                        <div className="mt-4 text-5xl font-black">
-
-                            {
-
-                                stores.filter(
-
-                                    s => s.status === "disconnected"
-
-                                ).length
-
-                            }
-
-                        </div>
-
-                        <div className="mt-3 text-sm text-orange-400">
-
-                            Require attention
-
-                        </div>
-
-                    </div>
-
-                    {/* Business */}
-
-                    <div className="rounded-3xl border border-white/10 bg-zinc-950/70 p-7">
-
-                        <div className="text-sm text-zinc-500">
-
-                            Business
-
-                        </div>
-
-                        <div className="mt-4 text-2xl font-bold truncate">
-
-                            {
-
-                                business?.business_name ||
-
-                                "Loading..."
-
-                            }
-
-                        </div>
-
-                        <div className="mt-3 text-sm text-zinc-500">
-
-                            Merchant Account
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </section>
-
-            {/* Search + Toolbar */}
-            <section className="max-w-7xl mx-auto px-8 mt-8">
-                <div className="rounded-3xl border border-white/10 bg-zinc-950/70 p-6">
-                    <div className="flex flex-col xl:flex-row gap-5 xl:items-center xl:justify-between">
-
-                        <div className="flex-1">
-                            <div className="relative">
-                                <svg className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                    <circle cx="11" cy="11" r="7" />
-                                    <path d="M20 20l-3.5-3.5" />
-                                </svg>
-
+                        <div style={styles.controls}>
+                            <div style={styles.searchWrapper}>
+                                <span style={styles.searchIcon}>⌕</span>
                                 <input
                                     type="text"
-                                    placeholder="Search connected stores..."
-                                    className="w-full pl-14 pr-5 py-4 rounded-2xl bg-black border border-white/10 focus:border-cyan-400 focus:outline-none transition"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search stores, providers or identifiers..."
+                                    style={{ ...styles.input, ...styles.searchInput }}
                                 />
                             </div>
-                        </div>
 
-                        <div className="flex flex-wrap gap-3">
-
-                            <select className="px-5 py-4 rounded-2xl bg-black border border-white/10">
-                                <option>All Providers</option>
-                                <option>Shopify</option>
-                                <option>WooCommerce</option>
-                                <option>Square</option>
-                                <option>Clover</option>
-                                <option>Lightspeed</option>
-                                <option>Custom POS</option>
+                            <select
+                                value={providerFilter}
+                                onChange={(e) => setProviderFilter(e.target.value)}
+                                style={styles.select}
+                            >
+                                <option value="all">All Providers</option>
+                                <option value="Shopify">Shopify</option>
+                                <option value="WooCommerce">WooCommerce</option>
+                                <option value="Square">Square</option>
+                                <option value="Clover">Clover</option>
+                                <option value="Lightspeed">Lightspeed</option>
+                                <option value="Custom POS">Custom POS</option>
                             </select>
 
-                            <select className="px-5 py-4 rounded-2xl bg-black border border-white/10">
-                                <option>All Statuses</option>
-                                <option>Connected</option>
-                                <option>Disconnected</option>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                style={styles.select}
+                            >
+                                <option value="all">All Statuses</option>
+                                <option value="connected">Connected</option>
+                                <option value="disconnected">Disconnected</option>
                             </select>
 
                             <button
-                                onClick={() => fetchStores(business?.id)}
-                                className="px-6 py-4 rounded-2xl bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition"
+                                type="button"
+                                style={styles.clearButton}
+                                onClick={() => {
+                                    setSearchQuery("");
+                                    setProviderFilter("all");
+                                    setStatusFilter("all");
+                                }}
                             >
-                                Refresh
+                                Clear Filters
                             </button>
-
                         </div>
 
-                    </div>
-                </div>
-            </section>
-
-            {/* Quick Integration Cards */}
-            <section className="max-w-7xl mx-auto px-8 mt-8">
-                <div className="grid xl:grid-cols-3 md:grid-cols-2 gap-6">
-
-                    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#0f0f0f] to-black p-7 hover:border-cyan-500/40 transition">
-                        <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 rounded-2xl bg-green-500/15 flex items-center justify-center text-2xl">🛍️</div>
-                            <span className="text-xs text-zinc-500">Popular</span>
-                        </div>
-
-                        <h3 className="mt-6 text-xl font-bold">Shopify</h3>
-
-                        <p className="mt-3 text-sm leading-7 text-zinc-400">
-                            Connect Shopify stores and automatically deliver digital till
-                            slips after every completed order.
-                        </p>
-
-                        <button
-                            onClick={resetForm}
-                            className="mt-8 w-full py-3 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition"
-                        >
-                            Connect Shopify
-                        </button>
-                    </div>
-
-                    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#0f0f0f] to-black p-7 hover:border-cyan-500/40 transition">
-                        <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 rounded-2xl bg-purple-500/15 flex items-center justify-center text-2xl">🛒</div>
-                            <span className="text-xs text-zinc-500">eCommerce</span>
-                        </div>
-
-                        <h3 className="mt-6 text-xl font-bold">WooCommerce</h3>
-
-                        <p className="mt-3 text-sm leading-7 text-zinc-400">
-                            Receive webhook events from WooCommerce and send customers their
-                            receipts instantly.
-                        </p>
-
-                        <button
-                            onClick={resetForm}
-                            className="mt-8 w-full py-3 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition"
-                        >
-                            Connect WooCommerce
-                        </button>
-                    </div>
-
-                    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-[#0f0f0f] to-black p-7 hover:border-cyan-500/40 transition">
-                        <div className="flex items-center justify-between">
-                            <div className="w-14 h-14 rounded-2xl bg-cyan-500/15 flex items-center justify-center text-2xl">⚡</div>
-                            <span className="text-xs text-zinc-500">Webhook</span>
-                        </div>
-
-                        <h3 className="mt-6 text-xl font-bold">Custom POS</h3>
-
-                        <p className="mt-3 text-sm leading-7 text-zinc-400">
-                            Connect any POS or ERP platform using your secure RuachAgent
-                            webhook endpoint.
-                        </p>
-
-                        <button
-                            onClick={resetForm}
-                            className="mt-8 w-full py-3 rounded-xl bg-white text-black font-semibold hover:scale-[1.02] transition"
-                        >
-                            Create Webhook
-                        </button>
-                    </div>
-
-                </div>
-            </section>
-
-            {/* Connected Stores Header */}
-            <section className="max-w-7xl mx-auto px-8 mt-10">
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div>
-                        <h2 className="text-3xl font-bold">Connected Stores</h2>
-                        <p className="text-zinc-500 mt-2">
-                            Manage every connected store, POS and webhook integration from one place.
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        <span className="px-4 py-2 rounded-full bg-cyan-500/10 text-cyan-300 text-sm border border-cyan-500/20">
-                            {stores.length} Total
-                        </span>
-
-                        <span className="px-4 py-2 rounded-full bg-green-500/10 text-green-400 text-sm border border-green-500/20">
-                            {stores.filter(s => s.status === "connected").length} Active
-                        </span>
-                    </div>
-                </div>
-            </section>
-
-            {/* Connected Stores Grid */}
-            <section className="max-w-7xl mx-auto px-8 py-8">
-
-                {loading ? (
-
-                    <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-6">
-
-                        {[...Array(6)].map((_, i) => (
-                            <div
-                                key={i}
-                                className="rounded-3xl border border-white/10 bg-zinc-950/70 p-7 animate-pulse"
-                            >
-                                <div className="h-14 w-14 rounded-2xl bg-zinc-800"></div>
-                                <div className="mt-6 h-6 w-40 rounded bg-zinc-800"></div>
-                                <div className="mt-3 h-4 w-56 rounded bg-zinc-900"></div>
-                                <div className="mt-8 h-12 rounded-2xl bg-zinc-900"></div>
+                        <div style={styles.connectionStrip}>
+                            <div style={styles.connectionInfo}>
+                                <span style={styles.connectionDot} />
+                                <span style={styles.connectionText}>
+                                    Business connection:
+                                    {" "}
+                                    <span style={styles.connectionValue}>
+                                        {business?.business_name || "Loading business..."}
+                                    </span>
+                                </span>
                             </div>
-                        ))}
 
-                    </div>
+                            <div style={styles.connectionText}>
+                                Webhook:
+                                {" "}
+                                <span style={styles.connectionValue}>
+                                    {business?.webhook_slug
+                                        ? "Configured"
+                                        : "Not configured"}
+                                </span>
+                            </div>
+                        </div>
+                    </section>
 
-                ) : stores.length === 0 ? (
+                    {/* ========================================= */}
+                    {/* Connected Store Nodes */}
+                    {/* ========================================= */}
 
-                    <div className="rounded-[36px] border border-dashed border-white/10 bg-zinc-950/60 py-24 text-center">
+                    <section style={styles.storesSection}>
+                        <div style={styles.storesHeader}>
+                            <div style={styles.storesHeaderTitle}>
+                                Connected Integrations
+                            </div>
+                            <div style={styles.storesHeaderCount}>
+                                {filteredStores.length} shown
+                            </div>
+                        </div>
 
-                        <div className="text-7xl">🏪</div>
-
-                        <h2 className="mt-6 text-3xl font-bold">
-                            No Connected Stores
-                        </h2>
-
-                        <p className="mt-4 max-w-xl mx-auto text-zinc-500 leading-7">
-                            Connect Shopify, WooCommerce, Square, Clover or any POS
-                            system using secure webhook integrations.
-                        </p>
-
-                        <button
-                            onClick={resetForm}
-                            className="mt-10 px-8 py-4 rounded-2xl bg-white text-black font-semibold hover:scale-105 transition"
-                        >
-                            Connect Your First Store
-                        </button>
-
-                    </div>
-
-                ) : (
-
-                    <div className="grid xl:grid-cols-3 lg:grid-cols-2 gap-7">
-
-                        {stores.map(store => {
-
-                            const providerColor = {
-                                Shopify: "bg-green-500/15 text-green-400",
-                                WooCommerce: "bg-purple-500/15 text-purple-400",
-                                Square: "bg-cyan-500/15 text-cyan-400",
-                                Clover: "bg-emerald-500/15 text-emerald-400",
-                                Lightspeed: "bg-orange-500/15 text-orange-400"
-                            }[store.provider] || "bg-white/10 text-white";
-
-                            const providerIcon = {
-                                Shopify: "🛍️",
-                                WooCommerce: "🛒",
-                                Square: "⬜",
-                                Clover: "🍀",
-                                Lightspeed: "⚡"
-                            }[store.provider] || "🏪";
-
-                            return (
-
-                                <div
-                                    key={store.id}
-                                    className="group rounded-[30px] border border-white/10 bg-gradient-to-br from-zinc-950 via-black to-zinc-900 hover:border-cyan-400/40 transition-all duration-300 overflow-hidden"
-                                >
-
-                                    <div className="h-1 bg-gradient-to-r from-cyan-400 via-white to-cyan-400 opacity-0 group-hover:opacity-100 transition" />
-
-                                    <div className="p-7">
-
-                                        <div className="flex items-start justify-between">
-
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl ${providerColor}`}>
-                                                {providerIcon}
+                        {loading ? (
+                            <div style={styles.skeletonGrid}>
+                                {[1, 2, 3, 4].map((item) => (
+                                    <div key={item} style={styles.skeletonCard}>
+                                        <div style={styles.skeletonRow}>
+                                            <div style={styles.skeletonIcon} />
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    ...styles.skeletonLine,
+                                                    width: "65%",
+                                                    marginBottom: "8px"
+                                                }} />
+                                                <div style={{
+                                                    ...styles.skeletonLine,
+                                                    width: "42%",
+                                                    height: "7px"
+                                                }} />
                                             </div>
-
-                                            <span
-                                                className={`px-3 py-1 rounded-full text-xs font-semibold ${store.status === "connected"
-                                                    ? "bg-green-500/10 text-green-400 border border-green-500/20"
-                                                    : "bg-red-500/10 text-red-400 border border-red-500/20"
-                                                    }`}
-                                            >
-                                                {store.status}
-                                            </span>
-
                                         </div>
 
-                                        <h3 className="mt-6 text-2xl font-bold">
-                                            {store.store_name}
-                                        </h3>
+                                        <div style={{
+                                            ...styles.skeletonLine,
+                                            width: "85%",
+                                            marginTop: "25px"
+                                        }} />
 
-                                        <div className="mt-2 text-zinc-400">
-                                            {store.provider}
-                                        </div>
+                                        <div style={{
+                                            ...styles.skeletonLine,
+                                            width: "55%",
+                                            marginTop: "9px"
+                                        }} />
 
-                                        <div className="mt-6 space-y-4">
+                                        <div style={{
+                                            ...styles.skeletonLine,
+                                            width: "100%",
+                                            height: "38px",
+                                            marginTop: "18px",
+                                            borderRadius: "10px"
+                                        }} />
 
-                                            <div className="flex justify-between">
-
-                                                <span className="text-zinc-500">
-                                                    Identifier
-                                                </span>
-
-                                                <span className="text-sm text-white">
-                                                    {store.store_identifier || "--"}
-                                                </span>
-
-                                            </div>
-
-                                            <div className="flex justify-between">
-
-                                                <span className="text-zinc-500">
-                                                    Business
-                                                </span>
-
-                                                <span className="text-sm">
-                                                    {business?.business_name}
-                                                </span>
-
-                                            </div>
-
-                                            <div className="flex justify-between">
-
-                                                <span className="text-zinc-500">
-                                                    Last Sync
-                                                </span>
-
-                                                <span className="text-sm">
-
-                                                    {store.last_sync_at
-                                                        ? new Date(
-                                                            store.last_sync_at
-                                                        ).toLocaleString()
-                                                        : "Never"}
-
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-
-                                        <div className="mt-7 rounded-2xl border border-white/10 bg-black/50 p-4">
-
-                                            <div className="text-xs uppercase tracking-widest text-zinc-500">
-
-                                                Webhook URL
-
-                                            </div>
-
-                                            <div className="mt-3 break-all text-sm text-cyan-300">
-
-                                                {store.webhook_url ||
-                                                    "No webhook configured"}
-
-                                            </div>
-
-                                        </div>
-
-                                        <div className="grid grid-cols-3 gap-3 mt-7">
-
-                                            <button
-                                                onClick={() => editStore(store)}
-                                                className="rounded-xl border border-white/10 py-3 hover:bg-white/5 transition"
-                                            >
-                                                Edit
-                                            </button>
-
-                                            <button
-                                                onClick={() => toggleStatus(store)}
-                                                className={`rounded-xl py-3 font-semibold transition ${store.status === "connected"
-                                                    ? "bg-orange-500/15 text-orange-400"
-                                                    : "bg-green-500/15 text-green-400"
-                                                    }`}
-                                            >
-                                                {store.status === "connected"
-                                                    ? "Disable"
-                                                    : "Enable"}
-                                            </button>
-
-                                            <button
-                                                onClick={() => deleteStore(store.id)}
-                                                className="rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 transition"
-                                            >
-                                                Delete
-                                            </button>
-
-                                        </div>
-
+                                        <div style={{
+                                            ...styles.skeletonLine,
+                                            width: "45%",
+                                            height: "7px",
+                                            marginTop: "16px"
+                                        }} />
                                     </div>
+                                ))}
+                            </div>
+                        ) : filteredStores.length === 0 ? (
+                            <div style={styles.premiumEmptyState}>
+                                <div style={styles.emptyGlow} />
 
+                                <div style={styles.emptyOrb}>
+                                    ⇄
                                 </div>
 
-                            );
+                                <h3 style={styles.emptyHeading}>
+                                    {stores.length === 0
+                                        ? "Your store network is ready"
+                                        : "No integrations match your filters"}
+                                </h3>
 
-                        })}
-
-                    </div>
-
-                )}
-
-            </section>
-
-            {/* ================================================= */}
-            {/* Add / Edit Store Modal */}
-            {/* ================================================= */}
-
-            {(selectedStore || !selectedStore) && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-
-                    <div className="w-full max-w-3xl rounded-[32px] border border-white/10 bg-[#090909] shadow-2xl overflow-hidden">
-
-                        {/* Header */}
-
-                        <div className="flex items-center justify-between border-b border-white/10 px-8 py-6">
-
-                            <div>
-
-                                <h2 className="text-2xl font-bold">
-                                    {selectedStore ? "Edit Connected Store" : "Connect New Store"}
-                                </h2>
-
-                                <p className="text-sm text-zinc-500 mt-1">
-                                    Configure webhook integrations for your online store or POS.
+                                <p style={styles.emptyText}>
+                                    {stores.length === 0
+                                        ? "Connect your online store or point-of-sale system to RuachAgent and begin routing transaction data into your digital till slip workflow."
+                                        : "We couldn't find a connected store matching your current search and filter settings. Adjust your filters or clear them to see your integrations."}
                                 </p>
 
+                                {stores.length === 0 ? (
+                                    <>
+                                        <div style={styles.emptyFeatures}>
+                                            <span style={styles.emptyFeature}>
+                                                WEBHOOK READY
+                                            </span>
+                                            <span style={styles.emptyFeature}>
+                                                POS COMPATIBLE
+                                            </span>
+                                            <span style={styles.emptyFeature}>
+                                                REAL-TIME SYNC
+                                            </span>
+                                            <span style={styles.emptyFeature}>
+                                                DIGITAL RECEIPTS
+                                            </span>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            style={styles.primaryButton}
+                                            onClick={() => startIntegration("Custom POS")}
+                                        >
+                                            + Connect Your First Store
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        style={styles.primaryButton}
+                                        onClick={() => {
+                                            setSearchQuery("");
+                                            setProviderFilter("all");
+                                            setStatusFilter("all");
+                                        }}
+                                    >
+                                        Clear Filters
+                                    </button>
+                                )}
                             </div>
 
-                            <button
-                                onClick={resetForm}
-                                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 transition"
-                            >
-                                ✕
-                            </button>
+                        ) : (
+                            <div style={styles.storeGrid}>
+                                {filteredStores.map((store) => {
+                                    const isConnected =
+                                        store.status === "connected";
 
+                                    const providerInitials =
+                                        (store.provider || "POS")
+                                            .slice(0, 3)
+                                            .toUpperCase();
+
+                                    const lastSync = store.last_sync_at
+                                        ? new Date(
+                                            store.last_sync_at
+                                        ).toLocaleString([], {
+                                            dateStyle: "medium",
+                                            timeStyle: "short"
+                                        })
+                                        : "Never synchronized";
+
+                                    return (
+                                        <article
+                                            key={store.id}
+                                            style={styles.storeCard}
+                                        >
+                                            {/* Store Header */}
+                                            <div style={styles.storeCardTop}>
+                                                <div style={styles.storeIdentity}>
+                                                    <div style={styles.providerIcon}>
+                                                        {providerInitials}
+                                                    </div>
+
+                                                    <div style={{ minWidth: 0 }}>
+                                                        <div style={styles.providerName}>
+                                                            {store.provider || "Custom POS"}
+                                                        </div>
+
+                                                        <div style={styles.storeName}>
+                                                            {store.store_name}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div
+                                                    style={{
+                                                        ...styles.statusBadge,
+                                                        background: isConnected
+                                                            ? "rgba(49,220,126,.07)"
+                                                            : "rgba(255,82,82,.07)",
+                                                        border: isConnected
+                                                            ? "1px solid rgba(49,220,126,.14)"
+                                                            : "1px solid rgba(255,82,82,.14)",
+                                                        color: isConnected
+                                                            ? "#55e493"
+                                                            : "#ff7777"
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            ...styles.statusDot,
+                                                            background: isConnected
+                                                                ? "#31dc7e"
+                                                                : "#ff5555",
+                                                            boxShadow: isConnected
+                                                                ? "0 0 8px rgba(49,220,126,.7)"
+                                                                : "0 0 8px rgba(255,82,82,.6)"
+                                                        }}
+                                                    />
+                                                    {isConnected
+                                                        ? "Connected"
+                                                        : "Disconnected"}
+                                                </div>
+                                            </div>
+
+                                            {/* Store Details */}
+                                            <div style={styles.storeDetails}>
+                                                <div style={styles.detailBox}>
+                                                    <div style={styles.detailLabel}>
+                                                        Store Identifier
+                                                    </div>
+                                                    <div style={styles.detailValue}>
+                                                        {store.store_identifier ||
+                                                            "Not specified"}
+                                                    </div>
+                                                </div>
+
+                                                <div style={styles.detailBox}>
+                                                    <div style={styles.detailLabel}>
+                                                        Integration Status
+                                                    </div>
+                                                    <div style={styles.detailValue}>
+                                                        {isConnected
+                                                            ? "Receiving transactions"
+                                                            : "Connection paused"}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Webhook */}
+                                            <div style={styles.webhookRow}>
+                                                <div style={styles.detailLabel}>
+                                                    Webhook Endpoint
+                                                </div>
+
+                                                <div
+                                                    style={{
+                                                        ...styles.detailValue,
+                                                        color: store.webhook_url
+                                                            ? "#26d8ff"
+                                                            : "#59636d"
+                                                    }}
+                                                    title={store.webhook_url || ""}
+                                                >
+                                                    {store.webhook_url ||
+                                                        "No webhook endpoint configured"}
+                                                </div>
+                                            </div>
+
+                                            {/* ========================================= */}
+                                            {/* Store Actions */}
+                                            {/* ========================================= */}
+
+                                            <div style={styles.actionPanel}>
+                                                <div style={styles.actionInfo}>
+                                                    <div style={styles.actionSync}>
+                                                        Last sync: {lastSync}
+                                                    </div>
+                                                </div>
+
+                                                <div style={styles.actionButtons}>
+                                                    {/* EDIT */}
+                                                    <button
+                                                        type="button"
+                                                        style={styles.editAction}
+                                                        onClick={() => editStore(store)}
+                                                    >
+                                                        Edit
+                                                    </button>
+
+                                                    {/* ENABLE / DISABLE */}
+                                                    <button
+                                                        type="button"
+                                                        style={styles.toggleAction}
+                                                        onClick={() => toggleStatus(store)}
+                                                    >
+                                                        {isConnected ? "Disable" : "Enable"}
+                                                    </button>
+
+                                                    {/* DELETE */}
+                                                    <button
+                                                        type="button"
+                                                        style={styles.deleteAction}
+                                                        onClick={() => deleteStore(store.id)}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </section>
+
+                    {/* ========================================= */}
+                    {/* Integration Marketplace */}
+                    {/* ========================================= */}
+
+                    <section style={styles.marketplaceSection}>
+                        <div style={styles.marketplaceHeader}>
+                            <div>
+                                <h2 style={styles.marketplaceTitle}>
+                                    Integration Marketplace
+                                </h2>
+                                <p style={styles.marketplaceDescription}>
+                                    Connect RuachAgent to the platforms your business
+                                    already uses.
+                                </p>
+                            </div>
+
+                            <div style={styles.marketplaceCount}>
+                                More integrations coming soon
+                            </div>
                         </div>
 
-                        {/* Body */}
-
-                        <div className="p-8 space-y-6">
-
-                            {/* Provider */}
-
-                            <div>
-
-                                <label className="block mb-2 text-sm text-zinc-400">
-                                    Provider
-                                </label>
-
-                                <select
-                                    name="provider"
-                                    value={form.provider}
-                                    onChange={handleInput}
-                                    className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 focus:border-cyan-400 outline-none"
+                        <div style={styles.integrationGrid}>
+                            {[
+                                {
+                                    name: "Shopify",
+                                    code: "S",
+                                    type: "E-commerce",
+                                    description: "Receive Shopify orders and automatically process customer receipt transactions."
+                                },
+                                {
+                                    name: "WooCommerce",
+                                    code: "W",
+                                    type: "E-commerce",
+                                    description: "Connect your WooCommerce store and route completed orders into RuachAgent."
+                                },
+                                {
+                                    name: "Square",
+                                    code: "SQ",
+                                    type: "POS",
+                                    description: "Connect Square transaction events for automated digital till slip delivery."
+                                },
+                                {
+                                    name: "Clover",
+                                    code: "C",
+                                    type: "POS",
+                                    description: "Bring Clover-powered point-of-sale transactions into your RuachAgent workflow."
+                                },
+                                {
+                                    name: "Lightspeed",
+                                    code: "L",
+                                    type: "POS & Retail",
+                                    description: "Connect your Lightspeed environment for centralized transaction processing."
+                                },
+                                {
+                                    name: "Custom POS",
+                                    code: "↯",
+                                    type: "Webhook",
+                                    description: "Connect almost any POS or online store capable of sending webhook events.",
+                                    custom: true
+                                }
+                            ].map((integration) => (
+                                <div
+                                    key={integration.name}
+                                    style={{
+                                        ...styles.integrationCard,
+                                        ...(integration.custom
+                                            ? styles.customIntegration
+                                            : {})
+                                    }}
                                 >
-                                    <option value="">Choose Provider</option>
-                                    <option>Shopify</option>
-                                    <option>WooCommerce</option>
-                                    <option>Square</option>
-                                    <option>Clover</option>
-                                    <option>Lightspeed</option>
-                                    <option>Custom POS</option>
-                                </select>
+                                    <div style={styles.integrationTop}>
+                                        <div style={styles.integrationIdentity}>
+                                            <div style={styles.integrationIcon}>
+                                                {integration.code}
+                                            </div>
 
-                            </div>
+                                            <div>
+                                                <div style={styles.integrationName}>
+                                                    {integration.name}
+                                                </div>
+                                                <div style={styles.integrationType}>
+                                                    {integration.type}
+                                                </div>
+                                            </div>
+                                        </div>
 
-                            {/* Store Name */}
+                                        <span style={styles.availableBadge}>
+                                            AVAILABLE
+                                        </span>
+                                    </div>
 
-                            <div>
+                                    <div style={styles.integrationDescription}>
+                                        {integration.description}
+                                    </div>
 
-                                <label className="block mb-2 text-sm text-zinc-400">
-                                    Store Name
-                                </label>
-
-                                <input
-                                    name="store_name"
-                                    value={form.store_name}
-                                    onChange={handleInput}
-                                    placeholder="Example Electronics"
-                                    className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 outline-none focus:border-cyan-400"
-                                />
-
-                            </div>
-
-                            {/* Store Identifier */}
-
-                            <div>
-
-                                <label className="block mb-2 text-sm text-zinc-400">
-                                    Store Identifier
-                                </label>
-
-                                <input
-                                    name="store_identifier"
-                                    value={form.store_identifier}
-                                    onChange={handleInput}
-                                    placeholder="shop_12345"
-                                    className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 outline-none focus:border-cyan-400"
-                                />
-
-                            </div>
-
-                            {/* Webhook URL */}
-
-                            <div>
-
-                                <label className="block mb-2 text-sm text-zinc-400">
-                                    Webhook URL
-                                </label>
-
-                                <input
-                                    name="webhook_url"
-                                    value={form.webhook_url}
-                                    onChange={handleInput}
-                                    placeholder="https://..."
-                                    className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 outline-none focus:border-cyan-400"
-                                />
-
-                            </div>
-
-                            {/* Webhook Secret */}
-
-                            <div>
-
-                                <label className="block mb-2 text-sm text-zinc-400">
-                                    Webhook Secret
-                                </label>
-
-                                <input
-                                    name="webhook_secret"
-                                    value={form.webhook_secret}
-                                    onChange={handleInput}
-                                    placeholder="**************"
-                                    className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 outline-none focus:border-cyan-400"
-                                />
-
-                            </div>
-
-                            {/* Status */}
-
-                            <div>
-
-                                <label className="block mb-2 text-sm text-zinc-400">
-                                    Status
-                                </label>
-
-                                <select
-                                    name="status"
-                                    value={form.status}
-                                    onChange={handleInput}
-                                    className="w-full rounded-2xl border border-white/10 bg-black px-5 py-4 outline-none focus:border-cyan-400"
-                                >
-                                    <option value="connected">Connected</option>
-                                    <option value="disconnected">Disconnected</option>
-                                </select>
-
-                            </div>
-
-                            {/* Business Info */}
-
-                            <div className="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
-
-                                <div className="text-sm text-cyan-300 font-semibold">
-                                    Connected Business
+                                    <button
+                                        type="button"
+                                        style={styles.integrationButton}
+                                        onClick={() => startIntegration(integration.name)}
+                                    >
+                                        Connect
+                                    </button>
                                 </div>
-
-                                <div className="mt-2 text-lg font-bold">
-                                    {business?.business_name}
-                                </div>
-
-                                <div className="mt-2 text-sm text-zinc-400 break-all">
-                                    {business?.webhook_slug
-                                        ? `https://YOUR_PROJECT.functions.supabase.co/receipt-agent?slug=${business.webhook_slug}`
-                                        : "Webhook slug not configured"}
-                                </div>
-
-                            </div>
+                            ))}
 
                         </div>
+                    </section>
 
-                        {/* Footer */}
+                    {/* ========================================= */}
+                    {/* Store Configuration Drawer */}
+                    {/* ========================================= */}
 
-                        <div className="flex justify-end gap-4 border-t border-white/10 px-8 py-6">
+                    {drawerOpen && (
+                        <div
+                            style={styles.drawerOverlay}
+                            onMouseDown={(e) => {
+                                if (e.target === e.currentTarget) {
+                                    closeDrawer();
+                                }
+                            }}
+                        >
+                            <aside style={styles.drawer}>
+                                {/* Drawer Header */}
+                                <div style={styles.drawerHeader}>
+                                    <div>
+                                        <div style={styles.drawerEyebrow}>
+                                            {selectedStore
+                                                ? "Integration Management"
+                                                : "New Integration"}
+                                        </div>
 
-                            <button
-                                onClick={resetForm}
-                                className="px-6 py-3 rounded-xl border border-white/10 hover:bg-white/5 transition"
-                            >
-                                Cancel
-                            </button>
+                                        <h2 style={styles.drawerTitle}>
+                                            {selectedStore
+                                                ? "Manage Store"
+                                                : "Connect Store"}
+                                        </h2>
 
-                            <button
-                                disabled={saving}
-                                onClick={selectedStore ? updateStore : createStore}
-                                className="px-8 py-3 rounded-xl bg-white text-black font-semibold hover:scale-105 transition disabled:opacity-50"
-                            >
-                                {saving
-                                    ? "Saving..."
-                                    : selectedStore
-                                        ? "Update Store"
-                                        : "Connect Store"}
-                            </button>
+                                        <p style={styles.drawerSubtitle}>
+                                            Configure how this store communicates
+                                            with RuachAgent.
+                                        </p>
+                                    </div>
 
+                                    <button
+                                        type="button"
+                                        style={styles.closeButton}
+                                        onClick={closeDrawer}
+                                        aria-label="Close drawer"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+
+                                {/* Drawer Body */}
+                                <div style={styles.drawerBody}>
+
+                                    {/* Provider Preview */}
+                                    <div style={styles.providerPreview}>
+                                        <div style={styles.providerPreviewIcon}>
+                                            {(form.provider || "POS")
+                                                .slice(0, 3)
+                                                .toUpperCase()}
+                                        </div>
+
+                                        <div>
+                                            <div style={styles.providerPreviewName}>
+                                                {form.provider || "Select provider"}
+                                            </div>
+
+                                            <div style={styles.providerPreviewStatus}>
+                                                RuachAgent store integration
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Basic Configuration */}
+                                    <section style={styles.formSection}>
+                                        <div style={styles.formSectionTitle}>
+                                            Store Configuration
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Provider
+                                            </label>
+
+                                            <select
+                                                name="provider"
+                                                value={form.provider}
+                                                onChange={handleInput}
+                                                style={styles.formSelect}
+                                            >
+                                                <option value="">
+                                                    Select provider
+                                                </option>
+                                                <option value="Shopify">
+                                                    Shopify
+                                                </option>
+                                                <option value="WooCommerce">
+                                                    WooCommerce
+                                                </option>
+                                                <option value="Square">
+                                                    Square
+                                                </option>
+                                                <option value="Clover">
+                                                    Clover
+                                                </option>
+                                                <option value="Lightspeed">
+                                                    Lightspeed
+                                                </option>
+                                                <option value="Custom POS">
+                                                    Custom POS
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Store Name
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                name="store_name"
+                                                value={form.store_name}
+                                                onChange={handleInput}
+                                                placeholder="e.g. Johannesburg Store"
+                                                style={styles.formInput}
+                                            />
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Store Identifier
+                                            </label>
+
+                                            <input
+                                                type="text"
+                                                name="store_identifier"
+                                                value={form.store_identifier}
+                                                onChange={handleInput}
+                                                placeholder="Store ID, domain or POS identifier"
+                                                style={styles.formInput}
+                                            />
+
+                                            <div style={styles.formHint}>
+                                                Used to identify this integration
+                                                when multiple stores are connected.
+                                            </div>
+                                        </div>
+                                    </section>
+
+                                    {/* Webhook Configuration */}
+                                    <section style={styles.formSection}>
+                                        <div style={styles.formSectionTitle}>
+                                            Webhook Configuration
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Webhook URL
+                                            </label>
+
+                                            <input
+                                                type="url"
+                                                name="webhook_url"
+                                                value={form.webhook_url}
+                                                onChange={handleInput}
+                                                placeholder="https://..."
+                                                style={styles.formInput}
+                                            />
+
+                                            <div style={styles.formHint}>
+                                                Endpoint used to receive transaction
+                                                events from the connected store.
+                                            </div>
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Webhook Secret
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                name="webhook_secret"
+                                                value={form.webhook_secret}
+                                                onChange={handleInput}
+                                                placeholder="Enter webhook signing secret"
+                                                style={styles.formInput}
+                                            />
+                                        </div>
+                                    </section>
+
+                                    {/* Authentication */}
+                                    <section style={styles.formSection}>
+                                        <div style={styles.formSectionTitle}>
+                                            Authentication
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                API Key
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                name="api_key_encrypted"
+                                                value={form.api_key_encrypted}
+                                                onChange={handleInput}
+                                                placeholder="API key"
+                                                style={styles.formInput}
+                                            />
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Access Token
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                name="access_token_encrypted"
+                                                value={form.access_token_encrypted}
+                                                onChange={handleInput}
+                                                placeholder="Access token"
+                                                style={styles.formInput}
+                                            />
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Refresh Token
+                                            </label>
+
+                                            <input
+                                                type="password"
+                                                name="refresh_token_encrypted"
+                                                value={form.refresh_token_encrypted}
+                                                onChange={handleInput}
+                                                placeholder="Refresh token"
+                                                style={styles.formInput}
+                                            />
+                                        </div>
+                                    </section>
+
+                                    {/* Status */}
+                                    <section style={styles.formSection}>
+                                        <div style={styles.formSectionTitle}>
+                                            Connection Status
+                                        </div>
+
+                                        <div style={styles.formGroup}>
+                                            <label style={styles.formLabel}>
+                                                Status
+                                            </label>
+
+                                            <select
+                                                name="status"
+                                                value={form.status}
+                                                onChange={handleInput}
+                                                style={styles.formSelect}
+                                            >
+                                                <option value="connected">
+                                                    Connected
+                                                </option>
+                                                <option value="disconnected">
+                                                    Disconnected
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </section>
+                                </div>
+
+                                {/* Drawer Footer */}
+                                <div style={styles.drawerFooter}>
+                                    <button
+                                        type="button"
+                                        style={styles.drawerCancel}
+                                        onClick={closeDrawer}
+                                        disabled={saving}
+                                    >
+                                        Cancel
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        style={styles.drawerSave}
+                                        disabled={
+                                            saving ||
+                                            !form.provider ||
+                                            !form.store_name
+                                        }
+                                        onClick={async () => {
+                                            if (selectedStore) {
+                                                await updateStore();
+                                            } else {
+                                                await createStore();
+                                            }
+                                            setDrawerOpen(false);
+                                        }}
+                                    >
+                                        {saving
+                                            ? "Saving..."
+                                            : selectedStore
+                                                ? "Save Changes"
+                                                : "Connect Store"}
+                                    </button>
+                                </div>
+                            </aside>
                         </div>
-
-                    </div>
-
-                </div>
-            )}
-
-        </div>
+                    )}
+                </main>
+            </div>
+        </div >
     );
-} 
+}

@@ -1150,7 +1150,7 @@ export default function AdminPanel() {
                 </button>
 
                 <button className="sidebar-item"
-                  onClick={() => navigate("/till-slips-collwction")}
+                  onClick={() => navigate("/till-slips-collection")}
                 >
                   <FileText size={18} />
 
@@ -1568,3 +1568,5 @@ export default function AdminPanel() {
     </div>
   );
 }
+
+// The sidebar and topbar should be visually compatible with AdminPanel.jsx(the chat section and till slip preview should be persistent), while Analysis, Connected Stores, Agent Parameters and Till Slips Collection themselves get their own content area.
