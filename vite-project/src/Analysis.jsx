@@ -25,10 +25,6 @@ import "./AdminPanel.css";
 
 export default function Analysis() {
 
-  // =========================================================
-  // BACKEND
-  // =========================================================
-
   const {
     user,
     settings,
@@ -1102,7 +1098,7 @@ export default function Analysis() {
             28-PERIOD ANALYTICS GRAPH
     ===================================================== */}
 
-              <section
+              <div
                 style={{
                   ...styles.previewPanel,
                   minHeight: "380px",
@@ -1435,7 +1431,7 @@ export default function Analysis() {
 
                 </div>
 
-              </section>
+              </div>
 
 
               {/* =====================================================
@@ -3088,496 +3084,491 @@ export default function Analysis() {
 
                 `}
       </style>
-      {/* =========================================================
-    PART 3 — RESPONSIVE / INTERACTION / SYSTEM POLISH
-========================================================= */
+      {/* PART 3 - RESPONSIVE / INTERACTION / SYSTEM POLISH */}
 
+      {/* ANALYSIS PAGE INTERACTION LAYER */}
 
-        /* =========================================================
-           ANALYSIS PAGE INTERACTION LAYER
-        ========================================================= */
+      <section
+        style={{
+          marginTop: "18px",
+          display: "grid",
+          gridTemplateColumns: "1fr",
+          gap: "14px"
+        }}
+        className="analysis-system-footer"
+      >
 
-        <div
-          style={{
-            marginTop: "18px",
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: "14px"
-          }}
-          className="analysis-system-footer"
-        >
-
-          {/* =====================================================
+        {/* =====================================================
         SYSTEM STATUS STRIP
     ===================================================== */}
 
+        <div
+          style={{
+            ...styles.previewPanel,
+            minHeight: "58px",
+            padding: "0 16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "18px",
+            position: "relative",
+            overflow: "hidden"
+          }}
+        >
+
+          {/* CYAN AMBIENT LINE */}
+
           <div
             style={{
-              ...styles.previewPanel,
-              minHeight: "58px",
-              padding: "0 16px",
+              position: "absolute",
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: "2px",
+              background:
+                "linear-gradient(180deg, transparent, #00C6FF, transparent)",
+              opacity: .8
+            }}
+          />
+
+          <div
+            style={{
               display: "flex",
               alignItems: "center",
-              justifyContent: "space-between",
-              gap: "18px",
+              gap: "9px",
+              minWidth: 0
+            }}
+          >
+
+            <span
+              style={{
+                width: "7px",
+                height: "7px",
+                flexShrink: 0,
+                borderRadius: "50%",
+                background: loadingAnalytics
+                  ? "#FBBF24"
+                  : "#00F5A0",
+                boxShadow: loadingAnalytics
+                  ? "0 0 10px rgba(251,191,36,.6)"
+                  : "0 0 10px rgba(0,245,160,.65)",
+                animation:
+                  "analysisStatusPulse 2s infinite"
+              }}
+            />
+
+            <span
+              style={{
+                color: "#778596",
+                fontSize: "8px",
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".7px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              }}
+            >
+              {loadingAnalytics
+                ? "ANALYTICS ENGINE SYNCHRONIZING"
+                : "ANALYTICS ENGINE OPERATIONAL"}
+            </span>
+
+          </div>
+
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              flexShrink: 0
+            }}
+          >
+
+            <span
+              style={{
+                color: "#465566",
+                fontSize: "7px",
+                fontFamily: "monospace",
+                letterSpacing: ".5px"
+              }}
+            >
+              SUPABASE
+            </span>
+
+            <span
+              style={{
+                width: "5px",
+                height: "5px",
+                borderRadius: "50%",
+                background: "#00F5A0",
+                boxShadow:
+                  "0 0 7px rgba(0,245,160,.5)"
+              }}
+            />
+
+          </div>
+
+        </div>
+
+
+        {/* =====================================================
+        EMPTY STATE
+    ===================================================== */}
+
+        {safeTxCount === 0 && !loadingAnalytics && (
+          <section
+            style={{
+              ...styles.previewPanel,
+              minHeight: "270px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              padding: "35px 20px",
               position: "relative",
               overflow: "hidden"
             }}
           >
 
-            {/* CYAN AMBIENT LINE */}
+            {/* EMPTY STATE RADIAL */}
+
+            <div
+              style={{
+                position: "absolute",
+                width: "280px",
+                height: "280px",
+                borderRadius: "50%",
+                background:
+                  "radial-gradient(circle, rgba(0,198,255,.055), transparent 68%)",
+                pointerEvents: "none"
+              }}
+            />
+
+
+            <div
+              style={{
+                position: "relative",
+                zIndex: 2,
+                maxWidth: "460px"
+              }}
+            >
+
+              {/* ICON */}
+
+              <div
+                style={{
+                  width: "58px",
+                  height: "58px",
+                  margin: "0 auto 18px",
+                  borderRadius: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background:
+                    "linear-gradient(145deg, rgba(0,198,255,.09), rgba(0,245,160,.045))",
+                  border:
+                    "1px solid rgba(0,198,255,.15)",
+                  color: "#00C6FF",
+                  boxShadow:
+                    "0 0 30px rgba(0,198,255,.06)"
+                }}
+              >
+                <BarChart3 size={24} />
+              </div>
+
+
+              <div
+                style={{
+                  color: "#dce5ec",
+                  fontSize: "14px",
+                  fontWeight: 900,
+                  fontFamily: "monospace",
+                  letterSpacing: ".5px"
+                }}
+              >
+                Analytics Awaiting Activity
+              </div>
+
+
+              <div
+                style={{
+                  marginTop: "9px",
+                  color: "#596879",
+                  fontSize: "10px",
+                  lineHeight: 1.7
+                }}
+              >
+                Once your connected inboxes begin receiving
+                till slips, RuachAgent will populate this
+                dashboard with transaction volume, revenue
+                activity and business intelligence.
+              </div>
+
+
+              {/* EMPTY STATE SIGNAL */}
+
+              <div
+                style={{
+                  marginTop: "18px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "7px",
+                  padding: "7px 11px",
+                  borderRadius: "8px",
+                  background:
+                    "rgba(0,198,255,.035)",
+                  border:
+                    "1px solid rgba(0,198,255,.08)",
+                  color: "#5c788b",
+                  fontSize: "7px",
+                  fontFamily: "monospace",
+                  letterSpacing: ".6px"
+                }}
+              >
+
+                <span
+                  style={{
+                    width: "5px",
+                    height: "5px",
+                    borderRadius: "50%",
+                    background: "#00C6FF"
+                  }}
+                />
+
+                WAITING FOR FIRST TRANSACTION
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+
+        {/* =====================================================
+        LOADING STATE
+    ===================================================== */}
+
+        {loadingAnalytics && (
+          <section
+            style={{
+              ...styles.previewPanel,
+              minHeight: "270px",
+              padding: "28px",
+              position: "relative",
+              overflow: "hidden"
+            }}
+          >
+
+            {/* SCANNING LINE */}
 
             <div
               style={{
                 position: "absolute",
                 left: 0,
-                top: 0,
-                bottom: 0,
-                width: "2px",
+                right: 0,
+                top: "0",
+                height: "1px",
                 background:
-                  "linear-gradient(180deg, transparent, #00C6FF, transparent)",
-                opacity: .8
+                  "linear-gradient(90deg, transparent, #00C6FF, transparent)",
+                animation:
+                  "analysisScanLine 2.2s linear infinite"
               }}
             />
 
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "9px",
-                minWidth: 0
-              }}
-            >
-
-              <span
-                style={{
-                  width: "7px",
-                  height: "7px",
-                  flexShrink: 0,
-                  borderRadius: "50%",
-                  background: loadingAnalytics
-                    ? "#FBBF24"
-                    : "#00F5A0",
-                  boxShadow: loadingAnalytics
-                    ? "0 0 10px rgba(251,191,36,.6)"
-                    : "0 0 10px rgba(0,245,160,.65)",
-                  animation:
-                    "analysisStatusPulse 2s infinite"
-                }}
-              />
-
-              <span
-                style={{
-                  color: "#778596",
-                  fontSize: "8px",
-                  fontFamily: "monospace",
-                  fontWeight: 700,
-                  letterSpacing: ".7px",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis"
-                }}
-              >
-                {loadingAnalytics
-                  ? "ANALYTICS ENGINE SYNCHRONIZING"
-                  : "ANALYTICS ENGINE OPERATIONAL"}
-              </span>
-
-            </div>
-
 
             <div
               style={{
                 display: "flex",
-                alignItems: "center",
-                gap: "14px",
-                flexShrink: 0
-              }}
-            >
-
-              <span
-                style={{
-                  color: "#465566",
-                  fontSize: "7px",
-                  fontFamily: "monospace",
-                  letterSpacing: ".5px"
-                }}
-              >
-                SUPABASE
-              </span>
-
-              <span
-                style={{
-                  width: "5px",
-                  height: "5px",
-                  borderRadius: "50%",
-                  background: "#00F5A0",
-                  boxShadow:
-                    "0 0 7px rgba(0,245,160,.5)"
-                }}
-              />
-
-            </div>
-
-          </div>
-
-
-          {/* =====================================================
-        EMPTY STATE
-    ===================================================== */}
-
-          {safeTxCount === 0 && !loadingAnalytics && (
-            <section
-              style={{
-                ...styles.previewPanel,
-                minHeight: "270px",
-                display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                textAlign: "center",
-                padding: "35px 20px",
-                position: "relative",
-                overflow: "hidden"
+                height: "100%",
+                minHeight: "210px"
               }}
             >
 
-              {/* EMPTY STATE RADIAL */}
+              {/* LOADER */}
 
               <div
                 style={{
-                  position: "absolute",
-                  width: "280px",
-                  height: "280px",
+                  width: "46px",
+                  height: "46px",
                   borderRadius: "50%",
-                  background:
-                    "radial-gradient(circle, rgba(0,198,255,.055), transparent 68%)",
-                  pointerEvents: "none"
+                  border:
+                    "1px solid rgba(0,198,255,.12)",
+                  borderTopColor:
+                    "#00C6FF",
+                  borderRightColor:
+                    "#00F5A0",
+                  animation:
+                    "analysisLoaderSpin 1s linear infinite",
+                  boxShadow:
+                    "0 0 25px rgba(0,198,255,.06)"
                 }}
               />
 
+
+              <div
+                style={{
+                  marginTop: "18px",
+                  color: "#dce5ec",
+                  fontSize: "10px",
+                  fontWeight: 800,
+                  fontFamily: "monospace",
+                  letterSpacing: "1px"
+                }}
+              >
+                SYNCHRONIZING ANALYTICS
+              </div>
+
+
+              <div
+                style={{
+                  marginTop: "7px",
+                  color: "#4f6072",
+                  fontSize: "8px",
+                  fontFamily: "monospace"
+                }}
+              >
+                Reading merchant intelligence matrix...
+              </div>
+
+
+              {/* LOADING BLOCKS */}
+
+              <div
+                style={{
+                  marginTop: "20px",
+                  display: "flex",
+                  gap: "5px"
+                }}
+              >
+
+                {Array.from({
+                  length: 5
+                }).map((_, index) => (
+
+                  <div
+                    key={index}
+                    style={{
+                      width: "24px",
+                      height: "3px",
+                      borderRadius: "999px",
+                      background:
+                        index === 0
+                          ? "#00C6FF"
+                          : "rgba(255,255,255,.06)",
+                      animation:
+                        "analysisLoadingBlock 1.2s infinite",
+                      animationDelay:
+                        `${index * .12}s`
+                    }}
+                  />
+
+                ))}
+
+              </div>
+
+            </div>
+
+          </section>
+        )}
+
+
+        {/* =====================================================
+        ACTIVE ANALYTICS SIGNAL
+    ===================================================== */}
+
+        {safeTxCount > 0 && !loadingAnalytics && (
+          <section
+            style={{
+              ...styles.previewPanel,
+              padding: "14px 16px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "15px",
+              minHeight: "48px"
+            }}
+          >
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "9px"
+              }}
+            >
 
               <div
                 style={{
                   position: "relative",
-                  zIndex: 2,
-                  maxWidth: "460px"
+                  width: "8px",
+                  height: "8px"
                 }}
               >
-
-                {/* ICON */}
-
-                <div
-                  style={{
-                    width: "58px",
-                    height: "58px",
-                    margin: "0 auto 18px",
-                    borderRadius: "16px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background:
-                      "linear-gradient(145deg, rgba(0,198,255,.09), rgba(0,245,160,.045))",
-                    border:
-                      "1px solid rgba(0,198,255,.15)",
-                    color: "#00C6FF",
-                    boxShadow:
-                      "0 0 30px rgba(0,198,255,.06)"
-                  }}
-                >
-                  <BarChart3 size={24} />
-                </div>
-
-
-                <div
-                  style={{
-                    color: "#dce5ec",
-                    fontSize: "14px",
-                    fontWeight: 900,
-                    fontFamily: "monospace",
-                    letterSpacing: ".5px"
-                  }}
-                >
-                  Analytics Awaiting Activity
-                </div>
-
-
-                <div
-                  style={{
-                    marginTop: "9px",
-                    color: "#596879",
-                    fontSize: "10px",
-                    lineHeight: 1.7
-                  }}
-                >
-                  Once your connected inboxes begin receiving
-                  till slips, RuachAgent will populate this
-                  dashboard with transaction volume, revenue
-                  activity and business intelligence.
-                </div>
-
-
-                {/* EMPTY STATE SIGNAL */}
-
-                <div
-                  style={{
-                    marginTop: "18px",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "7px",
-                    padding: "7px 11px",
-                    borderRadius: "8px",
-                    background:
-                      "rgba(0,198,255,.035)",
-                    border:
-                      "1px solid rgba(0,198,255,.08)",
-                    color: "#5c788b",
-                    fontSize: "7px",
-                    fontFamily: "monospace",
-                    letterSpacing: ".6px"
-                  }}
-                >
-
-                  <span
-                    style={{
-                      width: "5px",
-                      height: "5px",
-                      borderRadius: "50%",
-                      background: "#00C6FF"
-                    }}
-                  />
-
-                  WAITING FOR FIRST TRANSACTION
-
-                </div>
-
-              </div>
-
-            </section>
-          )}
-
-
-          {/* =====================================================
-        LOADING STATE
-    ===================================================== */}
-
-          {loadingAnalytics && (
-            <section
-              style={{
-                ...styles.previewPanel,
-                minHeight: "270px",
-                padding: "28px",
-                position: "relative",
-                overflow: "hidden"
-              }}
-            >
-
-              {/* SCANNING LINE */}
-
-              <div
-                style={{
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  top: "0",
-                  height: "1px",
-                  background:
-                    "linear-gradient(90deg, transparent, #00C6FF, transparent)",
-                  animation:
-                    "analysisScanLine 2.2s linear infinite"
-                }}
-              />
-
-
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
-                  minHeight: "210px"
-                }}
-              >
-
-                {/* LOADER */}
-
-                <div
-                  style={{
-                    width: "46px",
-                    height: "46px",
-                    borderRadius: "50%",
-                    border:
-                      "1px solid rgba(0,198,255,.12)",
-                    borderTopColor:
-                      "#00C6FF",
-                    borderRightColor:
-                      "#00F5A0",
-                    animation:
-                      "analysisLoaderSpin 1s linear infinite",
-                    boxShadow:
-                      "0 0 25px rgba(0,198,255,.06)"
-                  }}
-                />
-
-
-                <div
-                  style={{
-                    marginTop: "18px",
-                    color: "#dce5ec",
-                    fontSize: "10px",
-                    fontWeight: 800,
-                    fontFamily: "monospace",
-                    letterSpacing: "1px"
-                  }}
-                >
-                  SYNCHRONIZING ANALYTICS
-                </div>
-
-
-                <div
-                  style={{
-                    marginTop: "7px",
-                    color: "#4f6072",
-                    fontSize: "8px",
-                    fontFamily: "monospace"
-                  }}
-                >
-                  Reading merchant intelligence matrix...
-                </div>
-
-
-                {/* LOADING BLOCKS */}
-
-                <div
-                  style={{
-                    marginTop: "20px",
-                    display: "flex",
-                    gap: "5px"
-                  }}
-                >
-
-                  {Array.from({
-                    length: 5
-                  }).map((_, index) => (
-
-                    <div
-                      key={index}
-                      style={{
-                        width: "24px",
-                        height: "3px",
-                        borderRadius: "999px",
-                        background:
-                          index === 0
-                            ? "#00C6FF"
-                            : "rgba(255,255,255,.06)",
-                        animation:
-                          "analysisLoadingBlock 1.2s infinite",
-                        animationDelay:
-                          `${index * .12}s`
-                      }}
-                    />
-
-                  ))}
-
-                </div>
-
-              </div>
-
-            </section>
-          )}
-
-
-          {/* =====================================================
-        ACTIVE ANALYTICS SIGNAL
-    ===================================================== */}
-
-          {safeTxCount > 0 && !loadingAnalytics && (
-            <section
-              style={{
-                ...styles.previewPanel,
-                padding: "14px 16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "15px",
-                minHeight: "48px"
-              }}
-            >
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "9px"
-                }}
-              >
-
-                <div
-                  style={{
-                    position: "relative",
-                    width: "8px",
-                    height: "8px"
-                  }}
-                >
-
-                  <span
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      borderRadius: "50%",
-                      background: "#00F5A0",
-                      boxShadow:
-                        "0 0 9px rgba(0,245,160,.7)"
-                    }}
-                  />
-
-                  <span
-                    style={{
-                      position: "absolute",
-                      inset: "-4px",
-                      borderRadius: "50%",
-                      border:
-                        "1px solid rgba(0,245,160,.18)",
-                      animation:
-                        "analysisRipple 2s infinite"
-                    }}
-                  />
-
-                </div>
-
 
                 <span
                   style={{
-                    color: "#718091",
-                    fontSize: "8px",
-                    fontFamily: "monospace",
-                    letterSpacing: ".6px"
+                    position: "absolute",
+                    inset: 0,
+                    borderRadius: "50%",
+                    background: "#00F5A0",
+                    boxShadow:
+                      "0 0 9px rgba(0,245,160,.7)"
                   }}
-                >
-                  LIVE MERCHANT ACTIVITY DETECTED
-                </span>
+                />
+
+                <span
+                  style={{
+                    position: "absolute",
+                    inset: "-4px",
+                    borderRadius: "50%",
+                    border:
+                      "1px solid rgba(0,245,160,.18)",
+                    animation:
+                      "analysisRipple 2s infinite"
+                  }}
+                />
 
               </div>
 
 
               <span
                 style={{
-                  color: "#3f5365",
-                  fontSize: "7px",
+                  color: "#718091",
+                  fontSize: "8px",
                   fontFamily: "monospace",
-                  whiteSpace: "nowrap"
+                  letterSpacing: ".6px"
                 }}
               >
-                {safeTxCount.toLocaleString()} TRANSACTIONS
+                LIVE MERCHANT ACTIVITY DETECTED
               </span>
 
-            </section>
-          )}
-
-        </div>
+            </div>
 
 
-{/* =========================================================
+            <span
+              style={{
+                color: "#3f5365",
+                fontSize: "7px",
+                fontFamily: "monospace",
+                whiteSpace: "nowrap"
+              }}
+            >
+              {safeTxCount.toLocaleString()} TRANSACTIONS
+            </span>
+
+          </section>
+        )}
+
+      </section>
+
+
+      {/* =========================================================
     PART 3 — PAGE-LEVEL RESPONSIVE / ANIMATION CSS
 ========================================================= */}
 
@@ -3883,6 +3874,6 @@ export default function Analysis() {
     `}
       </style>
 
-    </div>
+    </div >
   );
 }
