@@ -8,7 +8,7 @@ import html2pdf from "html2pdf.js";
 // ============================================================
 
 // Current production receipt design
-import MatrixTillSlip from "./MatrixTillSlip";
+import MatrixTillSlip from "../MatrixTillSlip";
 
 // Add your other designs here as they are created.
 //

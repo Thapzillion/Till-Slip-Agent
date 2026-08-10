@@ -8,7 +8,7 @@ import { useBusiness } from "./backend/businessService";
 
 import { useNavigate } from "react-router-dom";
 
-import MatrixTillSlip from "./MatrixTillSlip";
+import MatrixTillSlip from "../MatrixTillSlip";
 
 import {
   LayoutDashboard,

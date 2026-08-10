@@ -605,148 +605,150 @@ export default function TillSlipsCollection() {
                         }}
                     >
 
-                        {filteredDesigns.map((design) => (
+                        {filteredDesigns.map((design) => {
 
-                            <div
-                                key={design.id}
-                                style={{
-                                    background:
-                                        "linear-gradient(180deg,#09131A,#050B10)",
+                            return (
 
-                                    border: "1px solid rgba(8,227,216,.12)",
+                                <div
+                                    key={design.id}
+                                    style={{
+                                        background:
+                                            "linear-gradient(180deg,#09131A,#050B10)",
 
-                                    borderRadius: "28px",
+                                        border: "1px solid rgba(8,227,216,.12)",
 
-                                    overflow: "hidden",
+                                        borderRadius: "28px",
 
-                                    transition: "all .25s ease",
+                                        overflow: "hidden",
 
-                                    boxShadow: `
+                                        transition: "all .25s ease",
+
+                                        boxShadow: `
             0 12px 35px rgba(0,0,0,.35),
             0 0 15px rgba(8,227,216,.05)
           `
-                                }}
+                                    }}
 
-                                onMouseEnter={(e) => {
+                                    onMouseEnter={(e) => {
 
-                                    e.currentTarget.style.transform =
-                                        "translateY(-6px)";
+                                        e.currentTarget.style.transform =
+                                            "translateY(-6px)";
 
-                                    e.currentTarget.style.border =
-                                        "1px solid rgba(8,227,216,.35)";
+                                        e.currentTarget.style.border =
+                                            "1px solid rgba(8,227,216,.35)";
 
-                                    e.currentTarget.style.boxShadow = `
+                                        e.currentTarget.style.boxShadow = `
             0 20px 45px rgba(0,0,0,.45),
             0 0 30px rgba(8,227,216,.18)
           `;
 
-                                }}
+                                    }}
 
-                                onMouseLeave={(e) => {
+                                    onMouseLeave={(e) => {
 
-                                    e.currentTarget.style.transform =
-                                        "translateY(0px)";
+                                        e.currentTarget.style.transform =
+                                            "translateY(0px)";
 
-                                    e.currentTarget.style.border =
-                                        "1px solid rgba(8,227,216,.12)";
+                                        e.currentTarget.style.border =
+                                            "1px solid rgba(8,227,216,.12)";
 
-                                    e.currentTarget.style.boxShadow = `
+                                        e.currentTarget.style.boxShadow = `
             0 12px 35px rgba(0,0,0,.35),
             0 0 15px rgba(8,227,216,.05)
           `;
 
-                                }}
-                            >
+                                    }}
+                                >
 
-                                {/* =====================================================
+                                    {/* =====================================================
             CARD HEADER
         ====================================================== */}
 
-                                <div
-                                    style={{
-                                        padding: "18px 22px",
-
-                                        display: "flex",
-
-                                        justifyContent: "space-between",
-
-                                        alignItems: "center",
-
-                                        borderBottom:
-                                            "1px solid rgba(255,255,255,.05)"
-                                    }}
-                                >
-
                                     <div
                                         style={{
-                                            color: "#FFFFFF",
-                                            fontSize: "18px",
-                                            fontWeight: 800,
-                                            letterSpacing: ".3px"
+                                            padding: "18px 22px",
+
+                                            display: "flex",
+
+                                            justifyContent: "space-between",
+
+                                            alignItems: "center",
+
+                                            borderBottom:
+                                                "1px solid rgba(255,255,255,.05)"
                                         }}
                                     >
-                                        {design.name}
+
+                                        <div
+                                            style={{
+                                                color: "#FFFFFF",
+                                                fontSize: "18px",
+                                                fontWeight: 800,
+                                                letterSpacing: ".3px"
+                                            }}
+                                        >
+                                            {design.name}
+                                        </div>
+
+                                        <div
+                                            style={{
+                                                padding: "6px 12px",
+
+                                                borderRadius: "999px",
+
+                                                background:
+                                                    "rgba(8,227,216,.08)",
+
+                                                border:
+                                                    "1px solid rgba(8,227,216,.18)",
+
+                                                color: "#08E3D8",
+
+                                                fontSize: "11px",
+
+                                                fontWeight: 800,
+
+                                                textTransform: "uppercase",
+
+                                                letterSpacing: ".6px"
+                                            }}
+                                        >
+                                            {design.category}
+                                        </div>
+
                                     </div>
 
-                                    <div
-                                        style={{
-                                            padding: "6px 12px",
-
-                                            borderRadius: "999px",
-
-                                            background:
-                                                "rgba(8,227,216,.08)",
-
-                                            border:
-                                                "1px solid rgba(8,227,216,.18)",
-
-                                            color: "#08E3D8",
-
-                                            fontSize: "11px",
-
-                                            fontWeight: 800,
-
-                                            textTransform: "uppercase",
-
-                                            letterSpacing: ".6px"
-                                        }}
-                                    >
-                                        {design.category}
-                                    </div>
-
-                                </div>
-
-                                {/* =====================================================
+                                    {/* =====================================================
             DESIGN PREVIEW AREA
         ====================================================== */}
 
-                                <div
-                                    style={{
-                                        padding: "20px",
-
-                                        minHeight: "620px",
-
-                                        display: "flex",
-
-                                        justifyContent: "center",
-
-                                        alignItems: "center"
-                                    }}
-                                >
-
                                     <div
                                         style={{
-                                            width: "100%",
+                                            padding: "20px",
 
-                                            minHeight: "560px",
+                                            minHeight: "620px",
 
-                                            borderRadius: "22px",
+                                            display: "flex",
 
-                                            border:
-                                                "2px dashed rgba(8,227,216,.18)",
+                                            justifyContent: "center",
 
-                                            background:
-                                                `
+                                            alignItems: "center"
+                                        }}
+                                    >
+
+                                        <div
+                                            style={{
+                                                width: "100%",
+
+                                                minHeight: "560px",
+
+                                                borderRadius: "22px",
+
+                                                border:
+                                                    "2px dashed rgba(8,227,216,.18)",
+
+                                                background:
+                                                    `
                 linear-gradient(
                   180deg,
                   rgba(8,18,24,.65),
@@ -754,314 +756,318 @@ export default function TillSlipsCollection() {
                 )
                 `,
 
-                                            display: "flex",
+                                                display: "flex",
 
-                                            justifyContent: "center",
+                                                justifyContent: "center",
 
-                                            alignItems: "center",
+                                                alignItems: "center",
 
-                                            padding: "24px",
+                                                padding: "24px",
 
-                                            position: "relative",
+                                                position: "relative",
 
-                                            overflow: "hidden"
-                                        }}
-                                    >
+                                                overflow: "hidden"
+                                            }}
+                                        >
 
-                                        {/* GRID BACKGROUND */}
+                                            {/* GRID BACKGROUND */}
 
-                                        <div
-                                            style={{
-                                                position: "absolute",
+                                            <div
+                                                style={{
+                                                    position: "absolute",
 
-                                                inset: 0,
+                                                    inset: 0,
 
-                                                backgroundImage:
-                                                    `
+                                                    backgroundImage:
+                                                        `
                   linear-gradient(rgba(8,227,216,.05) 1px, transparent 1px),
                   linear-gradient(90deg, rgba(8,227,216,.05) 1px, transparent 1px)
                   `,
 
-                                                backgroundSize: "22px 22px",
+                                                    backgroundSize: "22px 22px",
 
-                                                pointerEvents: "none"
-                                            }}
-                                        />
+                                                    pointerEvents: "none"
+                                                }}
+                                            />
 
-                                        {/* ===================================================
+                                            {/* ===================================================
                                             LIVE DESIGN SLOT
                                         ==================================================== */}
 
-                                        <div
-                                            style={{
-                                                position: "relative",
-                                                zIndex: 2,
-                                                width: "100%"
-                                            }}
-                                        >
-                                            {design.id === "matrix-grid" ? (
-                                                <MatrixTillSlip
-                                                    receiptData={receiptData}
-                                                    settings={settings}
-                                                    user={user}
-                                                    activeCurrencySymbol={
-                                                        settings?.currency_symbol ||
-                                                        settings?.currencySymbol ||
-                                                        ""
-                                                    }
-                                                />
-                                            ) : (
-                                                <div
-                                                    style={{
-                                                        minHeight: "500px",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        textAlign: "center",
-                                                        color: "#64748B"
-                                                    }}
-                                                >
-                                                    {/* Add the live {design.name} component here. */}
-                                                    <span>
-                                                        {/* Add your {design.name} till slip design here */}
-                                                    </span>
-                                                </div>
-                                            )}
+                                            <div
+                                                style={{
+                                                    position: "relative",
+                                                    zIndex: 2,
+                                                    width: "100%"
+                                                }}
+                                            >
+                                                {design.id === "matrix-grid" ? (
+                                                    <MatrixTillSlip
+                                                        receiptData={receiptData}
+                                                        settings={settings}
+                                                        user={user}
+                                                        activeCurrencySymbol={
+                                                            settings?.currency_symbol ||
+                                                            settings?.currencySymbol ||
+                                                            ""
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        style={{
+                                                            minHeight: "500px",
+                                                            display: "flex",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            textAlign: "center",
+                                                            color: "#64748B"
+                                                        }}
+                                                    >
+                                                        {/* Add the live {design.name} component here. */}
+                                                        <span>
+                                                            {/* Add your {design.name} till slip design here */}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
                                         </div>
 
-                                    </div>
-
-                                    {/* ===========================================================
+                                        {/* ===========================================================
             CARD FOOTER
         ============================================================ */}
 
-                                    <div
-                                        style={{
-                                            padding: "20px 22px",
-                                            borderTop: "1px solid rgba(255,255,255,.05)",
-                                            background:
-                                                "linear-gradient(180deg,#08131A,#060C11)",
-
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            gap: "16px",
-                                            flexWrap: "wrap"
-                                        }}
-                                    >
-
-                                        {/* DESIGN DETAILS */}
-
-                                        <div>
-
-                                            <div
-                                                style={{
-                                                    color: "#FFFFFF",
-                                                    fontSize: "16px",
-                                                    fontWeight: 800,
-                                                    letterSpacing: ".3px"
-                                                }}
-                                            >
-                                                {design.name}
-                                            </div>
-
-                                            <div
-                                                style={{
-                                                    marginTop: "5px",
-                                                    color: "#8FA8BA",
-                                                    fontSize: "12px",
-                                                    fontWeight: 600
-                                                }}
-                                            >
-                                                Professional Till Slip Design
-                                            </div>
-
-                                        </div>
-
-                                        {/* CHOOSE BUTTON */}
-
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-
-                                                /*
-                                                ====================================================
-                                  
-                                                    SELECT THIS DESIGN
-                                  
-                                                    Example:
-                                  
-                                                    setSelectedDesign(design.id);
-                                  
-                                                    handleChooseDesign(design);
-                                  
-                                                    saveSelectedDesign(design.id);
-                                  
-                                                ====================================================
-                                                */
-
-                                                console.log(
-                                                    "Selected Design:",
-                                                    design.name
-                                                );
-
-                                            }}
+                                        <div
                                             style={{
-                                                border: "none",
-                                                outline: "none",
-                                                cursor: "pointer",
-
-                                                padding: "14px 26px",
-
-                                                borderRadius: "14px",
-
+                                                padding: "20px 22px",
+                                                borderTop: "1px solid rgba(255,255,255,.05)",
                                                 background:
-                                                    "linear-gradient(135deg,#08E3D8,#00A8FF)",
+                                                    "linear-gradient(180deg,#08131A,#060C11)",
 
-                                                color: "#041014",
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                gap: "16px",
+                                                flexWrap: "wrap"
+                                            }}
+                                        >
 
-                                                fontWeight: 900,
+                                            {/* DESIGN DETAILS */}
 
-                                                fontSize: "12px",
+                                            <div>
 
-                                                letterSpacing: ".8px",
+                                                <div
+                                                    style={{
+                                                        color: "#FFFFFF",
+                                                        fontSize: "16px",
+                                                        fontWeight: 800,
+                                                        letterSpacing: ".3px"
+                                                    }}
+                                                >
+                                                    {design.name}
+                                                </div>
 
-                                                textTransform: "uppercase",
+                                                <div
+                                                    style={{
+                                                        marginTop: "5px",
+                                                        color: "#8FA8BA",
+                                                        fontSize: "12px",
+                                                        fontWeight: 600
+                                                    }}
+                                                >
+                                                    Professional Till Slip Design
+                                                </div>
 
-                                                transition: "all .25s ease",
+                                            </div>
 
-                                                boxShadow: `
+                                            {/* CHOOSE BUTTON */}
+
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+
+                                                    /*
+                                                    ====================================================
+                                      
+                                                        SELECT THIS DESIGN
+                                      
+                                                        Example:
+                                      
+                                                        setSelectedDesign(design.id);
+                                      
+                                                        handleChooseDesign(design);
+                                      
+                                                        saveSelectedDesign(design.id);
+                                      
+                                                    ====================================================
+                                                    */
+
+                                                    console.log(
+                                                        "Selected Design:",
+                                                        design.name
+                                                    );
+
+                                                }}
+                                                style={{
+                                                    border: "none",
+                                                    outline: "none",
+                                                    cursor: "pointer",
+
+                                                    padding: "14px 26px",
+
+                                                    borderRadius: "14px",
+
+                                                    background:
+                                                        "linear-gradient(135deg,#08E3D8,#00A8FF)",
+
+                                                    color: "#041014",
+
+                                                    fontWeight: 900,
+
+                                                    fontSize: "12px",
+
+                                                    letterSpacing: ".8px",
+
+                                                    textTransform: "uppercase",
+
+                                                    transition: "all .25s ease",
+
+                                                    boxShadow: `
                 0 0 16px rgba(8,227,216,.25),
                 0 10px 28px rgba(0,0,0,.25)
               `
-                                            }}
-                                            onMouseEnter={(e) => {
+                                                }}
+                                                onMouseEnter={(e) => {
 
-                                                e.currentTarget.style.transform =
-                                                    "translateY(-2px) scale(1.02)";
+                                                    e.currentTarget.style.transform =
+                                                        "translateY(-2px) scale(1.02)";
 
-                                                e.currentTarget.style.boxShadow = `
+                                                    e.currentTarget.style.boxShadow = `
                 0 0 28px rgba(8,227,216,.45),
                 0 14px 36px rgba(0,0,0,.30)
               `;
 
-                                            }}
-                                            onMouseLeave={(e) => {
+                                                }}
+                                                onMouseLeave={(e) => {
 
-                                                e.currentTarget.style.transform =
-                                                    "translateY(0px) scale(1)";
+                                                    e.currentTarget.style.transform =
+                                                        "translateY(0px) scale(1)";
 
-                                                e.currentTarget.style.boxShadow = `
+                                                    e.currentTarget.style.boxShadow = `
                 0 0 16px rgba(8,227,216,.25),
                 0 10px 28px rgba(0,0,0,.25)
               `;
 
-                                            }}
-                                        >
-                                            CHOOSE
-                                        </button>
+                                                }}
+                                            >
+                                                CHOOSE
+                                            </button>
+
+                                        </div>
 
                                     </div>
 
                                 </div>
 
-                        ))}
+                            );
 
-                            </div>
+                        })}
+
+                    </div>
 
                     {/* ===========================================================
       EMPTY SEARCH STATE
   ============================================================ */}
 
                     {
-                                filteredDesigns.length === 0 && (
+                        filteredDesigns.length === 0 && (
 
-                                    <div
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    padding: "80px 20px"
+                                }}
+                            >
+
+                                <div
+                                    style={{
+                                        width: "100%",
+                                        maxWidth: "650px",
+
+                                        background:
+                                            "linear-gradient(180deg,#08131A,#050B10)",
+
+                                        border: "1px solid rgba(8,227,216,.15)",
+
+                                        borderRadius: "26px",
+
+                                        padding: "60px 40px",
+
+                                        textAlign: "center",
+
+                                        boxShadow:
+                                            "0 18px 50px rgba(0,0,0,.35)"
+                                    }}
+                                >
+
+                                    <Search
+                                        size={60}
+                                        color="#08E3D8"
+                                    />
+
+                                    <h2
                                         style={{
-                                            display: "flex",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            padding: "80px 20px"
+                                            color: "#FFFFFF",
+                                            marginTop: "22px",
+                                            marginBottom: "12px",
+                                            fontSize: "28px",
+                                            fontWeight: 900
                                         }}
                                     >
+                                        No Designs Found
+                                    </h2>
 
-                                        <div
-                                            style={{
-                                                width: "100%",
-                                                maxWidth: "650px",
+                                    <p
+                                        style={{
+                                            margin: "0 auto",
+                                            maxWidth: "430px",
 
-                                                background:
-                                                    "linear-gradient(180deg,#08131A,#050B10)",
+                                            color: "#94A3B8",
 
-                                                border: "1px solid rgba(8,227,216,.15)",
+                                            fontSize: "14px",
 
-                                                borderRadius: "26px",
+                                            lineHeight: "1.9"
+                                        }}
+                                    >
+                                        No till slip designs matched your search or
+                                        selected category.
+                                        <br />
+                                        Try a different keyword or choose another
+                                        category.
+                                    </p>
 
-                                                padding: "60px 40px",
+                                </div>
 
-                                                textAlign: "center",
+                            </div>
 
-                                                boxShadow:
-                                                    "0 18px 50px rgba(0,0,0,.35)"
-                                            }}
-                                        >
-
-                                            <Search
-                                                size={60}
-                                                color="#08E3D8"
-                                            />
-
-                                            <h2
-                                                style={{
-                                                    color: "#FFFFFF",
-                                                    marginTop: "22px",
-                                                    marginBottom: "12px",
-                                                    fontSize: "28px",
-                                                    fontWeight: 900
-                                                }}
-                                            >
-                                                No Designs Found
-                                            </h2>
-
-                                            <p
-                                                style={{
-                                                    margin: "0 auto",
-                                                    maxWidth: "430px",
-
-                                                    color: "#94A3B8",
-
-                                                    fontSize: "14px",
-
-                                                    lineHeight: "1.9"
-                                                }}
-                                            >
-                                                No till slip designs matched your search or
-                                                selected category.
-                                                <br />
-                                                Try a different keyword or choose another
-                                                category.
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-                                )
-                            }
-
-                </div>
-
-                    {/* ===========================================================
-    END OF SCROLLABLE CONTENT
-=========================================================== */}
+                        )
+                    }
 
                 </div>
 
                 {/* ===========================================================
+    END OF SCROLLABLE CONTENT
+=========================================================== */}
+
+            </div>
+
+            {/* ===========================================================
     END OF TILL SLIPS COLLECTION PAGE
 =========================================================== */}
 
-            </>
-            );
+        </>
+    );
 
 }
