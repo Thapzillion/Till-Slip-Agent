@@ -63,14 +63,14 @@ serve(async (req: Request) => {
 
       // ─── NEW: CRITICAL TIME-BASED EXPIRATION POLICY CHECKER ───
       const settings = voucher.business_settings;
-      const expirationDays = settings?.voucher_expiration_days ?? 30; 
+      const expirationDays = settings?.voucher_expiration_days ?? 30;
       const voucherCreatedTime = new Date(voucher.created_at).getTime();
       const currentServerTime = new Date().getTime();
       const expirationWindowLimit = expirationDays * 24 * 60 * 60 * 1000;
 
       if (currentServerTime - voucherCreatedTime > expirationWindowLimit) {
-        return new Response(JSON.stringify({ 
-          error: `Security Exception: This voucher link timeline has expired. Authorized ${expirationDays}-day redemption period exceeded.` 
+        return new Response(JSON.stringify({
+          error: `Security Exception: This voucher link timeline has expired. Authorized ${expirationDays}-day redemption period exceeded.`
         }), {
           status: 410, // HTTP 410 Gone matches your client error screen expectations
           headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
@@ -88,7 +88,7 @@ serve(async (req: Request) => {
       // 4. PLATFORM SUITE ROUTING ENGINE
       const storePlatform = settings.platform_type?.toLowerCase() || "custom_supabase";
       const discountValue = voucher.discount_value || 10;
-      
+
       // Generate standard clean code structure for store consumption
       const dynamicCartCouponCode = `FTC-${discountValue}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
@@ -113,7 +113,7 @@ serve(async (req: Request) => {
     /* ==========================================================================
         📬 PATHWAY A: INCOMING HOOK TRANSACTION INGESTION
        ========================================================================== */
-    const slug = url.searchParams.get("slug"); 
+    const slug = url.searchParams.get("slug");
     if (!slug) {
       return new Response(JSON.stringify({ error: "Routing parameter exception: Missing merchant webhook identification identifier." }), {
         status: 400,
@@ -121,7 +121,38 @@ serve(async (req: Request) => {
       });
     }
 
-    const { customer_email, items, total_amount } = await req.json();
+    const {
+      customer_email,
+      items,
+      total_amount,
+      template_id,
+      design_config
+    } = await req.json();
+
+    const selectedTemplateId =
+      typeof template_id === "string" && template_id.trim()
+        ? template_id.trim()
+        : "matrix-grid";
+
+    const selectedDesignConfig =
+      design_config &&
+        typeof design_config === "object" &&
+        !Array.isArray(design_config)
+        ? design_config
+        : {};
+
+    // Expand this section as your designs increase.
+    const ALLOWED_TEMPLATES = [
+      "matrix-grid",
+      "titanium",
+      "black-gold"
+    ];
+
+    const selectedTemplateId =
+      typeof template_id === "string" &&
+        ALLOWED_TEMPLATES.includes(template_id)
+        ? template_id
+        : "matrix-grid";
 
     const { data: settings, error: settingsError } = await supabase
       .from('business_settings')

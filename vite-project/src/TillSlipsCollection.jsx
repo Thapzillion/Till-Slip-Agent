@@ -4,7 +4,9 @@
    Imports • Component • State • Search Logic • Categories
    ============================================================================ */
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useBusiness } from "./backend/businessService";
+import MatrixTillSlip from "./MatrixTillSlip";
 import {
     Search,
     LayoutGrid,
@@ -90,6 +92,42 @@ const DESIGNS = [
    ============================================================================ */
 
 export default function TillSlipsCollection() {
+
+    const {
+        user,
+        settings,
+        receiptData
+    } = useBusiness();
+
+    const [selectedDesign, setSelectedDesign] = useState(() => {
+        return localStorage.getItem("ruachagent:selectedTillSlipDesign") || null;
+    });
+
+    useEffect(() => {
+        const handleSelectedDesign = (event) => {
+            setSelectedDesign(
+                event?.detail ||
+                localStorage.getItem("ruachagent:selectedTillSlipDesign") || null
+            );
+        };
+
+        window.addEventListener("ruachagent:tillSlipDesignSelected", handleSelectedDesign);
+
+        return () => {
+            window.removeEventListener("ruachagent:tillSlipDesignSelected", handleSelectedDesign);
+        };
+    }, []);
+
+    const handleChooseDesign = (designId) => {
+        setSelectedDesign(designId);
+        localStorage.setItem("ruachagent:selectedTillSlipDesign", designId);
+
+        window.dispatchEvent(
+            new CustomEvent("ruachagent:tillSlipDesignSelected", {
+                detail: designId
+            })
+        );
+    };
 
     /* ==========================================================================
        STATE
@@ -751,340 +789,279 @@ export default function TillSlipsCollection() {
                                         />
 
                                         {/* ===================================================
-                PLACE YOUR TILL SLIP DESIGN HERE
-            ==================================================== */}
+                                            LIVE DESIGN SLOT
+                                        ==================================================== */}
 
                                         <div
                                             style={{
                                                 position: "relative",
-
                                                 zIndex: 2,
-
                                                 width: "100%"
                                             }}
                                         >
+                                            {design.id === "matrix-grid" ? (
+                                                <MatrixTillSlip
+                                                    receiptData={receiptData}
+                                                    settings={settings}
+                                                    user={user}
+                                                    activeCurrencySymbol={
+                                                        settings?.currency_symbol ||
+                                                        settings?.currencySymbol ||
+                                                        ""
+                                                    }
+                                                />
+                                            ) : (
+                                                <div
+                                                    style={{
+                                                        minHeight: "500px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        textAlign: "center",
+                                                        color: "#64748B"
+                                                    }}
+                                                >
+                                                    {/* Add the live {design.name} component here. */}
+                                                    <span>
+                                                        {/* Add your {design.name} till slip design here */}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
 
-                                            {/*
-              ====================================================
+                                    </div>
 
-                   ADD YOUR TILL SLIP DESIGN HERE
+                                    {/* ===========================================================
+            CARD FOOTER
+        ============================================================ */}
 
-              Example:
+                                    <div
+                                        style={{
+                                            padding: "20px 22px",
+                                            borderTop: "1px solid rgba(255,255,255,.05)",
+                                            background:
+                                                "linear-gradient(180deg,#08131A,#060C11)",
 
-              Matrix Grid
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            gap: "16px",
+                                            flexWrap: "wrap"
+                                        }}
+                                    >
 
-              Cyber Neon
+                                        {/* DESIGN DETAILS */}
 
-              Titanium
-
-              Luxury Minimal
-
-              Tech HUD
-
-              Black Gold
-
-              etc...
-
-              Simply replace this comment with your
-              receipt JSX.
-
-              ====================================================
-              */}
+                                        <div>
 
                                             <div
                                                 style={{
-                                                    display: "flex",
-
-                                                    flexDirection: "column",
-
-                                                    justifyContent: "center",
-
-                                                    alignItems: "center",
-
-                                                    minHeight: "500px",
-
-                                                    textAlign: "center"
+                                                    color: "#FFFFFF",
+                                                    fontSize: "16px",
+                                                    fontWeight: 800,
+                                                    letterSpacing: ".3px"
                                                 }}
                                             >
+                                                {design.name}
+                                            </div>
 
-                                                <LayoutGrid
-                                                    size={52}
-                                                    color="#08E3D8"
-                                                />
-
-                                                <div
-                                                    style={{
-                                                        marginTop: "22px",
-
-                                                        color: "#FFFFFF",
-
-                                                        fontSize: "20px",
-
-                                                        fontWeight: 800
-                                                    }}
-                                                >
-                                                    Add your till slip design here
-                                                </div>
-
-                                                <div
-                                                    style={{
-                                                        marginTop: "10px",
-
-                                                        maxWidth: "260px",
-
-                                                        color: "#8FA8BA",
-
-                                                        fontSize: "13px",
-
-                                                        lineHeight: "1.8"
-                                                    }}
-                                                >
-                                                    Replace this placeholder with
-                                                    the complete JSX for the
-                                                    <strong>
-                                                        {" "}
-                                                        {design.name}
-                                                    </strong>{" "}
-                                                    receipt design.
-                                                </div>
-
+                                            <div
+                                                style={{
+                                                    marginTop: "5px",
+                                                    color: "#8FA8BA",
+                                                    fontSize: "12px",
+                                                    fontWeight: 600
+                                                }}
+                                            >
+                                                Professional Till Slip Design
                                             </div>
 
                                         </div>
 
-                                    </div>
+                                        {/* CHOOSE BUTTON */}
 
-                                </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
 
-                                {/* ===========================================================
-            CARD FOOTER
-        ============================================================ */}
+                                                /*
+                                                ====================================================
+                                  
+                                                    SELECT THIS DESIGN
+                                  
+                                                    Example:
+                                  
+                                                    setSelectedDesign(design.id);
+                                  
+                                                    handleChooseDesign(design);
+                                  
+                                                    saveSelectedDesign(design.id);
+                                  
+                                                ====================================================
+                                                */
 
-                                <div
-                                    style={{
-                                        padding: "20px 22px",
-                                        borderTop: "1px solid rgba(255,255,255,.05)",
-                                        background:
-                                            "linear-gradient(180deg,#08131A,#060C11)",
+                                                console.log(
+                                                    "Selected Design:",
+                                                    design.name
+                                                );
 
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        gap: "16px",
-                                        flexWrap: "wrap"
-                                    }}
-                                >
-
-                                    {/* DESIGN DETAILS */}
-
-                                    <div>
-
-                                        <div
-                                            style={{
-                                                color: "#FFFFFF",
-                                                fontSize: "16px",
-                                                fontWeight: 800,
-                                                letterSpacing: ".3px"
                                             }}
-                                        >
-                                            {design.name}
-                                        </div>
-
-                                        <div
                                             style={{
-                                                marginTop: "5px",
-                                                color: "#8FA8BA",
+                                                border: "none",
+                                                outline: "none",
+                                                cursor: "pointer",
+
+                                                padding: "14px 26px",
+
+                                                borderRadius: "14px",
+
+                                                background:
+                                                    "linear-gradient(135deg,#08E3D8,#00A8FF)",
+
+                                                color: "#041014",
+
+                                                fontWeight: 900,
+
                                                 fontSize: "12px",
-                                                fontWeight: 600
-                                            }}
-                                        >
-                                            Professional Till Slip Design
-                                        </div>
 
-                                    </div>
+                                                letterSpacing: ".8px",
 
-                                    {/* CHOOSE BUTTON */}
+                                                textTransform: "uppercase",
 
-                                    <button
-                                        type="button"
-                                        onClick={() => {
+                                                transition: "all .25s ease",
 
-                                            /*
-                                            ====================================================
-                              
-                                                SELECT THIS DESIGN
-                              
-                                                Example:
-                              
-                                                setSelectedDesign(design.id);
-                              
-                                                handleChooseDesign(design);
-                              
-                                                saveSelectedDesign(design.id);
-                              
-                                            ====================================================
-                                            */
-
-                                            console.log(
-                                                "Selected Design:",
-                                                design.name
-                                            );
-
-                                        }}
-                                        style={{
-                                            border: "none",
-                                            outline: "none",
-                                            cursor: "pointer",
-
-                                            padding: "14px 26px",
-
-                                            borderRadius: "14px",
-
-                                            background:
-                                                "linear-gradient(135deg,#08E3D8,#00A8FF)",
-
-                                            color: "#041014",
-
-                                            fontWeight: 900,
-
-                                            fontSize: "12px",
-
-                                            letterSpacing: ".8px",
-
-                                            textTransform: "uppercase",
-
-                                            transition: "all .25s ease",
-
-                                            boxShadow: `
+                                                boxShadow: `
                 0 0 16px rgba(8,227,216,.25),
                 0 10px 28px rgba(0,0,0,.25)
               `
-                                        }}
-                                        onMouseEnter={(e) => {
+                                            }}
+                                            onMouseEnter={(e) => {
 
-                                            e.currentTarget.style.transform =
-                                                "translateY(-2px) scale(1.02)";
+                                                e.currentTarget.style.transform =
+                                                    "translateY(-2px) scale(1.02)";
 
-                                            e.currentTarget.style.boxShadow = `
+                                                e.currentTarget.style.boxShadow = `
                 0 0 28px rgba(8,227,216,.45),
                 0 14px 36px rgba(0,0,0,.30)
               `;
 
-                                        }}
-                                        onMouseLeave={(e) => {
+                                            }}
+                                            onMouseLeave={(e) => {
 
-                                            e.currentTarget.style.transform =
-                                                "translateY(0px) scale(1)";
+                                                e.currentTarget.style.transform =
+                                                    "translateY(0px) scale(1)";
 
-                                            e.currentTarget.style.boxShadow = `
+                                                e.currentTarget.style.boxShadow = `
                 0 0 16px rgba(8,227,216,.25),
                 0 10px 28px rgba(0,0,0,.25)
               `;
 
-                                        }}
-                                    >
-                                        CHOOSE
-                                    </button>
+                                            }}
+                                        >
+                                            CHOOSE
+                                        </button>
+
+                                    </div>
 
                                 </div>
 
-                            </div>
-
                         ))}
 
-                    </div>
+                            </div>
 
                     {/* ===========================================================
       EMPTY SEARCH STATE
   ============================================================ */}
 
-                    {filteredDesigns.length === 0 && (
+                    {
+                                filteredDesigns.length === 0 && (
 
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                padding: "80px 20px"
-                            }}
-                        >
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            padding: "80px 20px"
+                                        }}
+                                    >
 
-                            <div
-                                style={{
-                                    width: "100%",
-                                    maxWidth: "650px",
+                                        <div
+                                            style={{
+                                                width: "100%",
+                                                maxWidth: "650px",
 
-                                    background:
-                                        "linear-gradient(180deg,#08131A,#050B10)",
+                                                background:
+                                                    "linear-gradient(180deg,#08131A,#050B10)",
 
-                                    border: "1px solid rgba(8,227,216,.15)",
+                                                border: "1px solid rgba(8,227,216,.15)",
 
-                                    borderRadius: "26px",
+                                                borderRadius: "26px",
 
-                                    padding: "60px 40px",
+                                                padding: "60px 40px",
 
-                                    textAlign: "center",
+                                                textAlign: "center",
 
-                                    boxShadow:
-                                        "0 18px 50px rgba(0,0,0,.35)"
-                                }}
-                            >
+                                                boxShadow:
+                                                    "0 18px 50px rgba(0,0,0,.35)"
+                                            }}
+                                        >
 
-                                <Search
-                                    size={60}
-                                    color="#08E3D8"
-                                />
+                                            <Search
+                                                size={60}
+                                                color="#08E3D8"
+                                            />
 
-                                <h2
-                                    style={{
-                                        color: "#FFFFFF",
-                                        marginTop: "22px",
-                                        marginBottom: "12px",
-                                        fontSize: "28px",
-                                        fontWeight: 900
-                                    }}
-                                >
-                                    No Designs Found
-                                </h2>
+                                            <h2
+                                                style={{
+                                                    color: "#FFFFFF",
+                                                    marginTop: "22px",
+                                                    marginBottom: "12px",
+                                                    fontSize: "28px",
+                                                    fontWeight: 900
+                                                }}
+                                            >
+                                                No Designs Found
+                                            </h2>
 
-                                <p
-                                    style={{
-                                        margin: "0 auto",
-                                        maxWidth: "430px",
+                                            <p
+                                                style={{
+                                                    margin: "0 auto",
+                                                    maxWidth: "430px",
 
-                                        color: "#94A3B8",
+                                                    color: "#94A3B8",
 
-                                        fontSize: "14px",
+                                                    fontSize: "14px",
 
-                                        lineHeight: "1.9"
-                                    }}
-                                >
-                                    No till slip designs matched your search or
-                                    selected category.
-                                    <br />
-                                    Try a different keyword or choose another
-                                    category.
-                                </p>
+                                                    lineHeight: "1.9"
+                                                }}
+                                            >
+                                                No till slip designs matched your search or
+                                                selected category.
+                                                <br />
+                                                Try a different keyword or choose another
+                                                category.
+                                            </p>
 
-                            </div>
+                                        </div>
 
-                        </div>
+                                    </div>
 
-                    )}
+                                )
+                            }
+
+                </div>
+
+                    {/* ===========================================================
+    END OF SCROLLABLE CONTENT
+=========================================================== */}
 
                 </div>
 
                 {/* ===========================================================
-    END OF SCROLLABLE CONTENT
-=========================================================== */}
-
-            </div>
-
-            {/* ===========================================================
     END OF TILL SLIPS COLLECTION PAGE
 =========================================================== */}
 
-        </>
-    );
+            </>
+            );
 
 }

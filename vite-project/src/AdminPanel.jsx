@@ -8,6 +8,8 @@ import { useBusiness } from "./backend/businessService";
 
 import { useNavigate } from "react-router-dom";
 
+import MatrixTillSlip from "./MatrixTillSlip";
+
 import {
   LayoutDashboard,
   Receipt,
@@ -115,6 +117,33 @@ export default function AdminPanel() {
   const navigate = useNavigate();
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+
+  // Persistent till-slip design selection shared with TillSlipsCollection.
+  const [selectedTillSlipDesign, setSelectedTillSlipDesign] = useState(() => {
+    return localStorage.getItem("ruachagent:selectedTillSlipDesign") || null;
+  });
+
+  useEffect(() => {
+    const handleTillSlipDesignSelected = (event) => {
+      setSelectedTillSlipDesign(
+        event?.detail ||
+        localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
+        "matrix-grid"
+      );
+    };
+
+    window.addEventListener(
+      "ruachagent:tillSlipDesignSelected",
+      handleTillSlipDesignSelected
+    );
+
+    return () => {
+      window.removeEventListener(
+        "ruachagent:tillSlipDesignSelected",
+        handleTillSlipDesignSelected
+      );
+    };
+  }, []);
 
   const styles = {
     container: {
@@ -1458,50 +1487,67 @@ export default function AdminPanel() {
 
                     {/* Receipt Paper (Connected to Dynamic State) */}
 
-                    <div
-                      className="receipt-paper"
-                      style={{
-                        borderColor: receiptData.themeColor || "#00f0ff"
-                      }}
-                    >
-                      <div className="ai-preview-badge">✨ AI Live Preview</div>
-
-                      <div className="receipt-merchant">
-                        <h2>{receiptData.merchantName}</h2>
-
-                        <p>{receiptData.location}</p>
+                    {selectedTillSlipDesign === "matrix-grid" ? (
+                      <div style={{ width: "100%" }}>
+                        <MatrixTillSlip
+                          receiptData={receiptData}
+                          settings={settings}
+                          user={user}
+                          activeCurrencySymbol={
+                            settings?.currency === "ZAR"
+                              ? "R"
+                              : settings?.currency === "USD"
+                                ? "$"
+                                : settings?.currency === "EUR"
+                                  ? "€"
+                                  : settings?.currency === "GBP"
+                                    ? "£"
+                                    : ""
+                          }
+                        />
                       </div>
+                    ) : (
+                      <div
+                        className="receipt-paper"
+                        style={{
+                          borderColor: receiptData.themeColor || "#00f0ff"
+                        }}
+                      >
+                        <div className="ai-preview-badge">✨ AI Live Preview</div>
 
-                      <div className="receipt-divider"></div>
+                        <div className="receipt-merchant">
+                          <h2>{receiptData.merchantName}</h2>
+                          <p>{receiptData.location}</p>
+                        </div>
 
-                      <div className="receipt-items">
-                        {receiptData.items.map((item, idx) => (
-                          <div key={idx} className="receipt-row">
-                            <span>{item.name}</span>
+                        <div className="receipt-divider"></div>
 
-                            <span>{item.price}</span>
+                        <div className="receipt-items">
+                          {receiptData.items.map((item, idx) => (
+                            <div key={idx} className="receipt-row">
+                              <span>{item.name}</span>
+                              <span>{item.price}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="receipt-total">
+                          <div className="receipt-total-row">
+                            <span>VAT</span>
+                            <span>{receiptData.vat}</span>
                           </div>
-                        ))}
-                      </div>
 
-                      <div className="receipt-total">
-                        <div className="receipt-total-row">
-                          <span>VAT</span>
-
-                          <span>{receiptData.vat}</span>
+                          <div className="receipt-total-row receipt-grand-total">
+                            <span>Total</span>
+                            <span>{receiptData.total}</span>
+                          </div>
                         </div>
 
-                        <div className="receipt-total-row receipt-grand-total">
-                          <span>Total</span>
+                        <div className="receipt-qr"></div>
 
-                          <span>{receiptData.total}</span>
-                        </div>
+                        <div className="receipt-footer">Powered by RuachAgent AI</div>
                       </div>
-
-                      <div className="receipt-qr"></div>
-
-                      <div className="receipt-footer">Powered by RuachAgent AI</div>
-                    </div>
+                    )}
 
                     {/* Statistics */}
 

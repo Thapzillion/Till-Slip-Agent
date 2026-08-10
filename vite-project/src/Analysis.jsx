@@ -10,6 +10,7 @@ import {
   Bell,
   UserCircle2,
   Activity,
+  BarChart3,
   TrendingUp,
   DollarSign,
   Database,
@@ -73,6 +74,13 @@ export default function Analysis() {
     typeof totalParsedCount !== "undefined"
       ? Number(totalParsedCount) || 0
       : safeTxCount;
+
+  const discountsUsedCount = 0;
+
+  const discountsNotUsedCount = Math.max(
+    safeTxCount - discountsUsedCount,
+    0
+  );
 
 
   const averageTransaction =

@@ -134,41 +134,109 @@ export function useBusiness() {
     const handleSendPrompt = async () => {
         if (!inputPrompt.trim() || isLoading) return;
 
-        const userQuery = inputPrompt;
-        setInputPrompt("");
+        const userQuery = inputPrompt.trim();
 
-        // Push user question to live conversation state
-        setMessages((prev) => [...prev, { role: "user", text: userQuery }]);
+        setInputPrompt("");
+        setMessages((prev) => [
+            ...prev,
+            {
+                role: "user",
+                text: userQuery
+            }
+        ]);
+
         setIsLoading(true);
 
         try {
-            const response = await fetch("/api/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: userQuery })
-            });
+            // ---------------------------------------
+            // SEND PROMPT TO SUPABASE EDGE FUNCTION
+            // ---------------------------------------
 
-            const data = await response.json();
+            const { data, error } = await supabase.functions.invoke(
+                "google-api-handler",
+                {
+                    body: {
+                        prompt: userQuery,
+
+                        // Current merchant information
+                        settings: settings,
+
+                        // Current receipt being displayed
+                        receiptData: receiptData,
+
+                        // Existing logo
+                        logoUrl: settings?.logo_url || null,
+
+                        // Current authenticated user
+                        userId: user?.id || null
+                    }
+                }
+            );
+
+            if (error) {
+                throw error;
+            }
+
+            if (!data) {
+                throw new Error("RuachAgent AI returned no data.");
+            }
+
+            // ---------------------------------------
+            // AI CHAT RESPONSE
+            // ---------------------------------------
 
             if (data.chatResponse) {
                 setMessages((prev) => [
                     ...prev,
-                    { role: "agent", text: data.chatResponse }
+                    {
+                        role: "agent",
+                        text: data.chatResponse
+                    }
                 ]);
             }
 
+            // ---------------------------------------
+            // AI RECEIPT / DESIGN RESPONSE
+            // ---------------------------------------
+
             if (data.receiptData) {
-                setReceiptData(data.receiptData);
+                setReceiptData((previousReceipt) => ({
+                    ...previousReceipt,
+                    ...data.receiptData
+                }));
             }
+
+            // ---------------------------------------
+            // AI DESIGN CONFIG
+            // ---------------------------------------
+
+            if (data.designConfig) {
+                setReceiptData((previousReceipt) => ({
+                    ...previousReceipt,
+                    design_config: {
+                        ...(previousReceipt?.design_config || {}),
+                        ...data.designConfig
+                    }
+                }));
+            }
+
         } catch (error) {
-            console.error("Failed to fetch AI response:", error);
+
+            console.error(
+                "RuachAgent AI request failed:",
+                error
+            );
+
             setMessages((prev) => [
                 ...prev,
                 {
                     role: "agent",
-                    text: "Unable to connect to RuachAgent AI engine. Please check your API route."
+                    text:
+                        error?.message ||
+                        "Unable to connect to RuachAgent AI engine."
                 }
             ]);
+
         } finally {
             setIsLoading(false);
         }

@@ -19,6 +19,8 @@ export default function ConnectedStores() {
 
     const [selectedStore, setSelectedStore] = useState(null);
 
+    const [drawerOpen, setDrawerOpen] = useState(false);
+
     const [searchQuery, setSearchQuery] = useState("");
 
     const [providerFilter, setProviderFilter] = useState("all");
