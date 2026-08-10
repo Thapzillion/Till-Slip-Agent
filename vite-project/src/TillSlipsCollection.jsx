@@ -6,7 +6,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useBusiness } from "./backend/businessService";
-import MatrixTillSlip from "./MatrixTillSlip";
+import MatrixTillSlip from "./models/MatrixTillSlip";
 import {
     Search,
     LayoutGrid,
