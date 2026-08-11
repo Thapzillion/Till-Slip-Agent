@@ -96,32 +96,28 @@ export default function TillSlipsCollection() {
     const {
         user,
         settings,
-        receiptData
+        receiptData,
+        selectedTemplateId
     } = useBusiness();
 
     const [selectedDesign, setSelectedDesign] = useState(() => {
-        return localStorage.getItem("ruachagent:selectedTillSlipDesign") || null;
+        return (
+            localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
+            "matrix-grid"
+        );
     });
 
-    useEffect(() => {
-        const handleSelectedDesign = (event) => {
-            setSelectedDesign(
-                event?.detail ||
-                localStorage.getItem("ruachagent:selectedTillSlipDesign") || null
-            );
-        };
-
-        window.addEventListener("ruachagent:tillSlipDesignSelected", handleSelectedDesign);
-
-        return () => {
-            window.removeEventListener("ruachagent:tillSlipDesignSelected", handleSelectedDesign);
-        };
-    }, []);
-
     const handleChooseDesign = (designId) => {
+        // UI state
         setSelectedDesign(designId);
-        localStorage.setItem("ruachagent:selectedTillSlipDesign", designId);
 
+        // Persistent source of truth
+        localStorage.setItem(
+            "ruachagent:selectedTillSlipDesign",
+            designId
+        );
+
+        // Tell AdminPanel / other components
         window.dispatchEvent(
             new CustomEvent("ruachagent:tillSlipDesignSelected", {
                 detail: designId

@@ -121,32 +121,27 @@ export default function AdminPanel() {
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
 
-  // Persistent till-slip design selection shared with TillSlipsCollection.
-  const [selectedTillSlipDesign, setSelectedTillSlipDesign] = useState(() => {
-    return (
-      localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
-      "matrix-grid"
-    );
-  });
-
   useEffect(() => {
-    const handleTillSlipDesignSelected = (event) => {
-      setSelectedTillSlipDesign(
+    const handleTemplateSelected = (event) => {
+      const templateId =
         event?.detail ||
         localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
-        "matrix-grid"
-      );
+        "matrix-grid";
+
+      setSelectedTemplateId(templateId);
     };
+
+    handleTemplateSelected();
 
     window.addEventListener(
       "ruachagent:tillSlipDesignSelected",
-      handleTillSlipDesignSelected
+      handleTemplateSelected
     );
 
     return () => {
       window.removeEventListener(
         "ruachagent:tillSlipDesignSelected",
-        handleTillSlipDesignSelected
+        handleTemplateSelected
       );
     };
   }, []);
@@ -1491,14 +1486,24 @@ export default function AdminPanel() {
                       </div>
                     </div>
 
-                    {/* Receipt Paper (Connected to Dynamic State) */}
+                    {/* Receipt Paper — selectedTemplateId is the source of truth */}
 
-                    {selectedTillSlipDesign === "matrix-grid" ? (
+                    {/* Receipt Paper — SOURCE OF TRUTH: selectedTemplateId */}
+
+                    {selectedTemplateId === "matrix-grid" ? (
                       <div style={{ width: "100%" }}>
                         <MatrixTillSlip
                           receiptData={receiptData}
                           settings={settings}
                           user={user}
+                          designConfig={receiptData?.design_config}
+                          voucher={receiptData?.voucher}
+                          isExpired={receiptData?.isExpired}
+                          daysRemaining={receiptData?.daysRemaining}
+                          qrCodeUrl={receiptData?.qrCodeUrl}
+                          checkoutPayloadLink={receiptData?.checkoutPayloadLink}
+                          receiptId={receiptData?.receiptId}
+                          onDownload={receiptData?.onDownload}
                           activeCurrencySymbol={
                             settings?.currency === "ZAR"
                               ? "R"
