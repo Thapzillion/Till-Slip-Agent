@@ -884,30 +884,25 @@ export default function TillSlipsCollection() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => {
+                                                onClick={() => handleChooseDesign(design.id)}
 
-                                                    /*
-                                                    ====================================================
-                                      
-                                                        SELECT THIS DESIGN
-                                      
-                                                        Example:
-                                      
-                                                        setSelectedDesign(design.id);
-                                      
-                                                        handleChooseDesign(design);
-                                      
-                                                        saveSelectedDesign(design.id);
-                                      
-                                                    ====================================================
-                                                    */
+                                                /*
+                                                ====================================================
+                                  
+                                                    SELECT THIS DESIGN
+                                  
+                                                    Example:
+                                  
+                                                    setSelectedDesign(design.id);
+                                  
+                                                    handleChooseDesign(design);
+                                  
+                                                    saveSelectedDesign(design.id);
+                                  
+                                                ====================================================
+                                                */
 
-                                                    console.log(
-                                                        "Selected Design:",
-                                                        design.name
-                                                    );
 
-                                                }}
                                                 style={{
                                                     border: "none",
                                                     outline: "none",

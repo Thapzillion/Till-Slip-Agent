@@ -120,7 +120,10 @@ export default function AdminPanel() {
 
   // Persistent till-slip design selection shared with TillSlipsCollection.
   const [selectedTillSlipDesign, setSelectedTillSlipDesign] = useState(() => {
-    return localStorage.getItem("ruachagent:selectedTillSlipDesign") || null;
+    return (
+      localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
+      "matrix-grid"
+    );
   });
 
   useEffect(() => {
