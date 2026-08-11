@@ -1,5 +1,12 @@
 import { GoogleGenAI } from "npm:@google/genai";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "https://ruachagent.xyz",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 
 if (!GEMINI_API_KEY) {
