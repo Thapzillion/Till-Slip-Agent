@@ -96,12 +96,20 @@ export function useBusiness() {
     const [error, setError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
+
+
     // ==============================
     //       DYNAMIC STATE ENGINE
     // ==============================
     const [inputPrompt, setInputPrompt] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([]);
+
+    const [selectedTemplateId, setSelectedTemplateId] = useState(
+        () =>
+            localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
+            "matrix-grid"
+    );
 
     // Default receipt state initialized with original hardcoded values
     const [receiptData, setReceiptData] = useState({
@@ -151,12 +159,6 @@ export function useBusiness() {
             // ---------------------------------------
             // SEND PROMPT TO SUPABASE EDGE FUNCTION
             // ---------------------------------------
-
-            const [selectedTemplateId, setSelectedTemplateId] = useState(
-                () =>
-                    localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
-                    "matrix-grid"
-            );
 
             const { data, error } = await supabase.functions.invoke(
                 "google-api-handler",
