@@ -106,6 +106,9 @@ export default function AdminPanel() {
     receipt,
     setReceipt,
 
+    selectedTemplateId,
+    setSelectedTemplateId,
+
     // Misc
     loading,
     error,

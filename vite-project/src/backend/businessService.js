@@ -152,23 +152,32 @@ export function useBusiness() {
             // SEND PROMPT TO SUPABASE EDGE FUNCTION
             // ---------------------------------------
 
+            const [selectedTemplateId, setSelectedTemplateId] = useState(
+                () =>
+                    localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
+                    "matrix-grid"
+            );
+
             const { data, error } = await supabase.functions.invoke(
                 "google-api-handler",
                 {
                     body: {
                         prompt: userQuery,
 
-                        // Current merchant information
-                        settings: settings,
+                        settings,
 
-                        // Current receipt being displayed
-                        receiptData: receiptData,
+                        receiptData,
 
-                        // Existing logo
-                        logoUrl: settings?.logo_url || null,
+                        templateId: selectedTemplateId,
 
-                        // Current authenticated user
-                        userId: user?.id || null
+                        designConfig:
+                            receiptData?.design_config || {},
+
+                        logoUrl:
+                            settings?.logo_url || null,
+
+                        userId:
+                            user?.id || null
                     }
                 }
             );
@@ -1084,6 +1093,9 @@ export function useBusiness() {
 
         receipt,
         setReceipt,
+
+        selectedTemplateId,
+        setSelectedTemplateId,
 
         // ---------------- BACKEND ----------------
         getActiveUser,
