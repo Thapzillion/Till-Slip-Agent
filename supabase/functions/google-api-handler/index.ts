@@ -831,40 +831,38 @@ Return ONLY the required JSON object.
     // GEMINI
     // ------------------------------------------------------------
 
-    const response =
-      await ai.models.generateContent({
+    const response = await ai.models.generateContent({
 
-        model: "const response = await ai.models.generateContent({
-  model: "gemini-3.6-flash",
+      model: "gemini-3.6-flash",
 
-        contents: [
+      contents: [
 
-          {
-            role: "user",
-            parts: [
-              {
-                text: SYSTEM_INSTRUCTIONS
-              }
-            ]
-          },
+        {
+          role: "user",
+          parts: [
+            {
+              text: SYSTEM_INSTRUCTIONS
+            }
+          ]
+        },
 
-          {
-            role: "user",
-            parts: [
-              {
-                text: userPrompt
-              }
-            ]
-          }
-
-        ],
-
-        config: {
-          temperature: 0.35,
-          responseMimeType: "application/json"
+        {
+          role: "user",
+          parts: [
+            {
+              text: userPrompt
+            }
+          ]
         }
 
-      });
+      ],
+
+      config: {
+        temperature: 0.35,
+        responseMimeType: "application/json"
+      }
+
+    });
 
 
     // ------------------------------------------------------------
@@ -959,12 +957,11 @@ Return ONLY the required JSON object.
         headers: {
           ...corsHeaders,
           "Content-Type":
-            "application/json",
-        },
+            "application/json"
+        }
       }
 
     );
-
 
   } catch (error) {
 
