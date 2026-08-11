@@ -278,7 +278,7 @@ input {
 
 .admin-page {
 
-    width: 100vw;
+    width: 100%;
 
     min-height: 100vh;
 
@@ -781,6 +781,8 @@ input::placeholder {
 .main-content {
 
     flex: 1;
+
+    min-width: 0;
 
     display: flex;
 
