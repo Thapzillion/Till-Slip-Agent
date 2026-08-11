@@ -693,8 +693,40 @@ function parseAIResponse(text: string) {
 |--------------------------------------------------------------------------
 */
 
-export async function POST(req: Request) {
+Deno.serve(async (req: Request) => {
+
+  // ------------------------------------------------------------
+  // CORS PREFLIGHT
+  // ------------------------------------------------------------
+
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      status: 200,
+      headers: corsHeaders,
+    });
+  }
+
+  // ------------------------------------------------------------
+  // ONLY ACCEPT POST REQUESTS
+  // ------------------------------------------------------------
+
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({
+        error: "Method not allowed."
+      }),
+      {
+        status: 405,
+        headers: {
+          ...corsHeaders,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+
   try {
+
     const {
       prompt,
       receiptData,
@@ -705,55 +737,74 @@ export async function POST(req: Request) {
       logoUrl,
     } = await req.json();
 
+
+    // ------------------------------------------------------------
+    // VALIDATE PROMPT
+    // ------------------------------------------------------------
+
     if (!prompt || typeof prompt !== "string") {
-      return Response.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: "A valid prompt is required."
-        },
+        }),
         {
-          status: 400
+          status: 400,
+          headers: {
+            ...corsHeaders,
+            "Content-Type": "application/json",
+          },
         }
       );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Give Gemini the current receipt context.
-    |--------------------------------------------------------------------------
-    */
+
+    // ------------------------------------------------------------
+    // CURRENT RECEIPT CONTEXT
+    // ------------------------------------------------------------
 
     const context = {
-      templateId: templateId || null,
 
-      availableTemplates: Array.isArray(availableTemplates)
-        ? availableTemplates
-        : [],
+      templateId:
+        templateId || null,
 
-      currentDesignConfig: designConfig || {},
+      availableTemplates:
+        Array.isArray(availableTemplates)
+          ? availableTemplates
+          : [],
 
-      merchantSettings: settings
-        ? {
-          business_name: settings.business_name || null,
-          store_address: settings.store_address || null,
-          currency: settings.currency || null,
-          logo_url: settings.logo_url || null,
-        }
-        : null,
+      currentDesignConfig:
+        designConfig || {},
+
+      merchantSettings:
+        settings
+          ? {
+            business_name:
+              settings.business_name || null,
+
+            store_address:
+              settings.store_address || null,
+
+            currency:
+              settings.currency || null,
+
+            logo_url:
+              settings.logo_url || null,
+          }
+          : null,
 
       logoUrl:
         logoUrl ||
         settings?.logo_url ||
         null,
 
-      receiptData: receiptData || null,
+      receiptData:
+        receiptData || null,
     };
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Merchant request + application context
-    |--------------------------------------------------------------------------
-    */
+    // ------------------------------------------------------------
+    // MERCHANT REQUEST
+    // ------------------------------------------------------------
 
     const userPrompt = `
 MERCHANT REQUEST:
@@ -776,46 +827,48 @@ Return ONLY the required JSON object.
 `;
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Gemini
-    |--------------------------------------------------------------------------
-    */
+    // ------------------------------------------------------------
+    // GEMINI
+    // ------------------------------------------------------------
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+    const response =
+      await ai.models.generateContent({
 
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: SYSTEM_INSTRUCTIONS
-            }
-          ]
-        },
-        {
-          role: "user",
-          parts: [
-            {
-              text: userPrompt
-            }
-          ]
+        model: "gemini-2.5-flash",
+
+        contents: [
+
+          {
+            role: "user",
+            parts: [
+              {
+                text: SYSTEM_INSTRUCTIONS
+              }
+            ]
+          },
+
+          {
+            role: "user",
+            parts: [
+              {
+                text: userPrompt
+              }
+            ]
+          }
+
+        ],
+
+        config: {
+          temperature: 0.35,
+          responseMimeType: "application/json"
         }
-      ],
 
-      config: {
-        temperature: 0.35,
-        responseMimeType: "application/json"
-      }
-    });
+      });
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Read Gemini response
-    |--------------------------------------------------------------------------
-    */
+    // ------------------------------------------------------------
+    // READ GEMINI RESPONSE
+    // ------------------------------------------------------------
 
     const outputText =
       response.text ||
@@ -826,85 +879,131 @@ Return ONLY the required JSON object.
 
 
     if (!outputText) {
-      throw new Error("Gemini returned an empty response.");
+      throw new Error(
+        "Gemini returned an empty response."
+      );
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Parse AI JSON
-    |--------------------------------------------------------------------------
-    */
+    // ------------------------------------------------------------
+    // PARSE AI JSON
+    // ------------------------------------------------------------
 
-    const parsedData = parseAIResponse(outputText);
+    const parsedData =
+      parseAIResponse(outputText);
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Defensive designConfig
-    |--------------------------------------------------------------------------
-    */
+    // ------------------------------------------------------------
+    // DEFENSIVE DESIGN CONFIG
+    // ------------------------------------------------------------
 
     const safeDesignConfig = {
-      colors: parsedData?.designConfig?.colors || {},
-      typography: parsedData?.designConfig?.typography || {},
-      spacing: parsedData?.designConfig?.spacing || {},
-      borders: parsedData?.designConfig?.borders || {},
-      effects: parsedData?.designConfig?.effects || {},
-      logo: parsedData?.designConfig?.logo || {},
-      branding: parsedData?.designConfig?.branding || {},
-      qrCode: parsedData?.designConfig?.qrCode || {},
-      footer: parsedData?.designConfig?.footer || {}
+
+      colors:
+        parsedData?.designConfig?.colors || {},
+
+      typography:
+        parsedData?.designConfig?.typography || {},
+
+      spacing:
+        parsedData?.designConfig?.spacing || {},
+
+      borders:
+        parsedData?.designConfig?.borders || {},
+
+      effects:
+        parsedData?.designConfig?.effects || {},
+
+      logo:
+        parsedData?.designConfig?.logo || {},
+
+      branding:
+        parsedData?.designConfig?.branding || {},
+
+      qrCode:
+        parsedData?.designConfig?.qrCode || {},
+
+      footer:
+        parsedData?.designConfig?.footer || {}
+
     };
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Return AI result
-    |--------------------------------------------------------------------------
-    |
-    | IMPORTANT:
-    |
-    | We do NOT allow Gemini to become the source of truth for
-    | transaction data.
-    |
-    */
+    // ------------------------------------------------------------
+    // SUCCESS RESPONSE
+    // ------------------------------------------------------------
 
-    return Response.json({
-      chatResponse:
-        parsedData?.chatResponse ||
-        "Your till slip design has been updated.",
+    return new Response(
 
-      designConfig: safeDesignConfig,
+      JSON.stringify({
 
-      templateId: templateId || null,
+        chatResponse:
+          parsedData?.chatResponse ||
+          "Your till slip design has been updated.",
 
-      /*
-      |--------------------------------------------------------------------------
-      | Return original receipt data untouched.
-      |--------------------------------------------------------------------------
-      */
+        designConfig:
+          safeDesignConfig,
 
-      receiptData: receiptData || null
-    });
+        templateId:
+          templateId || null,
+
+        receiptData:
+          receiptData || null
+
+      }),
+
+      {
+        status: 200,
+
+        headers: {
+          ...corsHeaders,
+          "Content-Type":
+            "application/json",
+        },
+      }
+
+    );
+
 
   } catch (error) {
 
-    console.error("RuachAgent AI Error:", error);
+    console.error(
+      "RuachAgent AI Error:",
+      error
+    );
 
-    return Response.json(
-      {
-        error: "Failed to process RuachAgent AI request.",
+
+    // ------------------------------------------------------------
+    // ERROR RESPONSE
+    // ------------------------------------------------------------
+
+    return new Response(
+
+      JSON.stringify({
+
+        error:
+          "Failed to process RuachAgent AI request.",
 
         chatResponse:
           "I couldn't apply that design change. Please try describing the visual change again.",
 
         designConfig: {}
-      },
+
+      }),
+
       {
-        status: 500
+        status: 500,
+
+        headers: {
+          ...corsHeaders,
+          "Content-Type":
+            "application/json",
+        },
       }
+
     );
+
   }
-}
+
+});
 
