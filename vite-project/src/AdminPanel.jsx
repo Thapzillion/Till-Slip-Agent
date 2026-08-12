@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import "./AdminPanel.css";
 
@@ -99,6 +99,8 @@ export default function AdminPanel() {
 
     handleSendPrompt,
     handleClear,
+    handleSave,
+    isSaveSyncing,
 
     receiptData,
     setReceiptData,
@@ -120,6 +122,55 @@ export default function AdminPanel() {
   const navigate = useNavigate();
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+
+  // Snapshot the persisted design so AI changes can be discarded locally.
+  // This never changes the JSX receipt template or transaction data.
+  const originalDesignConfigRef = useRef(null);
+  const [hasDesignChanges, setHasDesignChanges] = useState(false);
+
+  useEffect(() => {
+    if (!receiptData || !selectedTemplateId) return;
+
+    const incomingConfig = receiptData?.design_config || {};
+
+    if (
+      originalDesignConfigRef.current === null ||
+      originalDesignConfigRef.current.templateId !== selectedTemplateId
+    ) {
+      originalDesignConfigRef.current = {
+        templateId: selectedTemplateId,
+        config: JSON.parse(JSON.stringify(incomingConfig))
+      };
+      setHasDesignChanges(false);
+    }
+  }, [receiptData, selectedTemplateId]);
+
+  const handlePromptWithDesignTracking = async () => {
+    if (!inputPrompt?.trim() || isLoading) return;
+    setHasDesignChanges(true);
+    return handleSendPrompt();
+  };
+
+  const handleRevertToOriginal = () => {
+    const snapshot = originalDesignConfigRef.current;
+
+    if (!snapshot || !receiptData) return;
+
+    setReceiptData((current) => ({
+      ...current,
+      design_config: JSON.parse(JSON.stringify(snapshot.config))
+    }));
+
+    setHasDesignChanges(false);
+
+    setMessages((current) => [
+      ...current,
+      {
+        role: "assistant",
+        text: "Reverted the till slip to its original saved design."
+      }
+    ]);
+  };
 
   useEffect(() => {
     const handleTemplateSelected = (event) => {
@@ -1447,9 +1498,9 @@ export default function AdminPanel() {
                           placeholder="Ask RuachAgent AI anything..."
                           value={inputPrompt}
                           onChange={(e) => setInputPrompt(e.target.value)}
-                          onKeyDown={(e) => e.key === "Enter" && handleSendPrompt()}
+                          onKeyDown={(e) => e.key === "Enter" && handlePromptWithDesignTracking()}
                         />
-                        <button onClick={handleSendPrompt} disabled={isLoading}>
+                        <button onClick={handlePromptWithDesignTracking} disabled={isLoading}>
                           <Send size={18} />
                         </button>
                       </div>
@@ -1465,30 +1516,30 @@ export default function AdminPanel() {
                 </section>
 
                 {/* ======================
-              TILL SLIP PREVIEW
-          ======================= */}
+    TILL SLIP PREVIEW
+======================= */}
 
                 <aside className="preview-panel">
                   <div className="preview-card">
+
                     {/* Header */}
 
                     <div className="preview-header">
                       <div>
                         <h2>Till Slip Preview</h2>
-
                         <p>AI Generated Receipt</p>
                       </div>
 
                       <div className="status-badge">
                         <div className="status-dot"></div>
 
-                        <span>{isLoading ? "Generating..." : "AI Connected"}</span>
+                        <span>
+                          {isLoading ? "Generating..." : "AI Connected"}
+                        </span>
                       </div>
                     </div>
 
                     {/* Receipt Paper — selectedTemplateId is the source of truth */}
-
-                    {/* Receipt Paper — SOURCE OF TRUTH: selectedTemplateId */}
 
                     {selectedTemplateId === "matrix-grid" ? (
                       <div style={{ width: "100%" }}>
@@ -1496,7 +1547,14 @@ export default function AdminPanel() {
                           receiptData={receiptData}
                           settings={settings}
                           user={user}
+
+                          /*
+                           * IMPORTANT:
+                           * This is the LIVE design configuration being
+                           * modified by RuachAgent AI.
+                           */
                           designConfig={receiptData?.design_config}
+
                           voucher={receiptData?.voucher}
                           isExpired={receiptData?.isExpired}
                           daysRemaining={receiptData?.daysRemaining}
@@ -1504,6 +1562,7 @@ export default function AdminPanel() {
                           checkoutPayloadLink={receiptData?.checkoutPayloadLink}
                           receiptId={receiptData?.receiptId}
                           onDownload={receiptData?.onDownload}
+
                           activeCurrencySymbol={
                             settings?.currency === "ZAR"
                               ? "R"
@@ -1524,7 +1583,9 @@ export default function AdminPanel() {
                           borderColor: receiptData.themeColor || "#00f0ff"
                         }}
                       >
-                        <div className="ai-preview-badge">✨ AI Live Preview</div>
+                        <div className="ai-preview-badge">
+                          ✨ AI Live Preview
+                        </div>
 
                         <div className="receipt-merchant">
                           <h2>{receiptData.merchantName}</h2>
@@ -1556,25 +1617,11 @@ export default function AdminPanel() {
 
                         <div className="receipt-qr"></div>
 
-                        <div className="receipt-footer">Powered by RuachAgent AI</div>
+                        <div className="receipt-footer">
+                          Powered by RuachAgent AI
+                        </div>
                       </div>
                     )}
-
-                    {/* Statistics */}
-
-                    <div className="preview-stats">
-                      <div className="stat-card">
-                        <span className="stat-value">0</span>
-
-                        <span className="stat-label">Receipts</span>
-                      </div>
-
-                      <div className="stat-card">
-                        <span className="stat-value">0</span>
-
-                        <span className="stat-label">Connected</span>
-                      </div>
-                    </div>
 
                     {/* AI Status */}
 
@@ -1594,27 +1641,40 @@ export default function AdminPanel() {
                       </div>
                     </div>
 
-                    {/* Actions */}
+                    {/* Design Actions */}
 
                     <div className="preview-actions">
-                      <button className="primary-action" onClick={handleSendPrompt}>
-                        Generate Preview
+
+                      {/* SAVE DESIGN */}
+
+                      <button
+                        className="primary-action"
+                        onClick={handleSave}
+                        disabled={
+                          isSaveSyncing ||
+                          !hasDesignChanges
+                        }
+                      >
+                        {isSaveSyncing
+                          ? "Saving..."
+                          : "Save"}
                       </button>
 
-                      <button className="secondary-action" onClick={handleClear}>
-                        Clear
+                      {/* REVERT DESIGN */}
+
+                      <button
+                        className="secondary-action"
+                        onClick={handleRevertToOriginal}
+                        disabled={
+                          isSaveSyncing ||
+                          !hasDesignChanges
+                        }
+                      >
+                        Revert to Original
                       </button>
+
                     </div>
 
-                    {/* Export */}
-
-                    <div className="export-card">
-                      <h3>Export</h3>
-
-                      <p>Download or share your generated receipt.</p>
-
-                      <button className="export-button">Export Receipt</button>
-                    </div>
                   </div>
                 </aside>
               </div>

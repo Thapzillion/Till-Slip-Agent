@@ -58,6 +58,44 @@ export default function MatrixTillSlip({
     const receiptConfig = config.receipt || {};
     const logoConfig = config.logo || {};
 
+    // Advanced visual effect configuration. These values are supplied by
+    // RuachAgent AI through designConfig; this component only renders them.
+    const rotationEffect = effects.infiniteRotation || {};
+    const hoverEffect = effects.hoverAnimation || {};
+    const floatingEffect = effects.floatingElements || effects.floatingProductElements || {};
+    const metallicEffect = effects.metallicReflection || {};
+    const glassEffect = effects.glassEffect || {};
+    const neonEffect = effects.neonGlow || {};
+    const holographicEffect = effects.holographicLighting || {};
+    const dynamicGradientEffect = effects.dynamicGradient || {};
+    const animatedQrEffect = effects.animatedQr || effects.animatedQRCode || {};
+    const particleEffect = effects.particleEffects || {};
+    const transitionEffect = effects.premiumTransitions || {};
+
+    const transitionDuration =
+        transitionEffect.duration || "450ms";
+
+    const transitionEasing =
+        transitionEffect.easing || "cubic-bezier(.2,.8,.2,1)";
+
+    const rotationEnabled = rotationEffect.enabled === true;
+    const hoverEnabled = hoverEffect.enabled === true;
+    const floatingEnabled = floatingEffect.enabled === true;
+    const metallicEnabled = metallicEffect.enabled === true;
+    const glassEnabled = glassEffect.enabled === true;
+    const neonEnabled = neonEffect.enabled === true;
+    const holographicEnabled = holographicEffect.enabled === true;
+    const dynamicGradientEnabled = dynamicGradientEffect.enabled === true;
+    const animatedQrEnabled = animatedQrEffect.enabled === true;
+    const particlesEnabled = particleEffect.enabled === true;
+
+    const resolveEffectColor = (value, fallback) => {
+        if (!value || value === "primary") return fallback || primaryColor;
+        if (value === "secondary") return secondaryColor;
+        if (value === "accent") return colors.accent || primaryColor;
+        return value;
+    };
+
 
     // ============================================================
     // RECEIPT DATE
@@ -128,12 +166,33 @@ export default function MatrixTillSlip({
     const logoEnabled =
         logoConfig.enabled !== false;
 
-    const logoSize =
+    const baseLogoSize =
         logoConfig.size === "small"
             ? 100
             : logoConfig.size === "large"
                 ? 220
                 : 170;
+
+    const numericLogoScale =
+        Number.isFinite(Number(logoConfig.scale))
+            ? Math.max(0.1, Number(logoConfig.scale))
+            : 1;
+
+    const logoWidth =
+        logoConfig.width ||
+        logoConfig.mainLogoWidth ||
+        `${Math.round(baseLogoSize * numericLogoScale)}px`;
+
+    const logoHeight =
+        logoConfig.height ||
+        logoConfig.mainLogoHeight ||
+        `${Math.round(baseLogoSize * numericLogoScale)}px`;
+
+    const logoMaxWidth =
+        logoConfig.maxWidth || "100%";
+
+    const logoMaxHeight =
+        logoConfig.maxHeight || "none";
 
 
     // ============================================================
@@ -163,11 +222,43 @@ export default function MatrixTillSlip({
         };
     }
 
+    if (logoConfig.position === "top") {
+        logoPosition = {
+            top: "40px",
+            left: "50%",
+            transform: "translateX(-50%)"
+        };
+    }
+
     if (logoConfig.position === "center") {
         logoPosition = {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)"
+        };
+    }
+
+    if (logoConfig.position === "bottom") {
+        logoPosition = {
+            bottom: "40px",
+            left: "50%",
+            transform: "translateX(-50%)"
+        };
+    }
+
+    if (logoConfig.position === "bottom-left") {
+        logoPosition = {
+            bottom: "40px",
+            left: "40px",
+            transform: "none"
+        };
+    }
+
+    if (logoConfig.position === "bottom-right") {
+        logoPosition = {
+            bottom: "40px",
+            right: "40px",
+            transform: "none"
         };
     }
 
@@ -190,6 +281,11 @@ export default function MatrixTillSlip({
         receiptData?.vat ??
         receiptData?.vat_amount ??
         null;
+
+    const qrCodeSize =
+        typeof config.qrCode?.size === "number"
+            ? `${config.qrCode.size}px`
+            : config.qrCode?.size || "80px";
 
 
     // ============================================================
@@ -220,6 +316,7 @@ export default function MatrixTillSlip({
     return (
         <div
             id="till-slip-capture"
+            className="matrix-till-slip-root"
             style={{
                 padding: "28px",
                 border: `2px solid ${primaryColor}`,
@@ -231,6 +328,171 @@ export default function MatrixTillSlip({
                 ...containerStyle
             }}
         >
+
+            <style>{`
+                @keyframes ruachInfiniteRotation {
+                    from { transform: rotateY(0deg); }
+                    to { transform: rotateY(360deg); }
+                }
+                @keyframes ruachFloat {
+                    0%, 100% { transform: translate3d(0, 0, 0); }
+                    50% { transform: translate3d(0, -${floatingEffect.amplitude || 7}px, 0); }
+                }
+                @keyframes ruachMetallicSweep {
+                    0% { background-position: -220% 0; }
+                    100% { background-position: 220% 0; }
+                }
+                @keyframes ruachHolographic {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+                @keyframes ruachGradient {
+                    0% { background-position: 0% 50%; }
+                    50% { background-position: 100% 50%; }
+                    100% { background-position: 0% 50%; }
+                }
+                @keyframes ruachQrPulse {
+                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+                    50% { transform: scale(1.035); filter: drop-shadow(0 0 10px ${resolveEffectColor(animatedQrEffect.glowColor, primaryColor)}66); }
+                }
+                @keyframes ruachQrScan {
+                    0% { transform: translateY(-55px); opacity: 0; }
+                    15% { opacity: .75; }
+                    85% { opacity: .75; }
+                    100% { transform: translateY(55px); opacity: 0; }
+                }
+                @keyframes ruachParticleDrift {
+                    0% { transform: translate3d(0, 0, 0); opacity: 0; }
+                    15% { opacity: var(--particle-opacity); }
+                    85% { opacity: var(--particle-opacity); }
+                    100% { transform: translate3d(var(--particle-x), var(--particle-y), 0); opacity: 0; }
+                }
+                @keyframes ruachNeonPulse {
+                    0%, 100% { opacity: .72; }
+                    50% { opacity: 1; }
+                }
+                .matrix-effect-target {
+                    transition: all ${transitionDuration} ${transitionEasing};
+                }
+                .matrix-hover-target:hover {
+                    transform: translate3d(0, ${hoverEffect.translateY ?? -3}px, 0) scale(${hoverEffect.scale || 1.025}) rotate(${hoverEffect.rotate || 0}deg);
+                    filter: drop-shadow(0 10px 22px ${resolveEffectColor(hoverEffect.glowColor, primaryColor)}33);
+                }
+                .matrix-rotation-target {
+                    animation: ruachInfiniteRotation ${rotationEffect.speed || "18s"} linear infinite;
+                    animation-direction: ${rotationEffect.direction === "reverse" ? "reverse" : "normal"};
+                    transform-style: preserve-3d;
+                }
+                .matrix-float-target {
+                    animation: ruachFloat ${floatingEffect.duration || "4s"} ease-in-out infinite;
+                    animation-delay: ${floatingEffect.delay || "0s"};
+                }
+                .matrix-metallic-target {
+                    position: relative;
+                    isolation: isolate;
+                }
+                .matrix-metallic-target::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    pointer-events: none;
+                    background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,${metallicEffect.intensity ?? .28}) 48%, transparent 68%);
+                    background-size: 220% 100%;
+                    animation: ruachMetallicSweep ${metallicEffect.speed || "3.5s"} linear infinite;
+                    mix-blend-mode: screen;
+                    border-radius: inherit;
+                    z-index: 3;
+                }
+                .matrix-glass-target {
+                    backdrop-filter: blur(${glassEffect.blur || "14px"}) saturate(${glassEffect.saturation || "140%"});
+                    -webkit-backdrop-filter: blur(${glassEffect.blur || "14px"}) saturate(${glassEffect.saturation || "140%"});
+                    background: rgba(255,255,255,${glassEffect.opacity ?? .08}) !important;
+                    border-color: rgba(255,255,255,${glassEffect.borderOpacity ?? .18}) !important;
+                }
+                .matrix-neon-target {
+                    animation: ${neonEffect.pulse === false ? "none" : "ruachNeonPulse 2.2s ease-in-out infinite"};
+                    box-shadow: 0 0 ${neonEffect.radius || 24}px ${resolveEffectColor(neonEffect.color, primaryColor)}${Math.round((neonEffect.intensity ?? .55) * 99).toString(16).padStart(2, "0")};
+                }
+                .matrix-holographic-target {
+                    background-image: linear-gradient(120deg, ${((holographicEffect.colors || [primaryColor, secondaryColor, "#FF4FD8"]).join(", "))}) !important;
+                    background-size: 300% 300% !important;
+                    animation: ruachHolographic ${holographicEffect.speed || "5s"} ease infinite;
+                }
+                .matrix-dynamic-gradient-target {
+                    background-image: linear-gradient(${dynamicGradientEffect.angle || "135deg"}, ${((dynamicGradientEffect.colors || [primaryColor, secondaryColor]).join(", "))}) !important;
+                    background-size: 240% 240% !important;
+                    animation: ruachGradient ${dynamicGradientEffect.speed || "6s"} ease infinite;
+                }
+                .matrix-qr-animated {
+                    animation: ${animatedQrEffect.pulse === false ? "none" : `ruachQrPulse ${animatedQrEffect.speed || "2.4s"} ease-in-out infinite`};
+                }
+                .matrix-qr-scanline {
+                    position: absolute;
+                    left: 8px;
+                    right: 8px;
+                    top: 50%;
+                    height: 2px;
+                    background: ${resolveEffectColor(animatedQrEffect.scanlineColor, primaryColor)};
+                    box-shadow: 0 0 8px ${resolveEffectColor(animatedQrEffect.scanlineColor, primaryColor)};
+                    animation: ruachQrScan ${animatedQrEffect.speed || "2.2s"} linear infinite;
+                    pointer-events: none;
+                    z-index: 4;
+                }
+                .matrix-premium-transition {
+                    transition: all ${transitionDuration} ${transitionEasing};
+                }
+                @media print {
+                    .matrix-rotation-target,
+                    .matrix-float-target,
+                    .matrix-metallic-target::after,
+                    .matrix-neon-target,
+                    .matrix-holographic-target,
+                    .matrix-dynamic-gradient-target,
+                    .matrix-qr-animated,
+                    .matrix-qr-scanline,
+                    .matrix-till-slip-root > div[aria-hidden="true"] {
+                        animation: none !important;
+                    }
+                    .matrix-hover-target {
+                        transform: none !important;
+                    }
+                }
+            `}</style>
+
+            {particlesEnabled && (
+                <div
+                    aria-hidden="true"
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        overflow: "hidden",
+                        pointerEvents: "none",
+                        zIndex: 4
+                    }}
+                >
+                    {Array.from({ length: Math.min(60, Math.max(1, Number(particleEffect.count) || 14)) }).map((_, index) => (
+                        <span
+                            key={`particle-${index}`}
+                            style={{
+                                position: "absolute",
+                                left: `${(index * 37) % 100}%`,
+                                top: `${(index * 61) % 100}%`,
+                                width: `${particleEffect.size || 2}px`,
+                                height: `${particleEffect.size || 2}px`,
+                                borderRadius: "50%",
+                                background: resolveEffectColor(particleEffect.color, primaryColor),
+                                boxShadow: `0 0 8px ${resolveEffectColor(particleEffect.color, primaryColor)}`,
+                                opacity: 0,
+                                ["--particle-x"]: `${((index % 2 ? 1 : -1) * (20 + (index % 5) * 10))}px`,
+                                ["--particle-y"]: `${-(20 + (index % 7) * 12)}px`,
+                                ["--particle-opacity"]: particleEffect.opacity ?? 0.55,
+                                animation: `ruachParticleDrift ${particleEffect.duration || "4s"} ease-in-out ${(index * .17).toFixed(2)}s infinite`
+                            }}
+                        />
+                    ))}
+                </div>
+            )}
 
             {/* =====================================================
                 TOP GLOW EFFECT
@@ -285,6 +547,15 @@ export default function MatrixTillSlip({
             ====================================================== */}
 
             <div
+                className={[
+                    "matrix-receipt-surface",
+                    "matrix-effect-target",
+                    glassEnabled ? "matrix-glass-target" : "",
+                    neonEnabled ? "matrix-neon-target" : "",
+                    holographicEnabled ? "matrix-holographic-target" : "",
+                    dynamicGradientEnabled ? "matrix-dynamic-gradient-target" : "",
+                    metallicEnabled ? "matrix-metallic-target" : ""
+                ].filter(Boolean).join(" ")}
                 style={{
                     background: `
                         linear-gradient(
@@ -347,10 +618,16 @@ export default function MatrixTillSlip({
                     logoEnabled &&
                     showWatermark && (
                         <div
+                            className={[
+                                "matrix-effect-target",
+                                rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all") ? "matrix-rotation-target" : "",
+                                hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all") ? "matrix-hover-target" : "",
+                                floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all") ? "matrix-float-target" : ""
+                            ].filter(Boolean).join(" ")}
                             style={{
                                 position: "absolute",
-                                width: `${logoSize}px`,
-                                height: `${logoSize}px`,
+                                width: logoWidth,
+                                height: logoHeight,
                                 backgroundImage:
                                     `url(${settings.logo_url})`,
                                 backgroundSize: "contain",
@@ -482,14 +759,28 @@ export default function MatrixTillSlip({
                                 <img
                                     src={settings.logo_url}
                                     alt="Merchant Logo"
+                                    className={[
+                                        "matrix-merchant-logo",
+                                        "matrix-effect-target",
+                                        rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all") ? "matrix-rotation-target" : "",
+                                        hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all") ? "matrix-hover-target" : "",
+                                        floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all") ? "matrix-float-target" : ""
+                                    ].filter(Boolean).join(" ")}
                                     style={{
-                                        maxHeight:
-                                            logoConfig.mainLogoHeight ||
-                                            "52px",
-                                        maxWidth:
-                                            logoConfig.mainLogoWidth ||
-                                            "170px",
-                                        objectFit: "contain"
+                                        width: logoWidth,
+                                        height: logoHeight,
+                                        maxWidth: logoMaxWidth,
+                                        maxHeight: logoMaxHeight,
+                                        objectFit: logoConfig.objectFit || "contain",
+                                        aspectRatio: logoConfig.aspectRatio || "auto",
+                                        opacity: logoConfig.opacity ?? 1,
+                                        borderRadius: logoConfig.borderRadius || undefined,
+                                        padding: logoConfig.padding || undefined,
+                                        mixBlendMode: logoConfig.blendMode || "normal",
+                                        filter: logoConfig.monochrome
+                                            ? `grayscale(1)${logoConfig.tint ? ` drop-shadow(0 0 0 ${resolveEffectColor(logoConfig.tint, primaryColor)})` : ""}`
+                                            : undefined,
+                                        transition: `all ${transitionDuration} ${transitionEasing}`
                                     }}
                                 />
 
@@ -656,6 +947,12 @@ export default function MatrixTillSlip({
                                         item?.id ??
                                         index
                                     }
+                                    className={[
+                                        "matrix-product-item",
+                                        "matrix-effect-target",
+                                        floatingEnabled && (floatingEffect.target === "products" || floatingEffect.target === "items" || floatingEffect.target === "all") ? "matrix-float-target" : "",
+                                        hoverEnabled && (hoverEffect.target === "products" || hoverEffect.target === "items" || hoverEffect.target === "all") ? "matrix-hover-target" : ""
+                                    ].filter(Boolean).join(" ")}
                                     style={{
                                         display: "flex",
                                         justifyContent:
@@ -857,8 +1154,15 @@ export default function MatrixTillSlip({
                             ================================================== */}
 
                             <div
+                                className={[
+                                    "matrix-qr-container",
+                                    "matrix-effect-target",
+                                    animatedQrEnabled ? "matrix-qr-animated" : "",
+                                    hoverEnabled && (hoverEffect.target === "qr" || hoverEffect.target === "all") ? "matrix-hover-target" : ""
+                                ].filter(Boolean).join(" ")}
                                 style={{
                                     display: "inline-block",
+                                    position: "relative",
                                     padding: "12px",
                                     background: "#FFFFFF",
                                     borderRadius: "18px",
@@ -872,14 +1176,18 @@ export default function MatrixTillSlip({
                                 }}
                             >
 
+                                {animatedQrEnabled && animatedQrEffect.scanline !== false && (
+                                    <span className="matrix-qr-scanline" aria-hidden="true" />
+                                )}
+
                                 {qrCodeUrl ? (
 
                                     <img
                                         src={qrCodeUrl}
                                         alt="Voucher Token QR"
                                         style={{
-                                            width: "80px",
-                                            height: "80px",
+                                            width: qrCodeSize,
+                                            height: qrCodeSize,
                                             display: "block"
                                         }}
                                     />
@@ -888,8 +1196,8 @@ export default function MatrixTillSlip({
 
                                     <div
                                         style={{
-                                            width: "80px",
-                                            height: "80px",
+                                            width: qrCodeSize,
+                                            height: qrCodeSize,
                                             display: "flex",
                                             alignItems: "center",
                                             justifyContent:

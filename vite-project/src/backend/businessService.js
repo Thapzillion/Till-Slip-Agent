@@ -945,13 +945,41 @@ export function useBusiness() {
 
             const payload = {
                 owner_id: activeUser.id,
+
                 business_name: cleanBusinessName,
-                store_address: settings?.store_address?.trim() || '',
-                discount_percentage: Number(settings?.discount_percentage ?? 10),
-                webhook_slug: cleanWebhookSlug,
-                currency: settings?.currency || 'ZAR',
-                logo_url: resolvedLogoUrl,
-                voucher_expiration_days: Number(settings?.voucher_expiration_days ?? 30) // Appended database column value to save payload
+
+                store_address:
+                    settings?.store_address?.trim() || '',
+
+                discount_percentage:
+                    Number(settings?.discount_percentage ?? 10),
+
+                webhook_slug:
+                    cleanWebhookSlug,
+
+                currency:
+                    settings?.currency || 'ZAR',
+
+                logo_url:
+                    resolvedLogoUrl,
+
+                voucher_expiration_days:
+                    Number(settings?.voucher_expiration_days ?? 30),
+
+                // ==========================================
+                // RECEIPT DESIGN CONFIGURATION
+                // ==========================================
+
+                receipt_template:
+                    selectedTemplateId ||
+                    settings?.receipt_template ||
+                    'matrix-grid',
+
+                receipt_design_config:
+                    receiptData?.design_config &&
+                        typeof receiptData.design_config === 'object'
+                        ? receiptData.design_config
+                        : {}
             };
 
             if (settings?.id) {
