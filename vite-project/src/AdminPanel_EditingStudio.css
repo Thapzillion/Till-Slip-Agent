@@ -1,0 +1,517 @@
+/* ============================================================
+   RUACHAGENT — TESLA BLACK / BLUE NEON EDITING STUDIO
+   Add after the existing AdminPanel.css styles so these rules
+   become the studio layer without replacing existing layout rules.
+   ============================================================ */
+
+.studio-panel {
+  min-width: 0;
+}
+
+.studio-window {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(0, 168, 255, .12), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgba(0, 229, 255, .07), transparent 30%),
+    linear-gradient(145deg, #05080d 0%, #080d14 52%, #03060a 100%);
+  border: 1px solid rgba(56, 163, 255, .16);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .035);
+}
+
+.studio-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid rgba(74, 159, 230, .12);
+  background: linear-gradient(180deg, rgba(13, 22, 33, .96), rgba(7, 12, 18, .86));
+}
+
+.studio-title-block {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.studio-brand-mark {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 196, 255, .35);
+  border-radius: 11px;
+  color: #53cfff;
+  background: radial-gradient(circle, rgba(0, 191, 255, .18), rgba(0, 191, 255, .03));
+  box-shadow: 0 0 28px rgba(0, 174, 255, .14), inset 0 0 18px rgba(0, 174, 255, .05);
+}
+
+.studio-eyebrow,
+.studio-section-kicker {
+  display: block;
+  color: #4ea9d9;
+  font-size: 9px;
+  letter-spacing: .18em;
+  font-weight: 800;
+}
+
+.studio-topbar h2 {
+  margin: 3px 0 2px;
+  color: #f3faff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+}
+
+.studio-topbar p {
+  margin: 0;
+  color: #71879a;
+  font-size: 11px;
+}
+
+.studio-live-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border: 1px solid rgba(0, 198, 255, .15);
+  border-radius: 999px;
+  color: #6fa8c8;
+  background: rgba(0, 150, 220, .045);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+.studio-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16c7ff;
+  box-shadow: 0 0 12px rgba(22, 199, 255, .9);
+  animation: ruachStudioPulse 1.8s infinite;
+}
+
+.studio-ai-command {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 18px;
+  padding: 10px 11px;
+  border: 1px solid rgba(0, 181, 255, .16);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(14, 27, 41, .95), rgba(6, 13, 21, .95));
+  box-shadow: 0 0 25px rgba(0, 153, 255, .05), inset 0 1px 0 rgba(255, 255, 255, .03);
+}
+
+.studio-command-icon {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  color: #6ddcff;
+  border-radius: 8px;
+  background: rgba(0, 169, 255, .08);
+}
+
+.studio-ai-command input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  color: #dff7ff;
+  background: transparent;
+  font-size: 12px;
+}
+
+.studio-ai-command input::placeholder {
+  color: #506477;
+}
+
+.studio-ai-command button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 191, 255, .3);
+  border-radius: 9px;
+  color: #071019;
+  background: linear-gradient(135deg, #67d8ff, #149cff);
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(20, 156, 255, .18);
+}
+
+.studio-ai-command button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.studio-workspace {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr);
+  min-height: 570px;
+  border-top: 1px solid rgba(255, 255, 255, .025);
+}
+
+.studio-tool-rail {
+  padding: 12px 8px;
+  border-right: 1px solid rgba(74, 159, 230, .1);
+  background: linear-gradient(180deg, #060a10, #04070b);
+}
+
+.studio-tool {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #668096;
+  background: transparent;
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 700;
+  transition: .2s ease;
+}
+
+.studio-tool:hover {
+  color: #b9eaff;
+  background: rgba(0, 155, 255, .045);
+}
+
+.studio-tool.active {
+  color: #e6faff;
+  border-color: rgba(0, 183, 255, .2);
+  background: linear-gradient(180deg, rgba(0, 153, 255, .13), rgba(0, 98, 160, .04));
+  box-shadow: inset 0 0 20px rgba(0, 162, 255, .035), 0 0 20px rgba(0, 149, 255, .05);
+}
+
+.studio-tool-icon {
+  width: 34px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.studio-tool.active .studio-tool-icon {
+  color: #58d6ff;
+  background: rgba(0, 173, 255, .11);
+  box-shadow: 0 0 18px rgba(0, 173, 255, .1);
+}
+
+.studio-controls {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(3, 7, 12, .55);
+}
+
+.studio-controls-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 18px 13px;
+  border-bottom: 1px solid rgba(74, 159, 230, .08);
+}
+
+.studio-controls-header h3 {
+  margin: 3px 0 0;
+  color: #eef9ff;
+  font-size: 16px;
+}
+
+.studio-change-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #668096;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.studio-scroll-area {
+  flex: 1;
+  overflow: auto;
+  padding: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 169, 255, .22) transparent;
+}
+
+.studio-group {
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(73, 143, 194, .11);
+  border-radius: 11px;
+  background: rgba(9, 17, 26, .65);
+}
+
+.studio-group.expanded {
+  border-color: rgba(0, 166, 255, .16);
+  box-shadow: inset 0 0 30px rgba(0, 131, 211, .025);
+}
+
+.studio-group-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 13px;
+  border: 0;
+  color: #b9cfe0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.studio-group-title,
+.studio-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.studio-group-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+
+.studio-group-header>svg {
+  color: #4e718b;
+}
+
+.studio-group-body {
+  padding: 2px 13px 13px;
+  border-top: 1px solid rgba(74, 159, 230, .07);
+}
+
+.studio-field-label {
+  display: block;
+  margin: 12px 0 6px;
+  color: #71899d;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.studio-select {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(79, 142, 181, .15);
+  border-radius: 8px;
+  outline: none;
+  color: #cce8f7;
+  background: #07101a;
+  font-size: 11px;
+}
+
+.studio-select:focus {
+  border-color: rgba(0, 181, 255, .45);
+  box-shadow: 0 0 0 2px rgba(0, 181, 255, .06);
+}
+
+.studio-control {
+  padding: 9px 0;
+}
+
+.studio-control-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #7d95a8;
+  font-size: 10px;
+}
+
+.studio-control-head strong {
+  color: #bfeaff;
+  font-weight: 700;
+}
+
+.studio-range {
+  width: 100%;
+  margin-top: 9px;
+  accent-color: #17baff;
+  cursor: pointer;
+}
+
+.studio-toggle {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 5px;
+  padding: 8px 9px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #7d95a8;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 10px;
+  transition: .18s ease;
+}
+
+.studio-toggle:hover {
+  background: rgba(0, 145, 220, .045);
+  color: #c0e6f7;
+}
+
+.studio-toggle.active {
+  color: #bcecff;
+  border-color: rgba(0, 181, 255, .12);
+  background: rgba(0, 145, 220, .065);
+}
+
+.studio-switch {
+  width: 29px;
+  height: 16px;
+  position: relative;
+  flex: 0 0 29px;
+  border-radius: 999px;
+  background: #172432;
+  border: 1px solid #294052;
+}
+
+.studio-switch span {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #63778a;
+  transition: .18s ease;
+}
+
+.studio-toggle.active .studio-switch {
+  border-color: rgba(0, 191, 255, .45);
+  background: rgba(0, 163, 235, .18);
+}
+
+.studio-toggle.active .studio-switch span {
+  left: 15px;
+  background: #45d3ff;
+  box-shadow: 0 0 10px rgba(69, 211, 255, .8);
+}
+
+.studio-color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 0;
+  color: #7d95a8;
+  font-size: 10px;
+}
+
+.studio-color-input {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 6px 4px 4px;
+  border: 1px solid rgba(79, 142, 181, .15);
+  border-radius: 7px;
+  background: #07101a;
+}
+
+.studio-color-input input {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.studio-color-input code {
+  color: #8fb0c5;
+  font-size: 9px;
+}
+
+.studio-target-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.studio-target {
+  padding: 8px 5px;
+  border: 1px solid rgba(79, 142, 181, .12);
+  border-radius: 7px;
+  color: #71899d;
+  background: #07101a;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.studio-target.active {
+  color: #bdefff;
+  border-color: rgba(0, 184, 255, .35);
+  background: rgba(0, 160, 230, .1);
+}
+
+.studio-ai-log {
+  margin: 0 12px 12px;
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 170, 255, .1);
+  border-radius: 9px;
+  background: rgba(0, 112, 170, .035);
+}
+
+.studio-ai-log-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #65cfff;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.studio-ai-log-line {
+  margin-top: 5px;
+  color: #6f879a;
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+@keyframes ruachStudioPulse {
+
+  0%,
+  100% {
+    opacity: .5;
+    transform: scale(.8);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@media (max-width: 1000px) {
+  .studio-workspace {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+
+  .studio-topbar {
+    padding: 16px;
+  }
+
+  .studio-live-state {
+    display: none;
+  }
+}
