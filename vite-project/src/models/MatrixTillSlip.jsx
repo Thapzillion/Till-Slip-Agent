@@ -52,31 +52,80 @@ export default function MatrixTillSlip({
 
     const config = designConfig || {};
 
+    /* Normalize the Editing Studio schema and the legacy AI schema. */
     const colors = config.colors || {};
     const effects = config.effects || {};
     const typography = config.typography || {};
     const receiptConfig = config.receipt || {};
+
     const logoConfig = config.logo || {};
+    const logoLayout = logoConfig.layout || {};
+    const logoColors = logoConfig.colors || {};
+    const logoEffects = logoConfig.effects || {};
 
-    // Advanced visual effect configuration. These values are supplied by
-    // RuachAgent AI through designConfig; this component only renders them.
-    const rotationEffect = effects.infiniteRotation || {};
-    const hoverEffect = effects.hoverAnimation || {};
-    const floatingEffect = effects.floatingElements || effects.floatingProductElements || {};
-    const metallicEffect = effects.metallicReflection || {};
-    const glassEffect = effects.glassEffect || {};
-    const neonEffect = effects.neonGlow || {};
-    const holographicEffect = effects.holographicLighting || {};
-    const dynamicGradientEffect = effects.dynamicGradient || {};
-    const animatedQrEffect = effects.animatedQr || effects.animatedQRCode || {};
-    const particleEffect = effects.particleEffects || {};
-    const transitionEffect = effects.premiumTransitions || {};
+    const qrConfig = config.qrCode || {};
+    const qrLayout = qrConfig.layout || {};
+    const qrColors = qrConfig.colors || {};
+    const qrEffects = qrConfig.effects || {};
 
-    const transitionDuration =
-        transitionEffect.duration || "450ms";
+    const textConfig = config.text || {};
+    const themeConfig = config.theme || {};
+    const themeLayout = themeConfig.layout || {};
+    const themeColors = themeConfig.colors || {};
+    const themeEffects = themeConfig.effects || {};
 
-    const transitionEasing =
-        transitionEffect.easing || "cubic-bezier(.2,.8,.2,1)";
+    const rotationEffect = effects.infiniteRotation || logoEffects.infiniteRotation || {};
+    const hoverEffect = effects.hoverAnimation || logoEffects.hover || {};
+    const floatingEffect = effects.floatingElements || effects.floatingProductElements || logoEffects.floating || {};
+    const metallicEffect = effects.metallicReflection || logoEffects.metallic || themeEffects.metallic || {};
+    const glassEffect = effects.glassEffect || logoEffects.glass || themeEffects.glass || {};
+    const neonEffect = effects.neonGlow || logoEffects.neonGlow || {};
+    const holographicEffect = effects.holographicLighting || logoEffects.holographic || themeEffects.holographic || {};
+    const dynamicGradientEffect = effects.dynamicGradient || themeEffects.dynamicGradient || {};
+
+    const animatedQrEffect = effects.animatedQr || effects.animatedQRCode || {
+        enabled: Boolean(
+            qrEffects.pulse?.enabled ||
+            qrEffects.scanline?.enabled ||
+            qrEffects.glow?.enabled ||
+            qrEffects.holographic?.enabled ||
+            qrEffects.animatedBorder?.enabled
+        ),
+        pulse: qrEffects.pulse?.enabled !== false,
+        scanline: qrEffects.scanline?.enabled === true,
+        glowColor: qrEffects.glow?.color,
+        speed: qrEffects.animationSpeed || qrEffects.pulse?.speed || "2.4s"
+    };
+
+    const particleEffect = effects.particleEffects || {
+        enabled: themeEffects.particles?.enabled === true,
+        ...themeEffects.particles
+    };
+
+    const transitionEffect = effects.premiumTransitions || {
+        enabled: themeEffects.premiumTransition?.enabled === true,
+        ...themeEffects.premiumTransition
+    };
+
+    const logoRotationEnabled = rotationEffect.enabled === true || logoEffects.infiniteRotation?.enabled === true;
+    const logoHoverEnabled = hoverEffect.enabled === true || logoEffects.hover?.enabled === true;
+    const logoFloatingEnabled = floatingEffect.enabled === true || logoEffects.floating?.enabled === true;
+    const logoMetallicEnabled = metallicEffect.enabled === true || logoEffects.metallic?.enabled === true;
+    const logoGlassEnabled = glassEffect.enabled === true || logoEffects.glass?.enabled === true;
+    const logoNeonEnabled = neonEffect.enabled === true || logoEffects.neonGlow?.enabled === true;
+    const logoHolographicEnabled = holographicEffect.enabled === true || logoEffects.holographic?.enabled === true;
+
+    const themeGlassEnabled = themeEffects.glass?.enabled === true;
+    const themeNeonEnabled = themeEffects.neonBorder?.enabled === true;
+    const themeHolographicEnabled = themeEffects.holographic?.enabled === true;
+    const themeMetallicEnabled = themeEffects.metallic?.enabled === true;
+    const themeDynamicGradientEnabled = themeEffects.dynamicGradient?.enabled === true;
+
+    const qrPulseEnabled = qrEffects.pulse?.enabled === true;
+    const qrScanlineEnabled = qrEffects.scanline?.enabled === true;
+    const qrGlowEnabled = qrEffects.glow?.enabled === true;
+    const qrHolographicEnabled = qrEffects.holographic?.enabled === true;
+    const qrAnimatedBorderEnabled = qrEffects.animatedBorder?.enabled === true;
 
     const rotationEnabled = rotationEffect.enabled === true;
     const hoverEnabled = hoverEffect.enabled === true;
@@ -87,12 +136,12 @@ export default function MatrixTillSlip({
     const holographicEnabled = holographicEffect.enabled === true;
     const dynamicGradientEnabled = dynamicGradientEffect.enabled === true;
     const animatedQrEnabled = animatedQrEffect.enabled === true;
-    const particlesEnabled = particleEffect.enabled === true;
+    const particlesEnabled = particleEffect.enabled === true || themeEffects.particles?.enabled === true;
 
     const resolveEffectColor = (value, fallback) => {
-        if (!value || value === "primary") return fallback || primaryColor;
-        if (value === "secondary") return secondaryColor;
-        if (value === "accent") return colors.accent || primaryColor;
+        if (!value || value === "primary") return fallback;
+        if (value === "secondary") return colors.secondary || "#00B8FF";
+        if (value === "accent") return colors.accent || "#39D9FF";
         return value;
     };
 
@@ -124,20 +173,20 @@ export default function MatrixTillSlip({
     // ============================================================
 
     const primaryColor =
-        colors.primary || "#08E3D8";
+        themeColors.primary || colors.primary || "#08E3D8";
 
     const secondaryColor =
-        colors.secondary || "#00B8FF";
+        themeColors.secondary || colors.secondary || "#00B8FF";
 
     const backgroundColor =
-        colors.background ||
+        themeColors.background || colors.background ||
         "linear-gradient(180deg, rgba(8,18,24,0.95), rgba(4,10,14,0.98))";
 
     const textColor =
-        colors.text || "#FFFFFF";
+        themeColors.text || colors.text || "#FFFFFF";
 
     const mutedTextColor =
-        colors.mutedText || "#94A3B8";
+        themeColors.mutedText || colors.mutedText || "#94A3B8";
 
     const receiptGlow =
         effects.receiptGlow ||
@@ -154,6 +203,56 @@ export default function MatrixTillSlip({
     const businessNameWeight =
         typography.businessNameWeight || "900";
 
+    const headingText = textConfig.heading || {};
+    const bodyText = textConfig.body || {};
+    const totalText = textConfig.total || {};
+
+    const textStyleFromConfig = (target, fallback = {}) => {
+        const brightness = Number(target.brightness ?? 1);
+        const contrast = Number(target.contrast ?? 1);
+        const effect = target.effects || {};
+        const gradientEnabled = target.dynamicGradient?.enabled === true;
+        const gradientColors = target.dynamicGradient?.colors || [primaryColor, secondaryColor];
+
+        return {
+            fontFamily: target.fontFamily || fallback.fontFamily,
+            fontSize: target.fontSize ? `${target.fontSize}px` : fallback.fontSize,
+            fontWeight: target.fontWeight || fallback.fontWeight,
+            letterSpacing: target.letterSpacing !== undefined ? `${target.letterSpacing}px` : fallback.letterSpacing,
+            textAlign: target.alignment || fallback.textAlign,
+            opacity: target.opacity ?? fallback.opacity,
+            color: target.color || fallback.color,
+            transform: `scale(${target.scale || 1}) rotate(${target.rotation || 0}deg)`,
+            transformOrigin: "center",
+            filter: `brightness(${brightness}) contrast(${contrast})`,
+            textShadow:
+                effect.neon?.enabled || effect.glow?.enabled || effect.shadow?.enabled
+                    ? `0 0 ${effect.neon?.radius || 10}px ${effect.neon?.color || primaryColor}99, 0 4px 12px rgba(0,0,0,0.35)`
+                    : undefined,
+            ...(gradientEnabled
+                ? {
+                    backgroundImage: `linear-gradient(90deg, ${gradientColors.join(", ")})`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text"
+                }
+                : {})
+        };
+    };
+
+    const headingVisualStyle = textStyleFromConfig(headingText, {
+        fontSize: businessNameSize,
+        fontWeight: businessNameWeight,
+        letterSpacing: typography.businessNameSpacing || "1px",
+        color: textColor
+    });
+    const bodyVisualStyle = textStyleFromConfig(bodyText, {
+        fontSize: "11px", fontWeight: "700", color: "rgba(255,255,255,0.85)"
+    });
+    const totalVisualStyle = textStyleFromConfig(totalText, {
+        fontSize: "14px", fontWeight: "900", color: colors.totalLabel || "#B1B5C6"
+    });
+
     const showWatermark =
         receiptConfig.showWatermark !== false;
 
@@ -163,103 +262,63 @@ export default function MatrixTillSlip({
     const showDownloadButton =
         receiptConfig.showDownloadButton !== false;
 
-    const logoEnabled =
-        logoConfig.enabled !== false;
+    const themeBorderWidth = Number(themeLayout.borderWidth ?? 2);
+    const themeBorderRadius = Number(themeLayout.borderRadius ?? 26);
+    const themeOuterPadding = Number(themeLayout.outerPadding ?? 9);
+    const themeReceiptWidth = themeLayout.width || "100%";
+
+    const logoEnabled = logoConfig.enabled !== false;
 
     const baseLogoSize =
-        logoConfig.size === "small"
-            ? 100
-            : logoConfig.size === "large"
-                ? 220
-                : 170;
+        logoConfig.size === "small" ? 100 :
+            logoConfig.size === "large" ? 220 : 170;
 
-    const numericLogoScale =
-        Number.isFinite(Number(logoConfig.scale))
-            ? Math.max(0.1, Number(logoConfig.scale))
-            : 1;
+    const numericLogoScale = Number.isFinite(Number(logoLayout.scale ?? logoConfig.scale))
+        ? Math.max(0.1, Number(logoLayout.scale ?? logoConfig.scale))
+        : 1;
 
     const logoWidth =
-        logoConfig.width ||
-        logoConfig.mainLogoWidth ||
+        logoLayout.width || logoConfig.width || logoConfig.mainLogoWidth ||
         `${Math.round(baseLogoSize * numericLogoScale)}px`;
 
     const logoHeight =
-        logoConfig.height ||
-        logoConfig.mainLogoHeight ||
+        logoLayout.height || logoConfig.height || logoConfig.mainLogoHeight ||
         `${Math.round(baseLogoSize * numericLogoScale)}px`;
 
-    const logoMaxWidth =
-        logoConfig.maxWidth || "100%";
-
-    const logoMaxHeight =
-        logoConfig.maxHeight || "none";
-
-
-    // ============================================================
-    // LOGO POSITION
-    // ============================================================
+    const logoMaxWidth = logoLayout.maxWidth || logoConfig.maxWidth || "100%";
+    const logoMaxHeight = logoLayout.maxHeight || logoConfig.maxHeight || "none";
+    const logoPositionName = logoLayout.position || logoConfig.position || "top-center";
+    const logoRotation = Number(logoLayout.rotation ?? logoConfig.rotation ?? 0);
+    const logoOpacity = Number(logoLayout.opacity ?? logoConfig.opacity ?? 1);
+    const logoAspectRatio = logoLayout.aspectRatio || logoConfig.aspectRatio || "auto";
+    const logoLockAspectRatio = logoLayout.lockAspectRatio ?? logoConfig.lockAspectRatio ?? true;
 
     let logoPosition = {
-        top: "52%",
+        top: "20px",
         left: "50%",
-        transform: "translate(-50%, -50%)"
+        transform: `translateX(-50%) rotate(${logoRotation}deg)`
     };
 
-    if (logoConfig.position === "top-left") {
-        logoPosition = {
-            top: "80px",
-            left: "40px",
-            transform: "none"
-        };
+    if (logoPositionName === "top-left") {
+        logoPosition = { top: "20px", left: "20px", transform: `rotate(${logoRotation}deg)` };
     }
-
-    if (logoConfig.position === "top-right") {
-        logoPosition = {
-            top: "80px",
-            left: "auto",
-            right: "40px",
-            transform: "none"
-        };
+    if (logoPositionName === "top-right") {
+        logoPosition = { top: "20px", right: "20px", transform: `rotate(${logoRotation}deg)` };
     }
-
-    if (logoConfig.position === "top") {
-        logoPosition = {
-            top: "40px",
-            left: "50%",
-            transform: "translateX(-50%)"
-        };
+    if (logoPositionName === "top-center" || logoPositionName === "top") {
+        logoPosition = { top: "20px", left: "50%", transform: `translateX(-50%) rotate(${logoRotation}deg)` };
     }
-
-    if (logoConfig.position === "center") {
-        logoPosition = {
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)"
-        };
+    if (logoPositionName === "center") {
+        logoPosition = { top: "50%", left: "50%", transform: `translate(-50%, -50%) rotate(${logoRotation}deg)` };
     }
-
-    if (logoConfig.position === "bottom") {
-        logoPosition = {
-            bottom: "40px",
-            left: "50%",
-            transform: "translateX(-50%)"
-        };
+    if (logoPositionName === "bottom-center" || logoPositionName === "bottom") {
+        logoPosition = { bottom: "40px", left: "50%", transform: `translateX(-50%) rotate(${logoRotation}deg)` };
     }
-
-    if (logoConfig.position === "bottom-left") {
-        logoPosition = {
-            bottom: "40px",
-            left: "40px",
-            transform: "none"
-        };
+    if (logoPositionName === "bottom-left") {
+        logoPosition = { bottom: "40px", left: "40px", transform: `rotate(${logoRotation}deg)` };
     }
-
-    if (logoConfig.position === "bottom-right") {
-        logoPosition = {
-            bottom: "40px",
-            right: "40px",
-            transform: "none"
-        };
+    if (logoPositionName === "bottom-right") {
+        logoPosition = { bottom: "40px", right: "40px", transform: `rotate(${logoRotation}deg)` };
     }
 
 
@@ -286,6 +345,13 @@ export default function MatrixTillSlip({
         typeof config.qrCode?.size === "number"
             ? `${config.qrCode.size}px`
             : config.qrCode?.size || "80px";
+
+    const qrScale = Number(qrLayout.scale ?? qrConfig.scale ?? 1);
+    const qrRotation = Number(qrLayout.rotation ?? qrConfig.rotation ?? 0);
+    const qrCornerRadius = Number(qrLayout.cornerRadius ?? qrConfig.cornerRadius ?? 18);
+    const qrForeground = qrColors.foreground || "#050608";
+    const qrBackground = qrColors.background || "#FFFFFF";
+    const qrOpacity = Number(qrColors.opacity ?? qrConfig.opacity ?? 1);
 
 
     // ============================================================
@@ -318,8 +384,9 @@ export default function MatrixTillSlip({
             id="till-slip-capture"
             className="matrix-till-slip-root"
             style={{
-                padding: "28px",
-                border: `2px solid ${primaryColor}`,
+                width: themeReceiptWidth,
+                padding: `${themeOuterPadding}px`,
+                border: `${themeBorderWidth}px solid ${primaryColor}`,
                 boxShadow: receiptGlow,
                 background: backgroundColor,
                 position: "relative",
@@ -550,11 +617,11 @@ export default function MatrixTillSlip({
                 className={[
                     "matrix-receipt-surface",
                     "matrix-effect-target",
-                    glassEnabled ? "matrix-glass-target" : "",
-                    neonEnabled ? "matrix-neon-target" : "",
-                    holographicEnabled ? "matrix-holographic-target" : "",
-                    dynamicGradientEnabled ? "matrix-dynamic-gradient-target" : "",
-                    metallicEnabled ? "matrix-metallic-target" : ""
+                    (glassEnabled || themeGlassEnabled) ? "matrix-glass-target" : "",
+                    (neonEnabled || themeNeonEnabled) ? "matrix-neon-target" : "",
+                    (holographicEnabled || themeHolographicEnabled) ? "matrix-holographic-target" : "",
+                    (dynamicGradientEnabled || themeDynamicGradientEnabled) ? "matrix-dynamic-gradient-target" : "",
+                    (metallicEnabled || themeMetallicEnabled) ? "matrix-metallic-target" : ""
                 ].filter(Boolean).join(" ")}
                 style={{
                     background: `
@@ -578,13 +645,13 @@ export default function MatrixTillSlip({
                     `,
                     backgroundSize: "24px 24px",
                     color: textColor,
-                    borderRadius: "26px",
-                    padding: "9px 7px",
+                    borderRadius: `${themeBorderRadius}px`,
+                    padding: `${themeOuterPadding}px`,
                     boxShadow: receiptGlow,
                     fontFamily: '"Courier New", monospace',
                     position: "relative",
                     overflow: "hidden",
-                    border: `2px solid ${primaryColor}`
+                    border: `${themeBorderWidth}px solid ${primaryColor}`
                 }}
             >
 
@@ -620,9 +687,13 @@ export default function MatrixTillSlip({
                         <div
                             className={[
                                 "matrix-effect-target",
-                                rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all") ? "matrix-rotation-target" : "",
-                                hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all") ? "matrix-hover-target" : "",
-                                floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all") ? "matrix-float-target" : ""
+                                (logoRotationEnabled || (rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all"))) ? "matrix-rotation-target" : "",
+                                (logoHoverEnabled || (hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all"))) ? "matrix-hover-target" : "",
+                                (logoFloatingEnabled || (floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all"))) ? "matrix-float-target" : "",
+                                logoMetallicEnabled ? "matrix-metallic-target" : "",
+                                logoGlassEnabled ? "matrix-glass-target" : "",
+                                logoNeonEnabled ? "matrix-neon-target" : "",
+                                logoHolographicEnabled ? "matrix-holographic-target" : ""
                             ].filter(Boolean).join(" ")}
                             style={{
                                 position: "absolute",
@@ -762,9 +833,13 @@ export default function MatrixTillSlip({
                                     className={[
                                         "matrix-merchant-logo",
                                         "matrix-effect-target",
-                                        rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all") ? "matrix-rotation-target" : "",
-                                        hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all") ? "matrix-hover-target" : "",
-                                        floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all") ? "matrix-float-target" : ""
+                                        (logoRotationEnabled || (rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all"))) ? "matrix-rotation-target" : "",
+                                        (logoHoverEnabled || (hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all"))) ? "matrix-hover-target" : "",
+                                        (logoFloatingEnabled || (floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all"))) ? "matrix-float-target" : "",
+                                        logoMetallicEnabled ? "matrix-metallic-target" : "",
+                                        logoGlassEnabled ? "matrix-glass-target" : "",
+                                        logoNeonEnabled ? "matrix-neon-target" : "",
+                                        logoHolographicEnabled ? "matrix-holographic-target" : ""
                                     ].filter(Boolean).join(" ")}
                                     style={{
                                         width: logoWidth,
@@ -773,13 +848,27 @@ export default function MatrixTillSlip({
                                         maxHeight: logoMaxHeight,
                                         objectFit: logoConfig.objectFit || "contain",
                                         aspectRatio: logoConfig.aspectRatio || "auto",
-                                        opacity: logoConfig.opacity ?? 1,
-                                        borderRadius: logoConfig.borderRadius || undefined,
-                                        padding: logoConfig.padding || undefined,
-                                        mixBlendMode: logoConfig.blendMode || "normal",
-                                        filter: logoConfig.monochrome
-                                            ? `grayscale(1)${logoConfig.tint ? ` drop-shadow(0 0 0 ${resolveEffectColor(logoConfig.tint, primaryColor)})` : ""}`
-                                            : undefined,
+                                        opacity: logoOpacity,
+                                        borderRadius: logoLayout.borderRadius || logoConfig.borderRadius || undefined,
+                                        padding: logoLayout.padding || logoConfig.padding || undefined,
+                                        mixBlendMode: logoLayout.blendMode || logoConfig.blendMode || "normal",
+                                        aspectRatio: logoLockAspectRatio ? (logoAspectRatio || "auto") : "auto",
+                                        transform: `scale(${numericLogoScale}) rotate(${logoRotation}deg)`,
+                                        transformOrigin: "center",
+                                        filter: (() => {
+                                            const mode = logoColors.mode || "original";
+                                            const brightness = Number(logoColors.brightness ?? 1);
+                                            const contrast = Number(logoColors.contrast ?? 1);
+                                            const saturation = Number(logoColors.saturation ?? 1);
+                                            const filters = [
+                                                mode === "grayscale" || mode === "monochrome" ? "grayscale(1)" : "",
+                                                mode === "tint" && logoColors.tintColor ? `drop-shadow(0 0 0 ${logoColors.tintColor})` : "",
+                                                `brightness(${brightness})`,
+                                                `contrast(${contrast})`,
+                                                `saturate(${saturation})`
+                                            ].filter(Boolean);
+                                            return filters.length ? filters.join(" ") : undefined;
+                                        })(),
                                         transition: `all ${transitionDuration} ${transitionEasing}`
                                     }}
                                 />
@@ -856,10 +945,9 @@ export default function MatrixTillSlip({
 
                         <div
                             style={{
-                                fontSize:
-                                    typography.addressSize ||
-                                    "11px",
+                                ...bodyVisualStyle,
                                 color:
+                                    bodyText.color ||
                                     colors.address ||
                                     "rgba(255,255,255,0.85)",
                                 marginTop: "6px",
@@ -967,7 +1055,9 @@ export default function MatrixTillSlip({
 
                                     <span
                                         style={{
-                                            maxWidth: "75%"
+                                            ...bodyVisualStyle,
+                                            maxWidth: "75%",
+                                            color: bodyText.color || textColor
                                         }}
                                     >
                                         {item?.name ||
@@ -1055,9 +1145,9 @@ export default function MatrixTillSlip({
                                     0 0 8px ${primaryColor}73,
                                     inset 0 0 18px ${primaryColor}0F
                                 `,
-                                fontWeight: "900",
-                                fontSize: "14px",
+                                ...totalVisualStyle,
                                 color:
+                                    totalText.color ||
                                     colors.totalLabel ||
                                     "#B1B5C6"
                             }}
@@ -1073,7 +1163,9 @@ export default function MatrixTillSlip({
                                         colors.totalValue ||
                                         "#00A884",
                                     textShadow:
-                                        `0 0 10px ${primaryColor}26`
+                                        totalText.effects?.neon?.enabled || totalText.effects?.glow?.enabled
+                                            ? `0 0 10px ${primaryColor}88`
+                                            : `0 0 10px ${primaryColor}26`
                                 }}
                             >
                                 {total}
@@ -1157,15 +1249,18 @@ export default function MatrixTillSlip({
                                 className={[
                                     "matrix-qr-container",
                                     "matrix-effect-target",
-                                    animatedQrEnabled ? "matrix-qr-animated" : "",
+                                    (animatedQrEnabled || qrPulseEnabled) ? "matrix-qr-animated" : "",
+                                    qrHolographicEnabled ? "matrix-holographic-target" : "",
+                                    qrGlowEnabled ? "matrix-neon-target" : "",
+                                    qrAnimatedBorderEnabled ? "matrix-neon-target" : "",
                                     hoverEnabled && (hoverEffect.target === "qr" || hoverEffect.target === "all") ? "matrix-hover-target" : ""
                                 ].filter(Boolean).join(" ")}
                                 style={{
                                     display: "inline-block",
                                     position: "relative",
                                     padding: "12px",
-                                    background: "#FFFFFF",
-                                    borderRadius: "18px",
+                                    background: qrBackground,
+                                    borderRadius: `${qrCornerRadius}px`,
                                     border:
                                         `1px solid ${primaryColor}26`,
                                     boxShadow: `
@@ -1176,7 +1271,7 @@ export default function MatrixTillSlip({
                                 }}
                             >
 
-                                {animatedQrEnabled && animatedQrEffect.scanline !== false && (
+                                {(animatedQrEnabled || qrScanlineEnabled) && animatedQrEffect.scanline !== false && (
                                     <span className="matrix-qr-scanline" aria-hidden="true" />
                                 )}
 
@@ -1188,7 +1283,12 @@ export default function MatrixTillSlip({
                                         style={{
                                             width: qrCodeSize,
                                             height: qrCodeSize,
-                                            display: "block"
+                                            transform: `scale(${Number.isFinite(qrScale) ? qrScale : 1}) rotate(${qrRotation}deg)`,
+                                            transformOrigin: "center",
+                                            opacity: qrOpacity,
+                                            display: "block",
+                                            objectFit: "contain",
+                                            filter: qrForeground !== "#050608" ? `drop-shadow(0 0 2px ${qrForeground})` : undefined
                                         }}
                                     />
 
@@ -1399,4 +1499,5 @@ export default function MatrixTillSlip({
         </div>
     );
 }
+
 
