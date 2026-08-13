@@ -33,6 +33,738 @@ export default function AgentParameters() {
       ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
       : "";
 
+  // ============================================================
+  // AGENT PARAMETERS — TESLA BLACK SAAS DESIGN SYSTEM
+  // ============================================================
+
+  const styles = {
+
+    // ----------------------------------------------------------
+    // PAGE SHELL
+    // ----------------------------------------------------------
+
+    page: {
+      position: 'relative',
+      minHeight: '100vh',
+      width: '100%',
+      background: '#05070a',
+      color: '#ffffff',
+      overflow: 'hidden',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+    },
+
+    pageAmbient: {
+      position: 'absolute',
+      inset: 0,
+      pointerEvents: 'none',
+      overflow: 'hidden',
+      zIndex: 0
+    },
+
+    ambientBlue: {
+      position: 'absolute',
+      width: '520px',
+      height: '520px',
+      top: '-260px',
+      right: '-160px',
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(0,110,255,0.13) 0%, rgba(0,110,255,0.035) 35%, transparent 72%)',
+      filter: 'blur(12px)'
+    },
+
+    ambientCyan: {
+      position: 'absolute',
+      width: '420px',
+      height: '420px',
+      bottom: '-240px',
+      left: '-180px',
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(0,190,255,0.08) 0%, transparent 70%)',
+      filter: 'blur(15px)'
+    },
+
+    gridOverlay: {
+      position: 'absolute',
+      inset: 0,
+      opacity: 0.16,
+      backgroundImage: `
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
+    `,
+      backgroundSize: '42px 42px',
+      maskImage: 'linear-gradient(to bottom, black, transparent 85%)',
+      WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 85%)'
+    },
+
+    // ----------------------------------------------------------
+    // MAIN CONTENT
+    // ----------------------------------------------------------
+
+    content: {
+      position: 'relative',
+      zIndex: 2,
+      width: '100%',
+      maxWidth: '1500px',
+      margin: '0 auto',
+      padding: '34px 34px 60px',
+      boxSizing: 'border-box'
+    },
+
+    // ----------------------------------------------------------
+    // PREMIUM HEADER
+    // ----------------------------------------------------------
+
+    header: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'space-between',
+      gap: '24px',
+      marginBottom: '28px'
+    },
+
+    headerLeft: {
+      minWidth: 0
+    },
+
+    eyebrow: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '9px',
+      marginBottom: '10px',
+      fontSize: '9px',
+      fontWeight: '700',
+      letterSpacing: '1.8px',
+      color: '#4d8dff',
+      textTransform: 'uppercase'
+    },
+
+    eyebrowDot: {
+      width: '6px',
+      height: '6px',
+      borderRadius: '50%',
+      background: '#168cff',
+      boxShadow: '0 0 10px rgba(22,140,255,0.9)'
+    },
+
+    title: {
+      margin: 0,
+      fontSize: '28px',
+      lineHeight: 1.1,
+      fontWeight: '600',
+      letterSpacing: '-0.8px',
+      color: '#ffffff'
+    },
+
+    subtitle: {
+      margin: '9px 0 0',
+      maxWidth: '620px',
+      fontSize: '12px',
+      lineHeight: 1.6,
+      color: '#6f7782',
+      letterSpacing: '0.15px'
+    },
+
+    headerStatus: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      padding: '10px 14px',
+      border: '1px solid rgba(45,126,255,0.25)',
+      borderRadius: '10px',
+      background: 'linear-gradient(180deg, rgba(14,20,30,0.96), rgba(7,10,15,0.96))',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 30px rgba(0,0,0,0.3)',
+      whiteSpace: 'nowrap'
+    },
+
+    statusOrb: {
+      width: '8px',
+      height: '8px',
+      borderRadius: '50%',
+      background: '#21d4ff',
+      boxShadow: '0 0 12px rgba(33,212,255,0.9)'
+    },
+
+    statusText: {
+      fontSize: '9px',
+      fontWeight: '700',
+      letterSpacing: '1px',
+      color: '#aab7c8',
+      textTransform: 'uppercase'
+    },
+
+    // ----------------------------------------------------------
+    // METRICS
+    // ----------------------------------------------------------
+
+    metricsGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+      gap: '12px',
+      marginBottom: '18px'
+    },
+
+    metricCard: {
+      position: 'relative',
+      minHeight: '94px',
+      padding: '16px',
+      boxSizing: 'border-box',
+      overflow: 'hidden',
+      borderRadius: '13px',
+      border: '1px solid rgba(80,120,180,0.16)',
+      background: 'linear-gradient(145deg, rgba(15,20,28,0.98), rgba(7,10,15,0.98))',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035), 0 15px 35px rgba(0,0,0,0.25)'
+    },
+
+    metricGlow: {
+      position: 'absolute',
+      top: '-35px',
+      right: '-35px',
+      width: '100px',
+      height: '100px',
+      borderRadius: '50%',
+      background: 'radial-gradient(circle, rgba(0,110,255,0.12), transparent 70%)',
+      pointerEvents: 'none'
+    },
+
+    metricLabel: {
+      position: 'relative',
+      zIndex: 1,
+      fontSize: '8px',
+      fontWeight: '700',
+      letterSpacing: '1.2px',
+      color: '#69717d',
+      textTransform: 'uppercase'
+    },
+
+    metricValue: {
+      position: 'relative',
+      zIndex: 1,
+      marginTop: '10px',
+      fontSize: '21px',
+      lineHeight: 1,
+      fontWeight: '500',
+      letterSpacing: '-0.4px',
+      color: '#f4f7fb'
+    },
+
+    metricMeta: {
+      position: 'relative',
+      zIndex: 1,
+      marginTop: '8px',
+      fontSize: '8px',
+      color: '#4f5967',
+      letterSpacing: '0.3px'
+    },
+
+    // ----------------------------------------------------------
+    // DASHBOARD GRID
+    // ----------------------------------------------------------
+
+    dashboardGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'minmax(0, 1.18fr) minmax(360px, 0.82fr)',
+      gap: '18px',
+      alignItems: 'start'
+    },
+
+    leftColumn: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '18px',
+      minWidth: 0
+    },
+
+    rightColumn: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '18px',
+      minWidth: 0
+    },
+
+    // ----------------------------------------------------------
+    // PREMIUM CARD
+    // ----------------------------------------------------------
+
+    card: {
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: '16px',
+      border: '1px solid rgba(75,125,205,0.18)',
+      background: 'linear-gradient(145deg, rgba(13,18,25,0.98), rgba(6,9,13,0.99))',
+      boxShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.035),
+      0 20px 55px rgba(0,0,0,0.32)
+    `
+    },
+
+    cardAccent: {
+      position: 'absolute',
+      top: 0,
+      left: '28px',
+      right: '28px',
+      height: '1px',
+      background: 'linear-gradient(90deg, transparent, rgba(35,125,255,0.8), transparent)',
+      boxShadow: '0 0 12px rgba(35,125,255,0.4)'
+    },
+
+    cardHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '16px',
+      padding: '20px 22px 17px',
+      borderBottom: '1px solid rgba(255,255,255,0.045)'
+    },
+
+    cardHeaderLeft: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      minWidth: 0
+    },
+
+    cardIcon: {
+      width: '34px',
+      height: '34px',
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '9px',
+      border: '1px solid rgba(37,133,255,0.25)',
+      background: 'linear-gradient(145deg, rgba(20,43,72,0.8), rgba(7,13,22,0.9))',
+      color: '#3da4ff',
+      fontSize: '13px',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 20px rgba(0,110,255,0.08)'
+    },
+
+    cardTitle: {
+      margin: 0,
+      fontSize: '11px',
+      fontWeight: '700',
+      letterSpacing: '0.8px',
+      color: '#f2f5f8',
+      textTransform: 'uppercase'
+    },
+
+    cardDescription: {
+      margin: '4px 0 0',
+      fontSize: '9px',
+      color: '#626b78',
+      lineHeight: 1.45
+    },
+
+    cardBadge: {
+      padding: '5px 8px',
+      borderRadius: '6px',
+      border: '1px solid rgba(40,130,255,0.2)',
+      background: 'rgba(20,60,110,0.12)',
+      color: '#579fff',
+      fontSize: '7px',
+      fontWeight: '700',
+      letterSpacing: '0.8px',
+      textTransform: 'uppercase'
+    },
+
+    cardBody: {
+      padding: '22px'
+    },
+
+    // ----------------------------------------------------------
+    // INPUTS
+    // ----------------------------------------------------------
+
+    field: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '7px'
+    },
+
+    fieldLabel: {
+      fontSize: '8px',
+      fontWeight: '700',
+      color: '#707985',
+      letterSpacing: '1px',
+      textTransform: 'uppercase'
+    },
+
+    input: {
+      width: '100%',
+      boxSizing: 'border-box',
+      minHeight: '42px',
+      padding: '0 13px',
+      borderRadius: '9px',
+      border: '1px solid rgba(93,116,145,0.22)',
+      outline: 'none',
+      background: 'rgba(3,6,10,0.82)',
+      color: '#e9edf2',
+      fontSize: '11px',
+      fontFamily: 'monospace',
+      letterSpacing: '0.4px',
+      transition: 'border-color 160ms ease, box-shadow 160ms ease, background 160ms ease'
+    },
+
+    textarea: {
+      width: '100%',
+      boxSizing: 'border-box',
+      minHeight: '82px',
+      padding: '12px 13px',
+      borderRadius: '9px',
+      border: '1px solid rgba(93,116,145,0.22)',
+      outline: 'none',
+      resize: 'vertical',
+      background: 'rgba(3,6,10,0.82)',
+      color: '#e9edf2',
+      fontSize: '11px',
+      fontFamily: 'monospace',
+      lineHeight: 1.5
+    },
+
+    // ----------------------------------------------------------
+    // LOGO UPLOAD
+    // ----------------------------------------------------------
+
+    uploadArea: {
+      display: 'grid',
+      gridTemplateColumns: '145px minmax(0, 1fr)',
+      gap: '18px',
+      alignItems: 'stretch'
+    },
+
+    logoPreview: {
+      position: 'relative',
+      minHeight: '145px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      borderRadius: '13px',
+      border: '1px solid rgba(69,133,220,0.2)',
+      background: 'radial-gradient(circle at center, rgba(25,50,80,0.28), rgba(4,7,11,0.95))',
+      boxShadow: 'inset 0 0 35px rgba(0,0,0,0.4)'
+    },
+
+    logoImage: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain',
+      padding: '14px',
+      boxSizing: 'border-box'
+    },
+
+    logoPlaceholder: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '8px',
+      color: '#3e4854'
+    },
+
+    logoPlaceholderIcon: {
+      fontSize: '27px'
+    },
+
+    logoPlaceholderText: {
+      fontSize: '7px',
+      fontWeight: '700',
+      letterSpacing: '1px',
+      textTransform: 'uppercase'
+    },
+
+    uploadPanel: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      gap: '13px',
+      padding: '18px',
+      borderRadius: '13px',
+      border: '1px dashed rgba(52,133,255,0.25)',
+      background: 'rgba(5,11,18,0.7)'
+    },
+
+    uploadButton: {
+      minHeight: '40px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '8px',
+      border: '1px solid rgba(42,137,255,0.55)',
+      background: 'linear-gradient(180deg, rgba(18,68,125,0.35), rgba(7,24,43,0.4))',
+      color: '#dcecff',
+      fontSize: '9px',
+      fontWeight: '700',
+      letterSpacing: '0.7px',
+      cursor: 'pointer',
+      textTransform: 'uppercase',
+      boxShadow: '0 0 22px rgba(0,105,255,0.07)'
+    },
+
+    helperText: {
+      margin: 0,
+      fontSize: '8px',
+      lineHeight: 1.55,
+      color: '#58626f'
+    },
+
+    // ----------------------------------------------------------
+    // WEBHOOK
+    // ----------------------------------------------------------
+
+    webhookPreview: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px',
+      minHeight: '44px',
+      padding: '0 12px',
+      borderRadius: '9px',
+      border: '1px solid rgba(40,126,255,0.2)',
+      background: 'rgba(4,13,24,0.8)',
+      overflow: 'hidden'
+    },
+
+    webhookIndicator: {
+      width: '7px',
+      height: '7px',
+      flexShrink: 0,
+      borderRadius: '50%',
+      background: '#2ba8ff',
+      boxShadow: '0 0 10px rgba(43,168,255,0.85)'
+    },
+
+    webhookUrl: {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      fontFamily: 'monospace',
+      fontSize: '9px',
+      color: '#7dafff'
+    },
+
+    // ----------------------------------------------------------
+    // AI CONFIGURATION
+    // ----------------------------------------------------------
+
+    aiBanner: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      padding: '13px 15px',
+      marginBottom: '18px',
+      borderRadius: '10px',
+      border: '1px solid rgba(41,146,255,0.2)',
+      background: 'linear-gradient(90deg, rgba(9,40,72,0.35), rgba(6,14,24,0.45))'
+    },
+
+    aiOrb: {
+      width: '29px',
+      height: '29px',
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50%',
+      border: '1px solid rgba(44,153,255,0.45)',
+      background: 'radial-gradient(circle, rgba(44,153,255,0.35), rgba(5,15,28,0.8))',
+      color: '#58b4ff',
+      fontSize: '11px',
+      boxShadow: '0 0 20px rgba(0,130,255,0.18)'
+    },
+
+    aiBannerTitle: {
+      fontSize: '9px',
+      fontWeight: '700',
+      color: '#c8e6ff',
+      letterSpacing: '0.6px'
+    },
+
+    aiBannerText: {
+      marginTop: '3px',
+      fontSize: '8px',
+      color: '#596c7e'
+    },
+
+    configGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+      gap: '14px'
+    },
+
+    configValue: {
+      marginTop: '7px',
+      padding: '11px 12px',
+      borderRadius: '8px',
+      border: '1px solid rgba(75,112,153,0.18)',
+      background: 'rgba(2,5,9,0.7)',
+      color: '#e8eef5',
+      fontSize: '11px',
+      fontFamily: 'monospace'
+    },
+
+    // ----------------------------------------------------------
+    // TILL SLIP PREVIEW
+    // ----------------------------------------------------------
+
+    previewCard: {
+      position: 'sticky',
+      top: '22px'
+    },
+
+    previewStage: {
+      minHeight: '580px',
+      padding: '28px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: `
+      radial-gradient(circle at 50% 30%, rgba(20,70,125,0.08), transparent 38%),
+      #070a0e
+    `
+    },
+
+    paperShadow: {
+      position: 'relative',
+      width: '270px',
+      minHeight: '465px',
+      padding: '25px 20px',
+      boxSizing: 'border-box',
+      background: '#f7f7f7',
+      color: '#111111',
+      boxShadow: '0 25px 70px rgba(0,0,0,0.75), 0 0 35px rgba(40,110,190,0.08)',
+      transform: 'rotate(0deg)'
+    },
+
+    paperHeader: {
+      textAlign: 'center',
+      fontSize: '10px',
+      fontWeight: '800',
+      letterSpacing: '1.5px'
+    },
+
+    paperLine: {
+      height: '1px',
+      background: '#c9c9c9',
+      margin: '16px 0'
+    },
+
+    paperRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      gap: '12px',
+      marginBottom: '8px',
+      fontSize: '8px',
+      color: '#555555'
+    },
+
+    paperPlaceholder: {
+      marginTop: '40px',
+      textAlign: 'center',
+      fontSize: '7px',
+      letterSpacing: '1px',
+      color: '#888888',
+      textTransform: 'uppercase'
+    },
+
+    // ----------------------------------------------------------
+    // HELPER / RECOMMENDATIONS
+    // ----------------------------------------------------------
+
+    helperPanel: {
+      padding: '15px',
+      borderRadius: '10px',
+      border: '1px solid rgba(72,104,140,0.15)',
+      background: 'rgba(4,8,13,0.65)'
+    },
+
+    helperHeading: {
+      marginBottom: '10px',
+      fontSize: '8px',
+      fontWeight: '700',
+      color: '#8c9bab',
+      letterSpacing: '0.9px',
+      textTransform: 'uppercase'
+    },
+
+    helperItem: {
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: '9px',
+      marginBottom: '9px',
+      fontSize: '8px',
+      lineHeight: 1.5,
+      color: '#596571'
+    },
+
+    helperBullet: {
+      width: '5px',
+      height: '5px',
+      marginTop: '4px',
+      flexShrink: 0,
+      borderRadius: '50%',
+      background: '#287dff',
+      boxShadow: '0 0 8px rgba(40,125,255,0.7)'
+    },
+
+    // ----------------------------------------------------------
+    // FOOTER ACTION
+    // ----------------------------------------------------------
+
+    saveFooter: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '18px',
+      marginTop: '18px',
+      padding: '17px 20px',
+      borderRadius: '13px',
+      border: '1px solid rgba(50,120,210,0.18)',
+      background: 'linear-gradient(90deg, rgba(10,16,24,0.98), rgba(6,10,15,0.98))',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03)'
+    },
+
+    saveInfo: {
+      minWidth: 0
+    },
+
+    saveTitle: {
+      fontSize: '9px',
+      fontWeight: '700',
+      color: '#cbd4df',
+      letterSpacing: '0.7px',
+      textTransform: 'uppercase'
+    },
+
+    saveDescription: {
+      marginTop: '4px',
+      fontSize: '8px',
+      color: '#555f6b'
+    },
+
+    button: {
+      minHeight: '42px',
+      padding: '0 20px',
+      border: '1px solid rgba(45,150,255,0.65)',
+      borderRadius: '9px',
+      background: 'linear-gradient(180deg, #1b8fff 0%, #0863cf 100%)',
+      color: '#ffffff',
+      fontSize: '9px',
+      fontWeight: '800',
+      letterSpacing: '0.8px',
+      textTransform: 'uppercase',
+      cursor: 'pointer',
+      boxShadow: '0 0 24px rgba(0,112,255,0.16), inset 0 1px 0 rgba(255,255,255,0.2)'
+    },
+
+    // ----------------------------------------------------------
+    // EXISTING STYLE COMPATIBILITY
+    // ----------------------------------------------------------
+
+    concaveCard: {
+      border: '1px solid rgba(75,105,140,0.2)',
+      background: 'linear-gradient(145deg, rgba(15,21,29,0.95), rgba(4,7,11,0.95))',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035), inset 0 -8px 20px rgba(0,0,0,0.25)'
+    }
+  };
+
   const SAFE_CURRENCY_OPTIONS = CURRENCY_OPTIONS;
 
   const activeCurrencySymbol =
