@@ -9,6 +9,12 @@ import { useNavigate } from "react-router-dom";
 
 import MatrixTillSlip from "./models/MatrixTillSlip";
 
+import RuachAgentReceiptStudioSystemA from "./RuachAgent_ReceiptStudio_System_A";
+import RuachAgentReceiptStudioSystemB from "./RuachAgent_ReceiptStudio_System_B";
+import RuachAgentReceiptStudioSystemC from "./RuachAgent_ReceiptStudio_System_C";
+import RuachAgentReceiptStudioSystemD from "./RuachAgent_ReceiptStudio_System_D";
+import RuachAgentReceiptStudioSystemE from "./RuachAgent_ReceiptStudio_System_E";
+
 import {
   LayoutDashboard,
   Receipt,
@@ -188,6 +194,39 @@ export default function AdminPanel() {
   };
 
   const designConfig = receiptData?.design_config || {};
+
+  /*
+   * ================================================================
+   * SHARED DESIGN CONFIGURATION BRIDGE
+   * ================================================================
+   *
+   * Systems B, C and E are independent UI modules, but they must
+   * operate on ONE shared configuration object. System D consumes
+   * this same object to render the live receipt.
+   *
+   * Supported forms:
+   *   setDesignConfig(nextObject)
+   *   setDesignConfig(current => nextObject)
+   *
+   * This never edits the receipt JSX.
+   */
+  const setDesignConfig = (nextConfigOrUpdater) => {
+    setReceiptData((current) => {
+      const currentConfig = current?.design_config || {};
+
+      const nextConfig =
+        typeof nextConfigOrUpdater === "function"
+          ? nextConfigOrUpdater(currentConfig)
+          : nextConfigOrUpdater;
+
+      return {
+        ...current,
+        design_config: cloneConfig(nextConfig || {})
+      };
+    });
+
+    setHasDesignChanges(true);
+  };
 
   const textTargetPath = {
     heading: ["text", "heading"],
@@ -1963,803 +2002,68 @@ export default function AdminPanel() {
                 </div>
               </div>
             </aside>
-
-            {/* ==============================
-            MAIN CONTENT
-      =============================== */}
-
             <main className="main-content">
-              {/* ==========================
-              TOP NAVIGATION
-        =========================== */}
 
-              <header className="topbar">
-                <div className="topbar-center">
-                  <h1>RuachAgent AI</h1>
+              <RuachAgentReceiptStudioSystemA
+                documentName={
+                  settings?.business_name
+                    ? `${settings.business_name} — Receipt Studio`
+                    : "Matrix Neon Receipt"
+                }
+                onSave={handleSave}
+                onRevert={handleRevertToOriginal}
+                onAIAssist={handlePromptWithDesignTracking}
+                isSaveSyncing={isSaveSyncing}
+                isLoading={isLoading}
+                timeline={
+                  <RuachAgentReceiptStudioSystemE
+                    designConfig={designConfig}
+                    setDesignConfig={setDesignConfig}
+                  />
+                }
+              >
 
-                  <p>Your intelligent till slip assistant</p>
+                <div className="studio-main-workspace">
+
+                  {/* OBJECT MODEL */}
+                  <section className="studio-object-panel">
+                    <RuachAgentReceiptStudioSystemB
+                      designConfig={designConfig}
+                      setDesignConfig={setDesignConfig}
+                    />
+                  </section>
+
+
+                  {/* CANVAS */}
+                  <section className="studio-canvas-panel">
+                    <RuachAgentReceiptStudioSystemD
+                      receiptData={receiptData}
+                      settings={settings}
+                      designConfig={designConfig}
+                    />
+                  </section>
+
+
+                  {/* DESIGN INSPECTOR */}
+                  <section className="studio-inspector-panel">
+                    <RuachAgentReceiptStudioSystemC
+                      designConfig={designConfig}
+                      setDesignConfig={setDesignConfig}
+                    />
+                  </section>
+
                 </div>
 
-                <div className="topbar-actions">
-                  <button className="icon-button">
-                    <HelpCircle size={20} />
-                  </button>
 
-                  <button className="icon-button">
-                    <Bell size={20} />
-                  </button>
+              </RuachAgentReceiptStudioSystemA>
 
-                  <button className="icon-button">
-                    <UserCircle2 size={24} />
-                  </button>
-                </div>
-              </header>
-
-              {/* ==========================
-              CONTENT AREA
-        =========================== */}
-
-              <div className="content-layout">
-                {/* ==============================
-                    RECEIPT EDITING STUDIO
-                =============================== */}
-                <section className="chat-panel editing-studio-panel" style={styles.editingStudioPanel}>
-                  <div className="editing-studio" style={styles.editingStudio}>
-
-                    <div className="studio-topbar" style={styles.studioTopbar}>
-                      <div className="studio-title-block" style={styles.studioTitleBlock}>
-                        <div className="studio-brand-mark" style={styles.studioBrandMark}><Sparkles size={17} /></div>
-                        <div>
-                          <div className="studio-kicker" style={styles.studioKicker}>RUACHAGENT / DESIGN STUDIO</div>
-                          <h2 style={styles.studioTitle}>Receipt Editing Studio</h2>
-                          <p style={styles.studioSubtitle}>Professional visual controls powered by designConfig.</p>
-                        </div>
-                      </div>
-                      <div className="studio-live-indicator" style={styles.studioLiveIndicator}>
-                        <span className="studio-live-dot" style={styles.studioLiveDot}></span>
-                        LIVE
-                      </div>
-                    </div>
-
-                    <div className="studio-command-bar" style={styles.studioCommandBar}>
-                      <div className="studio-command-icon" style={styles.studioCommandIcon}><Wand2 size={18} /></div>
-                      <input style={styles.studioCommandInput} type="text"
-                        placeholder="Tell RuachAgent what you want to change..."
-                        value={inputPrompt}
-                        onChange={(e) => setInputPrompt(e.target.value)}
-                        onKeyDown={(e) =>
-                          e.key === "Enter" && handlePromptWithDesignTracking()
-                        }
-                      />
-                      <button
-                        className="studio-command-button" style={styles.studioCommandButton}
-                        onClick={handlePromptWithDesignTracking}
-                        disabled={isLoading}
-                      >
-                        <Send size={17} />
-                      </button>
-                    </div>
-
-                    <div className="studio-status-strip" style={styles.studioStatusStrip}>
-                      <div style={styles.studioStatusLeft}>
-                        <Cpu size={15} />
-                        <span>
-                          {isLoading
-                            ? "RuachAgent is editing the live design..."
-                            : "AI and manual controls share the same design configuration."}
-                        </span>
-                      </div>
-                      <span className="studio-config-state" style={styles.studioConfigState}>
-                        {hasDesignChanges ? "UNSAVED CHANGES" : "SAVED DESIGN"}
-                      </span>
-                    </div>
-
-                    <div className="studio-workspace" style={styles.studioWorkspace}>
-
-                      <div className="studio-object-rail" style={styles.studioObjectRail}>
-                        <div className="studio-rail-label" style={styles.studioRailLabel}>OBJECTS</div>
-
-                        {studioObjects.map((object) => (
-                          <button
-                            key={object.id}
-                            type="button"
-                            className={`studio-object-button ${activeStudioObject === object.id ? "active" : ""}`}
-                            style={
-                              activeStudioObject === object.id
-                                ? styles.studioObjectButtonActive
-                                : styles.studioObjectButton
-                            }
-                            onClick={() => {
-                              setActiveStudioObject(object.id);
-                              setOpenStudioPanel("layout");
-                            }}
-                          >
-                            <span className="studio-object-icon" style={styles.studioObjectIcon}>{object.icon}</span>
-                            <span className="studio-object-label" style={styles.studioObjectLabel}>{object.label}</span>
-                          </button>
-                        ))}
-
-                        <div className="studio-rail-divider" style={styles.studioRailDivider}></div>
-                        <div className="studio-rail-mini" style={styles.studioRailMini}>
-                          <Eye size={15} />
-                          <span>Preview</span>
-                        </div>
-                      </div>
-
-                      <div className="studio-controls" style={styles.studioControls}>
-
-                        {activeStudioObject === "logo" && (
-                          <>
-                            <div className="studio-object-heading" style={styles.studioObjectHeading}>
-                              <div>
-                                <span>01 / BRAND MARK</span>
-                                <h3>Logo</h3>
-                              </div>
-                              <Layers size={20} />
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("layout")}>
-                                <span><Move size={15} /> Layout</span>
-                                <ChevronDown size={16} className={openStudioPanel === "layout" ? "rotated" : ""} />
-                              </button>
-
-                              {openStudioPanel === "layout" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <label className="studio-field" style={styles.studioField}>
-                                    <span>Position</span>
-                                    <select style={styles.studioSelect} value={getNestedValue(designConfig, ["logo", "layout", "position"], "top-center")}
-                                      onChange={(e) => updateDesignConfig(["logo", "layout", "position"], e.target.value)}
-                                    >
-                                      <option value="top-left">Top Left</option>
-                                      <option value="top-center">Top Center</option>
-                                      <option value="top-right">Top Right</option>
-                                      <option value="center">Center</option>
-                                      <option value="bottom-left">Bottom Left</option>
-                                      <option value="bottom-center">Bottom Center</option>
-                                      <option value="bottom-right">Bottom Right</option>
-                                    </select>
-                                  </label>
-
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}>
-                                      <span>Scale <strong>{Math.round(Number(getNestedValue(designConfig, ["logo", "layout", "scale"], 1)) * 100)}%</strong></span>
-                                      <input style={styles.studioRange} type="range" min="0.25" max="2.5" step="0.01"
-                                        value={Number(getNestedValue(designConfig, ["logo", "layout", "scale"], 1))}
-                                        onChange={(e) => updateDesignConfig(["logo", "layout", "scale"], Number(e.target.value))}
-                                      />
-                                    </label>
-                                    <label className="studio-field" style={styles.studioField}>
-                                      <span>Rotation <strong>{Number(getNestedValue(designConfig, ["logo", "layout", "rotation"], 0))}°</strong></span>
-                                      <input style={styles.studioRange} type="range" min="-180" max="180" step="1"
-                                        value={Number(getNestedValue(designConfig, ["logo", "layout", "rotation"], 0))}
-                                        onChange={(e) => updateDesignConfig(["logo", "layout", "rotation"], Number(e.target.value))}
-                                      />
-                                    </label>
-                                  </div>
-
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}>
-                                      <span>Width</span>
-                                      <input style={styles.studioControl} type="text"
-                                        placeholder="auto / 120px / 40%"
-                                        value={getNestedValue(designConfig, ["logo", "layout", "width"], "")}
-                                        onChange={(e) => updateDesignConfig(["logo", "layout", "width"], e.target.value || "auto")}
-                                      />
-                                    </label>
-                                    <label className="studio-field" style={styles.studioField}>
-                                      <span>Opacity</span>
-                                      <input style={styles.studioRange} type="range" min="0" max="1" step="0.01"
-                                        value={Number(getNestedValue(designConfig, ["logo", "layout", "opacity"], 1))}
-                                        onChange={(e) => updateDesignConfig(["logo", "layout", "opacity"], Number(e.target.value))}
-                                      />
-                                    </label>
-                                  </div>
-
-                                  <label className="studio-switch-row" style={styles.studioSwitchRow}>
-                                    <span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>Lock aspect ratio</b><small style={styles.studioSwitchDescription}>Prevent logo distortion</small></span>
-                                    <input style={styles.studioCheckbox} type="checkbox"
-                                      checked={Boolean(getNestedValue(designConfig, ["logo", "layout", "lockAspectRatio"], true))}
-                                      onChange={(e) => updateDesignConfig(["logo", "layout", "lockAspectRatio"], e.target.checked)}
-                                    />
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("colors")}>
-                                <span><Palette size={15} /> Colors</span>
-                                <ChevronDown size={16} className={openStudioPanel === "colors" ? "rotated" : ""} />
-                              </button>
-
-                              {openStudioPanel === "colors" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <div className="studio-choice-grid">
-                                    {[
-                                      ["original", "Original"],
-                                      ["monochrome", "Monochrome"],
-                                      ["tint", "Tint"],
-                                      ["grayscale", "Grayscale"]
-                                    ].map(([value, label]) => (
-                                      <button
-                                        type="button"
-                                        key={value}
-                                        className={`studio-choice ${getNestedValue(designConfig, ["logo", "colors", "mode"], "original") === value ? "active" : ""}`}
-                                        onClick={() => updateDesignConfig(["logo", "colors", "mode"], value)}
-                                      >
-                                        {label}
-                                      </button>
-                                    ))}
-                                  </div>
-
-                                  <label className="studio-color-field" style={styles.studioColorField}>
-                                    <span>Tint color</span>
-                                    <input style={styles.studioColorInput} type="color"
-                                      value={getNestedValue(designConfig, ["logo", "colors", "tintColor"], "#00a8ff")}
-                                      onChange={(e) => updateDesignConfig(["logo", "colors", "tintColor"], e.target.value)}
-                                    />
-                                  </label>
-
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    {[
-                                      ["brightness", "Brightness"],
-                                      ["contrast", "Contrast"],
-                                      ["saturation", "Saturation"]
-                                    ].map(([key, label]) => (
-                                      <label className="studio-field" style={styles.studioField} key={key}>
-                                        <span>{label}</span>
-                                        <input style={styles.studioRange} type="range" min="0" max="2" step="0.01"
-                                          value={Number(getNestedValue(designConfig, ["logo", "colors", key], 1))}
-                                          onChange={(e) => updateDesignConfig(["logo", "colors", key], Number(e.target.value))}
-                                        />
-                                      </label>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("effects")}>
-                                <span><Zap size={15} /> Visual Effects</span>
-                                <ChevronDown size={16} className={openStudioPanel === "effects" ? "rotated" : ""} />
-                              </button>
-
-                              {openStudioPanel === "effects" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  {[
-                                    ["infiniteRotation", "Infinite 360° rotation"],
-                                    ["hover", "Smooth hover animation"],
-                                    ["floating", "Floating element"],
-                                    ["metallic", "Metallic reflection"],
-                                    ["glass", "Glass effect"],
-                                    ["neonGlow", "Neon glow"],
-                                    ["holographic", "Holographic lighting"],
-                                    ["shadow", "Shadow"]
-                                  ].map(([key, label]) => (
-                                    <label className="studio-switch-row" style={styles.studioSwitchRow} key={key}>
-                                      <span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>{label}</b><small style={styles.studioSwitchDescription}>Live visual effect</small></span>
-                                      <input style={styles.studioCheckbox} type="checkbox"
-                                        checked={Boolean(getNestedValue(designConfig, ["logo", "effects", key, "enabled"], false))}
-                                        onChange={(e) => toggleDesignEffect(["logo", "effects", key, "enabled"], e.target.checked)}
-                                      />
-                                    </label>
-                                  ))}
-
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}>
-                                      <span>Glow intensity</span>
-                                      <input style={styles.studioRange} type="range" min="0" max="1" step="0.01"
-                                        value={Number(getNestedValue(designConfig, ["logo", "effects", "neonGlow", "intensity"], 0.6))}
-                                        onChange={(e) => updateDesignConfig(["logo", "effects", "neonGlow", "intensity"], Number(e.target.value))}
-                                      />
-                                    </label>
-                                    <label className="studio-field" style={styles.studioField}>
-                                      <span>Animation speed</span>
-                                      <select style={styles.studioSelect} value={getNestedValue(designConfig, ["logo", "effects", "animationSpeed"], "medium")}
-                                        onChange={(e) => updateDesignConfig(["logo", "effects", "animationSpeed"], e.target.value)}
-                                      >
-                                        <option value="slow">Slow</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="fast">Fast</option>
-                                      </select>
-                                    </label>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-
-                        {activeStudioObject === "qr" && (
-                          <>
-                            <div className="studio-object-heading" style={styles.studioObjectHeading}>
-                              <div><span>02 / MACHINE READABLE</span><h3>QR Code</h3></div>
-                              <QrCode size={20} />
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("layout")}>
-                                <span><Move size={15} /> Layout</span>
-                                <ChevronDown size={16} className={openStudioPanel === "layout" ? "rotated" : ""} />
-                              </button>
-
-                              {openStudioPanel === "layout" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <label className="studio-field" style={styles.studioField}>
-                                    <span>Position</span>
-                                    <select style={styles.studioSelect} value={getNestedValue(designConfig, ["qrCode", "layout", "position"], "bottom-center")}
-                                      onChange={(e) => updateDesignConfig(["qrCode", "layout", "position"], e.target.value)}
-                                    >
-                                      <option value="top-left">Top Left</option>
-                                      <option value="top-center">Top Center</option>
-                                      <option value="top-right">Top Right</option>
-                                      <option value="center">Center</option>
-                                      <option value="bottom-center">Bottom Center</option>
-                                      <option value="bottom-left">Bottom Left</option>
-                                      <option value="bottom-right">Bottom Right</option>
-                                    </select>
-                                  </label>
-                                  <label className="studio-field" style={styles.studioField}>
-                                    <span>Scale</span>
-                                    <input style={styles.studioRange} type="range" min="0.5" max="2" step="0.01"
-                                      value={Number(getNestedValue(designConfig, ["qrCode", "layout", "scale"], 1))}
-                                      onChange={(e) => updateDesignConfig(["qrCode", "layout", "scale"], Number(e.target.value))}
-                                    />
-                                  </label>
-                                  <label className="studio-field" style={styles.studioField}>
-                                    <span>Rotation</span>
-                                    <input style={styles.studioRange} type="range" min="-180" max="180"
-                                      value={Number(getNestedValue(designConfig, ["qrCode", "layout", "rotation"], 0))}
-                                      onChange={(e) => updateDesignConfig(["qrCode", "layout", "rotation"], Number(e.target.value))}
-                                    />
-                                  </label>
-                                  <label className="studio-field" style={styles.studioField}>
-                                    <span>Corner radius</span>
-                                    <input style={styles.studioRange} type="range" min="0" max="30"
-                                      value={Number(getNestedValue(designConfig, ["qrCode", "layout", "cornerRadius"], 4))}
-                                      onChange={(e) => updateDesignConfig(["qrCode", "layout", "cornerRadius"], Number(e.target.value))}
-                                    />
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("colors")}>
-                                <span><Palette size={15} /> Colors</span>
-                                <ChevronDown size={16} className={openStudioPanel === "colors" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "colors" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <label className="studio-color-field" style={styles.studioColorField}><span>Foreground</span>
-                                    <input style={styles.studioColorInput} type="color" value={getNestedValue(designConfig, ["qrCode", "colors", "foreground"], "#050608")} onChange={(e) => updateDesignConfig(["qrCode", "colors", "foreground"], e.target.value)} />
-                                  </label>
-                                  <label className="studio-color-field" style={styles.studioColorField}><span>Background</span>
-                                    <input style={styles.studioColorInput} type="color" value={getNestedValue(designConfig, ["qrCode", "colors", "background"], "#ffffff")} onChange={(e) => updateDesignConfig(["qrCode", "colors", "background"], e.target.value)} />
-                                  </label>
-                                  <label className="studio-field" style={styles.studioField}><span>Opacity</span>
-                                    <input style={styles.studioRange} type="range" min="0" max="1" step="0.01" value={Number(getNestedValue(designConfig, ["qrCode", "colors", "opacity"], 1))} onChange={(e) => updateDesignConfig(["qrCode", "colors", "opacity"], Number(e.target.value))} />
-                                  </label>
-                                  <label className="studio-switch-row" style={styles.studioSwitchRow}><span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>Dynamic gradient</b><small style={styles.studioSwitchDescription}>Animated QR color treatment</small></span>
-                                    <input style={styles.studioCheckbox} type="checkbox" checked={Boolean(getNestedValue(designConfig, ["qrCode", "colors", "dynamicGradient", "enabled"], false))} onChange={(e) => updateDesignConfig(["qrCode", "colors", "dynamicGradient", "enabled"], e.target.checked)} />
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("effects")}>
-                                <span><Zap size={15} /> Visual Effects</span>
-                                <ChevronDown size={16} className={openStudioPanel === "effects" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "effects" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  {[
-                                    ["pulse", "Pulse"], ["scanline", "Scan line"], ["glow", "Glow"],
-                                    ["holographic", "Holographic"], ["animatedBorder", "Animated border"]
-                                  ].map(([key, label]) => (
-                                    <label className="studio-switch-row" style={styles.studioSwitchRow} key={key}>
-                                      <span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>{label}</b><small style={styles.studioSwitchDescription}>QR visual treatment</small></span>
-                                      <input style={styles.studioCheckbox} type="checkbox" checked={Boolean(getNestedValue(designConfig, ["qrCode", "effects", key, "enabled"], false))} onChange={(e) => updateDesignConfig(["qrCode", "effects", key, "enabled"], e.target.checked)} />
-                                    </label>
-                                  ))}
-                                  <label className="studio-field" style={styles.studioField}><span>Animation speed</span>
-                                    <select style={styles.studioSelect} value={getNestedValue(designConfig, ["qrCode", "effects", "animationSpeed"], "medium")} onChange={(e) => updateDesignConfig(["qrCode", "effects", "animationSpeed"], e.target.value)}>
-                                      <option value="slow">Slow</option><option value="medium">Medium</option><option value="fast">Fast</option>
-                                    </select>
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-
-                        {activeStudioObject === "text" && (
-                          <>
-                            <div className="studio-object-heading" style={styles.studioObjectHeading}>
-                              <div><span>03 / TYPOGRAPHY</span><h3>Text</h3></div>
-                              <Type size={20} />
-                            </div>
-
-                            <label className="studio-field studio-text-target" style={styles.studioField}>
-                              <span>Editing target</span>
-                              <select style={styles.studioSelect} value={selectedTextTarget} onChange={(e) => setSelectedTextTarget(e.target.value)}>
-                                <option value="heading">Heading</option>
-                                <option value="body">Body</option>
-                                <option value="total">Total</option>
-                              </select>
-                            </label>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("fonts")}>
-                                <span><Type size={15} /> Fonts</span><ChevronDown size={16} className={openStudioPanel === "fonts" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "fonts" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <label className="studio-field" style={styles.studioField}><span>Font family</span>
-                                    <select style={styles.studioSelect} value={getNestedValue(textTarget, ["fontFamily"], "Inter")} onChange={(e) => updateDesignConfig([...textTargetPath, "fontFamily"], e.target.value)}>
-                                      <option>Inter</option><option>Arial</option><option>Helvetica</option><option>Georgia</option><option>Courier New</option><option>Montserrat</option><option>Poppins</option>
-                                    </select>
-                                  </label>
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}><span>Font size</span>
-                                      <input style={styles.studioControl} type="number" min="8" max="72" value={Number(getNestedValue(textTarget, ["fontSize"], selectedTextTarget === "total" ? 24 : 14))} onChange={(e) => updateDesignConfig([...textTargetPath, "fontSize"], Number(e.target.value))} />
-                                    </label>
-                                    <label className="studio-field" style={styles.studioField}><span>Weight</span>
-                                      <select style={styles.studioSelect} value={String(getNestedValue(textTarget, ["fontWeight"], "600"))} onChange={(e) => updateDesignConfig([...textTargetPath, "fontWeight"], e.target.value)}>
-                                        <option value="400">Regular</option><option value="500">Medium</option><option value="600">Semibold</option><option value="700">Bold</option><option value="800">Extra Bold</option>
-                                      </select>
-                                    </label>
-                                  </div>
-                                  <label className="studio-field" style={styles.studioField}><span>Letter spacing</span>
-                                    <input style={styles.studioRange} type="range" min="-2" max="8" step="0.1" value={Number(getNestedValue(textTarget, ["letterSpacing"], 0))} onChange={(e) => updateDesignConfig([...textTargetPath, "letterSpacing"], Number(e.target.value))} />
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("layout")}>
-                                <span><Move size={15} /> Layout</span><ChevronDown size={16} className={openStudioPanel === "layout" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "layout" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <label className="studio-field" style={styles.studioField}><span>Alignment</span>
-                                    <select style={styles.studioSelect} value={getNestedValue(textTarget, ["alignment"], "left")} onChange={(e) => updateDesignConfig([...textTargetPath, "alignment"], e.target.value)}>
-                                      <option value="left">Left</option><option value="center">Center</option><option value="right">Right</option>
-                                    </select>
-                                  </label>
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}><span>Scale</span><input style={styles.studioRange} type="range" min="0.5" max="2" step="0.01" value={Number(getNestedValue(textTarget, ["scale"], 1))} onChange={(e) => updateDesignConfig([...textTargetPath, "scale"], Number(e.target.value))} /></label>
-                                    <label className="studio-field" style={styles.studioField}><span>Rotation</span><input style={styles.studioRange} type="range" min="-180" max="180" value={Number(getNestedValue(textTarget, ["rotation"], 0))} onChange={(e) => updateDesignConfig([...textTargetPath, "rotation"], Number(e.target.value))} /></label>
-                                  </div>
-                                  <label className="studio-field" style={styles.studioField}><span>Opacity</span><input style={styles.studioRange} type="range" min="0" max="1" step="0.01" value={Number(getNestedValue(textTarget, ["opacity"], 1))} onChange={(e) => updateDesignConfig([...textTargetPath, "opacity"], Number(e.target.value))} /></label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("colors")}>
-                                <span><Palette size={15} /> Colors</span><ChevronDown size={16} className={openStudioPanel === "colors" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "colors" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <label className="studio-color-field" style={styles.studioColorField}><span>Text color</span><input style={styles.studioColorInput} type="color" value={getNestedValue(textTarget, ["color"], "#ffffff")} onChange={(e) => updateDesignConfig([...textTargetPath, "color"], e.target.value)} /></label>
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}><span>Brightness</span><input style={styles.studioRange} type="range" min="0" max="2" step="0.01" value={Number(getNestedValue(textTarget, ["brightness"], 1))} onChange={(e) => updateDesignConfig([...textTargetPath, "brightness"], Number(e.target.value))} /></label>
-                                    <label className="studio-field" style={styles.studioField}><span>Contrast</span><input style={styles.studioRange} type="range" min="0" max="2" step="0.01" value={Number(getNestedValue(textTarget, ["contrast"], 1))} onChange={(e) => updateDesignConfig([...textTargetPath, "contrast"], Number(e.target.value))} /></label>
-                                  </div>
-                                  <label className="studio-switch-row" style={styles.studioSwitchRow}><span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>Dynamic gradient</b><small style={styles.studioSwitchDescription}>Animated color grading</small></span><input style={styles.studioCheckbox} type="checkbox" checked={Boolean(getNestedValue(textTarget, ["dynamicGradient", "enabled"], false))} onChange={(e) => updateDesignConfig([...textTargetPath, "dynamicGradient", "enabled"], e.target.checked)} /></label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("effects")}>
-                                <span><Zap size={15} /> Visual Effects</span><ChevronDown size={16} className={openStudioPanel === "effects" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "effects" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  {[
-                                    ["shadow", "Shadow"], ["glow", "Glow"], ["neon", "Neon"],
-                                    ["metallic", "Metallic"], ["glass", "Glass"], ["holographic", "Holographic"], ["pulse", "Pulse"]
-                                  ].map(([key, label]) => (
-                                    <label className="studio-switch-row" style={styles.studioSwitchRow} key={key}>
-                                      <span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>{label}</b><small style={styles.studioSwitchDescription}>Text visual treatment</small></span>
-                                      <input style={styles.studioCheckbox} type="checkbox" checked={Boolean(getNestedValue(textTarget, ["effects", key, "enabled"], false))} onChange={(e) => updateDesignConfig([...textTargetPath, "effects", key, "enabled"], e.target.checked)} />
-                                    </label>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-
-                        {activeStudioObject === "theme" && (
-                          <>
-                            <div className="studio-object-heading" style={styles.studioObjectHeading}>
-                              <div><span>04 / RECEIPT ENVIRONMENT</span><h3>Theme</h3></div>
-                              <Palette size={20} />
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("layout")}>
-                                <span><Move size={15} /> Layout</span><ChevronDown size={16} className={openStudioPanel === "layout" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "layout" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}><span>Receipt width</span><input style={styles.studioControl} type="text" value={getNestedValue(designConfig, ["theme", "layout", "width"], "100%")} onChange={(e) => updateDesignConfig(["theme", "layout", "width"], e.target.value)} /></label>
-                                    <label className="studio-field" style={styles.studioField}><span>Border width</span><input style={styles.studioControl} type="number" min="0" max="8" value={Number(getNestedValue(designConfig, ["theme", "layout", "borderWidth"], 1))} onChange={(e) => updateDesignConfig(["theme", "layout", "borderWidth"], Number(e.target.value))} /></label>
-                                  </div>
-                                  <div className="studio-field-row" style={styles.studioFieldRow}>
-                                    <label className="studio-field" style={styles.studioField}><span>Outer padding</span><input style={styles.studioControl} type="number" min="0" max="80" value={Number(getNestedValue(designConfig, ["theme", "layout", "outerPadding"], 18))} onChange={(e) => updateDesignConfig(["theme", "layout", "outerPadding"], Number(e.target.value))} /></label>
-                                    <label className="studio-field" style={styles.studioField}><span>Border radius</span><input style={styles.studioControl} type="number" min="0" max="40" value={Number(getNestedValue(designConfig, ["theme", "layout", "borderRadius"], 14))} onChange={(e) => updateDesignConfig(["theme", "layout", "borderRadius"], Number(e.target.value))} /></label>
-                                  </div>
-                                  <label className="studio-field" style={styles.studioField}><span>Border style</span>
-                                    <select style={styles.studioSelect} value={getNestedValue(designConfig, ["theme", "layout", "borderStyle"], "solid")} onChange={(e) => updateDesignConfig(["theme", "layout", "borderStyle"], e.target.value)}>
-                                      <option value="solid">Solid</option><option value="dashed">Dashed</option><option value="dotted">Dotted</option><option value="double">Double</option>
-                                    </select>
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("colors")}>
-                                <span><Palette size={15} /> Colors</span><ChevronDown size={16} className={openStudioPanel === "colors" ? "rotated" : ""} />
-                              </button>
-                              {openStudioPanel === "colors" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  {[
-                                    ["primary", "Primary"], ["secondary", "Secondary"], ["accent", "Accent"],
-                                    ["background", "Background"], ["surface", "Surface"], ["text", "Text"],
-                                    ["mutedText", "Muted text"], ["divider", "Divider"]
-                                  ].map(([key, label]) => (
-                                    <label className="studio-color-field" style={styles.studioColorField} key={key}>
-                                      <span>{label}</span>
-                                      <input style={styles.studioColorInput} type="color"
-                                        value={getNestedValue(designConfig, ["theme", "colors", key], key === "background" ? "#050608" : "#00a8ff")}
-                                        onChange={(e) => updateDesignConfig(["theme", "colors", key], e.target.value)}
-                                      />
-                                    </label>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="studio-section" style={styles.studioSection}>
-                              <button type="button" className="studio-section-header" style={styles.studioSectionHeader} onClick={() => toggleStudioPanel("effects")}>
-                                <span><Zap size={15} /> Visual Effects</span><ChevronDown size={16} className={openStudioPanel === "effects" ? "rotated" : ""} /></button>
-                              {openStudioPanel === "effects" && (
-                                <div className="studio-section-body" style={styles.studioSectionBody}>
-                                  {[
-                                    ["glass", "Glass receipt"], ["neonBorder", "Neon border"], ["holographic", "Holographic lighting"],
-                                    ["metallic", "Metallic surface"], ["dynamicGradient", "Dynamic gradient"], ["ambientGlow", "Ambient glow"],
-                                    ["particles", "Particles"], ["animatedBorder", "Animated border"], ["premiumTransition", "Premium transition"]
-                                  ].map(([key, label]) => (
-                                    <label className="studio-switch-row" style={styles.studioSwitchRow} key={key}>
-                                      <span style={styles.studioSwitchText}><b style={styles.studioSwitchLabel}>{label}</b><small style={styles.studioSwitchDescription}>Global receipt effect</small></span>
-                                      <input style={styles.studioCheckbox} type="checkbox" checked={Boolean(getNestedValue(designConfig, ["theme", "effects", key, "enabled"], false))} onChange={(e) => toggleDesignEffect(["theme", "effects", key, "enabled"], e.target.checked)} />
-                                    </label>
-                                  ))}
-                                  <label className="studio-field" style={styles.studioField}><span>Effect intensity</span>
-                                    <input style={styles.studioRange} type="range" min="0" max="1" step="0.01" value={Number(getNestedValue(designConfig, ["theme", "effects", "intensity"], 0.7))} onChange={(e) => updateDesignConfig(["theme", "effects", "intensity"], Number(e.target.value))} />
-                                  </label>
-                                </div>
-                              )}
-                            </div>
-                          </>
-                        )}
-
-                      </div>
-                    </div>
-
-                    <div className="studio-activity" style={styles.studioActivity}>
-                      <div className="studio-activity-header" style={styles.studioActivityHeader}>
-                        <div><span style={styles.studioKicker}>AI ACTIVITY</span><h4 style={{ margin: "3px 0 0", color: "#e7f7ff", fontSize: "11px" }}>Design Intelligence</h4></div>
-                        <Cpu size={17} />
-                      </div>
-
-                      {messages.length === 0 ? (
-                        <p style={{ margin: 0, color: "#607887", fontSize: "9px", lineHeight: 1.45 }}>Use the command bar or the editing controls to begin designing your till slip.</p>
-                      ) : (
-                        <div className="studio-activity-list" style={styles.studioActivityList}>
-                          {messages.slice(-4).map((msg, index) => (
-                            <div key={index} className={`studio-activity-item ${msg.role === "user" ? "user" : "agent"}`}
-                              style={
-                                msg.role === "user"
-                                  ? styles.studioActivityItemUser
-                                  : styles.studioActivityItemAgent
-                              }>
-                              <span>{msg.role === "user" ? "YOU" : "AI"}</span>
-                              <p>{msg.text}</p>
-                            </div>
-                          ))}
-                          {isLoading && (
-                            <div className="studio-activity-item agent">
-                              <span>AI</span><p>Updating your receipt design...</p>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="studio-footer" style={styles.studioFooter}>
-                      <span>All visual changes are written to <strong>designConfig</strong>. JSX remains untouched.</span>
-                      <span>Powered by RuachAgent AI</span>
-                    </div>
-                  </div>
-                </section>
-
-                {/* ======================
-    TILL SLIP PREVIEW
-======================= */}
-
-                <aside className="preview-panel">
-                  <div className="preview-card">
-
-                    {/* Header */}
-
-                    <div className="preview-header">
-                      <div>
-                        <h2>Till Slip Preview</h2>
-                        <p>AI Generated Receipt</p>
-                      </div>
-
-                      <div className="status-badge">
-                        <div className="status-dot"></div>
-
-                        <span>
-                          {isLoading ? "Generating..." : "AI Connected"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Receipt Paper — selectedTemplateId is the source of truth */}
-
-                    {selectedTemplateId === "matrix-grid" ? (
-                      <div style={{ width: "100%" }}>
-                        <MatrixTillSlip
-                          receiptData={receiptData}
-                          settings={settings}
-                          user={user}
-
-                          /*
-                           * IMPORTANT:
-                           * This is the LIVE design configuration being
-                           * modified by RuachAgent AI.
-                           */
-                          designConfig={receiptData?.design_config}
-
-                          voucher={receiptData?.voucher}
-                          isExpired={receiptData?.isExpired}
-                          daysRemaining={receiptData?.daysRemaining}
-                          qrCodeUrl={receiptData?.qrCodeUrl}
-                          checkoutPayloadLink={receiptData?.checkoutPayloadLink}
-                          receiptId={receiptData?.receiptId}
-                          onDownload={receiptData?.onDownload}
-
-                          activeCurrencySymbol={
-                            settings?.currency === "ZAR"
-                              ? "R"
-                              : settings?.currency === "USD"
-                                ? "$"
-                                : settings?.currency === "EUR"
-                                  ? "€"
-                                  : settings?.currency === "GBP"
-                                    ? "£"
-                                    : ""
-                          }
-                        />
-                      </div>
-                    ) : (
-                      <div
-                        className="receipt-paper"
-                        style={{
-                          borderColor: receiptData.themeColor || "#00f0ff"
-                        }}
-                      >
-                        <div className="ai-preview-badge">
-                          ✨ AI Live Preview
-                        </div>
-
-                        <div className="receipt-merchant">
-                          <h2>{receiptData.merchantName}</h2>
-                          <p>{receiptData.location}</p>
-                        </div>
-
-                        <div className="receipt-divider"></div>
-
-                        <div className="receipt-items">
-                          {receiptData.items.map((item, idx) => (
-                            <div key={idx} className="receipt-row">
-                              <span>{item.name}</span>
-                              <span>{item.price}</span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="receipt-total">
-                          <div className="receipt-total-row">
-                            <span>VAT</span>
-                            <span>{receiptData.vat}</span>
-                          </div>
-
-                          <div className="receipt-total-row receipt-grand-total">
-                            <span>Total</span>
-                            <span>{receiptData.total}</span>
-                          </div>
-                        </div>
-
-                        <div className="receipt-qr"></div>
-
-                        <div className="receipt-footer">
-                          Powered by RuachAgent AI
-                        </div>
-                      </div>
-                    )}
-
-                    {/* AI Status */}
-
-                    <div className="ai-card">
-                      <div className="ai-icon">
-                        <Cpu size={20} />
-                      </div>
-
-                      <div>
-                        <h4>RuachAgent AI Engine</h4>
-
-                        <p>
-                          {messages.length > 0
-                            ? "AI engine actively engaged and rendering receipt changes."
-                            : "Waiting for your first request to generate a digital till slip."}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Design Actions */}
-
-                    <div className="preview-actions">
-
-                      {/* SAVE DESIGN */}
-
-                      <button
-                        className="primary-action"
-                        onClick={handleSave}
-                        disabled={
-                          isSaveSyncing ||
-                          !hasDesignChanges
-                        }
-                      >
-                        {isSaveSyncing
-                          ? "Saving..."
-                          : "Save"}
-                      </button>
-
-                      {/* REVERT DESIGN */}
-
-                      <button
-                        className="secondary-action"
-                        onClick={handleRevertToOriginal}
-                        disabled={
-                          isSaveSyncing ||
-                          !hasDesignChanges
-                        }
-                      >
-                        Revert to Original
-                      </button>
-
-                    </div>
-
-                  </div>
-                </aside>
-              </div>
             </main>
+
+            {/* Close the authenticated admin workspace branch. */}
           </div>
         )}
+
+        {/* Close the persistent outer content <main>. */}
       </main>
     </div>
   );
