@@ -107,6 +107,10 @@ export default function MatrixTillSlip({
         ...themeEffects.premiumTransition
     };
 
+    // Transition timing fallbacks used by CSS transitions
+    const transitionDuration = transitionEffect.duration || transitionEffect.transitionDuration || "0.25s";
+    const transitionEasing = transitionEffect.easing || transitionEffect.timingFunction || "ease";
+
     const logoRotationEnabled = rotationEffect.enabled === true || logoEffects.infiniteRotation?.enabled === true;
     const logoHoverEnabled = hoverEffect.enabled === true || logoEffects.hover?.enabled === true;
     const logoFloatingEnabled = floatingEffect.enabled === true || logoEffects.floating?.enabled === true;
