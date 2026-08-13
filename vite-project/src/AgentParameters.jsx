@@ -33,738 +33,1028 @@ export default function AgentParameters() {
       ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
       : "";
 
-  // ============================================================
-  // AGENT PARAMETERS — TESLA BLACK SAAS DESIGN SYSTEM
-  // ============================================================
+  /* =========================================================
+   TESLA / FUTURISTIC SAAS DESIGN SYSTEM
+   ========================================================= */
 
   const styles = {
-
-    // ----------------------------------------------------------
-    // PAGE SHELL
-    // ----------------------------------------------------------
-
+    /* ---------------------------------------------------------
+       PAGE SHELL
+       --------------------------------------------------------- */
     page: {
-      position: 'relative',
-      minHeight: '100vh',
+      minHeight: '100%',
       width: '100%',
       background: '#05070a',
       color: '#ffffff',
+      position: 'relative',
       overflow: 'hidden',
-      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+      fontFamily:
+        'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
 
-    pageAmbient: {
+    pageBackground: {
       position: 'absolute',
       inset: 0,
       pointerEvents: 'none',
       overflow: 'hidden',
-      zIndex: 0
-    },
-
-    ambientBlue: {
-      position: 'absolute',
-      width: '520px',
-      height: '520px',
-      top: '-260px',
-      right: '-160px',
-      borderRadius: '50%',
-      background: 'radial-gradient(circle, rgba(0,110,255,0.13) 0%, rgba(0,110,255,0.035) 35%, transparent 72%)',
-      filter: 'blur(12px)'
-    },
-
-    ambientCyan: {
-      position: 'absolute',
-      width: '420px',
-      height: '420px',
-      bottom: '-240px',
-      left: '-180px',
-      borderRadius: '50%',
-      background: 'radial-gradient(circle, rgba(0,190,255,0.08) 0%, transparent 70%)',
-      filter: 'blur(15px)'
+      background: `
+      radial-gradient(
+        circle at 12% 8%,
+        rgba(0, 140, 255, 0.09),
+        transparent 28%
+      ),
+      radial-gradient(
+        circle at 88% 18%,
+        rgba(0, 80, 255, 0.06),
+        transparent 30%
+      ),
+      linear-gradient(
+        180deg,
+        #05070a 0%,
+        #070a0f 48%,
+        #040609 100%
+      )
+    `,
     },
 
     gridOverlay: {
       position: 'absolute',
       inset: 0,
-      opacity: 0.16,
+      pointerEvents: 'none',
+      opacity: 0.18,
       backgroundImage: `
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
+      linear-gradient(
+        rgba(80, 150, 255, 0.035) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        rgba(80, 150, 255, 0.035) 1px,
+        transparent 1px
+      )
     `,
       backgroundSize: '42px 42px',
-      maskImage: 'linear-gradient(to bottom, black, transparent 85%)',
-      WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 85%)'
+      maskImage:
+        'linear-gradient(to bottom, black 0%, transparent 90%)',
+      WebkitMaskImage:
+        'linear-gradient(to bottom, black 0%, transparent 90%)',
     },
-
-    // ----------------------------------------------------------
-    // MAIN CONTENT
-    // ----------------------------------------------------------
 
     content: {
       position: 'relative',
       zIndex: 2,
       width: '100%',
-      maxWidth: '1500px',
+      maxWidth: '1680px',
       margin: '0 auto',
-      padding: '34px 34px 60px',
-      boxSizing: 'border-box'
+      padding: '28px 32px 60px',
+      boxSizing: 'border-box',
     },
 
-    // ----------------------------------------------------------
-    // PREMIUM HEADER
-    // ----------------------------------------------------------
+    /* ---------------------------------------------------------
+       PREMIUM HEADER
+       --------------------------------------------------------- */
 
     header: {
       display: 'flex',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       justifyContent: 'space-between',
       gap: '24px',
-      marginBottom: '28px'
+      marginBottom: '26px',
+      flexWrap: 'wrap',
     },
 
     headerLeft: {
-      minWidth: 0
+      display: 'flex',
+      alignItems: 'center',
+      gap: '16px',
+      minWidth: 0,
+    },
+
+    headerOrb: {
+      width: '46px',
+      height: '46px',
+      minWidth: '46px',
+      borderRadius: '14px',
+      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: `
+      radial-gradient(
+        circle at 35% 30%,
+        rgba(120, 200, 255, 0.25),
+        transparent 45%
+      ),
+      linear-gradient(
+        145deg,
+        #101722,
+        #070a0f
+      )
+    `,
+      border: '1px solid rgba(45, 145, 255, 0.45)',
+      boxShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.07),
+      0 0 25px rgba(0,100,255,0.10)
+    `,
+    },
+
+    headerOrbCore: {
+      width: '12px',
+      height: '12px',
+      borderRadius: '50%',
+      background: '#65b8ff',
+      boxShadow: `
+      0 0 8px rgba(70,170,255,0.95),
+      0 0 22px rgba(0,120,255,0.75),
+      0 0 42px rgba(0,100,255,0.35)
+    `,
     },
 
     eyebrow: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '9px',
-      marginBottom: '10px',
       fontSize: '9px',
       fontWeight: '700',
-      letterSpacing: '1.8px',
-      color: '#4d8dff',
-      textTransform: 'uppercase'
+      letterSpacing: '2.2px',
+      color: '#5c6b7c',
+      textTransform: 'uppercase',
+      marginBottom: '5px',
     },
 
-    eyebrowDot: {
-      width: '6px',
-      height: '6px',
-      borderRadius: '50%',
-      background: '#168cff',
-      boxShadow: '0 0 10px rgba(22,140,255,0.9)'
-    },
-
-    title: {
+    pageTitle: {
       margin: 0,
-      fontSize: '28px',
-      lineHeight: 1.1,
+      fontSize: '25px',
+      lineHeight: 1.15,
       fontWeight: '600',
-      letterSpacing: '-0.8px',
-      color: '#ffffff'
+      letterSpacing: '-0.7px',
+      color: '#f5f8fc',
     },
 
-    subtitle: {
-      margin: '9px 0 0',
-      maxWidth: '620px',
-      fontSize: '12px',
-      lineHeight: 1.6,
-      color: '#6f7782',
-      letterSpacing: '0.15px'
+    pageSubtitle: {
+      margin: '6px 0 0',
+      color: '#6f7b89',
+      fontSize: '11px',
+      lineHeight: 1.5,
+      maxWidth: '650px',
     },
 
-    headerStatus: {
+    headerRight: {
       display: 'flex',
       alignItems: 'center',
       gap: '10px',
-      padding: '10px 14px',
-      border: '1px solid rgba(45,126,255,0.25)',
-      borderRadius: '10px',
-      background: 'linear-gradient(180deg, rgba(14,20,30,0.96), rgba(7,10,15,0.96))',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 12px 30px rgba(0,0,0,0.3)',
-      whiteSpace: 'nowrap'
+      flexWrap: 'wrap',
     },
 
-    statusOrb: {
-      width: '8px',
-      height: '8px',
-      borderRadius: '50%',
-      background: '#21d4ff',
-      boxShadow: '0 0 12px rgba(33,212,255,0.9)'
-    },
-
-    statusText: {
+    statusPill: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '8px',
+      padding: '8px 12px',
+      borderRadius: '999px',
+      border: '1px solid rgba(45, 145, 255, 0.24)',
+      background: 'rgba(8, 15, 24, 0.72)',
+      color: '#9eb0c3',
       fontSize: '9px',
-      fontWeight: '700',
+      fontWeight: '600',
       letterSpacing: '1px',
-      color: '#aab7c8',
-      textTransform: 'uppercase'
+      textTransform: 'uppercase',
+      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
     },
 
-    // ----------------------------------------------------------
-    // METRICS
-    // ----------------------------------------------------------
+    statusDot: {
+      width: '6px',
+      height: '6px',
+      borderRadius: '50%',
+      background: '#48aaff',
+      boxShadow: '0 0 10px rgba(72,170,255,0.9)',
+    },
+
+    /* ---------------------------------------------------------
+       METRICS
+       --------------------------------------------------------- */
 
     metricsGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
       gap: '12px',
-      marginBottom: '18px'
+      marginBottom: '18px',
     },
 
     metricCard: {
       position: 'relative',
-      minHeight: '94px',
-      padding: '16px',
-      boxSizing: 'border-box',
       overflow: 'hidden',
-      borderRadius: '13px',
-      border: '1px solid rgba(80,120,180,0.16)',
-      background: 'linear-gradient(145deg, rgba(15,20,28,0.98), rgba(7,10,15,0.98))',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035), 0 15px 35px rgba(0,0,0,0.25)'
+      minHeight: '105px',
+      padding: '17px',
+      borderRadius: '14px',
+      background: `
+      linear-gradient(
+        145deg,
+        rgba(15, 21, 29, 0.98),
+        rgba(7, 10, 15, 0.98)
+      )
+    `,
+      border: '1px solid rgba(66, 102, 138, 0.24)',
+      boxShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.045),
+      0 14px 40px rgba(0,0,0,0.22)
+    `,
     },
 
     metricGlow: {
       position: 'absolute',
-      top: '-35px',
-      right: '-35px',
       width: '100px',
       height: '100px',
+      right: '-40px',
+      top: '-45px',
       borderRadius: '50%',
-      background: 'radial-gradient(circle, rgba(0,110,255,0.12), transparent 70%)',
-      pointerEvents: 'none'
+      background:
+        'radial-gradient(circle, rgba(0,120,255,0.16), transparent 70%)',
+      pointerEvents: 'none',
     },
 
     metricLabel: {
-      position: 'relative',
-      zIndex: 1,
       fontSize: '8px',
       fontWeight: '700',
-      letterSpacing: '1.2px',
-      color: '#69717d',
-      textTransform: 'uppercase'
+      color: '#5e6c7b',
+      letterSpacing: '1.5px',
+      textTransform: 'uppercase',
+      marginBottom: '10px',
     },
 
     metricValue: {
-      position: 'relative',
-      zIndex: 1,
-      marginTop: '10px',
-      fontSize: '21px',
+      fontSize: '22px',
       lineHeight: 1,
-      fontWeight: '500',
-      letterSpacing: '-0.4px',
-      color: '#f4f7fb'
+      fontWeight: '600',
+      color: '#f5f8fc',
+      letterSpacing: '-0.5px',
+      fontFamily:
+        'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
 
     metricMeta: {
-      position: 'relative',
-      zIndex: 1,
-      marginTop: '8px',
-      fontSize: '8px',
-      color: '#4f5967',
-      letterSpacing: '0.3px'
+      marginTop: '9px',
+      fontSize: '9px',
+      color: '#647283',
     },
 
-    // ----------------------------------------------------------
-    // DASHBOARD GRID
-    // ----------------------------------------------------------
+    metricAccent: {
+      color: '#64b8ff',
+    },
+
+    /* ---------------------------------------------------------
+       MAIN DASHBOARD GRID
+       --------------------------------------------------------- */
 
     dashboardGrid: {
       display: 'grid',
-      gridTemplateColumns: 'minmax(0, 1.18fr) minmax(360px, 0.82fr)',
-      gap: '18px',
-      alignItems: 'start'
+      gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 0.65fr)',
+      gap: '16px',
+      alignItems: 'start',
     },
 
     leftColumn: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '18px',
-      minWidth: 0
+      gap: '16px',
+      minWidth: 0,
     },
 
     rightColumn: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '18px',
-      minWidth: 0
+      gap: '16px',
+      minWidth: 0,
     },
 
-    // ----------------------------------------------------------
-    // PREMIUM CARD
-    // ----------------------------------------------------------
+    /* ---------------------------------------------------------
+       UNIVERSAL SAAS CARD
+       --------------------------------------------------------- */
 
     card: {
       position: 'relative',
       overflow: 'hidden',
       borderRadius: '16px',
-      border: '1px solid rgba(75,125,205,0.18)',
-      background: 'linear-gradient(145deg, rgba(13,18,25,0.98), rgba(6,9,13,0.99))',
+      background: `
+      linear-gradient(
+        145deg,
+        rgba(13, 18, 25, 0.98),
+        rgba(6, 9, 14, 0.99)
+      )
+    `,
+      border: '1px solid rgba(69, 103, 137, 0.23)',
       boxShadow: `
-      inset 0 1px 0 rgba(255,255,255,0.035),
-      0 20px 55px rgba(0,0,0,0.32)
-    `
-    },
-
-    cardAccent: {
-      position: 'absolute',
-      top: 0,
-      left: '28px',
-      right: '28px',
-      height: '1px',
-      background: 'linear-gradient(90deg, transparent, rgba(35,125,255,0.8), transparent)',
-      boxShadow: '0 0 12px rgba(35,125,255,0.4)'
+      inset 0 1px 0 rgba(255,255,255,0.045),
+      0 18px 55px rgba(0,0,0,0.28)
+    `,
     },
 
     cardHeader: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: '16px',
-      padding: '20px 22px 17px',
-      borderBottom: '1px solid rgba(255,255,255,0.045)'
+      gap: '15px',
+      padding: '19px 20px',
+      borderBottom: '1px solid rgba(255,255,255,0.055)',
     },
 
     cardHeaderLeft: {
       display: 'flex',
       alignItems: 'center',
-      gap: '12px',
-      minWidth: 0
+      gap: '11px',
+      minWidth: 0,
     },
 
     cardIcon: {
-      width: '34px',
-      height: '34px',
-      flexShrink: 0,
+      width: '32px',
+      height: '32px',
+      borderRadius: '9px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: '9px',
-      border: '1px solid rgba(37,133,255,0.25)',
-      background: 'linear-gradient(145deg, rgba(20,43,72,0.8), rgba(7,13,22,0.9))',
-      color: '#3da4ff',
-      fontSize: '13px',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 0 20px rgba(0,110,255,0.08)'
+      background: 'rgba(25, 55, 88, 0.28)',
+      border: '1px solid rgba(62, 150, 255, 0.24)',
+      color: '#68b8ff',
+      fontSize: '12px',
+      boxShadow: '0 0 18px rgba(0,100,255,0.08)',
     },
 
     cardTitle: {
       margin: 0,
-      fontSize: '11px',
-      fontWeight: '700',
-      letterSpacing: '0.8px',
-      color: '#f2f5f8',
-      textTransform: 'uppercase'
+      fontSize: '12px',
+      fontWeight: '650',
+      color: '#edf3f9',
+      letterSpacing: '0.15px',
     },
 
     cardDescription: {
-      margin: '4px 0 0',
+      margin: '3px 0 0',
       fontSize: '9px',
-      color: '#626b78',
-      lineHeight: 1.45
-    },
-
-    cardBadge: {
-      padding: '5px 8px',
-      borderRadius: '6px',
-      border: '1px solid rgba(40,130,255,0.2)',
-      background: 'rgba(20,60,110,0.12)',
-      color: '#579fff',
-      fontSize: '7px',
-      fontWeight: '700',
-      letterSpacing: '0.8px',
-      textTransform: 'uppercase'
+      color: '#697686',
+      lineHeight: 1.45,
     },
 
     cardBody: {
-      padding: '22px'
+      padding: '20px',
     },
 
-    // ----------------------------------------------------------
-    // INPUTS
-    // ----------------------------------------------------------
+    /* ---------------------------------------------------------
+       FORM SYSTEM
+       --------------------------------------------------------- */
+
+    fieldGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+      gap: '15px',
+    },
 
     field: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '7px'
+      minWidth: 0,
     },
 
-    fieldLabel: {
+    fieldFull: {
+      gridColumn: '1 / -1',
+    },
+
+    label: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '8px',
+      marginBottom: '7px',
       fontSize: '8px',
       fontWeight: '700',
-      color: '#707985',
-      letterSpacing: '1px',
-      textTransform: 'uppercase'
+      color: '#718092',
+      letterSpacing: '1.15px',
+      textTransform: 'uppercase',
+    },
+
+    labelHint: {
+      color: '#3f5368',
+      fontSize: '8px',
+      letterSpacing: '0',
+      textTransform: 'none',
+      fontWeight: '500',
     },
 
     input: {
       width: '100%',
       boxSizing: 'border-box',
       minHeight: '42px',
-      padding: '0 13px',
+      padding: '11px 13px',
       borderRadius: '9px',
-      border: '1px solid rgba(93,116,145,0.22)',
       outline: 'none',
-      background: 'rgba(3,6,10,0.82)',
-      color: '#e9edf2',
+      border: '1px solid rgba(73, 103, 134, 0.28)',
+      background: 'rgba(4, 7, 11, 0.92)',
+      color: '#eaf1f8',
       fontSize: '11px',
-      fontFamily: 'monospace',
-      letterSpacing: '0.4px',
-      transition: 'border-color 160ms ease, box-shadow 160ms ease, background 160ms ease'
+      fontFamily:
+        'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+      transition: 'all 160ms ease',
+      boxShadow: `
+      inset 0 1px 4px rgba(0,0,0,0.32),
+      0 1px 0 rgba(255,255,255,0.02)
+    `,
     },
 
     textarea: {
       width: '100%',
       boxSizing: 'border-box',
-      minHeight: '82px',
-      padding: '12px 13px',
+      minHeight: '90px',
+      padding: '11px 13px',
       borderRadius: '9px',
-      border: '1px solid rgba(93,116,145,0.22)',
       outline: 'none',
       resize: 'vertical',
-      background: 'rgba(3,6,10,0.82)',
-      color: '#e9edf2',
+      border: '1px solid rgba(73, 103, 134, 0.28)',
+      background: 'rgba(4, 7, 11, 0.92)',
+      color: '#eaf1f8',
       fontSize: '11px',
-      fontFamily: 'monospace',
-      lineHeight: 1.5
+      lineHeight: 1.55,
+      fontFamily:
+        'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     },
 
-    // ----------------------------------------------------------
-    // LOGO UPLOAD
-    // ----------------------------------------------------------
+    select: {
+      width: '100%',
+      minHeight: '42px',
+      boxSizing: 'border-box',
+      padding: '0 38px 0 13px',
+      borderRadius: '9px',
+      outline: 'none',
+      border: '1px solid rgba(73, 103, 134, 0.28)',
+      background: '#070b10',
+      color: '#eaf1f8',
+      fontSize: '11px',
+      fontFamily: 'monospace',
+      appearance: 'none',
+      cursor: 'pointer',
+    },
 
-    uploadArea: {
+    /* ---------------------------------------------------------
+       LOGO UPLOAD
+       --------------------------------------------------------- */
+
+    uploadPanel: {
       display: 'grid',
-      gridTemplateColumns: '145px minmax(0, 1fr)',
-      gap: '18px',
-      alignItems: 'stretch'
+      gridTemplateColumns: '1fr 150px',
+      gap: '16px',
+      alignItems: 'stretch',
+    },
+
+    uploadZone: {
+      position: 'relative',
+      minHeight: '145px',
+      borderRadius: '13px',
+      border: '1px dashed rgba(64, 155, 255, 0.34)',
+      background: `
+      radial-gradient(
+        circle at 50% 0%,
+        rgba(0, 120, 255, 0.08),
+        transparent 58%
+      ),
+      rgba(4, 8, 13, 0.76)
+    `,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center',
+      cursor: 'pointer',
+      overflow: 'hidden',
+    },
+
+    uploadContent: {
+      position: 'relative',
+      zIndex: 2,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '7px',
+    },
+
+    uploadIcon: {
+      width: '42px',
+      height: '42px',
+      borderRadius: '12px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: '#65b7ff',
+      background: 'rgba(35, 102, 165, 0.15)',
+      border: '1px solid rgba(68, 158, 255, 0.25)',
+      fontSize: '17px',
+    },
+
+    uploadTitle: {
+      color: '#dbe7f3',
+      fontSize: '11px',
+      fontWeight: '600',
+    },
+
+    uploadHint: {
+      color: '#596979',
+      fontSize: '8px',
     },
 
     logoPreview: {
-      position: 'relative',
       minHeight: '145px',
+      borderRadius: '13px',
+      border: '1px solid rgba(72, 101, 132, 0.24)',
+      background: `
+      radial-gradient(
+        circle,
+        rgba(255,255,255,0.035),
+        transparent 65%
+      ),
+      #06090d
+    `,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'hidden',
-      borderRadius: '13px',
-      border: '1px solid rgba(69,133,220,0.2)',
-      background: 'radial-gradient(circle at center, rgba(25,50,80,0.28), rgba(4,7,11,0.95))',
-      boxShadow: 'inset 0 0 35px rgba(0,0,0,0.4)'
     },
 
     logoImage: {
       width: '100%',
       height: '100%',
+      maxHeight: '145px',
       objectFit: 'contain',
-      padding: '14px',
-      boxSizing: 'border-box'
+      padding: '15px',
+      boxSizing: 'border-box',
     },
 
-    logoPlaceholder: {
+    /* ---------------------------------------------------------
+       WEBHOOK
+       --------------------------------------------------------- */
+
+    webhookPanel: {
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      gap: '8px',
-      color: '#3e4854'
+      gap: '12px',
     },
-
-    logoPlaceholderIcon: {
-      fontSize: '27px'
-    },
-
-    logoPlaceholderText: {
-      fontSize: '7px',
-      fontWeight: '700',
-      letterSpacing: '1px',
-      textTransform: 'uppercase'
-    },
-
-    uploadPanel: {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      gap: '13px',
-      padding: '18px',
-      borderRadius: '13px',
-      border: '1px dashed rgba(52,133,255,0.25)',
-      background: 'rgba(5,11,18,0.7)'
-    },
-
-    uploadButton: {
-      minHeight: '40px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: '8px',
-      border: '1px solid rgba(42,137,255,0.55)',
-      background: 'linear-gradient(180deg, rgba(18,68,125,0.35), rgba(7,24,43,0.4))',
-      color: '#dcecff',
-      fontSize: '9px',
-      fontWeight: '700',
-      letterSpacing: '0.7px',
-      cursor: 'pointer',
-      textTransform: 'uppercase',
-      boxShadow: '0 0 22px rgba(0,105,255,0.07)'
-    },
-
-    helperText: {
-      margin: 0,
-      fontSize: '8px',
-      lineHeight: 1.55,
-      color: '#58626f'
-    },
-
-    // ----------------------------------------------------------
-    // WEBHOOK
-    // ----------------------------------------------------------
 
     webhookPreview: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '10px',
-      minHeight: '44px',
-      padding: '0 12px',
-      borderRadius: '9px',
-      border: '1px solid rgba(40,126,255,0.2)',
-      background: 'rgba(4,13,24,0.8)',
-      overflow: 'hidden'
+      position: 'relative',
+      padding: '14px',
+      borderRadius: '11px',
+      border: '1px solid rgba(55, 137, 235, 0.28)',
+      background: `
+      linear-gradient(
+        135deg,
+        rgba(7, 21, 37, 0.72),
+        rgba(4, 9, 15, 0.95)
+      )
+    `,
+      overflow: 'hidden',
     },
 
-    webhookIndicator: {
-      width: '7px',
-      height: '7px',
-      flexShrink: 0,
-      borderRadius: '50%',
-      background: '#2ba8ff',
-      boxShadow: '0 0 10px rgba(43,168,255,0.85)'
+    webhookLabel: {
+      fontSize: '7px',
+      fontWeight: '700',
+      letterSpacing: '1.4px',
+      color: '#4e759b',
+      textTransform: 'uppercase',
+      marginBottom: '8px',
     },
 
     webhookUrl: {
+      display: 'block',
+      width: '100%',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
+      color: '#75bcff',
       fontFamily: 'monospace',
-      fontSize: '9px',
-      color: '#7dafff'
+      fontSize: '10px',
+      lineHeight: 1.5,
     },
 
-    // ----------------------------------------------------------
-    // AI CONFIGURATION
-    // ----------------------------------------------------------
+    webhookActions: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '9px',
+    },
+
+    /* ---------------------------------------------------------
+       AI CONFIGURATION
+       --------------------------------------------------------- */
 
     aiBanner: {
       display: 'flex',
       alignItems: 'center',
-      gap: '12px',
-      padding: '13px 15px',
+      gap: '11px',
+      padding: '12px 14px',
       marginBottom: '18px',
       borderRadius: '10px',
-      border: '1px solid rgba(41,146,255,0.2)',
-      background: 'linear-gradient(90deg, rgba(9,40,72,0.35), rgba(6,14,24,0.45))'
+      border: '1px solid rgba(67, 145, 225, 0.24)',
+      background: `
+      linear-gradient(
+        90deg,
+        rgba(14, 47, 78, 0.34),
+        rgba(8, 16, 25, 0.65)
+      )
+    `,
     },
 
-    aiOrb: {
-      width: '29px',
-      height: '29px',
-      flexShrink: 0,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+    aiPulse: {
+      width: '8px',
+      height: '8px',
+      minWidth: '8px',
       borderRadius: '50%',
-      border: '1px solid rgba(44,153,255,0.45)',
-      background: 'radial-gradient(circle, rgba(44,153,255,0.35), rgba(5,15,28,0.8))',
-      color: '#58b4ff',
-      fontSize: '11px',
-      boxShadow: '0 0 20px rgba(0,130,255,0.18)'
+      background: '#55b5ff',
+      boxShadow: `
+      0 0 8px rgba(85,181,255,0.9),
+      0 0 22px rgba(35,130,255,0.55)
+    `,
     },
 
     aiBannerTitle: {
       fontSize: '9px',
       fontWeight: '700',
-      color: '#c8e6ff',
-      letterSpacing: '0.6px'
+      color: '#b9dcfa',
+      letterSpacing: '0.7px',
+      textTransform: 'uppercase',
     },
 
     aiBannerText: {
-      marginTop: '3px',
+      marginTop: '2px',
       fontSize: '8px',
-      color: '#596c7e'
+      color: '#61768a',
     },
 
-    configGrid: {
+    rangeValue: {
+      color: '#65b8ff',
+      fontFamily: 'monospace',
+      fontWeight: '700',
+    },
+
+    /* ---------------------------------------------------------
+       AI RECOMMENDATIONS
+       --------------------------------------------------------- */
+
+    recommendationPanel: {
+      marginTop: '18px',
+      padding: '15px',
+      borderRadius: '11px',
+      border: '1px solid rgba(55, 102, 144, 0.24)',
+      background: 'rgba(5, 10, 16, 0.72)',
+    },
+
+    recommendationHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '12px',
+    },
+
+    recommendationTitle: {
+      fontSize: '8px',
+      fontWeight: '700',
+      letterSpacing: '1.2px',
+      color: '#8093a7',
+      textTransform: 'uppercase',
+    },
+
+    recommendationList: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+    },
+
+    recommendationItem: {
+      display: 'flex',
+      gap: '9px',
+      alignItems: 'flex-start',
+      fontSize: '9px',
+      lineHeight: 1.45,
+      color: '#6f7f90',
+    },
+
+    recommendationBullet: {
+      width: '5px',
+      height: '5px',
+      minWidth: '5px',
+      marginTop: '4px',
+      borderRadius: '50%',
+      background: '#579fe0',
+      boxShadow: '0 0 8px rgba(87,159,224,0.7)',
+    },
+
+    /* ---------------------------------------------------------
+       BUSINESS INSIGHTS
+       --------------------------------------------------------- */
+
+    insightGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      gap: '14px'
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+      gap: '10px',
     },
 
-    configValue: {
-      marginTop: '7px',
-      padding: '11px 12px',
-      borderRadius: '8px',
-      border: '1px solid rgba(75,112,153,0.18)',
-      background: 'rgba(2,5,9,0.7)',
-      color: '#e8eef5',
-      fontSize: '11px',
-      fontFamily: 'monospace'
+    insight: {
+      padding: '13px',
+      borderRadius: '10px',
+      background: 'rgba(4, 8, 13, 0.75)',
+      border: '1px solid rgba(66, 96, 126, 0.2)',
     },
 
-    // ----------------------------------------------------------
-    // TILL SLIP PREVIEW
-    // ----------------------------------------------------------
+    insightLabel: {
+      fontSize: '7px',
+      color: '#556575',
+      letterSpacing: '1px',
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      marginBottom: '7px',
+    },
+
+    insightValue: {
+      color: '#dbe7f2',
+      fontSize: '12px',
+      fontWeight: '600',
+    },
+
+    /* ---------------------------------------------------------
+       TILL SLIP PREVIEW
+       --------------------------------------------------------- */
 
     previewCard: {
       position: 'sticky',
-      top: '22px'
+      top: '20px',
+      borderRadius: '16px',
+      padding: '18px',
+      background: `
+      linear-gradient(
+        145deg,
+        rgba(12, 17, 23, 0.98),
+        rgba(5, 8, 12, 0.99)
+      )
+    `,
+      border: '1px solid rgba(74, 108, 141, 0.24)',
+      boxShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.045),
+      0 22px 65px rgba(0,0,0,0.32)
+    `,
     },
 
-    previewStage: {
-      minHeight: '580px',
-      padding: '28px',
+    previewHeader: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-      background: `
-      radial-gradient(circle at 50% 30%, rgba(20,70,125,0.08), transparent 38%),
-      #070a0e
-    `
+      justifyContent: 'space-between',
+      marginBottom: '16px',
     },
 
-    paperShadow: {
-      position: 'relative',
-      width: '270px',
-      minHeight: '465px',
-      padding: '25px 20px',
-      boxSizing: 'border-box',
-      background: '#f7f7f7',
+    previewTitle: {
+      fontSize: '11px',
+      fontWeight: '650',
+      color: '#e9f1f8',
+    },
+
+    previewStatus: {
+      fontSize: '7px',
+      fontWeight: '700',
+      color: '#69b8ff',
+      letterSpacing: '1px',
+      textTransform: 'uppercase',
+    },
+
+    paperStage: {
+      minHeight: '500px',
+      borderRadius: '12px',
+      padding: '22px',
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'center',
+      background: `
+      radial-gradient(
+        circle at 50% 15%,
+        rgba(45, 120, 210, 0.08),
+        transparent 38%
+      ),
+      #030507
+    `,
+      border: '1px solid rgba(255,255,255,0.035)',
+      overflow: 'hidden',
+    },
+
+    paper: {
+      width: 'min(100%, 285px)',
+      minHeight: '440px',
+      background: '#f7f7f5',
       color: '#111111',
-      boxShadow: '0 25px 70px rgba(0,0,0,0.75), 0 0 35px rgba(40,110,190,0.08)',
-      transform: 'rotate(0deg)'
+      boxShadow: `
+      0 22px 50px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(255,255,255,0.08)
+    `,
+      padding: '22px 18px',
+      boxSizing: 'border-box',
+      fontFamily: 'monospace',
     },
 
     paperHeader: {
       textAlign: 'center',
-      fontSize: '10px',
-      fontWeight: '800',
-      letterSpacing: '1.5px'
+      borderBottom: '1px dashed #777',
+      paddingBottom: '13px',
+      marginBottom: '14px',
+    },
+
+    paperLogoPlaceholder: {
+      width: '48px',
+      height: '48px',
+      margin: '0 auto 9px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: '1px solid #999',
+      color: '#777',
+      fontSize: '8px',
+    },
+
+    paperBusinessName: {
+      fontSize: '12px',
+      fontWeight: '700',
+      marginBottom: '4px',
+    },
+
+    paperText: {
+      fontSize: '7px',
+      color: '#555',
+      lineHeight: 1.55,
     },
 
     paperLine: {
-      height: '1px',
-      background: '#c9c9c9',
-      margin: '16px 0'
-    },
-
-    paperRow: {
       display: 'flex',
       justifyContent: 'space-between',
       gap: '12px',
-      marginBottom: '8px',
       fontSize: '8px',
-      color: '#555555'
+      marginBottom: '7px',
     },
 
-    paperPlaceholder: {
-      marginTop: '40px',
-      textAlign: 'center',
-      fontSize: '7px',
-      letterSpacing: '1px',
-      color: '#888888',
-      textTransform: 'uppercase'
+    paperDivider: {
+      borderTop: '1px dashed #888',
+      margin: '13px 0',
     },
 
-    // ----------------------------------------------------------
-    // HELPER / RECOMMENDATIONS
-    // ----------------------------------------------------------
-
-    helperPanel: {
-      padding: '15px',
-      borderRadius: '10px',
-      border: '1px solid rgba(72,104,140,0.15)',
-      background: 'rgba(4,8,13,0.65)'
-    },
-
-    helperHeading: {
-      marginBottom: '10px',
-      fontSize: '8px',
-      fontWeight: '700',
-      color: '#8c9bab',
-      letterSpacing: '0.9px',
-      textTransform: 'uppercase'
-    },
-
-    helperItem: {
+    paperTotal: {
       display: 'flex',
-      alignItems: 'flex-start',
-      gap: '9px',
-      marginBottom: '9px',
-      fontSize: '8px',
-      lineHeight: 1.5,
-      color: '#596571'
-    },
-
-    helperBullet: {
-      width: '5px',
-      height: '5px',
-      marginTop: '4px',
-      flexShrink: 0,
-      borderRadius: '50%',
-      background: '#287dff',
-      boxShadow: '0 0 8px rgba(40,125,255,0.7)'
-    },
-
-    // ----------------------------------------------------------
-    // FOOTER ACTION
-    // ----------------------------------------------------------
-
-    saveFooter: {
-      display: 'flex',
-      alignItems: 'center',
       justifyContent: 'space-between',
-      gap: '18px',
-      marginTop: '18px',
-      padding: '17px 20px',
-      borderRadius: '13px',
-      border: '1px solid rgba(50,120,210,0.18)',
-      background: 'linear-gradient(90deg, rgba(10,16,24,0.98), rgba(6,10,15,0.98))',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.03)'
-    },
-
-    saveInfo: {
-      minWidth: 0
-    },
-
-    saveTitle: {
-      fontSize: '9px',
+      fontSize: '11px',
       fontWeight: '700',
-      color: '#cbd4df',
-      letterSpacing: '0.7px',
-      textTransform: 'uppercase'
     },
 
-    saveDescription: {
-      marginTop: '4px',
-      fontSize: '8px',
-      color: '#555f6b'
+    paperQr: {
+      width: '72px',
+      height: '72px',
+      margin: '22px auto 0',
+      border: '5px solid #111',
+      background: `
+      repeating-linear-gradient(
+        45deg,
+        #111 0,
+        #111 3px,
+        #fff 3px,
+        #fff 6px
+      )
+    `,
     },
+
+    /* ---------------------------------------------------------
+       BUTTON SYSTEM
+       --------------------------------------------------------- */
 
     button: {
-      minHeight: '42px',
-      padding: '0 20px',
-      border: '1px solid rgba(45,150,255,0.65)',
+      minHeight: '40px',
+      padding: '0 14px',
       borderRadius: '9px',
-      background: 'linear-gradient(180deg, #1b8fff 0%, #0863cf 100%)',
-      color: '#ffffff',
+      border: '1px solid rgba(75, 139, 198, 0.28)',
+      background: `
+      linear-gradient(
+        180deg,
+        rgba(24, 37, 51, 0.98),
+        rgba(11, 17, 24, 0.98)
+      )
+    `,
+      color: '#dceaf6',
+      fontSize: '9px',
+      fontWeight: '700',
+      letterSpacing: '0.65px',
+      textTransform: 'uppercase',
+      cursor: 'pointer',
+      boxShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 8px 22px rgba(0,0,0,0.18)
+    `,
+      transition: 'all 160ms ease',
+    },
+
+    primaryButton: {
+      minHeight: '44px',
+      padding: '0 18px',
+      borderRadius: '10px',
+      border: '1px solid rgba(84, 177, 255, 0.72)',
+      background: `
+      linear-gradient(
+        180deg,
+        #8fd1ff 0%,
+        #3e9de8 45%,
+        #2475b5 100%
+      )
+    `,
+      color: '#03101a',
       fontSize: '9px',
       fontWeight: '800',
       letterSpacing: '0.8px',
       textTransform: 'uppercase',
       cursor: 'pointer',
-      boxShadow: '0 0 24px rgba(0,112,255,0.16), inset 0 1px 0 rgba(255,255,255,0.2)'
+      boxShadow: `
+      0 0 18px rgba(43, 150, 255, 0.20),
+      inset 0 1px 0 rgba(255,255,255,0.55)
+    `,
     },
 
-    // ----------------------------------------------------------
-    // EXISTING STYLE COMPATIBILITY
-    // ----------------------------------------------------------
+    secondaryButton: {
+      minHeight: '40px',
+      padding: '0 13px',
+      borderRadius: '9px',
+      border: '1px solid rgba(74, 115, 151, 0.28)',
+      background: 'rgba(7, 12, 18, 0.92)',
+      color: '#8fa3b7',
+      fontSize: '8px',
+      fontWeight: '700',
+      letterSpacing: '0.65px',
+      textTransform: 'uppercase',
+      cursor: 'pointer',
+    },
+
+    /* ---------------------------------------------------------
+       SAVE FOOTER
+       --------------------------------------------------------- */
+
+    saveFooter: {
+      marginTop: '16px',
+      padding: '15px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '15px',
+      borderRadius: '13px',
+      border: '1px solid rgba(59, 104, 143, 0.23)',
+      background: `
+      linear-gradient(
+        90deg,
+        rgba(8, 16, 25, 0.95),
+        rgba(5, 9, 14, 0.98)
+      )
+    `,
+    },
+
+    saveInfo: {
+      minWidth: 0,
+    },
+
+    saveTitle: {
+      color: '#dbe8f3',
+      fontSize: '9px',
+      fontWeight: '700',
+      letterSpacing: '0.7px',
+      textTransform: 'uppercase',
+    },
+
+    saveDescription: {
+      marginTop: '4px',
+      color: '#5f7081',
+      fontSize: '8px',
+    },
+
+    /* ---------------------------------------------------------
+       RESPONSIVE
+       --------------------------------------------------------- */
+
+    mobileStack: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '12px',
+    },
+
+    /* ---------------------------------------------------------
+       LEGACY COMPATIBILITY
+       
+       These preserve the style names used by your original
+       JSX so existing backend-connected JSX can continue to
+       reference styles.input, styles.button, etc.
+       --------------------------------------------------------- */
 
     concaveCard: {
-      border: '1px solid rgba(75,105,140,0.2)',
-      background: 'linear-gradient(145deg, rgba(15,21,29,0.95), rgba(4,7,11,0.95))',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035), inset 0 -8px 20px rgba(0,0,0,0.25)'
-    }
+      position: 'relative',
+      background: `
+      linear-gradient(
+        145deg,
+        rgba(11, 16, 22, 0.98),
+        rgba(5, 8, 12, 0.98)
+      )
+    `,
+      border: '1px solid rgba(67, 101, 134, 0.24)',
+      borderRadius: '10px',
+      boxShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.035),
+      inset 0 -8px 20px rgba(0,0,0,0.14)
+    `,
+    },
   };
-
   const SAFE_CURRENCY_OPTIONS = CURRENCY_OPTIONS;
 
   const activeCurrencySymbol =
@@ -922,1063 +1212,725 @@ export default function AgentParameters() {
   return (
     <div
       style={{
-        minHeight: '100vh',
         width: '100%',
-        background: '#05070a',
+        minHeight: '100%',
+        background:
+          'radial-gradient(circle at 15% 0%, rgba(0,122,255,0.08), transparent 28%), radial-gradient(circle at 90% 20%, rgba(0,180,255,0.045), transparent 25%), #05070a',
         color: '#ffffff',
-        position: 'relative',
-        overflowX: 'hidden',
         fontFamily:
           'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+
       {/* =========================================================
-        TESLA ATMOSPHERIC LIGHTING
+        AMBIENT TESLA LIGHTING
     ========================================================= */}
 
       <div
         style={{
-          position: 'fixed',
-          inset: 0,
-          pointerEvents: 'none',
-          zIndex: 0,
+          position: 'absolute',
+          top: '-220px',
+          left: '-180px',
+          width: '520px',
+          height: '520px',
+          borderRadius: '50%',
           background:
-            'radial-gradient(circle at 72% 8%, rgba(0,122,255,0.075), transparent 25%), radial-gradient(circle at 20% 80%, rgba(0,80,255,0.045), transparent 30%), linear-gradient(180deg, #05070a 0%, #070a0f 100%)',
+            'radial-gradient(circle, rgba(0,130,255,0.09), transparent 68%)',
+          pointerEvents: 'none',
         }}
       />
 
       <div
         style={{
-          position: 'fixed',
-          top: '-180px',
-          right: '-140px',
-          width: '500px',
-          height: '500px',
+          position: 'absolute',
+          top: '35%',
+          right: '-280px',
+          width: '620px',
+          height: '620px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(0,132,255,0.11), rgba(0,132,255,0.025) 38%, transparent 72%)',
-          filter: 'blur(10px)',
+            'radial-gradient(circle, rgba(0,180,255,0.045), transparent 68%)',
           pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      />
-
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '-220px',
-          left: '-160px',
-          width: '500px',
-          height: '500px',
-          borderRadius: '50%',
-          background:
-            'radial-gradient(circle, rgba(0,85,255,0.07), transparent 68%)',
-          pointerEvents: 'none',
-          zIndex: 0,
         }}
       />
 
       {/* =========================================================
-        MAIN APP SHELL
-        Sidebar + Header remain visually persistent
+        PAGE WRAPPER
     ========================================================= */}
 
       <div
         style={{
+          width: '100%',
+          maxWidth: '1700px',
+          margin: '0 auto',
+          padding: '30px 34px 60px',
           position: 'relative',
-          zIndex: 1,
-          minHeight: '100vh',
-          display: 'flex',
+          zIndex: 2,
+          boxSizing: 'border-box',
         }}
       >
 
         {/* =======================================================
-          LEFT SIDEBAR
-          Keep your existing sidebar navigation here.
-          Replace ONLY the onClick destinations if your existing
-          AdminPanel navigation uses different handlers.
+          PREMIUM PAGE HEADER
       ======================================================= */}
 
-        <aside
+        <section
           style={{
-            width: '238px',
-            minWidth: '238px',
-            minHeight: '100vh',
-            background:
-              'linear-gradient(180deg, rgba(7,10,14,0.98), rgba(4,6,9,0.99))',
-            borderRight: '1px solid rgba(70,95,120,0.20)',
-            boxShadow:
-              '18px 0 60px rgba(0,0,0,0.30), inset -1px 0 0 rgba(255,255,255,0.025)',
-            padding: '24px 14px',
-            position: 'sticky',
-            top: 0,
-            height: '100vh',
-            boxSizing: 'border-box',
-            overflowY: 'auto',
-          }}
-        >
-          {/* BRAND */}
-          <div
-            style={{
-              padding: '4px 10px 28px',
-              borderBottom: '1px solid rgba(255,255,255,0.045)',
-              marginBottom: '22px',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '15px',
-                fontWeight: '700',
-                letterSpacing: '1.5px',
-                color: '#ffffff',
-              }}
-            >
-              RUACH<span style={{ color: '#2f9cff' }}>AGENT</span>
-            </div>
-
-            <div
-              style={{
-                marginTop: '5px',
-                fontSize: '8px',
-                color: '#56616d',
-                letterSpacing: '1.8px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Autonomous Commerce Intelligence
-            </div>
-          </div>
-
-          {/* SIDEBAR SECTION */}
-          <div
-            style={{
-              padding: '0 10px',
-              marginBottom: '9px',
-              fontSize: '8px',
-              fontWeight: '700',
-              color: '#3e4852',
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-            }}
-          >
-            Workspace
-          </div>
-
-          {/* DASHBOARD */}
-          <button
-            type="button"
-            onClick={() => {
-              if (typeof onNavigate === 'function') {
-                onNavigate('dashboard');
-              }
-            }}
-            style={{
-              width: '100%',
-              border: 'none',
-              background: 'transparent',
-              color: '#68737f',
-              padding: '11px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '11px',
-            }}
-          >
-            <span style={{ fontSize: '13px' }}>⌂</span>
-            Dashboard
-          </button>
-
-          {/* SAVED DESIGNS */}
-          <button
-            type="button"
-            onClick={() => {
-              if (typeof onNavigate === 'function') {
-                onNavigate('saved-designs');
-              }
-            }}
-            style={{
-              width: '100%',
-              border: 'none',
-              background: 'transparent',
-              color: '#68737f',
-              padding: '11px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '11px',
-            }}
-          >
-            <span style={{ fontSize: '13px' }}>◇</span>
-            Saved Designs
-          </button>
-
-          {/* CONNECTED STORES */}
-          <button
-            type="button"
-            onClick={() => {
-              if (typeof onNavigate === 'function') {
-                onNavigate('connected-stores');
-              }
-            }}
-            style={{
-              width: '100%',
-              border: 'none',
-              background: 'transparent',
-              color: '#68737f',
-              padding: '11px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '11px',
-            }}
-          >
-            <span style={{ fontSize: '13px' }}>⇄</span>
-            Connected Stores
-          </button>
-
-          {/* TILL SLIPS SENT */}
-          <button
-            type="button"
-            onClick={() => {
-              if (typeof onNavigate === 'function') {
-                onNavigate('till-slips-sent');
-              }
-            }}
-            style={{
-              width: '100%',
-              border: 'none',
-              background: 'transparent',
-              color: '#68737f',
-              padding: '11px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '11px',
-            }}
-          >
-            <span style={{ fontSize: '13px' }}>▤</span>
-            Till Slips Sent
-          </button>
-
-          {/* ACTIVE PARAMETERS */}
-          <button
-            type="button"
-            style={{
-              width: '100%',
-              border: '1px solid rgba(0,145,255,0.25)',
-              background:
-                'linear-gradient(90deg, rgba(0,120,255,0.13), rgba(0,80,160,0.035))',
-              color: '#ffffff',
-              padding: '11px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              cursor: 'default',
-              textAlign: 'left',
-              fontSize: '11px',
-              boxShadow:
-                '0 0 20px rgba(0,110,255,0.07), inset 0 0 18px rgba(0,120,255,0.025)',
-            }}
-          >
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '50%',
-                background: '#249cff',
-                boxShadow: '0 0 10px rgba(36,156,255,0.9)',
-              }}
-            />
-            Agent Parameters
-          </button>
-
-          <div
-            style={{
-              margin: '24px 10px 10px',
-              height: '1px',
-              background: 'rgba(255,255,255,0.045)',
-            }}
-          />
-
-          <div
-            style={{
-              padding: '0 10px',
-              marginBottom: '9px',
-              fontSize: '8px',
-              fontWeight: '700',
-              color: '#3e4852',
-              letterSpacing: '1.5px',
-              textTransform: 'uppercase',
-            }}
-          >
-            System
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              if (typeof onNavigate === 'function') {
-                onNavigate('settings');
-              }
-            }}
-            style={{
-              width: '100%',
-              border: 'none',
-              background: 'transparent',
-              color: '#68737f',
-              padding: '11px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '11px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '11px',
-            }}
-          >
-            <span style={{ fontSize: '13px' }}>⚙</span>
-            Settings
-          </button>
-
-          {/* SIDEBAR SYSTEM FOOTER */}
-          <div
-            style={{
-              marginTop: 'auto',
-              padding: '18px 10px 0',
-            }}
-          >
-            <div
-              style={{
-                border: '1px solid rgba(60,78,95,0.22)',
-                borderRadius: '9px',
-                padding: '12px',
-                background: 'rgba(255,255,255,0.015)',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '7px',
-                  fontSize: '8px',
-                  color: '#77828d',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                <span
-                  style={{
-                    width: '5px',
-                    height: '5px',
-                    borderRadius: '50%',
-                    background: '#29d391',
-                    boxShadow: '0 0 9px rgba(41,211,145,0.8)',
-                  }}
-                />
-                Agent Core Online
-              </div>
-
-              <div
-                style={{
-                  marginTop: '8px',
-                  fontSize: '8px',
-                  color: '#3f4a54',
-                  lineHeight: '1.5',
-                }}
-              >
-                Configuration changes are synchronized through your
-                existing business settings backend.
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* =======================================================
-          RIGHT APPLICATION AREA
-      ======================================================= */}
-
-        <main
-          style={{
-            flex: 1,
-            minWidth: 0,
-            minHeight: '100vh',
-            position: 'relative',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-end',
+            gap: '25px',
+            marginBottom: '26px',
+            paddingBottom: '22px',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}
         >
 
-          {/* =====================================================
-            PREMIUM HEADER
-        ===================================================== */}
-
-          <header
-            style={{
-              height: '76px',
-              padding: '0 34px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid rgba(70,95,120,0.16)',
-              background: 'rgba(5,7,10,0.72)',
-              backdropFilter: 'blur(22px)',
-              WebkitBackdropFilter: 'blur(22px)',
-              position: 'sticky',
-              top: 0,
-              zIndex: 20,
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                }}
-              >
-                <div
-                  style={{
-                    width: '3px',
-                    height: '22px',
-                    borderRadius: '5px',
-                    background: '#239cff',
-                    boxShadow: '0 0 15px rgba(35,156,255,0.85)',
-                  }}
-                />
-
-                <h1
-                  style={{
-                    margin: 0,
-                    fontSize: '19px',
-                    fontWeight: '500',
-                    letterSpacing: '-0.3px',
-                    color: '#f5f7fa',
-                  }}
-                >
-                  Agent Parameters
-                </h1>
-              </div>
-
-              <div
-                style={{
-                  marginLeft: '13px',
-                  marginTop: '4px',
-                  color: '#58636e',
-                  fontSize: '9px',
-                  letterSpacing: '0.7px',
-                }}
-              >
-                Configure your RuachAgent commerce intelligence environment
-              </div>
-            </div>
+          <div>
 
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '16px',
+                gap: '9px',
+                marginBottom: '9px',
               }}
             >
+
               <div
                 style={{
-                  padding: '7px 10px',
-                  border: '1px solid rgba(41,211,145,0.18)',
-                  borderRadius: '6px',
-                  background: 'rgba(41,211,145,0.035)',
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: '#00aaff',
+                  boxShadow:
+                    '0 0 8px rgba(0,170,255,0.95), 0 0 20px rgba(0,120,255,0.5)',
+                }}
+              />
+
+              <span
+                style={{
+                  fontSize: '9px',
+                  fontWeight: '700',
+                  letterSpacing: '1.8px',
+                  color: '#4daeff',
+                  textTransform: 'uppercase',
+                }}
+              >
+                RUACHAGENT / CONTROL CENTER
+              </span>
+
+            </div>
+
+            <h1
+              style={{
+                margin: 0,
+                fontSize: '30px',
+                lineHeight: 1.1,
+                fontWeight: '600',
+                letterSpacing: '-0.8px',
+                color: '#ffffff',
+              }}
+            >
+              Agent Parameters
+            </h1>
+
+            <p
+              style={{
+                margin: '9px 0 0',
+                color: '#6d7785',
+                fontSize: '12px',
+                lineHeight: 1.6,
+                maxWidth: '650px',
+              }}
+            >
+              Configure the identity, transaction intelligence, webhook
+              infrastructure and voucher behavior powering your RuachAgent
+              merchant agent.
+            </p>
+
+          </div>
+
+          {/* HEADER STATUS */}
+
+          <div
+            style={{
+              minWidth: '220px',
+              padding: '13px 15px',
+              borderRadius: '12px',
+              background:
+                'linear-gradient(145deg, rgba(12,17,24,0.96), rgba(5,8,12,0.96))',
+              border: '1px solid rgba(0,142,255,0.20)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.035), 0 15px 45px rgba(0,0,0,0.25)',
+            }}
+          >
+
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+
+              <span
+                style={{
+                  fontSize: '9px',
+                  color: '#65707d',
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                AGENT STATUS
+              </span>
+
+              <span
+                style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '7px',
+                  gap: '6px',
+                  fontSize: '9px',
+                  color: '#55d8ff',
+                  fontWeight: '700',
                 }}
               >
                 <span
                   style={{
-                    width: '5px',
-                    height: '5px',
+                    width: '6px',
+                    height: '6px',
                     borderRadius: '50%',
-                    background: '#29d391',
-                    boxShadow: '0 0 9px rgba(41,211,145,0.9)',
+                    background: '#28cfff',
+                    boxShadow: '0 0 10px rgba(40,207,255,0.8)',
                   }}
                 />
+                ONLINE
+              </span>
 
-                <span
-                  style={{
-                    fontSize: '8px',
-                    color: '#8d9a9f',
-                    letterSpacing: '1px',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  System Ready
-                </span>
-              </div>
+            </div>
 
-              <div
+            <div
+              style={{
+                marginTop: '10px',
+                fontFamily: 'monospace',
+                fontSize: '10px',
+                color: '#9ba8b8',
+              }}
+            >
+              {user?.email || 'Authenticated merchant'}
+            </div>
+
+          </div>
+
+        </section>
+
+
+        {/* =======================================================
+          EXECUTIVE METRICS
+      ======================================================= */}
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'repeat(auto-fit, minmax(190px, 1fr))',
+            gap: '12px',
+            marginBottom: '18px',
+          }}
+        >
+
+          {/* CONFIGURATION HEALTH */}
+
+          <div
+            style={{
+              padding: '17px',
+              borderRadius: '14px',
+              background:
+                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
+              border: '1px solid rgba(0,135,255,0.18)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
+            }}
+          >
+
+            <div
+              style={{
+                color: '#697687',
+                fontSize: '9px',
+                letterSpacing: '1.1px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Configuration Health
+            </div>
+
+            <div
+              style={{
+                marginTop: '9px',
+                fontSize: '25px',
+                fontWeight: '600',
+                color: '#ffffff',
+              }}
+            >
+              {settings?.business_name &&
+                settings?.webhook_slug
+                ? '100%'
+                : '72%'}
+            </div>
+
+            <div
+              style={{
+                marginTop: '5px',
+                color: '#4dbdff',
+                fontSize: '9px',
+              }}
+            >
+              PARAMETERS READY
+            </div>
+
+          </div>
+
+
+          {/* CURRENCY */}
+
+          <div
+            style={{
+              padding: '17px',
+              borderRadius: '14px',
+              background:
+                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
+              border: '1px solid rgba(0,135,255,0.18)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
+            }}
+          >
+
+            <div
+              style={{
+                color: '#697687',
+                fontSize: '9px',
+                letterSpacing: '1.1px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Operational Currency
+            </div>
+
+            <div
+              style={{
+                marginTop: '9px',
+                fontSize: '25px',
+                fontWeight: '600',
+              }}
+            >
+              {settings?.currency || 'ZAR'}
+            </div>
+
+            <div
+              style={{
+                marginTop: '5px',
+                color: '#697687',
+                fontSize: '9px',
+              }}
+            >
+              TRANSACTION ENGINE
+            </div>
+
+          </div>
+
+
+          {/* DISCOUNT */}
+
+          <div
+            style={{
+              padding: '17px',
+              borderRadius: '14px',
+              background:
+                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
+              border: '1px solid rgba(0,135,255,0.18)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
+            }}
+          >
+
+            <div
+              style={{
+                color: '#697687',
+                fontSize: '9px',
+                letterSpacing: '1.1px',
+                textTransform: 'uppercase',
+              }}
+            >
+              AI Discount Compiler
+            </div>
+
+            <div
+              style={{
+                marginTop: '9px',
+                fontSize: '25px',
+                fontWeight: '600',
+              }}
+            >
+              {settings?.discount_percentage ?? 10}%
+            </div>
+
+            <div
+              style={{
+                marginTop: '5px',
+                color: '#697687',
+                fontSize: '9px',
+              }}
+            >
+              ACTIVE POLICY
+            </div>
+
+          </div>
+
+
+          {/* VOUCHER */}
+
+          <div
+            style={{
+              padding: '17px',
+              borderRadius: '14px',
+              background:
+                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
+              border: '1px solid rgba(0,135,255,0.18)',
+              boxShadow:
+                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
+            }}
+          >
+
+            <div
+              style={{
+                color: '#697687',
+                fontSize: '9px',
+                letterSpacing: '1.1px',
+                textTransform: 'uppercase',
+              }}
+            >
+              Voucher Lifetime
+            </div>
+
+            <div
+              style={{
+                marginTop: '9px',
+                fontSize: '25px',
+                fontWeight: '600',
+              }}
+            >
+              {settings?.voucher_expiration_days ?? 30}
+              <span
                 style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '50%',
-                  border: '1px solid rgba(100,120,140,0.22)',
-                  background:
-                    'linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.015))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#8b98a5',
-                  fontSize: '12px',
+                  fontSize: '11px',
+                  color: '#6b7685',
+                  marginLeft: '5px',
                 }}
               >
-                RA
-              </div>
+                DAYS
+              </span>
             </div>
-          </header>
+
+            <div
+              style={{
+                marginTop: '5px',
+                color: '#697687',
+                fontSize: '9px',
+              }}
+            >
+              EXPIRATION POLICY
+            </div>
+
+          </div>
+
+        </div>
+
+
+        {/* =======================================================
+          MAIN DASHBOARD GRID
+      ======================================================= */}
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'minmax(0, 1.15fr) minmax(340px, 0.85fr)',
+            gap: '18px',
+            alignItems: 'start',
+          }}
+        >
+
 
           {/* =====================================================
-            PAGE CONTENT
+            LEFT COLUMN
         ===================================================== */}
 
           <div
             style={{
-              maxWidth: '1480px',
-              margin: '0 auto',
-              padding: '30px 34px 60px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '18px',
+              minWidth: 0,
             }}
           >
 
+
             {/* ===================================================
-              PAGE INTRO
+              BUSINESS IDENTITY
           =================================================== */}
 
             <section
               style={{
-                marginBottom: '24px',
-                display: 'flex',
-                alignItems: 'flex-end',
-                justifyContent: 'space-between',
-                gap: '20px',
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '18px',
+                padding: '22px',
+                background:
+                  'linear-gradient(145deg, rgba(12,17,24,0.98), rgba(5,8,12,0.98))',
+                border: '1px solid rgba(0,142,255,0.22)',
+                boxShadow:
+                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 20px 60px rgba(0,0,0,0.32)',
               }}
             >
-              <div>
-                <div
-                  style={{
-                    fontSize: '8px',
-                    color: '#258fff',
-                    letterSpacing: '1.8px',
-                    textTransform: 'uppercase',
-                    marginBottom: '8px',
-                    fontWeight: '700',
-                  }}
-                >
-                  CONTROL CENTER / AGENT CONFIGURATION
-                </div>
 
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: '27px',
-                    lineHeight: 1.15,
-                    fontWeight: '500',
-                    letterSpacing: '-0.8px',
-                    color: '#f2f5f8',
-                  }}
-                >
-                  Configure your intelligent commerce agent.
-                </h2>
-
-                <p
-                  style={{
-                    margin: '9px 0 0',
-                    maxWidth: '650px',
-                    color: '#64717d',
-                    fontSize: '11px',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Manage your business identity, webhook infrastructure,
-                  transaction rules and AI-powered voucher behavior from
-                  one centralized control surface.
-                </p>
-              </div>
+              {/* BLUE EDGE LIGHT */}
 
               <div
                 style={{
-                  minWidth: '180px',
-                  padding: '12px 14px',
-                  borderRadius: '9px',
-                  border: '1px solid rgba(60,90,120,0.20)',
+                  position: 'absolute',
+                  top: 0,
+                  left: '7%',
+                  right: '7%',
+                  height: '1px',
                   background:
-                    'linear-gradient(145deg, rgba(255,255,255,0.035), rgba(255,255,255,0.008))',
+                    'linear-gradient(90deg, transparent, rgba(0,157,255,0.75), transparent)',
+                  boxShadow: '0 0 18px rgba(0,130,255,0.4)',
+                }}
+              />
+
+              {/* HEADER */}
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '22px',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: '7px',
-                    color: '#4d5965',
-                    letterSpacing: '1.2px',
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Configuration Mode
+
+                <div>
+
+                  <div
+                    style={{
+                      fontSize: '9px',
+                      color: '#389eff',
+                      letterSpacing: '1.5px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    01 / BUSINESS IDENTITY
+                  </div>
+
+                  <h2
+                    style={{
+                      margin: '7px 0 0',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      letterSpacing: '-0.2px',
+                    }}
+                  >
+                    Merchant Profile
+                  </h2>
+
+                  <p
+                    style={{
+                      margin: '6px 0 0',
+                      color: '#687482',
+                      fontSize: '10px',
+                    }}
+                  >
+                    The identity printed across your intelligent till slips.
+                  </p>
+
                 </div>
 
                 <div
                   style={{
-                    marginTop: '5px',
-                    fontSize: '11px',
-                    color: '#b9c4ce',
-                    fontFamily: 'monospace',
+                    padding: '6px 9px',
+                    borderRadius: '7px',
+                    border: '1px solid rgba(0,145,255,0.18)',
+                    background: 'rgba(0,110,255,0.04)',
+                    color: '#4eaeff',
+                    fontSize: '8px',
+                    letterSpacing: '1px',
                   }}
                 >
-                  LIVE / SYNCHRONIZED
+                  MERCHANT CORE
                 </div>
+
               </div>
-            </section>
 
-            {/* ===================================================
-              METRICS ROW
-          =================================================== */}
 
-            <section
-              style={{
-                display: 'grid',
-                gridTemplateColumns:
-                  'repeat(4, minmax(0, 1fr))',
-                gap: '12px',
-                marginBottom: '18px',
-              }}
-            >
-              {[
-                {
-                  label: 'AGENT STATUS',
-                  value: 'ONLINE',
-                  sub: 'Core operational',
-                  icon: '◉',
-                },
-                {
-                  label: 'CURRENCY',
-                  value: settings?.currency || 'ZAR',
-                  sub: 'Operational currency',
-                  icon: '¤',
-                },
-                {
-                  label: 'DISCOUNT ENGINE',
-                  value: `${settings?.discount_percentage ?? 10}%`,
-                  sub: 'AI compiler value',
-                  icon: '%',
-                },
-                {
-                  label: 'VOUCHER LIFE',
-                  value: `${settings?.voucher_expiration_days ?? 30} DAYS`,
-                  sub: 'Expiration policy',
-                  icon: '◷',
-                },
-              ].map((metric) => (
-                <div
-                  key={metric.label}
+              {/* LOGO AREA */}
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'minmax(190px, 0.8fr) minmax(0, 1.2fr)',
+                  gap: '18px',
+                  marginBottom: '20px',
+                }}
+              >
+
+                {/* LOGO UPLOADER */}
+
+                <label
+                  htmlFor="logo-upload"
                   style={{
                     position: 'relative',
-                    minHeight: '94px',
-                    padding: '16px',
-                    borderRadius: '10px',
-                    border: '1px solid rgba(66,88,110,0.22)',
+                    minHeight: '190px',
+                    borderRadius: '15px',
+                    border:
+                      '1px dashed rgba(0,150,255,0.35)',
                     background:
-                      'linear-gradient(145deg, rgba(18,23,29,0.92), rgba(7,10,14,0.94))',
-                    boxShadow:
-                      'inset 0 1px 0 rgba(255,255,255,0.025), 0 15px 35px rgba(0,0,0,0.16)',
+                      'radial-gradient(circle at center, rgba(0,110,255,0.07), transparent 65%), #070b10',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
                     overflow: 'hidden',
+                    boxSizing: 'border-box',
                   }}
                 >
+
                   <div
                     style={{
                       position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: '1px',
-                      background:
-                        'linear-gradient(90deg, transparent, rgba(35,156,255,0.5), transparent)',
+                      inset: '10px',
+                      border:
+                        '1px solid rgba(255,255,255,0.035)',
+                      borderRadius: '11px',
+                      pointerEvents: 'none',
                     }}
                   />
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: '7px',
-                        color: '#596571',
-                        letterSpacing: '1.2px',
-                        fontWeight: '700',
-                      }}
-                    >
-                      {metric.label}
-                    </span>
+                  {settings?.logo_url ? (
 
-                    <span
+                    <img
+                      src={settings.logo_url}
+                      alt="Business Logo"
                       style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '6px',
+                        width: '110px',
+                        height: '110px',
+                        objectFit: 'contain',
+                        borderRadius: '12px',
+                        position: 'relative',
+                        zIndex: 2,
+                      }}
+                    />
+
+                  ) : (
+
+                    <div
+                      style={{
+                        width: '78px',
+                        height: '78px',
+                        borderRadius: '18px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#299cff',
-                        background: 'rgba(20,130,255,0.06)',
-                        border: '1px solid rgba(35,156,255,0.12)',
-                        fontSize: '11px',
+                        fontSize: '30px',
+                        color: '#27303a',
+                        background:
+                          'linear-gradient(145deg, #111820, #06090d)',
+                        border:
+                          '1px solid rgba(0,140,255,0.18)',
+                        boxShadow:
+                          'inset 0 1px 0 rgba(255,255,255,0.04)',
                       }}
                     >
-                      {metric.icon}
-                    </span>
-                  </div>
+                      ◇
+                    </div>
+
+                  )}
 
                   <div
                     style={{
-                      marginTop: '10px',
-                      fontSize: '16px',
-                      color: '#eef4f8',
-                      fontWeight: '500',
-                      fontFamily: 'monospace',
-                      letterSpacing: '0.2px',
+                      marginTop: '13px',
+                      color: '#ffffff',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      letterSpacing: '0.5px',
                     }}
                   >
-                    {metric.value}
+                    {settings?.logo_url
+                      ? 'REPLACE BRAND LOGO'
+                      : 'UPLOAD BRAND LOGO'}
                   </div>
 
                   <div
                     style={{
-                      marginTop: '4px',
+                      marginTop: '5px',
+                      color: '#5f6b78',
                       fontSize: '8px',
-                      color: '#46515c',
                     }}
                   >
-                    {metric.sub}
-                  </div>
-                </div>
-              ))}
-            </section>
-
-            {/* ===================================================
-              MAIN DASHBOARD GRID
-          =================================================== */}
-
-            <section
-              style={{
-                display: 'grid',
-                gridTemplateColumns:
-                  'minmax(0, 1.05fr) minmax(0, 0.95fr)',
-                gap: '16px',
-                alignItems: 'start',
-              }}
-            >
-
-              {/* =================================================
-                BUSINESS IDENTITY CARD
-            ================================================= */}
-
-              <div
-                style={{
-                  position: 'relative',
-                  borderRadius: '13px',
-                  border: '1px solid rgba(65,88,112,0.25)',
-                  background:
-                    'linear-gradient(145deg, rgba(13,18,24,0.97), rgba(6,9,13,0.98))',
-                  boxShadow:
-                    '0 25px 70px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.025)',
-                  overflow: 'hidden',
-                }}
-              >
-                {/* BLUE TOP LIGHT */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: '8%',
-                    right: '8%',
-                    height: '1px',
-                    background:
-                      'linear-gradient(90deg, transparent, rgba(35,156,255,0.65), transparent)',
-                    boxShadow: '0 0 18px rgba(35,156,255,0.3)',
-                  }}
-                />
-
-                {/* CARD HEADER */}
-                <div
-                  style={{
-                    padding: '20px 22px 17px',
-                    borderBottom: '1px solid rgba(255,255,255,0.045)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div>
-                    <div
-                      style={{
-                        fontSize: '7px',
-                        color: '#258fff',
-                        letterSpacing: '1.5px',
-                        fontWeight: '700',
-                      }}
-                    >
-                      MODULE 01
-                    </div>
-
-                    <h3
-                      style={{
-                        margin: '5px 0 0',
-                        fontSize: '15px',
-                        fontWeight: '500',
-                        color: '#f1f4f7',
-                        letterSpacing: '-0.2px',
-                      }}
-                    >
-                      Business Identity
-                    </h3>
-
-                    <div
-                      style={{
-                        marginTop: '4px',
-                        fontSize: '8px',
-                        color: '#586570',
-                      }}
-                    >
-                      Brand identity and commerce endpoint configuration
-                    </div>
+                    PNG / JPG / WEBP
                   </div>
 
-                  <div
-                    style={{
-                      padding: '6px 9px',
-                      borderRadius: '5px',
-                      border: '1px solid rgba(41,211,145,0.16)',
-                      background: 'rgba(41,211,145,0.035)',
-                      color: '#5fae8d',
-                      fontSize: '7px',
-                      letterSpacing: '0.8px',
+                  <input
+                    id="logo-upload"
+                    name="logo_url"
+                    type="file"
+                    accept="image/*"
+                    autoComplete="off"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+
+                      if (file) {
+                        const localUrl =
+                          URL.createObjectURL(file);
+
+                        setSettings(prev => ({
+                          ...prev,
+                          logo_url: localUrl
+                        }));
+
+                        setPendingLogoFile(file);
+                      }
                     }}
-                  >
-                    IDENTITY ACTIVE
-                  </div>
-                </div>
+                    style={{ display: 'none' }}
+                  />
+
+                </label>
+
+
+                {/* BUSINESS INFORMATION */}
 
                 <div
                   style={{
-                    padding: '22px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '18px',
+                    gap: '13px',
                   }}
                 >
 
-                  {/* LOGO UPLOAD */}
                   <div>
-                    <div
-                      style={{
-                        fontSize: '7px',
-                        color: '#68747f',
-                        letterSpacing: '1.1px',
-                        fontWeight: '700',
-                        marginBottom: '9px',
-                      }}
-                    >
-                      BRAND LOGO / RECEIPT PRINT ASSET
-                    </div>
 
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '105px minmax(0, 1fr)',
-                        gap: '14px',
-                      }}
-                    >
-                      {/* LOGO PREVIEW */}
-                      <div
-                        style={{
-                          height: '105px',
-                          borderRadius: '10px',
-                          border: '1px solid rgba(65,90,115,0.30)',
-                          background:
-                            'linear-gradient(145deg, #10151b, #07090c)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                          position: 'relative',
-                          boxShadow:
-                            'inset 0 0 25px rgba(0,0,0,0.45)',
-                        }}
-                      >
-                        <div
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            background:
-                              'linear-gradient(135deg, rgba(35,156,255,0.05), transparent 50%)',
-                            pointerEvents: 'none',
-                          }}
-                        />
-
-                        {settings?.logo_url ? (
-                          <img
-                            src={settings.logo_url}
-                            alt="Business Logo Preview"
-                            style={{
-                              width: '82%',
-                              height: '82%',
-                              objectFit: 'contain',
-                              position: 'relative',
-                              zIndex: 1,
-                            }}
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              textAlign: 'center',
-                              color: '#303b46',
-                              fontSize: '25px',
-                            }}
-                          >
-                            ◇
-                            <div
-                              style={{
-                                marginTop: '4px',
-                                fontSize: '6px',
-                                letterSpacing: '1px',
-                                color: '#424d58',
-                              }}
-                            >
-                              NO LOGO
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* UPLOAD CONTROL */}
-                      <div
-                        style={{
-                          border: '1px dashed rgba(70,105,135,0.32)',
-                          borderRadius: '10px',
-                          padding: '16px',
-                          background:
-                            'linear-gradient(145deg, rgba(255,255,255,0.018), rgba(255,255,255,0.005))',
-                        }}
-                      >
-                        <div
-                          style={{
-                            fontSize: '10px',
-                            color: '#d8e0e7',
-                            fontWeight: '500',
-                          }}
-                        >
-                          Receipt brand asset
-                        </div>
-
-                        <div
-                          style={{
-                            marginTop: '5px',
-                            fontSize: '8px',
-                            color: '#586571',
-                            lineHeight: 1.5,
-                          }}
-                        >
-                          Upload the logo that RuachAgent should use
-                          when generating printable till slips.
-                        </div>
-
-                        <label
-                          htmlFor="logo-upload"
-                          style={{
-                            marginTop: '14px',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '7px',
-                            padding: '9px 13px',
-                            borderRadius: '6px',
-                            border: '1px solid rgba(35,156,255,0.38)',
-                            background:
-                              'linear-gradient(180deg, rgba(25,135,255,0.12), rgba(10,60,120,0.06))',
-                            color: '#b9dfff',
-                            fontSize: '8px',
-                            letterSpacing: '0.7px',
-                            cursor: 'pointer',
-                            boxShadow:
-                              '0 0 18px rgba(35,156,255,0.06)',
-                          }}
-                        >
-                          + CHOOSE IMAGE
-
-                          {/* EXISTING UPLOAD LOGIC PRESERVED */}
-                          <input
-                            id="logo-upload"
-                            name="logo_url"
-                            type="file"
-                            accept="image/*"
-                            autoComplete="off"
-                            onChange={(e) => {
-                              const file = e.target.files[0];
-
-                              if (file) {
-                                const localUrl =
-                                  URL.createObjectURL(file);
-
-                                setSettings(prev => ({
-                                  ...prev,
-                                  logo_url: localUrl,
-                                }));
-
-                                setPendingLogoFile(file);
-                              }
-                            }}
-                            style={{ display: 'none' }}
-                          />
-                        </label>
-
-                        {settings?.logo_url && (
-                          <div
-                            style={{
-                              marginTop: '10px',
-                              fontSize: '7px',
-                              color: '#4eaa84',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '5px',
-                            }}
-                          >
-                            <span>●</span>
-                            Logo asset loaded
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* BUSINESS NAME */}
-                  <div>
                     <label
                       htmlFor="business-name"
                       style={{
                         display: 'block',
-                        fontSize: '7px',
-                        color: '#68747f',
+                        marginBottom: '7px',
+                        color: '#66717e',
+                        fontSize: '8px',
                         letterSpacing: '1.1px',
                         fontWeight: '700',
-                        marginBottom: '8px',
                       }}
                     >
                       BUSINESS BRAND NAME
@@ -1991,42 +1943,40 @@ export default function AgentParameters() {
                       autoComplete="organization"
                       value={settings?.business_name || ''}
                       onChange={(e) => {
-                        const val = e.target.value;
-
                         setSettings(prev => ({
                           ...prev,
-                          business_name: val,
+                          business_name: e.target.value
                         }));
                       }}
-                      placeholder="Enter your business name"
+                      placeholder="Your business name"
                       style={{
                         ...styles.input,
                         width: '100%',
                         boxSizing: 'border-box',
                         padding: '13px 14px',
-                        borderRadius: '7px',
-                        fontSize: '10px',
+                        fontSize: '11px',
                         fontFamily: 'monospace',
-                        letterSpacing: '0.4px',
-                        background: '#080c10',
-                        border: '1px solid rgba(70,95,120,0.28)',
-                        color: '#e8eef3',
-                        outline: 'none',
+                        background: '#070b10',
+                        border:
+                          '1px solid rgba(0,130,255,0.18)',
+                        borderRadius: '9px',
                       }}
                     />
+
                   </div>
 
-                  {/* STORE ADDRESS */}
+
                   <div>
+
                     <label
                       htmlFor="store-address"
                       style={{
                         display: 'block',
-                        fontSize: '7px',
-                        color: '#68747f',
+                        marginBottom: '7px',
+                        color: '#66717e',
+                        fontSize: '8px',
                         letterSpacing: '1.1px',
                         fontWeight: '700',
-                        marginBottom: '8px',
                       }}
                     >
                       PHYSICAL OUTLET ADDRESS
@@ -2038,427 +1988,426 @@ export default function AgentParameters() {
                       autoComplete="street-address"
                       value={settings?.store_address || ''}
                       onChange={(e) => {
-                        const val = e.target.value;
-
                         setSettings(prev => ({
                           ...prev,
-                          store_address: val,
+                          store_address: e.target.value
                         }));
                       }}
-                      placeholder="Enter physical outlet address"
+                      placeholder="Business address"
                       style={{
                         ...styles.input,
                         width: '100%',
+                        minHeight: '78px',
                         boxSizing: 'border-box',
-                        minHeight: '76px',
-                        resize: 'vertical',
                         padding: '13px 14px',
-                        borderRadius: '7px',
+                        resize: 'none',
                         fontSize: '10px',
                         fontFamily: 'monospace',
-                        letterSpacing: '0.35px',
                         lineHeight: 1.5,
-                        background: '#080c10',
-                        border: '1px solid rgba(70,95,120,0.28)',
-                        color: '#e8eef3',
-                        outline: 'none',
-                      }}
-                    />
-                  </div>
-
-                  {/* WEBHOOK */}
-                  <div>
-                    <label
-                      htmlFor="webhook-slug"
-                      style={{
-                        display: 'block',
-                        fontSize: '7px',
-                        color: '#68747f',
-                        letterSpacing: '1.1px',
-                        fontWeight: '700',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      LIVE WEBHOOK SLUG
-                    </label>
-
-                    <input
-                      id="webhook-slug"
-                      name="webhook_slug"
-                      type="text"
-                      autoComplete="off"
-                      placeholder="e.g. eddienetwork"
-                      value={settings?.webhook_slug || ''}
-                      onChange={(e) => {
-                        const cleanValue =
-                          e.target.value
-                            .toLowerCase()
-                            .replace(/[^a-z0-9-_]/g, '');
-
-                        setSettings(prev => ({
-                          ...prev,
-                          webhook_slug: cleanValue,
-                        }));
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: '100%',
-                        boxSizing: 'border-box',
-                        padding: '13px 14px',
-                        borderRadius: '7px',
-                        fontSize: '10px',
-                        fontFamily: 'monospace',
-                        letterSpacing: '0.5px',
-                        background: '#080c10',
-                        border: '1px solid rgba(35,156,255,0.24)',
-                        color: '#a9d8ff',
-                        outline: 'none',
-                      }}
-                    />
-
-                    {/* REQUIRED WEBHOOK BACKEND URL */}
-                    <div
-                      style={{
-                        marginTop: '9px',
-                        padding: '11px 12px',
-                        borderRadius: '7px',
-                        background: 'rgba(0,105,210,0.035)',
+                        background: '#070b10',
                         border:
-                          '1px solid rgba(35,156,255,0.13)',
+                          '1px solid rgba(0,130,255,0.18)',
+                        borderRadius: '9px',
                       }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '6px',
-                          color: '#4e667b',
-                          letterSpacing: '1px',
-                          textTransform: 'uppercase',
-                          marginBottom: '6px',
-                        }}
-                      >
-                        LIVE RECEIPT AGENT ENDPOINT
-                      </div>
+                    />
 
-                      <div
-                        style={{
-                          fontFamily: 'monospace',
-                          fontSize: '8px',
-                          lineHeight: 1.5,
-                          color: settings?.webhook_slug
-                            ? '#78bfff'
-                            : '#46525e',
-                          wordBreak: 'break-all',
-                        }}
-                      >
-                        {settings?.webhook_slug
-                          ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
-                          : 'Define a unique webhook slug first...'}
-                      </div>
-                    </div>
                   </div>
+
                 </div>
+
               </div>
 
-              {/* =================================================
-                AI CONFIGURATION CARD
-            ================================================= */}
+
+              {/* WEBHOOK SECTION */}
 
               <div
                 style={{
-                  position: 'relative',
                   borderRadius: '13px',
-                  border: '1px solid rgba(65,88,112,0.25)',
+                  padding: '16px',
                   background:
-                    'linear-gradient(145deg, rgba(13,18,24,0.97), rgba(6,9,13,0.98))',
-                  boxShadow:
-                    '0 25px 70px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.025)',
-                  overflow: 'hidden',
+                    'linear-gradient(145deg, rgba(0,80,150,0.06), rgba(0,0,0,0.12))',
+                  border:
+                    '1px solid rgba(0,142,255,0.15)',
                 }}
               >
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: '8%',
-                    right: '8%',
-                    height: '1px',
-                    background:
-                      'linear-gradient(90deg, transparent, rgba(35,156,255,0.65), transparent)',
-                    boxShadow: '0 0 18px rgba(35,156,255,0.3)',
-                  }}
-                />
 
-                {/* AI HEADER */}
                 <div
                   style={{
-                    padding: '20px 22px 17px',
-                    borderBottom: '1px solid rgba(255,255,255,0.045)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '11px',
                   }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                    }}
-                  >
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '7px',
-                          color: '#258fff',
-                          letterSpacing: '1.5px',
-                          fontWeight: '700',
-                        }}
-                      >
-                        MODULE 02
-                      </div>
 
-                      <h3
-                        style={{
-                          margin: '5px 0 0',
-                          fontSize: '15px',
-                          fontWeight: '500',
-                          color: '#f1f4f7',
-                        }}
-                      >
-                        AI Configuration
-                      </h3>
+                  <div>
 
-                      <div
-                        style={{
-                          marginTop: '4px',
-                          fontSize: '8px',
-                          color: '#586570',
-                        }}
-                      >
-                        Commerce intelligence parameters
-                      </div>
+                    <div
+                      style={{
+                        color: '#4baeff',
+                        fontSize: '8px',
+                        fontWeight: '700',
+                        letterSpacing: '1.2px',
+                      }}
+                    >
+                      LIVE RECEIPT PIPELINE
                     </div>
 
                     <div
                       style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '7px',
-                        padding: '7px 9px',
-                        borderRadius: '6px',
-                        border:
-                          '1px solid rgba(35,156,255,0.17)',
-                        background: 'rgba(35,156,255,0.035)',
+                        marginTop: '4px',
+                        color: '#ffffff',
+                        fontSize: '11px',
+                        fontWeight: '600',
                       }}
                     >
-                      <span
-                        style={{
-                          width: '5px',
-                          height: '5px',
-                          borderRadius: '50%',
-                          background: '#269eff',
-                          boxShadow:
-                            '0 0 10px rgba(38,158,255,0.95)',
-                        }}
-                      />
-
-                      <span
-                        style={{
-                          fontSize: '7px',
-                          color: '#75bfff',
-                          letterSpacing: '0.7px',
-                        }}
-                      >
-                        GENAI CORE
-                      </span>
+                      Webhook Endpoint
                     </div>
+
                   </div>
 
-                  {/* AI STATUS BANNER */}
-                  <div
+                  <span
                     style={{
-                      marginTop: '15px',
-                      padding: '11px 12px',
-                      borderRadius: '8px',
-                      border:
-                        '1px solid rgba(35,156,255,0.16)',
+                      padding: '5px 8px',
+                      borderRadius: '6px',
                       background:
-                        'linear-gradient(90deg, rgba(20,120,255,0.06), rgba(20,120,255,0.015))',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
+                        settings?.webhook_slug
+                          ? 'rgba(0,190,255,0.08)'
+                          : 'rgba(255,180,0,0.06)',
+                      color:
+                        settings?.webhook_slug
+                          ? '#48cfff'
+                          : '#b8954c',
+                      fontSize: '8px',
+                      fontWeight: '700',
+                      letterSpacing: '0.6px',
                     }}
                   >
-                    <div
-                      style={{
-                        width: '27px',
-                        height: '27px',
-                        borderRadius: '7px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: 'rgba(35,156,255,0.08)',
-                        border:
-                          '1px solid rgba(35,156,255,0.16)',
-                        color: '#48aaff',
-                        fontSize: '12px',
-                      }}
-                    >
-                      AI
-                    </div>
+                    {settings?.webhook_slug
+                      ? 'READY'
+                      : 'ACTION REQUIRED'}
+                  </span>
 
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '8px',
-                          color: '#d8e7f5',
-                          fontWeight: '600',
-                        }}
-                      >
-                        RuachAgent AI Intelligence Active
-                      </div>
+                </div>
 
-                      <div
-                        style={{
-                          marginTop: '3px',
-                          fontSize: '7px',
-                          color: '#596875',
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        Google GenAI configuration layer connected to
-                        the agent's existing intelligence pipeline.
-                      </div>
-                    </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    alignItems: 'stretch',
+                  }}
+                >
+
+                  <input
+                    readOnly
+                    value={
+                      settings?.webhook_slug
+                        ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
+                        : 'Define a unique webhook slug first...'
+                    }
+                    style={{
+                      ...styles.input,
+                      flex: 1,
+                      minWidth: 0,
+                      padding: '12px',
+                      fontSize: '9px',
+                      fontFamily: 'monospace',
+                      color: settings?.webhook_slug
+                        ? '#7fcfff'
+                        : '#4f5965',
+                      background: '#05080c',
+                      border:
+                        '1px solid rgba(0,130,255,0.16)',
+                      borderRadius: '8px',
+                    }}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!settings?.webhook_slug) return;
+
+                      const endpoint =
+                        `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`;
+
+                      try {
+                        await navigator.clipboard.writeText(endpoint);
+                        alert('Webhook endpoint copied.');
+                      } catch (error) {
+                        console.error(
+                          'Webhook copy failed:',
+                          error
+                        );
+                      }
+                    }}
+                    style={{
+                      ...styles.button,
+                      minWidth: '92px',
+                      padding: '0 13px',
+                      fontSize: '9px',
+                      borderRadius: '8px',
+                      background:
+                        'linear-gradient(145deg, #0d151d, #070b10)',
+                      color: '#ffffff',
+                      border:
+                        '1px solid rgba(0,150,255,0.28)',
+                      boxShadow:
+                        '0 0 20px rgba(0,110,255,0.06)',
+                    }}
+                  >
+                    COPY WEBHOOK
+                  </button>
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            {/* ===================================================
+              AI CONFIGURATION
+          =================================================== */}
+
+            <section
+              style={{
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '18px',
+                padding: '22px',
+                background:
+                  'linear-gradient(145deg, rgba(12,17,24,0.98), rgba(5,8,12,0.98))',
+                border: '1px solid rgba(0,142,255,0.22)',
+                boxShadow:
+                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 20px 60px rgba(0,0,0,0.30)',
+              }}
+            >
+
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  right: '8%',
+                  width: '150px',
+                  height: '1px',
+                  background:
+                    'linear-gradient(90deg, transparent, rgba(0,170,255,0.75))',
+                  boxShadow: '0 0 18px rgba(0,150,255,0.4)',
+                }}
+              />
+
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '22px',
+                }}
+              >
+
+                <div>
+
+                  <div
+                    style={{
+                      fontSize: '9px',
+                      color: '#389eff',
+                      letterSpacing: '1.5px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    02 / AI CONFIGURATION
                   </div>
+
+                  <h2
+                    style={{
+                      margin: '7px 0 0',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                    }}
+                  >
+                    RuachAgent Intelligence
+                  </h2>
+
+                  <p
+                    style={{
+                      margin: '6px 0 0',
+                      color: '#687482',
+                      fontSize: '10px',
+                    }}
+                  >
+                    Transaction rules interpreted by your AI agent.
+                  </p>
+
                 </div>
 
                 <div
                   style={{
-                    padding: '22px',
                     display: 'flex',
-                    flexDirection: 'column',
-                    gap: '18px',
+                    alignItems: 'center',
+                    gap: '7px',
+                    color: '#46caff',
+                    fontSize: '8px',
+                    fontWeight: '700',
+                    letterSpacing: '0.8px',
+                  }}
+                >
+                  <span
+                    style={{
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#2dcfff',
+                      boxShadow: '0 0 10px #2dcfff',
+                    }}
+                  />
+                  GOOGLE GENAI CORE
+                </div>
+
+              </div>
+
+
+              {/* CONFIGURATION CONTROLS */}
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(auto-fit, minmax(190px, 1fr))',
+                  gap: '13px',
+                }}
+              >
+
+                {/* CURRENCY */}
+
+                <div
+                  style={{
+                    padding: '16px',
+                    borderRadius: '11px',
+                    background: '#080c11',
+                    border:
+                      '1px solid rgba(0,130,255,0.13)',
                   }}
                 >
 
-                  {/* CURRENCY */}
-                  <div>
-                    <label
-                      htmlFor="currency"
+                  <label
+                    htmlFor="currency"
+                    style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: '#697584',
+                      fontSize: '8px',
+                      letterSpacing: '1px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    OPERATIONAL CURRENCY
+                  </label>
+
+                  <div
+                    style={{
+                      position: 'relative',
+                    }}
+                  >
+
+                    <select
+                      id="currency"
+                      name="currency"
+                      value={settings?.currency || 'ZAR'}
+                      onChange={(e) => {
+                        setSettings(prev => ({
+                          ...prev,
+                          currency: e.target.value
+                        }));
+                      }}
                       style={{
-                        display: 'block',
-                        fontSize: '7px',
-                        color: '#68747f',
-                        letterSpacing: '1.1px',
-                        fontWeight: '700',
-                        marginBottom: '8px',
+                        ...styles.input,
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        padding: '12px 32px 12px 12px',
+                        fontSize: '10px',
+                        fontFamily: 'monospace',
+                        appearance: 'none',
+                        cursor: 'pointer',
+                        background: '#05080c',
+                        border:
+                          '1px solid rgba(0,130,255,0.16)',
+                        borderRadius: '8px',
                       }}
                     >
-                      OPERATIONAL CURRENCY
-                    </label>
 
-                    <div
+                      {CURRENCY_OPTIONS.map(curr => (
+                        <option
+                          key={curr.code}
+                          value={curr.code}
+                          style={{
+                            background: '#080c11',
+                            color: '#ffffff',
+                          }}
+                        >
+                          {curr.name} ({curr.symbol})
+                        </option>
+                      ))}
+
+                    </select>
+
+                    <span
                       style={{
-                        position: 'relative',
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        color: '#3dafff',
+                        fontSize: '8px',
+                        pointerEvents: 'none',
                       }}
                     >
-                      <select
-                        id="currency"
-                        name="currency"
-                        value={settings?.currency || 'ZAR'}
-                        onChange={(e) => {
-                          const val = e.target.value;
+                      ▼
+                    </span>
 
-                          setSettings(prev => ({
-                            ...prev,
-                            currency: val,
-                          }));
-                        }}
-                        style={{
-                          ...styles.input,
-                          width: '100%',
-                          boxSizing: 'border-box',
-                          padding: '13px 38px 13px 14px',
-                          borderRadius: '7px',
-                          fontSize: '10px',
-                          fontFamily: 'monospace',
-                          letterSpacing: '0.4px',
-                          appearance: 'none',
-                          cursor: 'pointer',
-                          background: '#080c10',
-                          border:
-                            '1px solid rgba(70,95,120,0.28)',
-                          color: '#dbe6ef',
-                          outline: 'none',
-                        }}
-                      >
-                        {CURRENCY_OPTIONS.map((curr) => (
-                          <option
-                            key={curr.code}
-                            value={curr.code}
-                            style={{
-                              background: '#0b1118',
-                              color: '#ffffff',
-                              fontFamily: 'monospace',
-                            }}
-                          >
-                            {curr.name} ({curr.symbol})
-                          </option>
-                        ))}
-                      </select>
-
-                      <span
-                        style={{
-                          position: 'absolute',
-                          right: '14px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          color: '#3c9eff',
-                          fontSize: '8px',
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        ▼
-                      </span>
-                    </div>
                   </div>
 
-                  {/* DISCOUNT */}
-                  <div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      <label
-                        htmlFor="discount-percentage"
-                        style={{
-                          fontSize: '7px',
-                          color: '#68747f',
-                          letterSpacing: '1.1px',
-                          fontWeight: '700',
-                        }}
-                      >
-                        AI DISCOUNT COMPILER
-                      </label>
+                </div>
 
-                      <span
-                        style={{
-                          fontFamily: 'monospace',
-                          color: '#2f9cff',
-                          fontSize: '11px',
-                        }}
-                      >
-                        {settings?.discount_percentage ?? 10}%
-                      </span>
-                    </div>
+
+                {/* DISCOUNT */}
+
+                <div
+                  style={{
+                    padding: '16px',
+                    borderRadius: '11px',
+                    background: '#080c11',
+                    border:
+                      '1px solid rgba(0,130,255,0.13)',
+                  }}
+                >
+
+                  <label
+                    htmlFor="discount-percentage"
+                    style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: '#697584',
+                      fontSize: '8px',
+                      letterSpacing: '1px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    AI DISCOUNT COMPILER
+                  </label>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
 
                     <input
                       id="discount-percentage"
                       name="discount_percentage"
                       type="number"
-                      autoComplete="off"
                       min="0"
                       max="100"
                       value={settings?.discount_percentage ?? 10}
@@ -2468,94 +2417,75 @@ export default function AgentParameters() {
 
                         setSettings(prev => ({
                           ...prev,
-                          discount_percentage: val,
+                          discount_percentage: val
                         }));
                       }}
                       style={{
                         ...styles.input,
                         width: '100%',
-                        boxSizing: 'border-box',
-                        padding: '13px 14px',
-                        borderRadius: '7px',
-                        fontSize: '10px',
+                        padding: '12px',
+                        fontSize: '12px',
                         fontFamily: 'monospace',
-                        letterSpacing: '0.4px',
-                        background: '#080c10',
+                        background: '#05080c',
                         border:
-                          '1px solid rgba(70,95,120,0.28)',
-                        color: '#e8eef3',
-                        outline: 'none',
+                          '1px solid rgba(0,130,255,0.16)',
+                        borderRadius: '8px',
                       }}
                     />
 
-                    {/* RANGE VISUAL */}
-                    <div
+                    <span
                       style={{
-                        marginTop: '9px',
-                        height: '3px',
-                        borderRadius: '10px',
-                        background:
-                          'linear-gradient(90deg, #167fff 0%, #167fff ' +
-                          `${Math.min(
-                            100,
-                            Math.max(
-                              0,
-                              settings?.discount_percentage ?? 10
-                            )
-                          )}%` +
-                          ', rgba(255,255,255,0.06) ' +
-                          `${Math.min(
-                            100,
-                            Math.max(
-                              0,
-                              settings?.discount_percentage ?? 10
-                            )
-                          )}%, rgba(255,255,255,0.06) 100%)`,
-                        boxShadow:
-                          '0 0 10px rgba(22,127,255,0.16)',
-                      }}
-                    />
-                  </div>
-
-                  {/* VOUCHER */}
-                  <div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '8px',
+                        color: '#3caeff',
+                        fontSize: '14px',
+                        fontFamily: 'monospace',
                       }}
                     >
-                      <label
-                        htmlFor="voucher-expiry-days"
-                        style={{
-                          fontSize: '7px',
-                          color: '#68747f',
-                          letterSpacing: '1.1px',
-                          fontWeight: '700',
-                        }}
-                      >
-                        VOUCHER EXPIRATION POLICY
-                      </label>
+                      %
+                    </span>
 
-                      <span
-                        style={{
-                          fontFamily: 'monospace',
-                          color: '#84909b',
-                          fontSize: '8px',
-                        }}
-                      >
-                        DAYS
-                      </span>
-                    </div>
+                  </div>
+
+                </div>
+
+
+                {/* VOUCHER */}
+
+                <div
+                  style={{
+                    padding: '16px',
+                    borderRadius: '11px',
+                    background: '#080c11',
+                    border:
+                      '1px solid rgba(0,130,255,0.13)',
+                  }}
+                >
+
+                  <label
+                    htmlFor="voucher-expiry-days"
+                    style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      color: '#697584',
+                      fontSize: '8px',
+                      letterSpacing: '1px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    VOUCHER EXPIRATION
+                  </label>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                    }}
+                  >
 
                     <input
                       id="voucher-expiry-days"
                       name="voucher_expiration_days"
                       type="number"
-                      autoComplete="off"
-                      placeholder="e.g. 30"
                       min="1"
                       value={
                         settings?.voucher_expiration_days ?? 30
@@ -2566,226 +2496,97 @@ export default function AgentParameters() {
 
                         setSettings(prev => ({
                           ...prev,
-                          voucher_expiration_days: val,
+                          voucher_expiration_days: val
                         }));
                       }}
                       style={{
                         ...styles.input,
                         width: '100%',
-                        boxSizing: 'border-box',
-                        padding: '13px 14px',
-                        borderRadius: '7px',
-                        fontSize: '10px',
+                        padding: '12px',
+                        fontSize: '12px',
                         fontFamily: 'monospace',
-                        letterSpacing: '0.4px',
-                        background: '#080c10',
+                        background: '#05080c',
                         border:
-                          '1px solid rgba(70,95,120,0.28)',
-                        color: '#e8eef3',
-                        outline: 'none',
+                          '1px solid rgba(0,130,255,0.16)',
+                        borderRadius: '8px',
                       }}
                     />
+
+                    <span
+                      style={{
+                        color: '#687482',
+                        fontSize: '9px',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      DAYS
+                    </span>
+
                   </div>
 
-                  {/* AI RECOMMENDATION PANEL */}
-                  <div
-                    style={{
-                      padding: '15px',
-                      borderRadius: '9px',
-                      border:
-                        '1px solid rgba(35,156,255,0.14)',
-                      background:
-                        'linear-gradient(145deg, rgba(20,120,255,0.045), rgba(255,255,255,0.008))',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                      }}
-                    >
-                      <span
-                        style={{
-                          color: '#299cff',
-                          fontSize: '10px',
-                        }}
-                      >
-                        ✦
-                      </span>
-
-                      <span
-                        style={{
-                          fontSize: '8px',
-                          color: '#a9cfff',
-                          fontWeight: '600',
-                          letterSpacing: '0.6px',
-                        }}
-                      >
-                        AI CONFIGURATION INSIGHT
-                      </span>
-                    </div>
-
-                    <p
-                      style={{
-                        margin: '9px 0 0',
-                        fontSize: '8px',
-                        color: '#5f6d79',
-                        lineHeight: 1.55,
-                      }}
-                    >
-                      Your current agent configuration is prepared
-                      for{' '}
-                      <span style={{ color: '#9bb6ca' }}>
-                        {settings?.currency || 'ZAR'}
-                      </span>{' '}
-                      transactions, with a{' '}
-                      <span style={{ color: '#9bb6ca' }}>
-                        {settings?.discount_percentage ?? 10}%
-                      </span>{' '}
-                      AI discount rule and{' '}
-                      <span style={{ color: '#9bb6ca' }}>
-                        {settings?.voucher_expiration_days ?? 30}
-                      </span>{' '}
-                      day voucher lifecycle.
-                    </p>
-                  </div>
-
-                  {/* CONFIG SUMMARY */}
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '8px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        padding: '10px',
-                        borderRadius: '7px',
-                        background: 'rgba(255,255,255,0.018)',
-                        border:
-                          '1px solid rgba(255,255,255,0.045)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '6px',
-                          color: '#4d5965',
-                          letterSpacing: '0.8px',
-                        }}
-                      >
-                        CURRENCY
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: '5px',
-                          fontFamily: 'monospace',
-                          fontSize: '9px',
-                          color: '#a9cfff',
-                        }}
-                      >
-                        {settings?.currency || 'ZAR'}
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        padding: '10px',
-                        borderRadius: '7px',
-                        background: 'rgba(255,255,255,0.018)',
-                        border:
-                          '1px solid rgba(255,255,255,0.045)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '6px',
-                          color: '#4d5965',
-                          letterSpacing: '0.8px',
-                        }}
-                      >
-                        DISCOUNT
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: '5px',
-                          fontFamily: 'monospace',
-                          fontSize: '9px',
-                          color: '#a9cfff',
-                        }}
-                      >
-                        {settings?.discount_percentage ?? 10}%
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        padding: '10px',
-                        borderRadius: '7px',
-                        background: 'rgba(255,255,255,0.018)',
-                        border:
-                          '1px solid rgba(255,255,255,0.045)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '6px',
-                          color: '#4d5965',
-                          letterSpacing: '0.8px',
-                        }}
-                      >
-                        VOUCHER LIFE
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: '5px',
-                          fontFamily: 'monospace',
-                          fontSize: '9px',
-                          color: '#a9cfff',
-                        }}
-                      >
-                        {settings?.voucher_expiration_days ?? 30}D
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        padding: '10px',
-                        borderRadius: '7px',
-                        background: 'rgba(255,255,255,0.018)',
-                        border:
-                          '1px solid rgba(255,255,255,0.045)',
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontSize: '6px',
-                          color: '#4d5965',
-                          letterSpacing: '0.8px',
-                        }}
-                      >
-                        AI ENGINE
-                      </div>
-
-                      <div
-                        style={{
-                          marginTop: '5px',
-                          fontFamily: 'monospace',
-                          fontSize: '9px',
-                          color: '#58b0ff',
-                        }}
-                      >
-                        GENAI
-                      </div>
-                    </div>
-                  </div>
                 </div>
+
               </div>
+
+
+              {/* AI INSIGHT */}
+
+              <div
+                style={{
+                  marginTop: '15px',
+                  padding: '14px 15px',
+                  borderRadius: '10px',
+                  background:
+                    'linear-gradient(90deg, rgba(0,120,255,0.07), rgba(0,0,0,0))',
+                  borderLeft:
+                    '2px solid rgba(0,155,255,0.65)',
+                }}
+              >
+
+                <div
+                  style={{
+                    color: '#55baff',
+                    fontSize: '8px',
+                    letterSpacing: '1px',
+                    fontWeight: '700',
+                    marginBottom: '6px',
+                  }}
+                >
+                  RUACHAGENT AI RECOMMENDATION
+                </div>
+
+                <div
+                  style={{
+                    color: '#8793a1',
+                    fontSize: '10px',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {settings?.discount_percentage > 25
+                    ? 'Your discount compiler is configured aggressively. Consider reviewing margin impact before deploying this policy.'
+                    : 'Your current discount configuration is within a conservative operating range. RuachAgent can use this value when generating eligible voucher recommendations.'}
+                </div>
+
+              </div>
+
             </section>
+
+          </div>
+
+
+          {/* =====================================================
+            RIGHT COLUMN
+        ===================================================== */}
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '18px',
+              minWidth: 0,
+            }}
+          >
+
 
             {/* ===================================================
               TILL SLIP PREVIEW
@@ -2793,446 +2594,642 @@ export default function AgentParameters() {
 
             <section
               style={{
-                marginTop: '16px',
-                borderRadius: '13px',
-                border: '1px solid rgba(65,88,112,0.25)',
-                background:
-                  'linear-gradient(145deg, rgba(13,18,24,0.97), rgba(6,9,13,0.98))',
-                boxShadow:
-                  '0 25px 70px rgba(0,0,0,0.25)',
-                overflow: 'hidden',
                 position: 'relative',
+                minHeight: '540px',
+                borderRadius: '18px',
+                overflow: 'hidden',
+                background:
+                  'linear-gradient(145deg, #0c1117, #05070a)',
+                border:
+                  '1px solid rgba(0,142,255,0.22)',
+                boxShadow:
+                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 20px 60px rgba(0,0,0,0.32)',
+                display: 'flex',
+                flexDirection: 'column',
               }}
             >
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '8%',
-                  right: '8%',
-                  height: '1px',
-                  background:
-                    'linear-gradient(90deg, transparent, rgba(35,156,255,0.65), transparent)',
-                }}
-              />
+
+              {/* HEADER */}
 
               <div
                 style={{
-                  padding: '19px 22px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
+                  padding: '20px 21px',
                   borderBottom:
-                    '1px solid rgba(255,255,255,0.045)',
+                    '1px solid rgba(255,255,255,0.055)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                 }}
               >
+
                 <div>
+
                   <div
                     style={{
-                      fontSize: '7px',
-                      color: '#258fff',
-                      letterSpacing: '1.5px',
+                      color: '#389eff',
+                      fontSize: '8px',
                       fontWeight: '700',
+                      letterSpacing: '1.5px',
                     }}
                   >
-                    MODULE 03
+                    03 / LIVE OUTPUT
                   </div>
 
-                  <h3
+                  <h2
                     style={{
-                      margin: '5px 0 0',
-                      fontSize: '15px',
-                      fontWeight: '500',
-                      color: '#f1f4f7',
+                      margin: '6px 0 0',
+                      fontSize: '17px',
+                      fontWeight: '600',
                     }}
                   >
                     Till Slip Preview
-                  </h3>
+                  </h2>
+
                 </div>
 
                 <div
                   style={{
-                    fontSize: '7px',
-                    color: '#4f5d68',
-                    letterSpacing: '1px',
+                    padding: '6px 9px',
+                    borderRadius: '6px',
+                    border:
+                      '1px solid rgba(0,145,255,0.16)',
+                    color: '#6d7886',
+                    fontSize: '8px',
+                    letterSpacing: '0.8px',
                   }}
                 >
-                  LIVE VISUAL MIRROR
+                  LIVE MIRROR
                 </div>
+
               </div>
+
+
+              {/* PREVIEW STAGE */}
 
               <div
                 style={{
-                  minHeight: '470px',
-                  padding: '30px',
+                  flex: 1,
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'flex-start',
+                  alignItems: 'center',
+                  padding: '28px',
+                  position: 'relative',
                   background:
-                    'radial-gradient(circle at 50% 30%, rgba(35,156,255,0.035), transparent 45%)',
+                    'radial-gradient(circle at center, rgba(0,110,255,0.05), transparent 60%)',
                 }}
               >
-                {/* BLACK & WHITE PAPER PLACEHOLDER */}
+
+                {/* GRID */}
+
                 <div
                   style={{
-                    width: '330px',
-                    minHeight: '430px',
-                    background: '#ffffff',
-                    color: '#111111',
-                    boxShadow:
-                      '0 25px 80px rgba(0,0,0,0.60), 0 0 0 1px rgba(255,255,255,0.08)',
-                    padding: '28px 25px',
-                    boxSizing: 'border-box',
+                    position: 'absolute',
+                    inset: 0,
+                    opacity: 0.22,
+                    backgroundImage:
+                      'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
+                    backgroundSize: '25px 25px',
+                    pointerEvents: 'none',
+                  }}
+                />
+
+
+                {/* BLACK / WHITE PAPER */}
+
+                <div
+                  style={{
                     position: 'relative',
+                    width: '245px',
+                    minHeight: '405px',
+                    background: '#ffffff',
+                    color: '#080808',
+                    boxShadow:
+                      '0 30px 70px rgba(0,0,0,0.65), 0 0 35px rgba(0,130,255,0.07)',
+                    padding: '26px 21px',
+                    boxSizing: 'border-box',
                     fontFamily: 'monospace',
                   }}
                 >
+
+                  {/* PAPER HEADER */}
+
                   <div
                     style={{
                       textAlign: 'center',
-                      fontSize: '13px',
-                      fontWeight: '700',
-                      letterSpacing: '1px',
+                      borderBottom:
+                        '1px dashed #999',
+                      paddingBottom: '13px',
                     }}
                   >
-                    {settings?.business_name ||
-                      'YOUR BUSINESS'}
-                  </div>
 
-                  <div
-                    style={{
-                      marginTop: '7px',
-                      textAlign: 'center',
-                      fontSize: '8px',
-                      color: '#555',
-                    }}
-                  >
-                    {settings?.store_address ||
-                      'Business Address'}
-                  </div>
-
-                  <div
-                    style={{
-                      margin: '20px 0',
-                      borderTop: '1px dashed #222',
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '8px',
-                    }}
-                  >
-                    <span>ITEM</span>
-                    <span>AMOUNT</span>
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: '10px',
-                      borderTop: '1px solid #ddd',
-                    }}
-                  />
-
-                  {[
-                    ['Product / Service', 'R 250.00'],
-                    ['AI Voucher', '-R 25.00'],
-                    ['Tax / Fees', 'R 0.00'],
-                  ].map(([name, amount]) => (
                     <div
-                      key={name}
+                      style={{
+                        width: '44px',
+                        height: '44px',
+                        border:
+                          '1px solid #111',
+                        margin: '0 auto 10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '18px',
+                      }}
+                    >
+                      {settings?.logo_url ? (
+                        <img
+                          src={settings.logo_url}
+                          alt=""
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'contain',
+                          }}
+                        />
+                      ) : (
+                        '◇'
+                      )}
+                    </div>
+
+                    <div
+                      style={{
+                        fontWeight: '700',
+                        fontSize: '12px',
+                      }}
+                    >
+                      {settings?.business_name ||
+                        'YOUR BUSINESS'}
+                    </div>
+
+                    <div
+                      style={{
+                        marginTop: '4px',
+                        fontSize: '7px',
+                      }}
+                    >
+                      TILL SLIP / AGENT PREVIEW
+                    </div>
+
+                  </div>
+
+
+                  {/* PAPER ITEMS */}
+
+                  <div
+                    style={{
+                      marginTop: '17px',
+                      fontSize: '8px',
+                    }}
+                  >
+
+                    <div
                       style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        padding: '9px 0',
-                        fontSize: '8px',
+                        marginBottom: '8px',
                       }}
                     >
-                      <span>{name}</span>
-                      <span>{amount}</span>
+                      <span>ITEM / SERVICE</span>
+                      <span>AMOUNT</span>
                     </div>
-                  ))}
 
-                  <div
-                    style={{
-                      borderTop: '1px dashed #222',
-                      marginTop: '10px',
-                      paddingTop: '13px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontWeight: '700',
-                      fontSize: '10px',
-                    }}
-                  >
-                    <span>TOTAL</span>
-                    <span>
-                      {settings?.currency === 'ZAR'
-                        ? 'R 225.00'
-                        : '225.00'}
-                    </span>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '7px',
+                      }}
+                    >
+                      <span>Sample Product</span>
+                      <span>
+                        {activeCurrencySymbol} 100.00
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        marginBottom: '7px',
+                      }}
+                    >
+                      <span>AI Voucher</span>
+                      <span>
+                        -{settings?.discount_percentage ?? 10}%
+                      </span>
+                    </div>
+
+                    <div
+                      style={{
+                        borderTop:
+                          '1px dashed #999',
+                        marginTop: '13px',
+                        paddingTop: '12px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        fontWeight: '700',
+                      }}
+                    >
+                      <span>TOTAL</span>
+                      <span>
+                        {activeCurrencySymbol} 90.00
+                      </span>
+                    </div>
+
                   </div>
 
+
                   <div
                     style={{
-                      marginTop: '28px',
+                      marginTop: '34px',
+                      paddingTop: '13px',
+                      borderTop:
+                        '1px dashed #999',
                       textAlign: 'center',
                       fontSize: '7px',
-                      color: '#555',
                       lineHeight: 1.6,
                     }}
                   >
-                    Thank you for your purchase.
+
+                    {settings?.store_address ||
+                      'Physical outlet address'}
+
                     <br />
-                    Powered by RuachAgent AI.
+
+                    Powered by RuachAgent AI
+
                   </div>
 
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '17px',
-                      left: '25px',
-                      right: '25px',
-                      height: '25px',
-                      background:
-                        'repeating-linear-gradient(90deg, #111 0px, #111 2px, transparent 2px, transparent 4px)',
-                      opacity: 0.75,
-                    }}
-                  />
                 </div>
+
               </div>
+
             </section>
 
+
             {/* ===================================================
-              SAVE & SYNC FOOTER
-              EXISTING handleSave / isSaveSyncing PRESERVED
+              BUSINESS INTELLIGENCE PANEL
           =================================================== */}
 
             <section
               style={{
-                marginTop: '16px',
-                padding: '18px',
-                borderRadius: '12px',
-                border:
-                  '1px solid rgba(35,156,255,0.20)',
+                padding: '20px',
+                borderRadius: '18px',
                 background:
-                  'linear-gradient(90deg, rgba(20,100,200,0.055), rgba(255,255,255,0.012))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '20px',
+                  'linear-gradient(145deg, rgba(12,17,24,0.98), rgba(5,8,12,0.98))',
+                border:
+                  '1px solid rgba(0,142,255,0.20)',
                 boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.025), 0 15px 40px rgba(0,0,0,0.18)',
+                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 18px 50px rgba(0,0,0,0.25)',
               }}
             >
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '7px',
-                      height: '7px',
-                      borderRadius: '50%',
-                      background: isSaveSyncing
-                        ? '#66717c'
-                        : '#299cff',
-                      boxShadow: isSaveSyncing
-                        ? 'none'
-                        : '0 0 12px rgba(41,156,255,0.8)',
-                    }}
-                  />
 
-                  <span
-                    style={{
-                      fontSize: '9px',
-                      color: '#b9c6d1',
-                      fontWeight: '600',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    {isSaveSyncing
-                      ? 'SYNCHRONIZING CONFIGURATION'
-                      : 'CONFIGURATION READY'}
-                  </span>
-                </div>
-
-                <div
-                  style={{
-                    marginTop: '5px',
-                    fontSize: '7px',
-                    color: '#505d68',
-                  }}
-                >
-                  Save your business parameters and synchronize the
-                  live agent profile.
-                </div>
-              </div>
-
-              {/* EXISTING SAVE LOGIC UNCHANGED */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-
-                  if (!isSaveSyncing) {
-                    handleSave(e);
-                  }
-                }}
-                disabled={isSaveSyncing}
+              <div
                 style={{
-                  ...styles.button,
-                  minWidth: '205px',
-                  padding: '13px 18px',
-                  borderRadius: '7px',
-                  fontSize: '9px',
-                  letterSpacing: '0.9px',
-                  textTransform: 'uppercase',
-                  background: isSaveSyncing
-                    ? '#10151b'
-                    : 'linear-gradient(180deg, #32a8ff, #1476c7)',
-                  color: isSaveSyncing
-                    ? '#66717c'
-                    : '#031019',
-                  border: isSaveSyncing
-                    ? '1px solid rgba(255,255,255,0.06)'
-                    : '1px solid rgba(80,180,255,0.35)',
-                  boxShadow: isSaveSyncing
-                    ? 'none'
-                    : '0 0 25px rgba(30,145,255,0.16)',
-                  cursor: isSaveSyncing
-                    ? 'not-allowed'
-                    : 'pointer',
+                  color: '#389eff',
+                  fontSize: '8px',
+                  letterSpacing: '1.4px',
                   fontWeight: '700',
                 }}
               >
-                {isSaveSyncing
-                  ? 'SYNCING PROFILE...'
-                  : 'SAVE & SYNC LIVE PROFILE'}
-              </button>
+                BUSINESS INTELLIGENCE
+              </div>
+
+              <h3
+                style={{
+                  margin: '7px 0 15px',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                }}
+              >
+                Agent Readiness
+              </h3>
+
+
+              {/* READINESS BARS */}
+
+              {[
+                [
+                  'Business Identity',
+                  settings?.business_name ? 100 : 35
+                ],
+                [
+                  'Webhook Infrastructure',
+                  settings?.webhook_slug ? 100 : 20
+                ],
+                [
+                  'AI Configuration',
+                  settings?.currency &&
+                    settings?.discount_percentage != null &&
+                    settings?.voucher_expiration_days != null
+                    ? 100
+                    : 60
+                ],
+              ].map(([label, value]) => (
+
+                <div
+                  key={label}
+                  style={{
+                    marginBottom: '14px',
+                  }}
+                >
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      marginBottom: '6px',
+                    }}
+                  >
+
+                    <span
+                      style={{
+                        color: '#7c8794',
+                        fontSize: '9px',
+                      }}
+                    >
+                      {label}
+                    </span>
+
+                    <span
+                      style={{
+                        color: '#4cb8ff',
+                        fontSize: '9px',
+                        fontFamily: 'monospace',
+                      }}
+                    >
+                      {value}%
+                    </span>
+
+                  </div>
+
+                  <div
+                    style={{
+                      height: '4px',
+                      background: '#10151b',
+                      borderRadius: '10px',
+                      overflow: 'hidden',
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        width: `${value}%`,
+                        height: '100%',
+                        background:
+                          'linear-gradient(90deg, #006cff, #38cfff)',
+                        boxShadow:
+                          '0 0 10px rgba(0,150,255,0.45)',
+                      }}
+                    />
+
+                  </div>
+
+                </div>
+
+              ))}
+
+
+              {/* SECURITY */}
+
+              <div
+                style={{
+                  marginTop: '17px',
+                  paddingTop: '15px',
+                  borderTop:
+                    '1px solid rgba(255,255,255,0.05)',
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(2, minmax(0, 1fr))',
+                  gap: '9px',
+                }}
+              >
+
+                <div
+                  style={{
+                    padding: '11px',
+                    borderRadius: '8px',
+                    background: '#080c11',
+                    border:
+                      '1px solid rgba(255,255,255,0.045)',
+                  }}
+                >
+
+                  <div
+                    style={{
+                      color: '#56616e',
+                      fontSize: '7px',
+                      letterSpacing: '0.8px',
+                    }}
+                  >
+                    AUTHENTICATION
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop: '5px',
+                      color: '#51c9ff',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    ● SECURE
+                  </div>
+
+                </div>
+
+                <div
+                  style={{
+                    padding: '11px',
+                    borderRadius: '8px',
+                    background: '#080c11',
+                    border:
+                      '1px solid rgba(255,255,255,0.045)',
+                  }}
+                >
+
+                  <div
+                    style={{
+                      color: '#56616e',
+                      fontSize: '7px',
+                      letterSpacing: '0.8px',
+                    }}
+                  >
+                    WEBHOOK
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop: '5px',
+                      color: settings?.webhook_slug
+                        ? '#51c9ff'
+                        : '#8d6e3e',
+                      fontSize: '9px',
+                      fontWeight: '700',
+                    }}
+                  >
+                    {settings?.webhook_slug
+                      ? '● READY'
+                      : '● PENDING'}
+                  </div>
+
+                </div>
+
+              </div>
+
             </section>
+
           </div>
-        </main>
+
+        </div>
+
 
         {/* =======================================================
-          RESPONSIVE CSS
-          Kept inside JSX so AgentParameters remains standalone.
+          SAVE / SYNC COMMAND FOOTER
       ======================================================= */}
 
-        <style>
-          {`
-          @media (max-width: 1100px) {
-            aside {
-              width: 205px !important;
-              min-width: 205px !important;
-            }
+        <section
+          style={{
+            marginTop: '18px',
+            padding: '17px 19px',
+            borderRadius: '15px',
+            background:
+              'linear-gradient(90deg, rgba(0,70,140,0.09), rgba(8,12,17,0.96))',
+            border:
+              '1px solid rgba(0,142,255,0.20)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '18px',
+            flexWrap: 'wrap',
+          }}
+        >
 
-            main header {
-              padding-left: 24px !important;
-              padding-right: 24px !important;
-            }
+          <div>
 
-            main > div {
-              padding-left: 24px !important;
-              padding-right: 24px !important;
-            }
-          }
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
 
-          @media (max-width: 900px) {
-            aside {
-              width: 72px !important;
-              min-width: 72px !important;
-              padding-left: 8px !important;
-              padding-right: 8px !important;
-            }
+              <span
+                style={{
+                  width: '7px',
+                  height: '7px',
+                  borderRadius: '50%',
+                  background: isSaveSyncing
+                    ? '#66717d'
+                    : '#35cfff',
+                  boxShadow: isSaveSyncing
+                    ? 'none'
+                    : '0 0 12px rgba(50,205,255,0.8)',
+                }}
+              />
 
-            aside > div:first-child {
-              padding-left: 4px !important;
-              padding-right: 4px !important;
-            }
+              <span
+                style={{
+                  fontSize: '9px',
+                  fontWeight: '700',
+                  letterSpacing: '1px',
+                  color: '#ffffff',
+                }}
+              >
+                {isSaveSyncing
+                  ? 'SYNCHRONIZING MERCHANT PROFILE'
+                  : 'AGENT CONFIGURATION READY'}
+              </span>
 
-            aside button {
-              justify-content: center !important;
-              font-size: 0 !important;
-            }
+            </div>
 
-            aside button span {
-              font-size: 14px !important;
-            }
+            <div
+              style={{
+                marginTop: '5px',
+                color: '#626e7b',
+                fontSize: '9px',
+              }}
+            >
+              Changes are persisted through your existing business settings
+              synchronization pipeline.
+            </div>
 
-            aside button span:first-child {
-              margin: 0 !important;
-            }
+          </div>
 
-            aside > div:not(:first-child) {
-              display: none !important;
-            }
 
-            main section[style*="repeat(4"] {
-              grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            }
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
 
-            main section[style*="1.05fr"] {
-              grid-template-columns: 1fr !important;
-            }
-          }
+              if (!isSaveSyncing) {
+                handleSave(e);
+              }
+            }}
+            disabled={isSaveSyncing}
+            style={{
+              ...styles.button,
+              minWidth: '205px',
+              padding: '13px 19px',
+              borderRadius: '9px',
+              fontSize: '9px',
+              fontWeight: '700',
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              background: isSaveSyncing
+                ? '#11171e'
+                : 'linear-gradient(135deg, #19bfff, #0874ff)',
+              color: isSaveSyncing
+                ? '#606b77'
+                : '#021018',
+              border: isSaveSyncing
+                ? '1px solid rgba(255,255,255,0.05)'
+                : '1px solid rgba(92,210,255,0.6)',
+              boxShadow: isSaveSyncing
+                ? 'none'
+                : '0 0 25px rgba(0,140,255,0.18)',
+              cursor: isSaveSyncing
+                ? 'not-allowed'
+                : 'pointer',
+            }}
+          >
+            {isSaveSyncing
+              ? 'SYNCING PROFILE...'
+              : 'SAVE & SYNC LIVE PROFILE'}
+          </button>
 
-          @media (max-width: 650px) {
-            aside {
-              display: none !important;
-            }
+        </section>
 
-            main header {
-              padding-left: 18px !important;
-              padding-right: 18px !important;
-              height: 68px !important;
-            }
-
-            main header > div:last-child > div:first-child {
-              display: none !important;
-            }
-
-            main > div {
-              padding: 22px 16px 45px !important;
-            }
-
-            main section[style*="repeat(4"] {
-              grid-template-columns: 1fr 1fr !important;
-            }
-
-            main section[style*="1.05fr"] {
-              grid-template-columns: 1fr !important;
-            }
-
-            main section[style*="1.05fr"] > div {
-              min-width: 0 !important;
-            }
-
-            section[style*="gridTemplateColumns: '105px"] {
-              grid-template-columns: 1fr !important;
-            }
-
-            section[style*="gridTemplateColumns: '105px"] > div:first-child {
-              max-width: 140px !important;
-            }
-
-            section[style*="justifyContent: 'space-between'"] {
-              flex-wrap: wrap !important;
-            }
-
-            button[style*="minWidth: '205px'"] {
-              width: 100% !important;
-            }
-          }
-        `}
-        </style>
       </div>
+
+
+      {/* =========================================================
+        RESPONSIVE CSS
+        Uses a scoped style tag so the page remains responsive
+        without changing your existing AdminPanel CSS.
+    ========================================================= */}
+
+      <style>
+        {`
+        @media (max-width: 1100px) {
+          .agent-parameters-responsive-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+
+        @media (max-width: 760px) {
+          .agent-parameters-logo-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .agent-parameters-page-padding {
+            padding: 20px 15px 40px !important;
+          }
+        }
+      `}
+      </style>
+
     </div>
   );
 
