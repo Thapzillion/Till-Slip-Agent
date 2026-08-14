@@ -7,13 +7,7 @@ import { useBusiness } from "./backend/businessService";
 
 import { useNavigate } from "react-router-dom";
 
-import MatrixTillSlip from "./models/MatrixTillSlip";
-
 import RuachAgentReceiptStudioSystemA from "./RuachAgent_ReceiptStudio_System_A";
-import RuachAgentReceiptStudioSystemB from "./RuachAgent_ReceiptStudio_System_B";
-import RuachAgentReceiptStudioSystemC from "./RuachAgent_ReceiptStudio_System_C";
-import RuachAgentReceiptStudioSystemD from "./RuachAgent_ReceiptStudio_System_D";
-import RuachAgentReceiptStudioSystemE from "./RuachAgent_ReceiptStudio_System_E";
 
 import {
   LayoutDashboard,
@@ -145,6 +139,15 @@ export default function AdminPanel() {
   const [activeStudioObject, setActiveStudioObject] = useState("logo");
   const [openStudioPanel, setOpenStudioPanel] = useState("layout");
   const [selectedTextTarget, setSelectedTextTarget] = useState("heading");
+
+  // Shared selection state for the Receipt Studio.
+  // Systems B, C and D all operate on the same selected receipt element.
+  const [selectedStudioElement, setSelectedStudioElement] = useState("receipt");
+
+  const handleStudioElementSelect = (elementId) => {
+    if (!elementId) return;
+    setSelectedStudioElement(elementId);
+  };
 
   const cloneConfig = (value) =>
     JSON.parse(JSON.stringify(value ?? {}));
@@ -2002,61 +2005,59 @@ export default function AdminPanel() {
                 </div>
               </div>
             </aside>
-            <main className="main-content">
+            <main
+              className="main-content"
+              style={{
+                padding: 0,
+                minWidth: 0,
+                minHeight: 0,
+                overflow: "hidden"
+              }}
+            >
+              {/* ==========================================================
+                  RUACHAGENT RECEIPT STUDIO
 
+                  AdminPanel is the host and persistence owner.
+                  System A is the outer Studio Shell and internally mounts:
+                    • System B — Properties
+                    • System C — Receipt Canvas
+                    • System D — Color Grading
+
+                  The three systems therefore share this SAME live document:
+                    receiptData.design_config
+
+                  AdminPanel continues to own Save/Revert/Supabase.
+                 ========================================================== */}
               <RuachAgentReceiptStudioSystemA
                 documentName={
                   settings?.business_name
                     ? `${settings.business_name} — Receipt Studio`
                     : "Matrix Neon Receipt"
                 }
+
+                /* Backend / persistence */
                 onSave={handleSave}
                 onRevert={handleRevertToOriginal}
                 onAIAssist={handlePromptWithDesignTracking}
                 isSaveSyncing={isSaveSyncing}
                 isLoading={isLoading}
-                timeline={
-                  <RuachAgentReceiptStudioSystemE
-                    designConfig={designConfig}
-                    setDesignConfig={setDesignConfig}
-                  />
-                }
-              >
 
-                <div className="studio-main-workspace">
+                /* Live receipt document */
+                receiptData={receiptData}
+                settings={settings}
+                user={user}
+                designConfig={designConfig}
+                selectedTemplateId={selectedTemplateId}
 
-                  {/* OBJECT MODEL */}
-                  <section className="studio-object-panel">
-                    <RuachAgentReceiptStudioSystemB
-                      designConfig={designConfig}
-                      setDesignConfig={setDesignConfig}
-                    />
-                  </section>
+                /* Shared designConfig bridge */
+                onDesignConfigChange={setDesignConfig}
 
-
-                  {/* CANVAS */}
-                  <section className="studio-canvas-panel">
-                    <RuachAgentReceiptStudioSystemD
-                      receiptData={receiptData}
-                      settings={settings}
-                      designConfig={designConfig}
-                    />
-                  </section>
-
-
-                  {/* DESIGN INSPECTOR */}
-                  <section className="studio-inspector-panel">
-                    <RuachAgentReceiptStudioSystemC
-                      designConfig={designConfig}
-                      setDesignConfig={setDesignConfig}
-                    />
-                  </section>
-
-                </div>
-
-
-              </RuachAgentReceiptStudioSystemA>
-
+                /* Shared element selection bridge */
+                selectedObjectId={selectedStudioElement}
+                selectedElementId={selectedStudioElement}
+                onSelectObject={handleStudioElementSelect}
+                onSelectElement={handleStudioElementSelect}
+              />
             </main>
 
             {/* Close the authenticated admin workspace branch. */}

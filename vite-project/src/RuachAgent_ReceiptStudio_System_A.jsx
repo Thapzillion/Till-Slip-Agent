@@ -21,6 +21,15 @@ import {
   Smartphone,
 } from "lucide-react";
 
+// ================================================================
+// RECEIPT STUDIO MODULES
+// System A is the outer shell. These three systems are mounted
+// directly inside the shell so AdminPanel only needs to import A.
+// ================================================================
+import RuachAgentReceiptStudioSystemB from "./RuachAgent_ReceiptStudio_System_B";
+import RuachAgentReceiptStudioSystemC from "./RuachAgent_ReceiptStudio_System_C";
+import RuachAgentReceiptStudioSystemD from "./RuachAgent_ReceiptStudio_System_D";
+
 /*
  * ================================================================
  * RUACHAGENT — RECEIPT EDITING STUDIO
@@ -35,7 +44,6 @@ import {
  *   - workspace frame
  *   - left application rail
  *   - bottom status bar
- *   - optional timeline dock
  *   - global studio controls
  *
  * It does NOT own:
@@ -46,33 +54,15 @@ import {
  *   - designConfig mutations
  *   - MatrixTillSlip rendering
  *
- * Those systems are injected through React children / props.
+ * Those systems are mounted directly by System A.
  *
- * Recommended composition from AdminPanel.jsx:
+ * AdminPanel.jsx imports ONLY this shell. System A imports and composes:
+ *   - System B — Properties
+ *   - System C — Receipt Canvas
+ *   - System D — Color Grading
  *
- * <ReceiptStudioShell
- *   onSave={handleSave}
- *   onRevert={handleRevertToOriginal}
- *   onAIAssist={handlePromptWithDesignTracking}
- *   onExport={handleExport}
- *   isSaveSyncing={isSaveSyncing}
- *   isLoading={isLoading}
- *   timeline={
- *     <RuachAgentReceiptStudioSystemE
- *       designConfig={designConfig}
- *       setDesignConfig={setDesignConfig}
- *     />
- *   }
- * >
- *   <div style={styles.workspaceGrid}>
- *     <RuachAgentReceiptStudioSystemB ... />
- *     <RuachAgentReceiptStudioSystemD ... />
- *     <RuachAgentReceiptStudioSystemC ... />
- *   </div>
- * </ReceiptStudioShell>
- *
- * This makes System A the outer application frame while Systems B–E
- * remain independent modules.
+ * This keeps the studio as one application while the individual systems
+ * remain separate files and separate responsibilities.
  */
 
 const styles = {
@@ -424,8 +414,9 @@ const styles = {
 };
 
 export default function ReceiptStudioShell({
-  children,
-  timeline = null,
+  // --------------------------------------------------------------
+  // Global AdminPanel/backend callbacks
+  // --------------------------------------------------------------
   onSave,
   onRevert,
   onAIAssist,
@@ -433,13 +424,60 @@ export default function ReceiptStudioShell({
   isSaveSyncing = false,
   isLoading = false,
   documentName = "Matrix Neon Receipt",
+
+  // --------------------------------------------------------------
+  // Live receipt/editor state supplied by AdminPanel
+  // --------------------------------------------------------------
+  receiptData = {},
+  settings = {},
+  user = null,
+  designConfig = {},
+  selectedTemplateId = "matrix-grid",
+  selectedObjectId = null,
+  selectedElementId = null,
+  initialObjectGraph = null,
+
+  // --------------------------------------------------------------
+  // Cross-system state bridges
+  // --------------------------------------------------------------
+  onDesignConfigChange,
+  onObjectGraphChange,
+  onSelectObject,
+  onSelectElement,
 }) {
   const [zoom, setZoom] = useState(78);
   const [grid, setGrid] = useState(true);
   const [snap, setSnap] = useState(true);
-  const [timelineOpen, setTimelineOpen] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
   const [activeTool, setActiveTool] = useState("studio");
+
+  // --------------------------------------------------------------
+  // System bridge
+  // --------------------------------------------------------------
+  // Every editing system writes back to the SAME designConfig object.
+  // AdminPanel remains the owner of persistence (Save/Revert/Supabase).
+  const handleDesignConfigChange = (nextConfig) => {
+    if (typeof onDesignConfigChange === "function") {
+      onDesignConfigChange(nextConfig || {});
+    }
+  };
+
+  const handleObjectSelect = (id) => {
+    if (typeof onSelectObject === "function") {
+      onSelectObject(id);
+    }
+  };
+
+  const handleElementSelect = (id) => {
+    if (typeof onSelectElement === "function") {
+      onSelectElement(id);
+    }
+    // Some existing canvas implementations use selectedObjectId.
+    // Forward the same selection so all three systems stay synchronized.
+    if (typeof onSelectObject === "function") {
+      onSelectObject(id);
+    }
+  };
 
   const railTools = [
     { id: "studio", label: "Studio" },
@@ -617,12 +655,9 @@ export default function ReceiptStudioShell({
 
           <button
             type="button"
-            style={{
-              ...styles.railBtn,
-              ...(timelineOpen ? styles.railActive : {}),
-            }}
-            title="Toggle animation timeline"
-            onClick={() => setTimelineOpen((value) => !value)}
+            style={styles.railBtn}
+            title="Studio workspace"
+            onClick={() => setActiveTool("studio")}
           >
             <PanelBottom size={16} />
           </button>
@@ -631,22 +666,76 @@ export default function ReceiptStudioShell({
         <section style={styles.workspace}>
           <div style={styles.backdrop} />
           <div style={styles.workspaceInner}>
-            {/*
-             * CHILDREN ARE THE ACTUAL STUDIO SYSTEMS.
-             *
-             * System B / Object Model
-             * System C / Design Inspector
-             * System D / Canvas Renderer
-             *
-             * AdminPanel decides their exact grid placement.
-             */}
-            {children}
+            {/* ========================================================
+                SYSTEMS B + C + D
+
+                System A is the composition root. The three modules below
+                are deliberately mounted here rather than in AdminPanel.
+
+                B = Properties
+                C = Receipt Canvas
+                D = Color Grading
+
+                All three receive the same live designConfig and therefore
+                edit/render the same receipt document.
+               ======================================================== */}
+            <div style={styles.workspaceGrid}>
+              {/* --------------------------------------------------------
+                  SYSTEM B — PROPERTIES
+                 -------------------------------------------------------- */}
+              <RuachAgentReceiptStudioSystemB
+                receiptData={receiptData}
+                settings={settings}
+                user={user}
+                designConfig={designConfig}
+                selectedTemplateId={selectedTemplateId}
+                selectedObjectId={selectedObjectId || selectedElementId}
+                initialObjectGraph={initialObjectGraph}
+                onObjectGraphChange={onObjectGraphChange}
+                onDesignConfigChange={handleDesignConfigChange}
+                onSelectObject={handleObjectSelect}
+                onSelectElement={handleElementSelect}
+              />
+
+              {/* --------------------------------------------------------
+                  SYSTEM C — RECEIPT CANVAS
+                 -------------------------------------------------------- */}
+              <RuachAgentReceiptStudioSystemC
+                receiptData={receiptData}
+                settings={settings}
+                user={user}
+                designConfig={designConfig}
+                selectedTemplateId={selectedTemplateId}
+                selectedObjectId={selectedObjectId || selectedElementId}
+                onSelectObject={handleObjectSelect}
+                onSelectElement={handleElementSelect}
+                onDesignConfigChange={handleDesignConfigChange}
+              />
+
+              {/* --------------------------------------------------------
+                  SYSTEM D — COLOR GRADING
+                 -------------------------------------------------------- */}
+              <RuachAgentReceiptStudioSystemD
+                receiptData={receiptData}
+                settings={settings}
+                user={user}
+                designConfig={designConfig}
+                selectedTemplateId={selectedTemplateId}
+                selectedObjectId={selectedObjectId || selectedElementId}
+                selectedElementId={selectedElementId || selectedObjectId}
+                onSelectObject={handleObjectSelect}
+                onSelectElement={handleElementSelect}
+                onDesignConfigChange={handleDesignConfigChange}
+              />
+            </div>
           </div>
 
-          {/* Optional System E dock */}
-          {timelineOpen && timeline && (
-            <div style={styles.timelineDock}>{timeline}</div>
-          )}
+          {/*
+           * System E / Animation Timeline has intentionally been removed
+           * from the current studio architecture. The shell keeps the
+           * bottom-dock state out of the active composition until that
+           * system is reintroduced.
+           */}
         </section>
       </div>
 
@@ -675,10 +764,10 @@ export default function ReceiptStudioShell({
           <button
             type="button"
             style={styles.iconBtn}
-            onClick={() => setTimelineOpen((value) => !value)}
-            title="Toggle timeline"
+            onClick={() => setGrid((value) => !value)}
+            title="Toggle canvas grid"
           >
-            <PanelBottom size={13} />
+            <Grid3X3 size={13} />
           </button>
 
           <button
@@ -693,11 +782,9 @@ export default function ReceiptStudioShell({
       </footer>
 
       {/*
-       * onRevert is intentionally accepted by the shell even though there
-       * is no dedicated Revert button in this chrome yet. AdminPanel can
-       * later expose it through the menu, command palette, or AI controls.
-       * Keeping the callback here means System A does not need to own the
-       * persistence implementation.
+       * onRevert is accepted by the shell as a persistence callback owned
+       * by AdminPanel. The actual Supabase implementation remains outside
+       * System A so the studio systems never own backend persistence.
        */}
       <span style={{ display: "none" }} data-revert-handler={!!onRevert} />
     </div>

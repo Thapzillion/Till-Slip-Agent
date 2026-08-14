@@ -1,1759 +1,2373 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    SunMedium,
+    Sparkles,
+    Lightbulb,
+    Waves,
+    Palette,
+    SlidersHorizontal,
+    RotateCcw,
+    Check,
+    ChevronDown,
+    ChevronRight,
+    Target,
+    Layers3,
+} from "lucide-react";
 
-/**
- * ================================================================
- * RUACHAGENT AI — SYSTEM D
- * CANVAS RENDERER
- * ================================================================
- *
- * RESPONSIBILITY
- * ----------------------------------------------------------------
- * System D is the visual rendering layer of the Receipt Studio.
- *
- * It receives:
- *
- *   designConfig
- *   receiptData
- *   settings
- *   selectedObjectId
- *
- * and turns the configuration into a live editing canvas.
- *
- * IMPORTANT ARCHITECTURE RULE
- * ----------------------------------------------------------------
- * This component DOES NOT rewrite JSX based on AI instructions.
- *
- * The JSX remains the renderer.
- *
- * AI / Studio
- *      ↓
- * designConfig
- *      ↓
- * System D
- *      ↓
- * rendered receipt
- *
- * The same designConfig can later be used by the customer-facing
- * receipt renderer so that the saved design and preview remain
- * visually consistent.
- *
- * SYSTEM D DOES NOT OWN:
- *   - Supabase persistence
- *   - AI prompting
- *   - save/revert logic
- *   - object inspector state
- *
- * Those responsibilities belong to AdminPanel / backend services.
- *
- * ================================================================
- */
+/*
+|--------------------------------------------------------------------------
+| RuachAgent Receipt Studio
+| System D — Color Grading
+|--------------------------------------------------------------------------
+|
+| RESPONSIBILITY
+|
+| Advanced color grading for the currently selected receipt object.
+|
+| IMPORTANT:
+|
+| This component NEVER edits MatrixTillSlip.jsx.
+|
+| It modifies:
+|
+| designConfig.colorGrading.targets[selectedElement]
+|
+| MatrixTillSlip.jsx is responsible for reading that configuration.
+|
+|--------------------------------------------------------------------------
+*/
 
-export default function ReceiptCanvasRenderer({
-    receiptData = {},
-    settings = {},
+/* ==========================================================================
+   DEFAULT TARGET CONFIGURATION
+   ========================================================================== */
+
+const createDefaultTargetGrading = () => ({
+    basic: {
+        exposure: 0,
+        contrast: 0,
+        highlights: 0,
+        shadows: 0,
+        saturation: 0,
+        whites: 0,
+        blacks: 0,
+        vibrance: 100,
+    },
+
+    neon: {
+        enabled: false,
+        color: "#00F0FF",
+        intensity: 80,
+        spread: 50,
+        glow: 70,
+    },
+
+    glow: {
+        enabled: false,
+        intensity: 60,
+        radius: 80,
+        threshold: 50,
+    },
+
+    light: {
+        enabled: false,
+        keyLight: 45,
+        fillLight: 25,
+        rimLight: 35,
+        intensity: 65,
+        direction: 45,
+        keyColor: "#FFD7CE",
+        fillColor: "#EAFBFF",
+        rimColor: "#D9F8FF",
+    },
+
+    sparkle: {
+        enabled: false,
+        intensity: 40,
+        size: 30,
+        density: 20,
+        animated: true,
+    },
+
+    gradient: {
+        enabled: false,
+        type: "linear",
+        startColor: "#00F0FF",
+        endColor: "#0066FF",
+        angle: 0,
+        opacity: 100,
+    },
+
+    advanced: {
+        hueShift: 0,
+        colorTemperature: 6500,
+        tint: 0,
+        sharpen: 10,
+        noiseReduction: 0,
+    },
+});
+
+
+/* ==========================================================================
+   AVAILABLE RECEIPT TARGETS
+   ========================================================================== */
+
+const TARGETS = [
+    {
+        id: "logo",
+        label: "Logo",
+        description: "Merchant logo",
+    },
+    {
+        id: "businessName",
+        label: "Business Name",
+        description: "Merchant name",
+    },
+    {
+        id: "businessLocation",
+        label: "Business Location",
+        description: "Store address",
+    },
+    {
+        id: "transaction",
+        label: "Transaction",
+        description: "Transaction information",
+    },
+    {
+        id: "verifiedBadge",
+        label: "Verified Badge",
+        description: "Verification indicator",
+    },
+    {
+        id: "qrCode",
+        label: "QR Code",
+        description: "Receipt QR code",
+    },
+    {
+        id: "qrLabel",
+        label: "QR Label",
+        description: "QR instruction text",
+    },
+    {
+        id: "items",
+        label: "Items",
+        description: "Purchased products",
+    },
+    {
+        id: "vat",
+        label: "VAT",
+        description: "Tax information",
+    },
+    {
+        id: "total",
+        label: "Total",
+        description: "Receipt total",
+    },
+    {
+        id: "voucher",
+        label: "Voucher",
+        description: "Voucher information",
+    },
+    {
+        id: "footer",
+        label: "Footer",
+        description: "Receipt footer",
+    },
+    {
+        id: "socialIcons",
+        label: "Social Icons",
+        description: "Receipt social icons",
+    },
+    {
+        id: "receiptBackground",
+        label: "Receipt Background",
+        description: "Receipt surface",
+    },
+    {
+        id: "receiptBorder",
+        label: "Receipt Border",
+        description: "Receipt outer border",
+    },
+];
+
+
+/* ==========================================================================
+   SAFE OBJECT HELPERS
+   ========================================================================== */
+
+function cloneObject(value) {
+    if (!value || typeof value !== "object") {
+        return {};
+    }
+
+    return JSON.parse(JSON.stringify(value));
+}
+
+
+function ensureColorGradingConfig(config) {
+    const next = cloneObject(config);
+
+    if (!next.colorGrading || typeof next.colorGrading !== "object") {
+        next.colorGrading = {};
+    }
+
+    if (
+        !next.colorGrading.targets ||
+        typeof next.colorGrading.targets !== "object"
+    ) {
+        next.colorGrading.targets = {};
+    }
+
+    return next;
+}
+
+
+function ensureTargetConfig(config, targetId) {
+    const next = ensureColorGradingConfig(config);
+
+    if (!next.colorGrading.targets[targetId]) {
+        next.colorGrading.targets[targetId] =
+            createDefaultTargetGrading();
+    }
+
+    return next;
+}
+
+
+/* ==========================================================================
+   COMPONENT
+   ========================================================================== */
+
+export default function RuachAgentReceiptStudioSystemD({
     designConfig = {},
-    selectedObjectId = null,
-    onSelectObject,
-    canvasMode = "studio",
+    selectedElement = "logo",
+    onDesignConfigChange,
+    onSelectElement,
+    disabled = false,
 }) {
-    const config = designConfig || {};
 
-    const colors = config.colors || {};
-    const typography = config.typography || {};
-    const effects = config.effects || {};
-    const receipt = config.receipt || {};
-    const logo = config.logo || {};
-    const qr = config.qr || {};
-    const text = config.text || {};
-    const objects = config.objects || {};
+    /* ----------------------------------------------------------------------
+       ACTIVE TARGET
+    ---------------------------------------------------------------------- */
 
-    /*
-     * --------------------------------------------------------------
-     * DEFAULT DESIGN CONFIG
-     * --------------------------------------------------------------
-     *
-     * The renderer is intentionally tolerant of partial configs.
-     * This allows the AI to modify one property without requiring
-     * the entire designConfig object to exist.
-     */
-    const primaryColor =
-        colors.primary ||
-        colors.accent ||
-        "#00c8ff";
-
-    const secondaryColor =
-        colors.secondary ||
-        "#071019";
-
-    const accentColor =
-        colors.accent ||
-        "#00e5ff";
-
-    const backgroundColor =
-        colors.background ||
-        "#05070a";
-
-    const surfaceColor =
-        colors.surface ||
-        "#0b1016";
-
-    const textColor =
-        colors.text ||
-        "#f4f8fb";
-
-    const mutedColor =
-        colors.mutedText ||
-        "#81909e";
-
-    const dividerColor =
-        colors.divider ||
-        "rgba(255,255,255,0.12)";
-
-    const receiptWidth =
-        Number(receipt.width) ||
-        Number(receipt.receiptWidth) ||
-        390;
-
-    const outerPadding =
-        Number(receipt.outerPadding) ||
-        24;
-
-    const sectionSpacing =
-        Number(receipt.sectionSpacing) ||
-        18;
-
-    const borderWidth =
-        Number(receipt.borderWidth) ||
-        1;
-
-    const borderRadius =
-        Number(receipt.borderRadius) ||
-        16;
-
-    const borderStyle =
-        receipt.borderStyle ||
-        "solid";
-
-    /*
-     * --------------------------------------------------------------
-     * HELPERS
-     * --------------------------------------------------------------
-     */
-
-    const safeNumber = (value, fallback = 0) => {
-        const number = Number(value);
-        return Number.isFinite(number) ? number : fallback;
-    };
-
-    const getNested = (source, path, fallback) => {
-        try {
-            const result = path.split(".").reduce(
-                (current, key) => current?.[key],
-                source
-            );
-
-            return result === undefined || result === null
-                ? fallback
-                : result;
-        } catch {
-            return fallback;
+    const resolvedTarget = useMemo(() => {
+        if (!selectedElement) {
+            return TARGETS[0];
         }
-    };
 
-    const normalizeScale = (value, fallback = 1) => {
-        const parsed = Number(value);
-        if (!Number.isFinite(parsed)) return fallback;
+        return (
+            TARGETS.find(
+                (target) => target.id === selectedElement
+            ) || TARGETS[0]
+        );
+    }, [selectedElement]);
+
+
+    /* ----------------------------------------------------------------------
+       LOCAL OPEN/CLOSED STATES
+    ---------------------------------------------------------------------- */
+
+    const [openSections, setOpenSections] = useState({
+        basic: true,
+        neon: true,
+        glow: true,
+        light: true,
+        sparkle: true,
+        gradient: true,
+        advanced: true,
+    });
+
+
+    /* ----------------------------------------------------------------------
+       LOCAL GRADING STATE
+    ---------------------------------------------------------------------- */
+
+    const [grading, setGrading] = useState(
+        createDefaultTargetGrading()
+    );
+
+
+    /* ----------------------------------------------------------------------
+       LOAD SELECTED TARGET
+       ---------------------------------------------------------------------- */
+
+    useEffect(() => {
+
+        const normalized = ensureTargetConfig(
+            designConfig,
+            resolvedTarget.id
+        );
+
+        const selectedConfig =
+            normalized.colorGrading.targets[
+            resolvedTarget.id
+            ];
+
+        setGrading({
+            ...createDefaultTargetGrading(),
+            ...selectedConfig,
+
+            basic: {
+                ...createDefaultTargetGrading().basic,
+                ...(selectedConfig?.basic || {}),
+            },
+
+            neon: {
+                ...createDefaultTargetGrading().neon,
+                ...(selectedConfig?.neon || {}),
+            },
+
+            glow: {
+                ...createDefaultTargetGrading().glow,
+                ...(selectedConfig?.glow || {}),
+            },
+
+            light: {
+                ...createDefaultTargetGrading().light,
+                ...(selectedConfig?.light || {}),
+            },
+
+            sparkle: {
+                ...createDefaultTargetGrading().sparkle,
+                ...(selectedConfig?.sparkle || {}),
+            },
+
+            gradient: {
+                ...createDefaultTargetGrading().gradient,
+                ...(selectedConfig?.gradient || {}),
+            },
+
+            advanced: {
+                ...createDefaultTargetGrading().advanced,
+                ...(selectedConfig?.advanced || {}),
+            },
+        });
+
+    }, [designConfig, resolvedTarget.id]);
+
+
+    /* ==========================================================================
+       UPDATE DESIGN CONFIGURATION
+       ========================================================================== */
+
+    const commitGrading = (nextGrading) => {
+
+        setGrading(nextGrading);
+
+        if (typeof onDesignConfigChange !== "function") {
+            return;
+        }
+
+        const nextConfig = ensureTargetConfig(
+            designConfig,
+            resolvedTarget.id
+        );
+
+        nextConfig.colorGrading.targets[
+            resolvedTarget.id
+        ] = nextGrading;
 
         /*
-         * Supports both:
+         * Optional compatibility layer.
          *
-         * 1.25
-         * 125
+         * Some versions of MatrixTillSlip may use:
          *
-         * so the Studio can store either representation.
+         * designConfig.color_grading
+         *
+         * while newer versions use:
+         *
+         * designConfig.colorGrading
+         *
+         * Keeping both synchronized makes migration safer.
          */
-        return parsed > 10 ? parsed / 100 : parsed;
-    };
 
-    const objectConfig = (objectId) => {
-        return (
-            objects?.[objectId] ||
-            config?.[objectId] ||
-            {}
-        );
-    };
-
-    const selected =
-        selectedObjectId
-            ? objectConfig(selectedObjectId)
-            : {};
-
-    const isSelected = (objectId) =>
-        selectedObjectId === objectId;
-
-    /*
-     * --------------------------------------------------------------
-     * OBJECT TRANSFORM ENGINE
-     * --------------------------------------------------------------
-     *
-     * Every visual object can be transformed through configuration.
-     */
-
-    const buildTransform = (object = {}) => {
-        const layout = object.layout || object.transform || {};
-
-        const x = safeNumber(
-            layout.x ?? layout.position?.x,
-            0
-        );
-
-        const y = safeNumber(
-            layout.y ?? layout.position?.y,
-            0
-        );
-
-        const scaleX = normalizeScale(
-            layout.scaleX ?? layout.scale,
-            1
-        );
-
-        const scaleY = normalizeScale(
-            layout.scaleY ?? layout.scale,
-            scaleX
-        );
-
-        const rotation = safeNumber(
-            layout.rotation,
-            0
-        );
-
-        const skewX = safeNumber(
-            layout.skewX,
-            0
-        );
-
-        const skewY = safeNumber(
-            layout.skewY,
-            0
-        );
-
-        return `
-            translate(${x}px, ${y}px)
-            rotate(${rotation}deg)
-            skew(${skewX}deg, ${skewY}deg)
-            scale(${scaleX}, ${scaleY})
-        `;
-    };
-
-    /*
-     * --------------------------------------------------------------
-     * EFFECT ENGINE
-     * --------------------------------------------------------------
-     */
-
-    const effectConfig = (object = {}) => ({
-        ...effects,
-        ...(object.effects || {}),
-    });
-
-    const buildEffectStyle = (object = {}) => {
-        const effect = effectConfig(object);
-
-        const style = {};
-
-        if (effect.shadow || effect.shadowEnabled) {
-            style.filter = `
-                drop-shadow(
-                    ${safeNumber(effect.shadowX, 0)}px
-                    ${safeNumber(effect.shadowY, 5)}px
-                    ${safeNumber(effect.shadowBlur, 16)}px
-                    ${effect.shadowColor || "rgba(0,0,0,.55)"}
-                )
-            `;
-        }
-
-        if (effect.glow || effect.neon) {
-            const glowColor =
-                effect.glowColor ||
-                effect.neonColor ||
-                accentColor;
-
-            const intensity =
-                safeNumber(
-                    effect.glowIntensity,
-                    18
-                );
-
-            style.filter = `
-                ${style.filter || ""}
-                drop-shadow(
-                    0 0 ${intensity}px ${glowColor}
-                )
-            `;
-        }
-
-        if (effect.opacity !== undefined) {
-            style.opacity =
-                Math.max(
-                    0,
-                    Math.min(
-                        1,
-                        safeNumber(effect.opacity, 1)
-                    )
-                );
-        }
-
-        if (
-            effect.blur !== undefined &&
-            safeNumber(effect.blur, 0) > 0
-        ) {
-            style.backdropFilter =
-                `blur(${safeNumber(effect.blur)}px)`;
-        }
-
-        return style;
-    };
-
-    /*
-     * --------------------------------------------------------------
-     * ANIMATION CLASS ENGINE
-     * --------------------------------------------------------------
-     */
-
-    const getAnimationClass = (object = {}) => {
-        const effect = effectConfig(object);
-
-        if (
-            effect.infiniteRotation ||
-            effect.rotation360 ||
-            effect["360Rotation"]
-        ) {
-            return "ruach-object-spin";
-        }
-
-        if (effect.floating) {
-            return "ruach-object-float";
-        }
-
-        if (effect.pulse) {
-            return "ruach-object-pulse";
-        }
-
-        if (effect.hover || effect.smoothHover) {
-            return "ruach-object-hover";
-        }
-
-        if (effect.scanLine) {
-            return "ruach-object-scan";
-        }
-
-        return "";
-    };
-
-    /*
-     * --------------------------------------------------------------
-     * OBJECT SELECTION
-     * --------------------------------------------------------------
-     */
-
-    const objectInteraction = (objectId) => ({
-        onClick: (event) => {
-            event.stopPropagation();
-
-            if (typeof onSelectObject === "function") {
-                onSelectObject(objectId);
-            }
-        },
-
-        className: [
-            "ruach-canvas-object",
-            getAnimationClass(objectConfig(objectId)),
-            isSelected(objectId)
-                ? "ruach-canvas-object-selected"
-                : "",
-        ].join(" "),
-    });
-
-    /*
-     * --------------------------------------------------------------
-     * LOGO
-     * --------------------------------------------------------------
-     */
-
-    const logoUrl =
-        settings?.logo_url ||
-        receiptData?.logo_url ||
-        logo?.url ||
-        logo?.src ||
-        "";
-
-    const logoLayout = logo.layout || {};
-
-    const logoStyle = {
-        width:
-            logoLayout.width ||
-            `${safeNumber(logo.width, 96)}px`,
-
-        height:
-            logoLayout.height ||
-            "auto",
-
-        opacity:
-            logoLayout.opacity !== undefined
-                ? safeNumber(logoLayout.opacity, 1)
-                : 1,
-
-        transform:
-            buildTransform(logo),
-
-        objectFit:
-            logoLayout.objectFit ||
-            "contain",
-
-        ...buildEffectStyle(logo),
-    };
-
-    /*
-     * --------------------------------------------------------------
-     * QR CODE
-     * --------------------------------------------------------------
-     */
-
-    const qrUrl =
-        receiptData?.qrCodeUrl ||
-        receiptData?.qr_code_url ||
-        qr?.url ||
-        "";
-
-    const qrLayout = qr.layout || {};
-
-    const qrStyle = {
-        width:
-            qrLayout.width ||
-            `${safeNumber(qr.size, 108)}px`,
-
-        height:
-            qrLayout.height ||
-            `${safeNumber(qr.size, 108)}px`,
-
-        opacity:
-            qrLayout.opacity !== undefined
-                ? safeNumber(qrLayout.opacity, 1)
-                : 1,
-
-        transform:
-            buildTransform(qr),
-
-        borderRadius:
-            safeNumber(
-                qrLayout.cornerRadius ??
-                qr.cornerRadius,
-                8
-            ),
-
-        ...buildEffectStyle(qr),
-    };
-
-    /*
-     * --------------------------------------------------------------
-     * RECEIPT DATA NORMALIZATION
-     * --------------------------------------------------------------
-     */
-
-    const merchantName =
-        receiptData?.merchantName ||
-        settings?.business_name ||
-        "Merchant";
-
-    const location =
-        receiptData?.location ||
-        settings?.store_address ||
-        "";
-
-    const items =
-        Array.isArray(receiptData?.items)
-            ? receiptData.items
-            : [];
-
-    const total =
-        receiptData?.total ||
-        receiptData?.grandTotal ||
-        "R0.00";
-
-    const vat =
-        receiptData?.vat ||
-        "R0.00";
-
-    /*
-     * --------------------------------------------------------------
-     * TEXT STYLE
-     * --------------------------------------------------------------
-     */
-
-    const headingText =
-        text.heading ||
-        {};
-
-    const bodyText =
-        text.body ||
-        {};
-
-    const totalText =
-        text.total ||
-        {};
-
-    const textStyle = (type = "body") => {
-        const selectedText =
-            type === "heading"
-                ? headingText
-                : type === "total"
-                    ? totalText
-                    : bodyText;
-
-        const fontSize =
-            selectedText.fontSize ||
-            typography?.[type]?.fontSize ||
-            (type === "heading"
-                ? 21
-                : type === "total"
-                    ? 22
-                    : 13);
-
-        const fontFamily =
-            selectedText.fontFamily ||
-            typography.fontFamily ||
-            "Inter, Arial, sans-serif";
-
-        const fontWeight =
-            selectedText.fontWeight ||
-            typography.fontWeight ||
-            (type === "total"
-                ? 700
-                : 500);
-
-        const letterSpacing =
-            selectedText.letterSpacing ??
-            typography.letterSpacing ??
-            0;
-
-        const opacity =
-            selectedText.opacity !== undefined
-                ? safeNumber(
-                    selectedText.opacity,
-                    1
-                )
-                : 1;
-
-        return {
-            fontFamily,
-            fontSize:
-                typeof fontSize === "number"
-                    ? `${fontSize}px`
-                    : fontSize,
-
-            fontWeight,
-
-            letterSpacing:
-                typeof letterSpacing === "number"
-                    ? `${letterSpacing}px`
-                    : letterSpacing,
-
-            color:
-                selectedText.color ||
-                textColor,
-
-            opacity,
-
-            textAlign:
-                selectedText.alignment ||
-                "left",
-
-            transform:
-                buildTransform(selectedText),
-
-            ...buildEffectStyle(selectedText),
+        nextConfig.color_grading = {
+            ...(nextConfig.color_grading || {}),
+            targets: nextConfig.colorGrading.targets,
         };
+
+        onDesignConfigChange(nextConfig);
     };
 
-    /*
-     * --------------------------------------------------------------
-     * RECEIPT BACKGROUND
-     * --------------------------------------------------------------
-     */
 
-    const backgroundGradient =
-        colors.dynamicGradient
-            ? `
-                linear-gradient(
-                    ${safeNumber(colors.gradientAngle, 135)}deg,
-                    ${colors.gradientStart || primaryColor},
-                    ${colors.gradientEnd || secondaryColor}
-                )
-              `
-            : colors.gradient
-                ? colors.gradient
-                : backgroundColor;
+    /* ==========================================================================
+       UPDATE NESTED VALUE
+       ========================================================================== */
 
-    const receiptStyle = {
-        width: `${receiptWidth}px`,
-        maxWidth: "100%",
+    const updateSectionValue = (
+        section,
+        property,
+        value
+    ) => {
 
-        padding:
-            `${outerPadding}px`,
+        const nextGrading = {
+            ...grading,
 
-        background:
-            backgroundGradient,
+            [section]: {
+                ...(grading[section] || {}),
+                [property]: value,
+            },
+        };
 
-        color:
-            textColor,
-
-        border:
-            `${borderWidth}px ${borderStyle} ${colors.border || primaryColor
-            }`,
-
-        borderRadius:
-            `${borderRadius}px`,
-
-        boxShadow:
-            effects.ambientGlow
-                ? `
-                    0 0 20px ${effects.ambientGlowColor ||
-                primaryColor
-                }66,
-                    0 25px 80px rgba(0,0,0,.55)
-                  `
-                : "0 25px 80px rgba(0,0,0,.55)",
-
-        position: "relative",
-        overflow: "hidden",
+        commitGrading(nextGrading);
     };
 
-    /*
-     * --------------------------------------------------------------
-     * SELECTION OUTLINE
-     * --------------------------------------------------------------
-     */
 
-    const selectionStyle = {
-        position: "absolute",
-        inset: "-3px",
-        border:
-            `1px solid ${accentColor}`,
-        borderRadius:
-            `${borderRadius + 3}px`,
-        pointerEvents: "none",
-        boxShadow:
-            `0 0 18px ${accentColor}66`,
+    /* ==========================================================================
+       TOGGLE SECTION
+       ========================================================================== */
+
+    const toggleSection = (section) => {
+
+        setOpenSections((previous) => ({
+            ...previous,
+            [section]: !previous[section],
+        }));
     };
 
-    /*
-     * --------------------------------------------------------------
-     * PRODUCT ROW
-     * --------------------------------------------------------------
-     */
 
-    const renderProduct = (item, index) => {
-        const productId =
-            `product-${index}`;
+    /* ==========================================================================
+       RESET CURRENT TARGET
+       ========================================================================== */
 
-        const productConfig =
-            objectConfig(productId);
+    const handleResetTarget = () => {
+
+        const defaults =
+            createDefaultTargetGrading();
+
+        commitGrading(defaults);
+    };
+
+
+    /* ==========================================================================
+       RESET ALL COLOR GRADING
+       ========================================================================== */
+
+    const handleResetAll = () => {
+
+        if (typeof onDesignConfigChange !== "function") {
+            return;
+        }
+
+        const nextConfig =
+            ensureColorGradingConfig(designConfig);
+
+        nextConfig.colorGrading.targets = {};
+
+        nextConfig.color_grading = {
+            ...(nextConfig.color_grading || {}),
+            targets: {},
+        };
+
+        onDesignConfigChange(nextConfig);
+
+        setGrading(
+            createDefaultTargetGrading()
+        );
+    };
+
+
+    /* ==========================================================================
+       RANGE CONTROL
+       ========================================================================== */
+
+    const RangeControl = ({
+        label,
+        value,
+        min = -100,
+        max = 100,
+        step = 1,
+        onChange,
+        suffix = "",
+    }) => {
+
+        const numericValue =
+            Number.isFinite(Number(value))
+                ? Number(value)
+                : 0;
 
         return (
-            <div
-                key={productId}
-                {...objectInteraction(productId)}
-                style={{
-                    ...styles.productRow,
-                    gap: 12,
-                    marginBottom:
-                        sectionSpacing / 2,
-                    background:
-                        productConfig.background ||
-                        "transparent",
-                    ...buildEffectStyle(
-                        productConfig
-                    ),
-                }}
-            >
-                <div
-                    style={{
-                        ...styles.productName,
-                        ...textStyle("body"),
-                    }}
-                >
-                    {item?.name || "Product"}
+            <div style={styles.rangeRow}>
+
+                <div style={styles.rangeLabel}>
+                    <span>{label}</span>
+
+                    <div style={styles.rangeValue}>
+                        {numericValue}
+                        {suffix}
+                    </div>
                 </div>
 
-                <div
-                    style={{
-                        ...styles.productPrice,
-                        ...textStyle("body"),
-                    }}
-                >
-                    {item?.price || "R0.00"}
-                </div>
+                <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={numericValue}
+                    disabled={disabled}
+                    onChange={(e) =>
+                        onChange(
+                            Number(e.target.value)
+                        )
+                    }
+                    style={styles.rangeInput}
+                />
+
             </div>
         );
     };
 
-    /*
-     * --------------------------------------------------------------
-     * PARTICLES
-     * --------------------------------------------------------------
-     */
 
-    const particlesEnabled =
-        effects.particles ||
-        receipt.effects?.particles;
+    /* ==========================================================================
+       COLOR CONTROL
+       ========================================================================== */
 
-    const particleCount =
-        Math.max(
-            0,
-            Math.min(
-                30,
-                safeNumber(
-                    effects.particleCount,
-                    12
-                )
-            )
-        );
+    const ColorControl = ({
+        label,
+        value,
+        onChange,
+    }) => {
 
-    const particleNodes =
-        useMemo(() => {
-            if (!particlesEnabled) return [];
+        return (
+            <div style={styles.colorRow}>
 
-            return Array.from({
-                length: particleCount,
-            }).map((_, index) => (
-                <span
-                    key={index}
-                    className="ruach-particle"
-                    style={{
-                        left:
-                            `${(index * 37) % 100}%`,
-                        top:
-                            `${(index * 61) % 100}%`,
-                        animationDelay:
-                            `${(index * 0.31) % 4}s`,
-                    }}
-                />
-            ));
-        }, [
-            particlesEnabled,
-            particleCount,
-        ]);
+                <span style={styles.colorLabel}>
+                    {label}
+                </span>
 
-    /*
-     * --------------------------------------------------------------
-     * RENDER
-     * --------------------------------------------------------------
-     */
+                <div style={styles.colorControl}>
 
-    return (
-        <div
-            className={`ruach-canvas-shell ${canvasMode === "studio"
-                    ? "ruach-canvas-studio"
-                    : ""
-                }`}
-            style={styles.shell}
-            onClick={() => {
-                if (typeof onSelectObject === "function") {
-                    onSelectObject(null);
-                }
-            }}
-        >
-            <div style={styles.canvasHeader}>
-                <div>
-                    <div style={styles.canvasEyebrow}>
-                        RUACHAGENT // CANVAS ENGINE
-                    </div>
-
-                    <div style={styles.canvasTitle}>
-                        LIVE RECEIPT RENDER
-                    </div>
-                </div>
-
-                <div style={styles.canvasTelemetry}>
-                    <span style={styles.telemetryDot} />
-                    DESIGN CONFIG LINKED
-                </div>
-            </div>
-
-            <div
-                className="ruach-canvas-workspace"
-                style={styles.workspace}
-            >
-                <div
-                    className="ruach-receipt-stage"
-                    style={styles.stage}
-                >
-                    <div
-                        className="ruach-receipt-shadow"
-                        style={{
-                            ...styles.receiptShadow,
-                            width:
-                                `${receiptWidth}px`,
-                        }}
+                    <input
+                        type="color"
+                        value={value || "#00F0FF"}
+                        disabled={disabled}
+                        onChange={(e) =>
+                            onChange(e.target.value)
+                        }
+                        style={styles.colorPicker}
                     />
 
-                    <article
-                        className="ruach-receipt"
-                        style={receiptStyle}
-                        onClick={(event) =>
-                            event.stopPropagation()
-                        }
-                    >
-                        {particlesEnabled && (
-                            <div
-                                className="ruach-particles"
-                                style={
-                                    styles.particles
-                                }
-                            >
-                                {particleNodes}
-                            </div>
-                        )}
+                    <span style={styles.colorValue}>
+                        {value || "#00F0FF"}
+                    </span>
 
-                        {effects.holographic && (
-                            <div
-                                className="ruach-holographic-layer"
-                                style={
-                                    styles.holographicLayer
-                                }
-                            />
-                        )}
-
-                        {effects.metallic && (
-                            <div
-                                className="ruach-metallic-layer"
-                                style={
-                                    styles.metallicLayer
-                                }
-                            />
-                        )}
-
-                        {/* =================================================
-                            MERCHANT / LOGO
-                        ================================================== */}
-
-                        <div
-                            {...objectInteraction(
-                                "logo"
-                            )}
-                            style={{
-                                ...styles.logoZone,
-                                marginBottom:
-                                    sectionSpacing,
-                                ...buildEffectStyle(
-                                    logo
-                                ),
-                            }}
-                        >
-                            {logoUrl ? (
-                                <img
-                                    src={logoUrl}
-                                    alt="Merchant logo"
-                                    style={logoStyle}
-                                    draggable={false}
-                                />
-                            ) : (
-                                <div
-                                    style={
-                                        styles.logoPlaceholder
-                                    }
-                                >
-                                    <span>
-                                        MERCHANT
-                                    </span>
-                                    <small>
-                                        LOGO
-                                    </small>
-                                </div>
-                            )}
-
-                            {isSelected("logo") && (
-                                <div
-                                    style={
-                                        selectionStyle
-                                    }
-                                />
-                            )}
-                        </div>
-
-                        {/* =================================================
-                            MERCHANT TEXT
-                        ================================================== */}
-
-                        <div
-                            {...objectInteraction(
-                                "merchant-heading"
-                            )}
-                            style={{
-                                marginBottom:
-                                    sectionSpacing,
-                            }}
-                        >
-                            <h2
-                                style={{
-                                    ...styles.heading,
-                                    ...textStyle(
-                                        "heading"
-                                    ),
-                                }}
-                            >
-                                {merchantName}
-                            </h2>
-
-                            {location && (
-                                <p
-                                    style={{
-                                        ...styles.location,
-                                        ...textStyle(
-                                            "body"
-                                        ),
-                                    }}
-                                >
-                                    {location}
-                                </p>
-                            )}
-
-                            {isSelected(
-                                "merchant-heading"
-                            ) && (
-                                    <div
-                                        style={
-                                            selectionStyle
-                                        }
-                                    />
-                                )}
-                        </div>
-
-                        {/* =================================================
-                            DIVIDER
-                        ================================================== */}
-
-                        <div
-                            {...objectInteraction(
-                                "divider"
-                            )}
-                            style={{
-                                ...styles.divider,
-                                background:
-                                    dividerColor,
-                                marginBottom:
-                                    sectionSpacing,
-                            }}
-                        >
-                            {isSelected("divider") && (
-                                <div
-                                    style={
-                                        selectionStyle
-                                    }
-                                />
-                            )}
-                        </div>
-
-                        {/* =================================================
-                            PRODUCTS
-                        ================================================== */}
-
-                        <section
-                            {...objectInteraction(
-                                "products"
-                            )}
-                            style={{
-                                marginBottom:
-                                    sectionSpacing,
-                            }}
-                        >
-                            {items.length > 0 ? (
-                                items.map(
-                                    renderProduct
-                                )
-                            ) : (
-                                <div
-                                    style={{
-                                        ...styles.emptyProducts,
-                                        color:
-                                            mutedColor,
-                                    }}
-                                >
-                                    NO PRODUCT DATA
-                                </div>
-                            )}
-
-                            {isSelected(
-                                "products"
-                            ) && (
-                                    <div
-                                        style={
-                                            selectionStyle
-                                        }
-                                    />
-                                )}
-                        </section>
-
-                        {/* =================================================
-                            TOTALS
-                        ================================================== */}
-
-                        <section
-                            {...objectInteraction(
-                                "totals"
-                            )}
-                            style={{
-                                marginTop:
-                                    sectionSpacing,
-                            }}
-                        >
-                            <div
-                                style={{
-                                    ...styles.totalLine,
-                                    color:
-                                        mutedColor,
-                                }}
-                            >
-                                <span>VAT</span>
-                                <span>{vat}</span>
-                            </div>
-
-                            <div
-                                style={{
-                                    ...styles.totalLine,
-                                    ...textStyle(
-                                        "total"
-                                    ),
-                                    color:
-                                        totalText.color ||
-                                        textColor,
-                                    marginTop: 8,
-                                }}
-                            >
-                                <span>TOTAL</span>
-                                <span>{total}</span>
-                            </div>
-
-                            {isSelected(
-                                "totals"
-                            ) && (
-                                    <div
-                                        style={
-                                            selectionStyle
-                                        }
-                                    />
-                                )}
-                        </section>
-
-                        {/* =================================================
-                            QR CODE
-                        ================================================== */}
-
-                        <div
-                            {...objectInteraction(
-                                "qr"
-                            )}
-                            style={{
-                                ...styles.qrZone,
-                                marginTop:
-                                    sectionSpacing * 1.4,
-                                marginBottom:
-                                    sectionSpacing,
-                                ...buildEffectStyle(
-                                    qr
-                                ),
-                            }}
-                        >
-                            {qrUrl ? (
-                                <img
-                                    src={qrUrl}
-                                    alt="Receipt QR code"
-                                    style={qrStyle}
-                                    draggable={false}
-                                />
-                            ) : (
-                                <div
-                                    style={{
-                                        ...styles.qrPlaceholder,
-                                        width:
-                                            qrStyle.width,
-                                        height:
-                                            qrStyle.height,
-                                        borderRadius:
-                                            qrStyle.borderRadius,
-                                    }}
-                                >
-                                    <span>QR</span>
-                                    <small>
-                                        CODE
-                                    </small>
-                                </div>
-                            )}
-
-                            {qr.scanLine && (
-                                <div
-                                    className="ruach-qr-scan"
-                                    style={
-                                        styles.qrScan
-                                    }
-                                />
-                            )}
-
-                            {isSelected("qr") && (
-                                <div
-                                    style={
-                                        selectionStyle
-                                    }
-                                />
-                            )}
-                        </div>
-
-                        {/* =================================================
-                            FOOTER
-                        ================================================== */}
-
-                        <div
-                            {...objectInteraction(
-                                "footer"
-                            )}
-                            style={{
-                                ...styles.footer,
-                                color:
-                                    mutedColor,
-                                ...textStyle(
-                                    "body"
-                                ),
-                            }}
-                        >
-                            {receiptData?.footer ||
-                                "Powered by RuachAgent AI"}
-
-                            {isSelected(
-                                "footer"
-                            ) && (
-                                    <div
-                                        style={
-                                            selectionStyle
-                                        }
-                                    />
-                                )}
-                        </div>
-
-                        {effects.animatedBorder && (
-                            <div
-                                className="ruach-animated-border"
-                                style={
-                                    styles.animatedBorder
-                                }
-                            />
-                        )}
-
-                        {selectedObjectId ===
-                            "receipt" && (
-                                <div
-                                    style={
-                                        selectionStyle
-                                    }
-                                />
-                            )}
-                    </article>
                 </div>
+
+            </div>
+        );
+    };
+
+
+    /* ==========================================================================
+       TOGGLE CONTROL
+       ========================================================================== */
+
+    const Toggle = ({
+        enabled,
+        onChange,
+    }) => {
+
+        return (
+            <button
+                type="button"
+                disabled={disabled}
+                onClick={() => onChange(!enabled)}
+                style={{
+                    ...styles.toggle,
+                    ...(enabled
+                        ? styles.toggleActive
+                        : {}),
+                }}
+            >
+
+                <span
+                    style={{
+                        ...styles.toggleKnob,
+                        ...(enabled
+                            ? styles.toggleKnobActive
+                            : {}),
+                    }}
+                />
+
+            </button>
+        );
+    };
+
+
+    /* ==========================================================================
+       SECTION HEADER
+       ========================================================================== */
+
+    const SectionHeader = ({
+        id,
+        icon,
+        title,
+        description,
+    }) => {
+
+        const isOpen = openSections[id];
+
+        return (
+            <button
+                type="button"
+                onClick={() =>
+                    toggleSection(id)
+                }
+                style={styles.sectionHeader}
+            >
+
+                <div style={styles.sectionHeaderLeft}>
+
+                    <div style={styles.sectionIcon}>
+                        {icon}
+                    </div>
+
+                    <div>
+
+                        <div style={styles.sectionTitle}>
+                            {title}
+                        </div>
+
+                        <div style={styles.sectionDescription}>
+                            {description}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                {isOpen ? (
+                    <ChevronDown
+                        size={14}
+                    />
+                ) : (
+                    <ChevronRight
+                        size={14}
+                    />
+                )}
+
+            </button>
+        );
+    };
+
+
+    /* ==========================================================================
+       RENDER
+       ========================================================================== */
+
+    return (
+        <section style={styles.root}>
+
+            {/* ================================================================
+                HEADER
+            ================================================================= */}
+
+            <div style={styles.header}>
+
+                <div style={styles.headerTitleRow}>
+
+                    <div style={styles.headerIcon}>
+                        <Palette size={16} />
+                    </div>
+
+                    <div>
+
+                        <h2 style={styles.title}>
+                            COLOR GRADING
+                        </h2>
+
+                        <p style={styles.subtitle}>
+                            Enhance and style your receipt
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div style={styles.targetIndicator}>
+                    <Target size={12} />
+                    <span>
+                        {resolvedTarget.label}
+                    </span>
+                </div>
+
             </div>
 
-            <div style={styles.canvasFooter}>
-                <span>
-                    X {safeNumber(
-                        selected?.layout?.x,
-                        0
-                    )}
-                </span>
 
-                <span>
-                    Y {safeNumber(
-                        selected?.layout?.y,
-                        0
-                    )}
-                </span>
+            {/* ================================================================
+                ACTIVE OBJECT
+            ================================================================= */}
 
-                <span>
-                    Z {safeNumber(
-                        selected?.layout?.z ??
-                        selected?.zIndex,
-                        0
-                    )}
-                </span>
+            <div style={styles.activeTarget}>
 
-                <span>
-                    {selectedObjectId
-                        ? `SELECTED // ${selectedObjectId.toUpperCase()}`
-                        : "NO OBJECT SELECTED"}
-                </span>
+                <div style={styles.activeTargetIcon}>
+                    <Layers3 size={15} />
+                </div>
 
-                <span style={{ marginLeft: "auto" }}>
-                    CONFIG // LIVE
-                </span>
+                <div style={styles.activeTargetInfo}>
+
+                    <span style={styles.activeTargetLabel}>
+                        SELECTED ELEMENT
+                    </span>
+
+                    <strong style={styles.activeTargetName}>
+                        {resolvedTarget.label}
+                    </strong>
+
+                    <span style={styles.activeTargetDescription}>
+                        {resolvedTarget.description}
+                    </span>
+
+                </div>
+
+                <div style={styles.liveIndicator}>
+                    <span style={styles.liveDot} />
+                    LIVE
+                </div>
+
             </div>
 
-            <style>{`
-                .ruach-canvas-shell {
-                    box-sizing: border-box;
-                    width: 100%;
-                    min-height: 640px;
-                    color: #eaf6ff;
-                    font-family:
-                        Inter,
-                        ui-sans-serif,
-                        system-ui,
-                        -apple-system,
-                        BlinkMacSystemFont,
-                        "Segoe UI",
-                        sans-serif;
-                    background:
-                        radial-gradient(
-                            circle at 50% 20%,
-                            rgba(0, 153, 255, .10),
-                            transparent 32%
-                        ),
-                        linear-gradient(
-                            145deg,
-                            #030507 0%,
-                            #070b10 48%,
-                            #020305 100%
-                        );
-                    border:
-                        1px solid rgba(82, 180, 255, .14);
-                    overflow: hidden;
-                    position: relative;
-                }
 
-                .ruach-canvas-shell::before {
-                    content: "";
-                    position: absolute;
-                    inset: 0;
-                    pointer-events: none;
-                    background-image:
-                        linear-gradient(
-                            rgba(255,255,255,.025) 1px,
-                            transparent 1px
-                        ),
-                        linear-gradient(
-                            90deg,
-                            rgba(255,255,255,.025) 1px,
-                            transparent 1px
-                        );
-                    background-size: 32px 32px;
-                    mask-image:
-                        linear-gradient(
-                            to bottom,
-                            black,
-                            transparent 92%
-                        );
-                }
+            {/* ================================================================
+                TARGET SELECTOR
+            ================================================================= */}
 
-                .ruach-canvas-workspace {
-                    min-height: 520px;
-                }
+            <div style={styles.targetSelector}>
 
-                .ruach-receipt-stage {
-                    perspective: 1400px;
-                }
+                {TARGETS.map((target) => {
 
-                .ruach-receipt {
-                    transform-style: preserve-3d;
-                    transition:
-                        box-shadow .25s ease,
-                        transform .25s ease;
-                }
+                    const active =
+                        target.id ===
+                        resolvedTarget.id;
 
-                .ruach-canvas-object {
-                    position: relative;
-                    cursor: pointer;
-                    transition:
-                        outline .16s ease,
-                        filter .2s ease,
-                        transform .2s ease;
-                }
+                    return (
+                        <button
+                            key={target.id}
+                            type="button"
+                            disabled={disabled}
+                            onClick={() => {
 
-                .ruach-canvas-object:hover {
-                    outline:
-                        1px solid rgba(0, 201, 255, .38);
-                    outline-offset: 5px;
-                }
+                                if (
+                                    typeof onSelectElement ===
+                                    "function"
+                                ) {
+                                    onSelectElement(
+                                        target.id
+                                    );
+                                }
 
-                .ruach-canvas-object-selected {
-                    outline:
-                        1px solid rgba(0, 216, 255, .95);
-                    outline-offset: 6px;
-                    box-shadow:
-                        0 0 0 1px rgba(0, 216, 255, .15),
-                        0 0 22px rgba(0, 174, 255, .18);
-                }
+                            }}
+                            style={{
+                                ...styles.targetChip,
+                                ...(active
+                                    ? styles.targetChipActive
+                                    : {}),
+                            }}
+                        >
+                            {target.label}
+                        </button>
+                    );
 
-                .ruach-object-spin {
-                    animation:
-                        ruachSpin 8s linear infinite;
-                }
+                })}
 
-                .ruach-object-float {
-                    animation:
-                        ruachFloat 3.8s ease-in-out infinite;
-                }
+            </div>
 
-                .ruach-object-pulse {
-                    animation:
-                        ruachPulse 2s ease-in-out infinite;
-                }
 
-                .ruach-object-hover:hover {
-                    transform:
-                        translateY(-4px)
-                        scale(1.015);
-                }
+            {/* ================================================================
+                BASIC
+            ================================================================= */}
 
-                .ruach-object-scan {
-                    overflow: hidden;
-                }
+            <div style={styles.section}>
 
-                .ruach-particle {
-                    position: absolute;
-                    width: 2px;
-                    height: 2px;
-                    border-radius: 50%;
-                    background: #00d9ff;
-                    box-shadow:
-                        0 0 8px #00d9ff;
-                    animation:
-                        ruachParticle 4s ease-in-out infinite;
-                }
+                <SectionHeader
+                    id="basic"
+                    icon={<SunMedium size={15} />}
+                    title="BASIC"
+                    description="Adjust brightness, contrast and more"
+                />
 
-                .ruach-holographic-layer,
-                .ruach-metallic-layer {
-                    position: absolute;
-                    inset: 0;
-                    pointer-events: none;
-                    z-index: 3;
-                }
+                {openSections.basic && (
+                    <div style={styles.sectionBody}>
 
-                .ruach-holographic-layer {
-                    background:
-                        linear-gradient(
-                            115deg,
-                            transparent 15%,
-                            rgba(0, 229, 255, .10),
-                            rgba(120, 70, 255, .08),
-                            transparent 80%
-                        );
-                    mix-blend-mode: screen;
-                    animation:
-                        ruachHologram 6s linear infinite;
-                }
+                        <RangeControl
+                            label="Exposure"
+                            value={
+                                grading.basic.exposure
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "exposure",
+                                    value
+                                )
+                            }
+                        />
 
-                .ruach-metallic-layer {
-                    background:
-                        linear-gradient(
-                            110deg,
-                            transparent 35%,
-                            rgba(255,255,255,.13) 48%,
-                            transparent 60%
-                        );
-                    mix-blend-mode: screen;
-                    animation:
-                        ruachMetallic 5s ease-in-out infinite;
-                }
+                        <RangeControl
+                            label="Contrast"
+                            value={
+                                grading.basic.contrast
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "contrast",
+                                    value
+                                )
+                            }
+                        />
 
-                .ruach-animated-border {
-                    position: absolute;
-                    inset: 0;
-                    pointer-events: none;
-                    border-radius: inherit;
-                    border: 1px solid transparent;
-                    background:
-                        linear-gradient(
-                            90deg,
-                            transparent,
-                            #00d9ff,
-                            transparent
-                        ) border-box;
-                    mask:
-                        linear-gradient(#fff 0 0) padding-box,
-                        linear-gradient(#fff 0 0);
-                    mask-composite: exclude;
-                    animation:
-                        ruachBorder 3s linear infinite;
-                }
+                        <RangeControl
+                            label="Highlights"
+                            value={
+                                grading.basic.highlights
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "highlights",
+                                    value
+                                )
+                            }
+                            min={-100}
+                            max={100}
+                        />
 
-                .ruach-qr-scan {
-                    position: absolute;
-                    left: 10%;
-                    right: 10%;
-                    top: 0;
-                    height: 2px;
-                    background: #00eaff;
-                    box-shadow:
-                        0 0 14px #00eaff;
-                    animation:
-                        ruachQrScan 2.4s linear infinite;
-                }
+                        <RangeControl
+                            label="Shadows"
+                            value={
+                                grading.basic.shadows
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "shadows",
+                                    value
+                                )
+                            }
+                            min={-100}
+                            max={100}
+                        />
 
-                @keyframes ruachSpin {
-                    from {
-                        transform: rotateY(0deg);
+                        <RangeControl
+                            label="Saturation"
+                            value={
+                                grading.basic.saturation
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "saturation",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Whites"
+                            value={
+                                grading.basic.whites
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "whites",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Blacks"
+                            value={
+                                grading.basic.blacks
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "blacks",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Vibrance"
+                            value={
+                                grading.basic.vibrance
+                            }
+                            min={0}
+                            max={200}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "basic",
+                                    "vibrance",
+                                    value
+                                )
+                            }
+                        />
+
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                NEON
+            ================================================================= */}
+
+            <div style={styles.section}>
+
+                <SectionHeader
+                    id="neon"
+                    icon={<Sparkles size={15} />}
+                    title="NEON"
+                    description="Control neon colors and intensity"
+                />
+
+                {openSections.neon && (
+                    <div style={styles.sectionBody}>
+
+                        <div style={styles.effectEnableRow}>
+
+                            <span>
+                                Enable Neon
+                            </span>
+
+                            <Toggle
+                                enabled={
+                                    grading.neon.enabled
+                                }
+                                onChange={(value) =>
+                                    updateSectionValue(
+                                        "neon",
+                                        "enabled",
+                                        value
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                        <ColorControl
+                            label="Neon Color"
+                            value={
+                                grading.neon.color
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "neon",
+                                    "color",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Neon Intensity"
+                            value={
+                                grading.neon.intensity
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "neon",
+                                    "intensity",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Neon Spread"
+                            value={
+                                grading.neon.spread
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "neon",
+                                    "spread",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Neon Glow"
+                            value={
+                                grading.neon.glow
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "neon",
+                                    "glow",
+                                    value
+                                )
+                            }
+                        />
+
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                GLOW
+            ================================================================= */}
+
+            <div style={styles.section}>
+
+                <SectionHeader
+                    id="glow"
+                    icon={<Waves size={15} />}
+                    title="GLOW"
+                    description="Add glow effects to elements"
+                />
+
+                {openSections.glow && (
+                    <div style={styles.sectionBody}>
+
+                        <div style={styles.effectEnableRow}>
+
+                            <span>
+                                Enable Glow
+                            </span>
+
+                            <Toggle
+                                enabled={
+                                    grading.glow.enabled
+                                }
+                                onChange={(value) =>
+                                    updateSectionValue(
+                                        "glow",
+                                        "enabled",
+                                        value
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                        <RangeControl
+                            label="Glow Intensity"
+                            value={
+                                grading.glow.intensity
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "glow",
+                                    "intensity",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Glow Radius"
+                            value={
+                                grading.glow.radius
+                            }
+                            min={0}
+                            max={150}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "glow",
+                                    "radius",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Glow Threshold"
+                            value={
+                                grading.glow.threshold
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "glow",
+                                    "threshold",
+                                    value
+                                )
+                            }
+                        />
+
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                LIGHT
+            ================================================================= */}
+
+            <div style={styles.section}>
+
+                <SectionHeader
+                    id="light"
+                    icon={<Lightbulb size={15} />}
+                    title="LIGHT"
+                    description="Adjust lighting and highlights"
+                />
+
+                {openSections.light && (
+                    <div style={styles.sectionBody}>
+
+                        <ColorControl
+                            label="Key Color"
+                            value={
+                                grading.light.keyColor
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "keyColor",
+                                    value
+                                )
+                            }
+                        />
+
+                        <ColorControl
+                            label="Fill Color"
+                            value={
+                                grading.light.fillColor
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "fillColor",
+                                    value
+                                )
+                            }
+                        />
+
+                        <ColorControl
+                            label="Rim Color"
+                            value={
+                                grading.light.rimColor
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "rimColor",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Key Light"
+                            value={
+                                grading.light.keyLight
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "keyLight",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Fill Light"
+                            value={
+                                grading.light.fillLight
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "fillLight",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Rim Light"
+                            value={
+                                grading.light.rimLight
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "rimLight",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Light Intensity"
+                            value={
+                                grading.light.intensity
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "intensity",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Light Direction"
+                            value={
+                                grading.light.direction
+                            }
+                            min={0}
+                            max={360}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "light",
+                                    "direction",
+                                    value
+                                )
+                            }
+                            suffix="°"
+                        />
+
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                SPARKLE
+            ================================================================= */}
+
+            <div style={styles.section}>
+
+                <SectionHeader
+                    id="sparkle"
+                    icon={<Sparkles size={15} />}
+                    title="SPARKLE"
+                    description="Add sparkle and particle effects"
+                />
+
+                {openSections.sparkle && (
+                    <div style={styles.sectionBody}>
+
+                        <RangeControl
+                            label="Sparkle Intensity"
+                            value={
+                                grading.sparkle.intensity
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "sparkle",
+                                    "intensity",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Sparkle Size"
+                            value={
+                                grading.sparkle.size
+                            }
+                            min={1}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "sparkle",
+                                    "size",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Sparkle Density"
+                            value={
+                                grading.sparkle.density
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "sparkle",
+                                    "density",
+                                    value
+                                )
+                            }
+                        />
+
+                        <div style={styles.effectEnableRow}>
+
+                            <span>
+                                Animated
+                            </span>
+
+                            <Toggle
+                                enabled={
+                                    grading.sparkle.animated
+                                }
+                                onChange={(value) =>
+                                    updateSectionValue(
+                                        "sparkle",
+                                        "animated",
+                                        value
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                GRADIENT
+            ================================================================= */}
+
+            <div style={styles.section}>
+
+                <SectionHeader
+                    id="gradient"
+                    icon={<Palette size={15} />}
+                    title="GRADIENT"
+                    description="Apply beautiful gradients"
+                />
+
+                {openSections.gradient && (
+                    <div style={styles.sectionBody}>
+
+                        <div style={styles.effectEnableRow}>
+
+                            <span>
+                                Dynamic Gradient
+                            </span>
+
+                            <Toggle
+                                enabled={
+                                    grading.gradient.enabled
+                                }
+                                onChange={(value) =>
+                                    updateSectionValue(
+                                        "gradient",
+                                        "enabled",
+                                        value
+                                    )
+                                }
+                            />
+
+                        </div>
+
+                        <div style={styles.selectRow}>
+
+                            <span>
+                                Gradient Type
+                            </span>
+
+                            <select
+                                value={
+                                    grading.gradient.type
+                                }
+                                disabled={disabled}
+                                onChange={(e) =>
+                                    updateSectionValue(
+                                        "gradient",
+                                        "type",
+                                        e.target.value
+                                    )
+                                }
+                                style={styles.select}
+                            >
+
+                                <option value="linear">
+                                    Linear
+                                </option>
+
+                                <option value="radial">
+                                    Radial
+                                </option>
+
+                                <option value="conic">
+                                    Conic
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <ColorControl
+                            label="Start Color"
+                            value={
+                                grading.gradient.startColor
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "gradient",
+                                    "startColor",
+                                    value
+                                )
+                            }
+                        />
+
+                        <ColorControl
+                            label="End Color"
+                            value={
+                                grading.gradient.endColor
+                            }
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "gradient",
+                                    "endColor",
+                                    value
+                                )
+                            }
+                        />
+
+                        <RangeControl
+                            label="Start Angle"
+                            value={
+                                grading.gradient.angle
+                            }
+                            min={0}
+                            max={360}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "gradient",
+                                    "angle",
+                                    value
+                                )
+                            }
+                            suffix="°"
+                        />
+
+                        <RangeControl
+                            label="Opacity"
+                            value={
+                                grading.gradient.opacity
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "gradient",
+                                    "opacity",
+                                    value
+                                )
+                            }
+                            suffix="%"
+                        />
+
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                ADVANCED
+            ================================================================= */}
+
+            <div style={styles.section}>
+
+                <SectionHeader
+                    id="advanced"
+                    icon={
+                        <SlidersHorizontal
+                            size={15}
+                        />
                     }
-                    to {
-                        transform: rotateY(360deg);
-                    }
-                }
+                    title="ADVANCED"
+                    description="Fine tune advanced controls"
+                />
 
-                @keyframes ruachFloat {
-                    0%, 100% {
-                        transform: translateY(0);
-                    }
-                    50% {
-                        transform: translateY(-7px);
-                    }
-                }
+                {openSections.advanced && (
+                    <div style={styles.sectionBody}>
 
-                @keyframes ruachPulse {
-                    0%, 100% {
-                        opacity: 1;
-                        filter:
-                            drop-shadow(
-                                0 0 0 transparent
-                            );
-                    }
-                    50% {
-                        opacity: .78;
-                        filter:
-                            drop-shadow(
-                                0 0 12px
-                                rgba(0, 220, 255, .8)
-                            );
-                    }
-                }
+                        <RangeControl
+                            label="Hue Shift"
+                            value={
+                                grading.advanced.hueShift
+                            }
+                            min={-180}
+                            max={180}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "advanced",
+                                    "hueShift",
+                                    value
+                                )
+                            }
+                            suffix="°"
+                        />
 
-                @keyframes ruachParticle {
-                    0%, 100% {
-                        transform:
-                            translate3d(0, 0, 0);
-                        opacity: .15;
-                    }
-                    50% {
-                        transform:
-                            translate3d(10px, -18px, 0);
-                        opacity: .9;
-                    }
-                }
+                        <RangeControl
+                            label="Color Temperature"
+                            value={
+                                grading.advanced.colorTemperature
+                            }
+                            min={2000}
+                            max={12000}
+                            step={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "advanced",
+                                    "colorTemperature",
+                                    value
+                                )
+                            }
+                            suffix="K"
+                        />
 
-                @keyframes ruachHologram {
-                    from {
-                        transform:
-                            translateX(-70%);
-                    }
-                    to {
-                        transform:
-                            translateX(70%);
-                    }
-                }
+                        <RangeControl
+                            label="Tint"
+                            value={
+                                grading.advanced.tint
+                            }
+                            min={-100}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "advanced",
+                                    "tint",
+                                    value
+                                )
+                            }
+                        />
 
-                @keyframes ruachMetallic {
-                    0%, 100% {
-                        transform:
-                            translateX(-80%);
-                    }
-                    50% {
-                        transform:
-                            translateX(80%);
-                    }
-                }
+                        <RangeControl
+                            label="Sharpen"
+                            value={
+                                grading.advanced.sharpen
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "advanced",
+                                    "sharpen",
+                                    value
+                                )
+                            }
+                        />
 
-                @keyframes ruachBorder {
-                    from {
-                        transform: rotate(0deg);
-                    }
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
+                        <RangeControl
+                            label="Noise Reduction"
+                            value={
+                                grading.advanced.noiseReduction
+                            }
+                            min={0}
+                            max={100}
+                            onChange={(value) =>
+                                updateSectionValue(
+                                    "advanced",
+                                    "noiseReduction",
+                                    value
+                                )
+                            }
+                        />
 
-                @keyframes ruachQrScan {
-                    0% {
-                        transform: translateY(0);
-                        opacity: 0;
-                    }
-                    15% {
-                        opacity: 1;
-                    }
-                    85% {
-                        opacity: 1;
-                    }
-                    100% {
-                        transform: translateY(105px);
-                        opacity: 0;
-                    }
-                }
-            `}</style>
-        </div>
+                    </div>
+                )}
+
+            </div>
+
+
+            {/* ================================================================
+                ACTIONS
+            ================================================================= */}
+
+            <div style={styles.actions}>
+
+                <button
+                    type="button"
+                    disabled={disabled}
+                    onClick={handleResetTarget}
+                    style={styles.applyButton}
+                >
+                    <Check size={14} />
+                    Apply to Receipt
+                </button>
+
+                <button
+                    type="button"
+                    disabled={disabled}
+                    onClick={handleResetTarget}
+                    style={styles.resetButton}
+                >
+                    <RotateCcw size={13} />
+                    Reset Selected Element
+                </button>
+
+                <button
+                    type="button"
+                    disabled={disabled}
+                    onClick={handleResetAll}
+                    style={styles.resetAllButton}
+                >
+                    Reset All Color Grading
+                </button>
+
+            </div>
+
+        </section>
     );
 }
 
-/*
- * =================================================================
- * SYSTEM D — STYLE OBJECT
- * =================================================================
- */
+
+/* ==========================================================================
+   STYLES
+   ==========================================================================
+   
+   IMPORTANT:
+   The application uses the "const styles = {}" pattern.
+   No external CSS file is required.
+   
+========================================================================== */
 
 const styles = {
-    shell: {
-        position: "relative",
+
+    root: {
         width: "100%",
-        minHeight: 640,
-        background: "#030507",
-        overflow: "hidden",
-    },
-
-    canvasHeader: {
-        position: "relative",
-        zIndex: 10,
-        minHeight: 64,
-        padding: "0 20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderBottom:
-            "1px solid rgba(111, 190, 255, .12)",
-        background:
-            "linear-gradient(180deg, rgba(12,18,25,.94), rgba(4,7,10,.94))",
-        boxSizing: "border-box",
-    },
-
-    canvasEyebrow: {
-        fontSize: 9,
-        letterSpacing: "2.4px",
-        color: "#4d88aa",
-        fontWeight: 700,
-        marginBottom: 4,
-    },
-
-    canvasTitle: {
-        fontSize: 13,
-        letterSpacing: "1.2px",
-        color: "#dff7ff",
-        fontWeight: 800,
-    },
-
-    canvasTelemetry: {
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        fontSize: 9,
-        letterSpacing: "1.4px",
-        color: "#6e9eb8",
-        fontWeight: 700,
-    },
-
-    telemetryDot: {
-        width: 6,
-        height: 6,
-        borderRadius: "50%",
-        background: "#00d9ff",
-        boxShadow:
-            "0 0 10px rgba(0,217,255,.9)",
-    },
-
-    workspace: {
-        position: "relative",
-        minHeight: 520,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "46px 28px 56px",
-        boxSizing: "border-box",
-        background:
-            "radial-gradient(circle at center, rgba(0,145,255,.08), transparent 42%)",
-    },
-
-    stage: {
-        position: "relative",
-        width: "100%",
-        minHeight: 430,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-
-    receiptShadow: {
-        position: "absolute",
-        height: "72%",
-        maxWidth: "75%",
-        background:
-            "rgba(0,0,0,.72)",
-        filter:
-            "blur(42px)",
-        transform:
-            "translateY(45px) scale(.88)",
-        pointerEvents: "none",
-    },
-
-    logoZone: {
-        position: "relative",
-        minHeight: 70,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    logoPlaceholder: {
-        width: 96,
-        height: 64,
+        height: "100%",
+        minHeight: 0,
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        border:
-            "1px dashed rgba(0,210,255,.45)",
-        borderRadius: 10,
-        color: "#53b8d7",
+        boxSizing: "border-box",
+
         background:
-            "rgba(0,120,180,.06)",
-        letterSpacing: "1.5px",
-        fontSize: 10,
-        fontWeight: 800,
+            "linear-gradient(180deg, #0a0f14 0%, #070b0f 100%)",
+
+        color: "#eaf7ff",
+
+        border:
+            "1px solid rgba(0, 215, 255, 0.14)",
+
+        borderRadius: "10px",
+
+        overflow: "hidden",
+
+        fontFamily:
+            "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+
+        boxShadow:
+            "0 20px 60px rgba(0,0,0,0.42)",
     },
 
-    heading: {
-        margin: 0,
-        lineHeight: 1.15,
-        textAlign: "center",
-    },
 
-    location: {
-        margin: "7px 0 0",
-        textAlign: "center",
-    },
+    /* ----------------------------------------------------------------------
+       HEADER
+    ---------------------------------------------------------------------- */
 
-    divider: {
-        position: "relative",
-        width: "100%",
-        height: 1,
-        opacity: .8,
-    },
+    header: {
+        padding: "14px 14px 12px 14px",
 
-    productRow: {
-        position: "relative",
-        width: "100%",
+        borderBottom:
+            "1px solid rgba(0, 215, 255, 0.12)",
+
+        background:
+            "linear-gradient(180deg, rgba(17,25,32,0.98), rgba(9,14,19,0.98))",
+
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        boxSizing: "border-box",
+
+        gap: "10px",
     },
 
-    productName: {
-        flex: 1,
+
+    headerTitleRow: {
+        display: "flex",
+        alignItems: "center",
+        gap: "10px",
         minWidth: 0,
     },
 
-    productPrice: {
-        textAlign: "right",
+
+    headerIcon: {
+        width: "30px",
+        height: "30px",
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+
+        borderRadius: "7px",
+
+        color: "#00eaff",
+
+        background:
+            "linear-gradient(135deg, rgba(0,234,255,0.16), rgba(0,115,255,0.08))",
+
+        border:
+            "1px solid rgba(0,234,255,0.30)",
+
+        boxShadow:
+            "0 0 18px rgba(0,214,255,0.12)",
+    },
+
+
+    title: {
+        margin: 0,
+
+        fontSize: "11px",
+        fontWeight: 800,
+
+        letterSpacing: "0.08em",
+
+        color: "#f2fbff",
+    },
+
+
+    subtitle: {
+        margin: "3px 0 0 0",
+
+        fontSize: "8px",
+
+        color: "#718896",
+    },
+
+
+    targetIndicator: {
+        display: "flex",
+        alignItems: "center",
+        gap: "5px",
+
+        padding: "5px 8px",
+
+        borderRadius: "5px",
+
+        color: "#00eaff",
+
+        fontSize: "8px",
+        fontWeight: 700,
+
+        background:
+            "rgba(0,234,255,0.06)",
+
+        border:
+            "1px solid rgba(0,234,255,0.18)",
+
         whiteSpace: "nowrap",
     },
 
-    emptyProducts: {
-        textAlign: "center",
-        fontSize: 9,
-        letterSpacing: "1.6px",
-        padding: "18px 0",
-    },
 
-    totalLine: {
-        position: "relative",
+    /* ----------------------------------------------------------------------
+       ACTIVE TARGET
+    ---------------------------------------------------------------------- */
+
+    activeTarget: {
+        margin: "10px 10px 7px 10px",
+
+        padding: "9px",
+
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
+
+        gap: "9px",
+
+        borderRadius: "7px",
+
+        background:
+            "linear-gradient(135deg, rgba(0,234,255,0.08), rgba(0,90,140,0.035))",
+
+        border:
+            "1px solid rgba(0,234,255,0.16)",
+
+        boxShadow:
+            "inset 0 0 20px rgba(0,234,255,0.025)",
     },
 
-    qrZone: {
-        position: "relative",
+
+    activeTargetIcon: {
+        width: "27px",
+        height: "27px",
+
         display: "flex",
+        alignItems: "center",
         justifyContent: "center",
-        alignItems: "center",
-        minHeight: 112,
+
+        borderRadius: "6px",
+
+        color: "#00eaff",
+
+        background:
+            "rgba(0,234,255,0.08)",
+
+        border:
+            "1px solid rgba(0,234,255,0.20)",
     },
 
-    qrPlaceholder: {
+
+    activeTargetInfo: {
+        flex: 1,
+        minWidth: 0,
+
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        border:
-            "1px solid rgba(0,220,255,.45)",
-        background:
-            "rgba(255,255,255,.94)",
-        color: "#05070a",
-        fontWeight: 900,
-        fontSize: 18,
-        boxSizing: "border-box",
     },
 
-    qrScan: {
-        position: "absolute",
-        left: "15%",
-        right: "15%",
-        top: 4,
+
+    activeTargetLabel: {
+        fontSize: "7px",
+
+        letterSpacing: "0.10em",
+
+        color: "#58717e",
+
+        fontWeight: 700,
     },
 
-    footer: {
-        position: "relative",
-        textAlign: "center",
-        fontSize: 10,
-        letterSpacing: ".4px",
-        marginTop: 4,
+
+    activeTargetName: {
+        marginTop: "2px",
+
+        fontSize: "10px",
+
+        color: "#eafcff",
     },
 
-    particles: {
-        position: "absolute",
-        inset: 0,
+
+    activeTargetDescription: {
+        marginTop: "2px",
+
+        fontSize: "7px",
+
+        color: "#647b87",
+
+        whiteSpace: "nowrap",
         overflow: "hidden",
-        pointerEvents: "none",
-        zIndex: 2,
+        textOverflow: "ellipsis",
     },
 
-    holographicLayer: {
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 3,
-    },
 
-    metallicLayer: {
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 3,
-    },
-
-    animatedBorder: {
-        position: "absolute",
-        inset: 0,
-        pointerEvents: "none",
-        zIndex: 10,
-    },
-
-    canvasFooter: {
-        position: "relative",
-        zIndex: 10,
-        minHeight: 34,
+    liveIndicator: {
         display: "flex",
         alignItems: "center",
-        gap: 18,
-        padding: "0 14px",
-        borderTop:
-            "1px solid rgba(111,190,255,.10)",
+        gap: "4px",
+
+        fontSize: "7px",
+        fontWeight: 800,
+
+        color: "#00eaff",
+
+        letterSpacing: "0.06em",
+    },
+
+
+    liveDot: {
+        width: "5px",
+        height: "5px",
+
+        borderRadius: "50%",
+
+        background: "#00eaff",
+
+        boxShadow:
+            "0 0 8px rgba(0,234,255,0.95)",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       TARGET SELECTOR
+    ---------------------------------------------------------------------- */
+
+    targetSelector: {
+        padding: "3px 10px 9px 10px",
+
+        display: "flex",
+
+        gap: "5px",
+
+        overflowX: "auto",
+
+        scrollbarWidth: "thin",
+    },
+
+
+    targetChip: {
+        flex: "0 0 auto",
+
+        padding: "5px 7px",
+
+        borderRadius: "5px",
+
+        border:
+            "1px solid rgba(255,255,255,0.07)",
+
         background:
-            "rgba(3,6,9,.94)",
-        color: "#54758a",
-        fontSize: 9,
-        letterSpacing: "1.1px",
+            "rgba(255,255,255,0.025)",
+
+        color: "#718692",
+
+        fontSize: "7px",
+        fontWeight: 600,
+
+        cursor: "pointer",
+    },
+
+
+    targetChipActive: {
+        color: "#00eaff",
+
+        border:
+            "1px solid rgba(0,234,255,0.35)",
+
+        background:
+            "rgba(0,234,255,0.08)",
+
+        boxShadow:
+            "0 0 12px rgba(0,234,255,0.08)",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       SECTIONS
+    ---------------------------------------------------------------------- */
+
+    section: {
+        margin: "0 7px 6px 7px",
+
+        border:
+            "1px solid rgba(255,255,255,0.055)",
+
+        borderRadius: "7px",
+
+        overflow: "hidden",
+
+        background:
+            "rgba(255,255,255,0.018)",
+    },
+
+
+    sectionHeader: {
+        width: "100%",
+
+        minHeight: "43px",
+
+        padding: "7px 9px",
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        background:
+            "linear-gradient(180deg, rgba(17,25,31,0.94), rgba(11,17,22,0.94))",
+
+        color: "#d9edf5",
+
+        border: "none",
+
+        cursor: "pointer",
+
+        textAlign: "left",
+    },
+
+
+    sectionHeaderLeft: {
+        display: "flex",
+        alignItems: "center",
+
+        gap: "8px",
+    },
+
+
+    sectionIcon: {
+        width: "22px",
+        height: "22px",
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+
+        borderRadius: "5px",
+
+        color: "#00eaff",
+
+        background:
+            "rgba(0,234,255,0.055)",
+    },
+
+
+    sectionTitle: {
+        fontSize: "8px",
+
+        fontWeight: 800,
+
+        letterSpacing: "0.06em",
+
+        color: "#d9f8ff",
+    },
+
+
+    sectionDescription: {
+        marginTop: "2px",
+
+        fontSize: "7px",
+
+        color: "#627883",
+    },
+
+
+    sectionBody: {
+        padding: "7px 9px 9px 9px",
+
+        background:
+            "rgba(4,8,12,0.54)",
+
+        borderTop:
+            "1px solid rgba(255,255,255,0.035)",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       RANGE
+    ---------------------------------------------------------------------- */
+
+    rangeRow: {
+        marginBottom: "7px",
+    },
+
+
+    rangeLabel: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        marginBottom: "4px",
+
+        fontSize: "7px",
+
+        color: "#8da3ad",
+    },
+
+
+    rangeValue: {
+        minWidth: "24px",
+
+        padding: "2px 4px",
+
+        borderRadius: "3px",
+
+        textAlign: "center",
+
+        color: "#c9f7ff",
+
+        background:
+            "rgba(255,255,255,0.035)",
+
+        border:
+            "1px solid rgba(255,255,255,0.055)",
+
+        fontSize: "7px",
+    },
+
+
+    rangeInput: {
+        width: "100%",
+
+        height: "3px",
+
+        margin: 0,
+
+        accentColor: "#00eaff",
+
+        cursor: "pointer",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       COLOR
+    ---------------------------------------------------------------------- */
+
+    colorRow: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        marginBottom: "7px",
+
+        minHeight: "22px",
+    },
+
+
+    colorLabel: {
+        fontSize: "7px",
+        color: "#8297a2",
+    },
+
+
+    colorControl: {
+        display: "flex",
+        alignItems: "center",
+        gap: "5px",
+    },
+
+
+    colorPicker: {
+        width: "24px",
+        height: "18px",
+
+        padding: 0,
+
+        border:
+            "1px solid rgba(255,255,255,0.12)",
+
+        borderRadius: "3px",
+
+        background: "transparent",
+
+        cursor: "pointer",
+    },
+
+
+    colorValue: {
+        width: "48px",
+
+        padding: "3px 4px",
+
+        borderRadius: "3px",
+
+        background:
+            "rgba(255,255,255,0.025)",
+
+        border:
+            "1px solid rgba(255,255,255,0.05)",
+
+        color: "#8ca6b2",
+
+        fontSize: "7px",
+
+        textAlign: "center",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       TOGGLE
+    ---------------------------------------------------------------------- */
+
+    effectEnableRow: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        padding: "3px 0 7px 0",
+
+        fontSize: "7px",
+
+        color: "#8ba0aa",
+    },
+
+
+    toggle: {
+        position: "relative",
+
+        width: "27px",
+        height: "14px",
+
+        padding: 0,
+
+        borderRadius: "10px",
+
+        border:
+            "1px solid rgba(255,255,255,0.10)",
+
+        background:
+            "#182128",
+
+        cursor: "pointer",
+    },
+
+
+    toggleActive: {
+        background:
+            "rgba(0,210,240,0.30)",
+
+        border:
+            "1px solid rgba(0,234,255,0.45)",
+
+        boxShadow:
+            "0 0 10px rgba(0,234,255,0.16)",
+    },
+
+
+    toggleKnob: {
+        position: "absolute",
+
+        top: "2px",
+        left: "2px",
+
+        width: "8px",
+        height: "8px",
+
+        borderRadius: "50%",
+
+        background: "#66757d",
+
+        transition:
+            "transform 160ms ease, background 160ms ease",
+    },
+
+
+    toggleKnobActive: {
+        transform: "translateX(13px)",
+
+        background: "#00eaff",
+
+        boxShadow:
+            "0 0 7px rgba(0,234,255,0.8)",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       SELECT
+    ---------------------------------------------------------------------- */
+
+    selectRow: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+
+        marginBottom: "7px",
+
+        fontSize: "7px",
+
+        color: "#8297a2",
+    },
+
+
+    select: {
+        width: "95px",
+
+        padding: "4px 5px",
+
+        borderRadius: "4px",
+
+        outline: "none",
+
+        border:
+            "1px solid rgba(255,255,255,0.07)",
+
+        background: "#0b1116",
+
+        color: "#cceaf2",
+
+        fontSize: "7px",
+
+        cursor: "pointer",
+    },
+
+
+    /* ----------------------------------------------------------------------
+       ACTIONS
+    ---------------------------------------------------------------------- */
+
+    actions: {
+        padding: "5px 7px 8px 7px",
+
+        display: "flex",
+        flexDirection: "column",
+
+        gap: "5px",
+    },
+
+
+    applyButton: {
+        width: "100%",
+
+        height: "27px",
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+
+        gap: "5px",
+
+        borderRadius: "5px",
+
+        border:
+            "1px solid rgba(0,234,255,0.75)",
+
+        background:
+            "linear-gradient(180deg, rgba(0,190,230,0.18), rgba(0,90,120,0.13))",
+
+        color: "#00eaff",
+
+        fontSize: "8px",
         fontWeight: 700,
-        boxSizing: "border-box",
+
+        cursor: "pointer",
+
+        boxShadow:
+            "0 0 14px rgba(0,234,255,0.08)",
+    },
+
+
+    resetButton: {
+        width: "100%",
+
+        height: "24px",
+
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+
+        gap: "5px",
+
+        borderRadius: "5px",
+
+        border:
+            "1px solid rgba(255,255,255,0.06)",
+
+        background:
+            "rgba(255,255,255,0.018)",
+
+        color: "#71858f",
+
+        fontSize: "7px",
+
+        cursor: "pointer",
+    },
+
+
+    resetAllButton: {
+        width: "100%",
+
+        height: "23px",
+
+        borderRadius: "5px",
+
+        border:
+            "1px solid rgba(255,255,255,0.035)",
+
+        background: "transparent",
+
+        color: "#485b64",
+
+        fontSize: "7px",
+
+        cursor: "pointer",
     },
 };

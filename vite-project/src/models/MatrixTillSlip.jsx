@@ -1,162 +1,811 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 /**
  * MatrixTillSlip
  *
- * Universal Matrix Grid till-slip renderer.
+ * Matrix receipt renderer.
  *
- * Props:
- * - receiptData
- * - settings
- * - user
- * - activeCurrencySymbol
- * - designConfig
- * - voucher
- * - isExpired
- * - daysRemaining
- * - qrCodeUrl
- * - checkoutPayloadLink
- * - receiptId
- * - onDownload
+ * IMPORTANT:
+ * This component intentionally does NOT read or render the old global
+ * Legacy animation configuration is intentionally ignored.
+ *
+ * The Editing Studio owns the configuration. MatrixTillSlip only consumes
+ * the configuration required to render the receipt:
+ *
+ * System B — Properties
+ *   - Crop
+ *   - Zoom / Unzoom
+ *   - Shape (Logo + QR only)
+ *   - Chroma Key (Logo + QR)
+ *
+ * System D — Color Grading
+ *   - Basic
+ *   - Neon
+ *   - Glow
+ *   - Light
+ *   - Sparkle
+ *   - Gradient
+ *   - Advanced
+ *
+ * Every editable receipt element can have its own configuration.
+ *
+ * Recommended designConfig shape:
+ *
+ * {
+ *   logo: {
+ *     layout: {
+ *       scale: 1,
+ *       zoom: 1,
+ *       width: "120px",
+ *       height: "120px",
+ *       shape: "circle",
+ *       crop: { top: 0, right: 0, bottom: 0, left: 0 },
+ *       chromaKey: { enabled: false, color: "#ffffff", tolerance: 35 }
+ *     },
+ *     colors: { ... }
+ *   },
+ *   qrCode: {
+ *     layout: {
+ *       scale: 1,
+ *       zoom: 1,
+ *       shape: "rounded",
+ *       cornerRadius: 18,
+ *       crop: { top: 0, right: 0, bottom: 0, left: 0 },
+ *       chromaKey: { enabled: false, color: "#ffffff", tolerance: 35 }
+ *     },
+ *     colors: { ... }
+ *   },
+ *   text: {
+ *     businessName: { ... },
+ *     address: { ... },
+ *     email: { ... },
+ *     items: { ... },
+ *     vat: { ... },
+ *     total: { ... }
+ *   },
+ *   colorGrading: {
+ *     selectedElementId: "businessName",
+ *     elements: {
+ *       businessName: { ... },
+ *       logo: { ... },
+ *       qr: { ... }
+ *     }
+ *   },
+ *   theme: {
+ *     colors: {
+ *       primary: "#08E3D8",
+ *       secondary: "#00B8FF",
+ *       background: "#041116",
+ *       text: "#FFFFFF",
+ *       mutedText: "#94A3B8"
+ *     }
+ *   }
+ * }
  */
+
+const clamp = (value, min, max) =>
+    Math.min(max, Math.max(min, Number(value) || 0));
+
+const hexToRgb = (hex) => {
+    if (!hex) return null;
+
+    const normalized = String(hex)
+        .replace("#", "")
+        .trim();
+
+    if (![3, 6].includes(normalized.length)) return null;
+
+    const value =
+        normalized.length === 3
+            ? normalized
+                .split("")
+                .map((char) => char + char)
+                .join("")
+            : normalized;
+
+    const parsed = Number.parseInt(value, 16);
+
+    if (Number.isNaN(parsed)) return null;
+
+    return {
+        r: (parsed >> 16) & 255,
+        g: (parsed >> 8) & 255,
+        b: parsed & 255
+    };
+};
+
+const resolveColor = (value, fallback) => {
+    if (!value) return fallback;
+    return value;
+};
+
+const mergeObjects = (...objects) =>
+    objects.reduce(
+        (result, object) => ({
+            ...result,
+            ...(object && typeof object === "object" ? object : {})
+        }),
+        {}
+    );
+
+const getElementGrading = (config, id) => {
+    const colorGrading = config?.colorGrading || {};
+    const elements = colorGrading?.elements || {};
+    const selectedId =
+        colorGrading?.selectedElementId ||
+        config?.selectedElementId;
+
+    /*
+     * The Color Grading studio can either:
+     *
+     * 1. store grading directly under elements[id], OR
+     * 2. keep the currently selected element in selectedElementId and
+     *    store the active grading controls directly under colorGrading.
+     *
+     * Supporting both makes the renderer tolerant of either Studio
+     * implementation without changing the JSX receipt itself.
+     */
+    const selectedGrading =
+        selectedId === id
+            ? {
+                basic: colorGrading?.basic,
+                neon: colorGrading?.neon,
+                glow: colorGrading?.glow,
+                light: colorGrading?.light,
+                sparkle: colorGrading?.sparkle,
+                gradient: colorGrading?.gradient,
+                advanced: colorGrading?.advanced
+            }
+            : {};
+
+    return mergeObjects(
+        colorGrading?.[id],
+        elements?.[id],
+        config?.elements?.[id]?.colorGrading,
+        config?.elements?.[id]?.colors,
+        selectedGrading
+    );
+};
+
+const getElementConfig = (config, id, directConfig) =>
+    mergeObjects(
+        directConfig,
+        config?.elements?.[id],
+        {
+            colors: getElementGrading(config, id)
+        }
+    );
+
+const getCropInsets = (crop) => {
+    if (!crop || typeof crop !== "object") {
+        return {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        };
+    }
+
+    return {
+        top: clamp(crop.top, 0, 49),
+        right: clamp(crop.right, 0, 49),
+        bottom: clamp(crop.bottom, 0, 49),
+        left: clamp(crop.left, 0, 49)
+    };
+};
+
+const shapeStyle = (shape, cornerRadius = 18) => {
+    switch (String(shape || "original").toLowerCase()) {
+        case "circle":
+            return {
+                borderRadius: "50%"
+            };
+
+        case "square":
+            return {
+                borderRadius: "0"
+            };
+
+        case "rounded":
+            return {
+                borderRadius: `${cornerRadius}px`
+            };
+
+        case "hexagon":
+            return {
+                clipPath:
+                    "polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%)"
+            };
+
+        case "diamond":
+            return {
+                clipPath:
+                    "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)"
+            };
+
+        case "octagon":
+            return {
+                clipPath:
+                    "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)"
+            };
+
+        default:
+            return {
+                borderRadius: `${cornerRadius}px`
+            };
+    }
+};
+
+const buildGradingFilter = (grading = {}) => {
+    const basic = grading?.basic || grading || {};
+    const advanced = grading?.advanced || {};
+
+    const exposure = Number(basic.exposure ?? 0);
+    const contrast = Number(basic.contrast ?? 0);
+    const saturation = Number(basic.saturation ?? 0);
+    const vibrance = Number(basic.vibrance ?? 0);
+    const hueShift = Number(advanced.hueShift ?? 0);
+
+    const brightness = clamp(1 + exposure / 100, 0.15, 3);
+    const contrastValue = clamp(1 + contrast / 100, 0.1, 3);
+    const saturationValue = clamp(
+        1 + (saturation + vibrance * 0.35) / 100,
+        0,
+        3
+    );
+
+    const filters = [
+        `brightness(${brightness})`,
+        `contrast(${contrastValue})`,
+        `saturate(${saturationValue})`
+    ];
+
+    if (hueShift) {
+        filters.push(`hue-rotate(${hueShift}deg)`);
+    }
+
+    if (Number(advanced.blur) > 0) {
+        filters.push(`blur(${Number(advanced.blur)}px)`);
+    }
+
+    return filters.join(" ");
+};
+
+const buildGradingStyle = (
+    grading = {},
+    fallbackColor = "#08E3D8",
+    isText = false
+) => {
+    const basic = grading?.basic || grading || {};
+    const neon = grading?.neon || {};
+    const glow = grading?.glow || {};
+    const light = grading?.light || {};
+    const sparkle = grading?.sparkle || {};
+    const gradient = grading?.gradient || {};
+    const advanced = grading?.advanced || {};
+
+    const primary =
+        neon.color ||
+        gradient.startColor ||
+        fallbackColor;
+
+    const shadows = [];
+
+    if (Number(neon.intensity ?? 0) > 0 || neon.enabled === true) {
+        const intensity = clamp(Number(neon.intensity ?? 60), 0, 100);
+        const spread = clamp(Number(neon.spread ?? 40), 1, 120);
+
+        shadows.push(
+            `0 0 ${Math.round(spread * 0.25)}px ${primary}`,
+            `0 0 ${Math.round(spread * 0.65)}px ${primary}${Math.round(
+                intensity * 0.55
+            )
+                .toString(16)
+                .padStart(2, "0")}`,
+            `0 0 ${spread}px ${primary}${Math.round(
+                intensity * 0.28
+            )
+                .toString(16)
+                .padStart(2, "0")}`
+        );
+    }
+
+    if (Number(glow.intensity ?? 0) > 0 || glow.enabled === true) {
+        const intensity = clamp(Number(glow.intensity ?? 60), 0, 100);
+        const radius = clamp(Number(glow.radius ?? 30), 1, 150);
+
+        shadows.push(
+            `0 0 ${radius}px ${primary}${Math.round(
+                intensity * 0.5
+            )
+                .toString(16)
+                .padStart(2, "0")}`
+        );
+    }
+
+    if (light.enabled === true || Number(light.intensity ?? 0) > 0) {
+        const intensity = clamp(Number(light.intensity ?? 30), 0, 100);
+
+        shadows.push(
+            `0 0 ${Math.max(4, Math.round(intensity / 3))}px rgba(255,255,255,${(
+                intensity / 200
+            ).toFixed(2)})`
+        );
+    }
+
+    if (advanced.sharpen) {
+        shadows.push(
+            `0 0 ${clamp(Number(advanced.sharpen), 0, 20)}px rgba(255,255,255,0.08)`
+        );
+    }
+
+    const style = {
+        filter: buildGradingFilter(grading, fallbackColor),
+        textShadow: isText && shadows.length
+            ? shadows.join(", ")
+            : undefined,
+        boxShadow: !isText && shadows.length
+            ? shadows.join(", ")
+            : undefined
+    };
+
+    if (gradient.enabled === true) {
+        const startColor = gradient.startColor || fallbackColor;
+        const endColor = gradient.endColor || "#00B8FF";
+        const angle = gradient.startAngle ?? gradient.angle ?? 90;
+        const opacity = clamp(
+            Number(gradient.opacity ?? 100) / 100,
+            0,
+            1
+        );
+
+        style.backgroundImage =
+            `linear-gradient(${angle}deg, ${startColor}, ${endColor})`;
+        style.backgroundBlendMode = "screen";
+        style.opacity = opacity;
+
+        if (isText) {
+            style.color = "transparent";
+            style.WebkitBackgroundClip = "text";
+            style.WebkitTextFillColor = "transparent";
+            style.backgroundClip = "text";
+        }
+    }
+
+    if (Number(basic.highlights ?? 0) !== 0) {
+        style.textShadow = [
+            style.textShadow,
+            `0 0 ${Math.abs(Number(basic.highlights)) / 2}px rgba(255,255,255,${Math.abs(
+                Number(basic.highlights)
+            ) / 500})`
+        ]
+            .filter(Boolean)
+            .join(", ");
+    }
+
+    if (sparkle.enabled === true) {
+        style["--ruach-sparkle-color"] =
+            sparkle.color || primary;
+    }
+
+    return style;
+};
+
+const SparkleOverlay = ({
+    grading = {},
+    color = "#08E3D8"
+}) => {
+    const sparkle = grading?.sparkle || {};
+
+    if (
+        sparkle.enabled !== true &&
+        Number(sparkle.intensity ?? 0) <= 0
+    ) {
+        return null;
+    }
+
+    const density = clamp(
+        Number(sparkle.density ?? 20),
+        1,
+        6
+    );
+
+    const count = Math.round(density);
+
+    return (
+        <span
+            aria-hidden="true"
+            style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                overflow: "hidden",
+                borderRadius: "inherit",
+                zIndex: 3
+            }}
+        >
+            {Array.from({ length: count }).map((_, index) => (
+                <span
+                    key={`sparkle-${index}`}
+                    style={{
+                        position: "absolute",
+                        left: `${15 + index * (70 / Math.max(1, count - 1))}%`,
+                        top: `${20 + ((index * 29) % 60)}%`,
+                        width: `${Math.max(
+                            2,
+                            Number(sparkle.size ?? 4)
+                        )}px`,
+                        height: `${Math.max(
+                            2,
+                            Number(sparkle.size ?? 4)
+                        )}px`,
+                        borderRadius: "50%",
+                        background:
+                            sparkle.color ||
+                            color,
+                        boxShadow: `0 0 8px ${sparkle.color || color
+                            }, 0 0 16px ${sparkle.color || color
+                            }`,
+                        opacity: clamp(
+                            Number(sparkle.intensity ?? 40) / 100,
+                            0.1,
+                            1
+                        )
+                    }}
+                />
+            ))}
+        </span>
+    );
+};
+
+const useChromaKeySource = (source, chromaKey) => {
+    const [processedSource, setProcessedSource] = useState(source || "");
+
+    useEffect(() => {
+        let cancelled = false;
+
+        if (
+            !source ||
+            !chromaKey?.enabled ||
+            !chromaKey?.color
+        ) {
+            setProcessedSource(source || "");
+            return undefined;
+        }
+
+        const target = hexToRgb(chromaKey.color);
+
+        if (!target) {
+            setProcessedSource(source || "");
+            return undefined;
+        }
+
+        const image = new Image();
+        image.crossOrigin = "anonymous";
+
+        image.onload = () => {
+            try {
+                const canvas = document.createElement("canvas");
+                canvas.width = image.naturalWidth || image.width;
+                canvas.height = image.naturalHeight || image.height;
+
+                const context = canvas.getContext("2d", {
+                    willReadFrequently: true
+                });
+
+                if (!context) {
+                    setProcessedSource(source);
+                    return;
+                }
+
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                const imageData = context.getImageData(
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                const pixels = imageData.data;
+                const tolerance = clamp(
+                    Number(chromaKey.tolerance ?? 35),
+                    1,
+                    255
+                );
+
+                for (let index = 0; index < pixels.length; index += 4) {
+                    const red = pixels[index];
+                    const green = pixels[index + 1];
+                    const blue = pixels[index + 2];
+
+                    const distance = Math.sqrt(
+                        (red - target.r) ** 2 +
+                        (green - target.g) ** 2 +
+                        (blue - target.b) ** 2
+                    );
+
+                    if (distance <= tolerance) {
+                        pixels[index + 3] = 0;
+                    } else if (
+                        distance <= tolerance * 1.5
+                    ) {
+                        const feather =
+                            (distance - tolerance) /
+                            (tolerance * 0.5);
+
+                        pixels[index + 3] = Math.round(
+                            255 * feather
+                        );
+                    }
+                }
+
+                context.putImageData(
+                    imageData,
+                    0,
+                    0
+                );
+
+                if (!cancelled) {
+                    setProcessedSource(
+                        canvas.toDataURL("image/png")
+                    );
+                }
+            } catch (error) {
+                console.warn(
+                    "MatrixTillSlip chroma key could not process the image:",
+                    error
+                );
+
+                if (!cancelled) {
+                    setProcessedSource(source);
+                }
+            }
+        };
+
+        image.onerror = () => {
+            if (!cancelled) {
+                setProcessedSource(source);
+            }
+        };
+
+        image.src = source;
+
+        return () => {
+            cancelled = true;
+        };
+    }, [
+        source,
+        chromaKey?.enabled,
+        chromaKey?.color,
+        chromaKey?.tolerance
+    ]);
+
+    return processedSource;
+};
+
+const ElementFrame = ({
+    id,
+    selectedElementId,
+    onSelectElement,
+    children,
+    style = {},
+    className = "",
+    ...props
+}) => {
+    const selected =
+        selectedElementId === id;
+
+    const handleClick = (event) => {
+        event.stopPropagation();
+
+        if (typeof onSelectElement === "function") {
+            onSelectElement(id);
+        }
+    };
+
+    return (
+        <div
+            data-receipt-element={id}
+            className={className}
+            onClick={handleClick}
+            style={{
+                position: "relative",
+                outline: selected
+                    ? "1px solid rgba(0,240,255,0.95)"
+                    : "none",
+                outlineOffset: selected
+                    ? "4px"
+                    : "0",
+                boxShadow: selected
+                    ? "0 0 0 1px rgba(0,240,255,0.2), 0 0 18px rgba(0,240,255,0.22)"
+                    : style.boxShadow,
+                cursor:
+                    typeof onSelectElement === "function"
+                        ? "pointer"
+                        : "default",
+                ...style
+            }}
+            {...props}
+        >
+            {children}
+        </div>
+    );
+};
 
 export default function MatrixTillSlip({
     receiptData = {},
     settings = {},
     user = null,
     activeCurrencySymbol = "",
-
-    // AI / design configuration
     designConfig = {},
-
-    // Voucher
     voucher = null,
     isExpired = false,
     daysRemaining = 0,
-
-    // QR / receipt
     qrCodeUrl = "",
     checkoutPayloadLink = "",
     receiptId = null,
-
-    // Actions
     onDownload,
-
-    // Optional external styling
+    onSelectElement,
+    selectedElementId: selectedElementIdProp = null,
     style: containerStyle = {}
 }) {
-
-    // ============================================================
-    // DESIGN CONFIGURATION
-    // ============================================================
-
     const config = designConfig || {};
 
-    /* Normalize the Editing Studio schema and the legacy AI schema. */
-    const colors = config.colors || {};
-    const effects = config.effects || {};
-    const typography = config.typography || {};
-    const receiptConfig = config.receipt || {};
-
+    /*
+     * System B configuration.
+     * No position configuration is consumed here.
+     */
     const logoConfig = config.logo || {};
     const logoLayout = logoConfig.layout || {};
-    const logoColors = logoConfig.colors || {};
-    const logoEffects = logoConfig.effects || {};
-
     const qrConfig = config.qrCode || {};
     const qrLayout = qrConfig.layout || {};
-    const qrColors = qrConfig.colors || {};
-    const qrEffects = qrConfig.effects || {};
 
-    const textConfig = config.text || {};
-    const themeConfig = config.theme || {};
-    const themeLayout = themeConfig.layout || {};
-    const themeColors = themeConfig.colors || {};
-    const themeEffects = themeConfig.effects || {};
+    /*
+     * System D configuration.
+     * Grading is resolved per receipt element.
+     */
+    const logoGrading = mergeObjects(
+        logoConfig.colors,
+        getElementGrading(config, "logo")
+    );
 
-    const rotationEffect = effects.infiniteRotation || logoEffects.infiniteRotation || {};
-    const hoverEffect = effects.hoverAnimation || logoEffects.hover || {};
-    const floatingEffect = effects.floatingElements || effects.floatingProductElements || logoEffects.floating || {};
-    const metallicEffect = effects.metallicReflection || logoEffects.metallic || themeEffects.metallic || {};
-    const glassEffect = effects.glassEffect || logoEffects.glass || themeEffects.glass || {};
-    const neonEffect = effects.neonGlow || logoEffects.neonGlow || {};
-    const holographicEffect = effects.holographicLighting || logoEffects.holographic || themeEffects.holographic || {};
-    const dynamicGradientEffect = effects.dynamicGradient || themeEffects.dynamicGradient || {};
+    const qrGrading = mergeObjects(
+        qrConfig.colors,
+        getElementGrading(config, "qr")
+    );
 
-    const animatedQrEffect = effects.animatedQr || effects.animatedQRCode || {
-        enabled: Boolean(
-            qrEffects.pulse?.enabled ||
-            qrEffects.scanline?.enabled ||
-            qrEffects.glow?.enabled ||
-            qrEffects.holographic?.enabled ||
-            qrEffects.animatedBorder?.enabled
-        ),
-        pulse: qrEffects.pulse?.enabled !== false,
-        scanline: qrEffects.scanline?.enabled === true,
-        glowColor: qrEffects.glow?.color,
-        speed: qrEffects.animationSpeed || qrEffects.pulse?.speed || "2.4s"
-    };
+    const businessNameConfig = getElementConfig(
+        config,
+        "businessName",
+        config.text?.businessName ||
+        config.text?.heading
+    );
 
-    const particleEffect = effects.particleEffects || {
-        enabled: themeEffects.particles?.enabled === true,
-        ...themeEffects.particles
-    };
+    const addressConfig = getElementConfig(
+        config,
+        "address",
+        config.text?.address ||
+        config.text?.body
+    );
 
-    const transitionEffect = effects.premiumTransitions || {
-        enabled: themeEffects.premiumTransition?.enabled === true,
-        ...themeEffects.premiumTransition
-    };
+    const emailConfig = getElementConfig(
+        config,
+        "email",
+        config.text?.email ||
+        config.text?.body
+    );
 
-    // Transition timing fallbacks used by CSS transitions
-    const transitionDuration = transitionEffect.duration || transitionEffect.transitionDuration || "0.25s";
-    const transitionEasing = transitionEffect.easing || transitionEffect.timingFunction || "ease";
+    const itemsConfig = getElementConfig(
+        config,
+        "items",
+        config.text?.items ||
+        config.text?.body
+    );
 
-    const logoRotationEnabled = rotationEffect.enabled === true || logoEffects.infiniteRotation?.enabled === true;
-    const logoHoverEnabled = hoverEffect.enabled === true || logoEffects.hover?.enabled === true;
-    const logoFloatingEnabled = floatingEffect.enabled === true || logoEffects.floating?.enabled === true;
-    const logoMetallicEnabled = metallicEffect.enabled === true || logoEffects.metallic?.enabled === true;
-    const logoGlassEnabled = glassEffect.enabled === true || logoEffects.glass?.enabled === true;
-    const logoNeonEnabled = neonEffect.enabled === true || logoEffects.neonGlow?.enabled === true;
-    const logoHolographicEnabled = holographicEffect.enabled === true || logoEffects.holographic?.enabled === true;
+    const vatConfig = getElementConfig(
+        config,
+        "vat",
+        config.text?.vat ||
+        config.text?.body
+    );
 
-    const themeGlassEnabled = themeEffects.glass?.enabled === true;
-    const themeNeonEnabled = themeEffects.neonBorder?.enabled === true;
-    const themeHolographicEnabled = themeEffects.holographic?.enabled === true;
-    const themeMetallicEnabled = themeEffects.metallic?.enabled === true;
-    const themeDynamicGradientEnabled = themeEffects.dynamicGradient?.enabled === true;
+    const totalConfig = getElementConfig(
+        config,
+        "total",
+        config.text?.total
+    );
 
-    const qrPulseEnabled = qrEffects.pulse?.enabled === true;
-    const qrScanlineEnabled = qrEffects.scanline?.enabled === true;
-    const qrGlowEnabled = qrEffects.glow?.enabled === true;
-    const qrHolographicEnabled = qrEffects.holographic?.enabled === true;
-    const qrAnimatedBorderEnabled = qrEffects.animatedBorder?.enabled === true;
+    const voucherConfig = getElementConfig(
+        config,
+        "voucher",
+        config.sections?.voucher
+    );
 
-    const rotationEnabled = rotationEffect.enabled === true;
-    const hoverEnabled = hoverEffect.enabled === true;
-    const floatingEnabled = floatingEffect.enabled === true;
-    const metallicEnabled = metallicEffect.enabled === true;
-    const glassEnabled = glassEffect.enabled === true;
-    const neonEnabled = neonEffect.enabled === true;
-    const holographicEnabled = holographicEffect.enabled === true;
-    const dynamicGradientEnabled = dynamicGradientEffect.enabled === true;
-    const animatedQrEnabled = animatedQrEffect.enabled === true;
-    const particlesEnabled = particleEffect.enabled === true || themeEffects.particles?.enabled === true;
+    const dividerConfig = getElementConfig(
+        config,
+        "divider",
+        config.sections?.divider
+    );
 
-    const resolveEffectColor = (value, fallback) => {
-        if (!value || value === "primary") return fallback;
-        if (value === "secondary") return colors.secondary || "#00B8FF";
-        if (value === "accent") return colors.accent || "#39D9FF";
-        return value;
-    };
+    const themeColors = config.theme?.colors || {};
 
+    const primaryColor =
+        themeColors.primary ||
+        config.colors?.primary ||
+        "#08E3D8";
 
-    // ============================================================
-    // RECEIPT DATE
-    // ============================================================
+    const secondaryColor =
+        themeColors.secondary ||
+        config.colors?.secondary ||
+        "#00B8FF";
 
-    const transactionDate = receiptData?.created_at
-        ? new Date(receiptData.created_at)
-        : new Date();
+    const backgroundColor =
+        themeColors.background ||
+        config.colors?.background ||
+        "linear-gradient(180deg, #061017 0%, #03080D 100%)";
+
+    const surfaceColor =
+        themeColors.surface ||
+        "#07181E";
+
+    const textColor =
+        themeColors.text ||
+        config.colors?.text ||
+        "#FFFFFF";
+
+    const mutedTextColor =
+        themeColors.mutedText ||
+        config.colors?.mutedText ||
+        "#94A3B8";
+
+    /*
+     * Only receipt layout values needed for the actual receipt shell.
+     * No element-position editor is read here.
+     */
+    const themeLayout = config.theme?.layout || {};
+
+    const receiptPadding =
+        Number(themeLayout.outerPadding ?? 12);
+
+    const receiptBorderWidth =
+        Number(themeLayout.borderWidth ?? 2);
+
+    const receiptBorderRadius =
+        Number(themeLayout.borderRadius ?? 24);
+
+    const sectionSpacing =
+        Number(themeLayout.sectionSpacing ?? 12);
+
+    const receiptWidth =
+        themeLayout.width || "100%";
+
+    const receiptDataItems = Array.isArray(
+        receiptData?.items
+    )
+        ? receiptData.items
+        : [];
+
+    const total =
+        receiptData?.total ??
+        receiptData?.total_amount ??
+        "";
+
+    const vat =
+        receiptData?.vat ??
+        receiptData?.vat_amount ??
+        null;
+
+    const transactionDate =
+        receiptData?.created_at
+            ? new Date(receiptData.created_at)
+            : new Date();
 
     const formattedTransactionDate =
         transactionDate
@@ -171,557 +820,450 @@ export default function MatrixTillSlip({
             })
             .replace(/,/g, "");
 
-
-    // ============================================================
-    // CONFIGURATION FALLBACKS
-    // ============================================================
-
-    const primaryColor =
-        themeColors.primary || colors.primary || "#08E3D8";
-
-    const secondaryColor =
-        themeColors.secondary || colors.secondary || "#00B8FF";
-
-    const backgroundColor =
-        themeColors.background || colors.background ||
-        "linear-gradient(180deg, rgba(8,18,24,0.95), rgba(4,10,14,0.98))";
-
-    const textColor =
-        themeColors.text || colors.text || "#FFFFFF";
-
-    const mutedTextColor =
-        themeColors.mutedText || colors.mutedText || "#94A3B8";
-
-    const receiptGlow =
-        effects.receiptGlow ||
-        `
-            0 0 6px rgba(8,227,216,.75),
-            0 0 16px rgba(8,227,216,.45),
-            0 0 34px rgba(8,227,216,.18),
-            0 25px 60px rgba(0,0,0,.65)
-        `;
-
-    const businessNameSize =
-        typography.businessNameSize || "20px";
-
-    const businessNameWeight =
-        typography.businessNameWeight || "900";
-
-    const headingText = textConfig.heading || {};
-    const bodyText = textConfig.body || {};
-    const totalText = textConfig.total || {};
-
-    const textStyleFromConfig = (target, fallback = {}) => {
-        const brightness = Number(target.brightness ?? 1);
-        const contrast = Number(target.contrast ?? 1);
-        const effect = target.effects || {};
-        const gradientEnabled = target.dynamicGradient?.enabled === true;
-        const gradientColors = target.dynamicGradient?.colors || [primaryColor, secondaryColor];
-
-        return {
-            fontFamily: target.fontFamily || fallback.fontFamily,
-            fontSize: target.fontSize ? `${target.fontSize}px` : fallback.fontSize,
-            fontWeight: target.fontWeight || fallback.fontWeight,
-            letterSpacing: target.letterSpacing !== undefined ? `${target.letterSpacing}px` : fallback.letterSpacing,
-            textAlign: target.alignment || fallback.textAlign,
-            opacity: target.opacity ?? fallback.opacity,
-            color: target.color || fallback.color,
-            transform: `scale(${target.scale || 1}) rotate(${target.rotation || 0}deg)`,
-            transformOrigin: "center",
-            filter: `brightness(${brightness}) contrast(${contrast})`,
-            textShadow:
-                effect.neon?.enabled || effect.glow?.enabled || effect.shadow?.enabled
-                    ? `0 0 ${effect.neon?.radius || 10}px ${effect.neon?.color || primaryColor}99, 0 4px 12px rgba(0,0,0,0.35)`
-                    : undefined,
-            ...(gradientEnabled
-                ? {
-                    backgroundImage: `linear-gradient(90deg, ${gradientColors.join(", ")})`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text"
-                }
-                : {})
-        };
-    };
-
-    const headingVisualStyle = textStyleFromConfig(headingText, {
-        fontSize: businessNameSize,
-        fontWeight: businessNameWeight,
-        letterSpacing: typography.businessNameSpacing || "1px",
-        color: textColor
-    });
-    const bodyVisualStyle = textStyleFromConfig(bodyText, {
-        fontSize: "11px", fontWeight: "700", color: "rgba(255,255,255,0.85)"
-    });
-    const totalVisualStyle = textStyleFromConfig(totalText, {
-        fontSize: "14px", fontWeight: "900", color: colors.totalLabel || "#B1B5C6"
-    });
-
-    const showWatermark =
-        receiptConfig.showWatermark !== false;
-
-    const showVoucher =
-        receiptConfig.showVoucher !== false;
-
-    const showDownloadButton =
-        receiptConfig.showDownloadButton !== false;
-
-    const themeBorderWidth = Number(themeLayout.borderWidth ?? 2);
-    const themeBorderRadius = Number(themeLayout.borderRadius ?? 26);
-    const themeOuterPadding = Number(themeLayout.outerPadding ?? 9);
-    const themeReceiptWidth = themeLayout.width || "100%";
-
-    const logoEnabled = logoConfig.enabled !== false;
-
-    const baseLogoSize =
-        logoConfig.size === "small" ? 100 :
-            logoConfig.size === "large" ? 220 : 170;
-
-    const numericLogoScale = Number.isFinite(Number(logoLayout.scale ?? logoConfig.scale))
-        ? Math.max(0.1, Number(logoLayout.scale ?? logoConfig.scale))
-        : 1;
-
-    const logoWidth =
-        logoLayout.width || logoConfig.width || logoConfig.mainLogoWidth ||
-        `${Math.round(baseLogoSize * numericLogoScale)}px`;
-
-    const logoHeight =
-        logoLayout.height || logoConfig.height || logoConfig.mainLogoHeight ||
-        `${Math.round(baseLogoSize * numericLogoScale)}px`;
-
-    const logoMaxWidth = logoLayout.maxWidth || logoConfig.maxWidth || "100%";
-    const logoMaxHeight = logoLayout.maxHeight || logoConfig.maxHeight || "none";
-    const logoPositionName = logoLayout.position || logoConfig.position || "top-center";
-    const logoRotation = Number(logoLayout.rotation ?? logoConfig.rotation ?? 0);
-    const logoOpacity = Number(logoLayout.opacity ?? logoConfig.opacity ?? 1);
-    const logoAspectRatio = logoLayout.aspectRatio || logoConfig.aspectRatio || "auto";
-    const logoLockAspectRatio = logoLayout.lockAspectRatio ?? logoConfig.lockAspectRatio ?? true;
-
-    let logoPosition = {
-        top: "20px",
-        left: "50%",
-        transform: `translateX(-50%) rotate(${logoRotation}deg)`
-    };
-
-    if (logoPositionName === "top-left") {
-        logoPosition = { top: "20px", left: "20px", transform: `rotate(${logoRotation}deg)` };
-    }
-    if (logoPositionName === "top-right") {
-        logoPosition = { top: "20px", right: "20px", transform: `rotate(${logoRotation}deg)` };
-    }
-    if (logoPositionName === "top-center" || logoPositionName === "top") {
-        logoPosition = { top: "20px", left: "50%", transform: `translateX(-50%) rotate(${logoRotation}deg)` };
-    }
-    if (logoPositionName === "center") {
-        logoPosition = { top: "50%", left: "50%", transform: `translate(-50%, -50%) rotate(${logoRotation}deg)` };
-    }
-    if (logoPositionName === "bottom-center" || logoPositionName === "bottom") {
-        logoPosition = { bottom: "40px", left: "50%", transform: `translateX(-50%) rotate(${logoRotation}deg)` };
-    }
-    if (logoPositionName === "bottom-left") {
-        logoPosition = { bottom: "40px", left: "40px", transform: `rotate(${logoRotation}deg)` };
-    }
-    if (logoPositionName === "bottom-right") {
-        logoPosition = { bottom: "40px", right: "40px", transform: `rotate(${logoRotation}deg)` };
-    }
-
-
-    // ============================================================
-    // RECEIPT CONTENT
-    // ============================================================
-
-    const items =
-        Array.isArray(receiptData?.items)
-            ? receiptData.items
-            : [];
-
-    const total =
-        receiptData?.total ??
-        receiptData?.total_amount ??
-        "";
-
-    const vat =
-        receiptData?.vat ??
-        receiptData?.vat_amount ??
+    const selectedElementId =
+        selectedElementIdProp ||
+        config?.colorGrading?.selectedElementId ||
+        config?.selectedElementId ||
         null;
 
-    const qrCodeSize =
-        typeof config.qrCode?.size === "number"
-            ? `${config.qrCode.size}px`
-            : config.qrCode?.size || "80px";
+    /*
+     * Logo properties.
+     */
+    const logoScale = clamp(
+        Number(logoLayout.scale ?? 1),
+        0.1,
+        10
+    );
 
-    const qrScale = Number(qrLayout.scale ?? qrConfig.scale ?? 1);
-    const qrRotation = Number(qrLayout.rotation ?? qrConfig.rotation ?? 0);
-    const qrCornerRadius = Number(qrLayout.cornerRadius ?? qrConfig.cornerRadius ?? 18);
-    const qrForeground = qrColors.foreground || "#050608";
-    const qrBackground = qrColors.background || "#FFFFFF";
-    const qrOpacity = Number(qrColors.opacity ?? qrConfig.opacity ?? 1);
+    const logoZoom = clamp(
+        Number(logoLayout.zoom ?? 1),
+        0.1,
+        10
+    );
 
+    const logoWidth =
+        logoLayout.width ||
+        `${Math.round(150 * logoScale)}px`;
 
-    // ============================================================
-    // DOWNLOAD HANDLER
-    // ============================================================
+    const logoHeight =
+        logoLayout.height ||
+        `${Math.round(150 * logoScale)}px`;
+
+    const logoOpacity = clamp(
+        Number(logoLayout.opacity ?? 1),
+        0,
+        1
+    );
+
+    const logoCrop =
+        getCropInsets(logoLayout.crop);
+
+    const logoShape =
+        logoLayout.shape ||
+        logoConfig.shape ||
+        "rounded";
+
+    const logoChromaKey =
+        logoLayout.chromaKey ||
+        logoConfig.chromaKey ||
+        {};
+
+    /*
+     * QR properties.
+     */
+    const qrBaseSize =
+        Number(qrLayout.size ?? qrConfig.size ?? 96);
+
+    const qrScale = clamp(
+        Number(qrLayout.scale ?? 1),
+        0.1,
+        10
+    );
+
+    const qrZoom = clamp(
+        Number(qrLayout.zoom ?? 1),
+        0.1,
+        10
+    );
+
+    const qrOpacity = clamp(
+        Number(qrLayout.opacity ?? qrConfig.opacity ?? 1),
+        0,
+        1
+    );
+
+    const qrCrop =
+        getCropInsets(qrLayout.crop);
+
+    const qrShape =
+        qrLayout.shape ||
+        qrConfig.shape ||
+        "rounded";
+
+    const qrCornerRadius =
+        Number(
+            qrLayout.cornerRadius ??
+            qrConfig.cornerRadius ??
+            18
+        );
+
+    const qrChromaKey =
+        qrLayout.chromaKey ||
+        qrConfig.chromaKey ||
+        {};
+
+    const logoSource =
+        useChromaKeySource(
+            settings?.logo_url || "",
+            logoChromaKey
+        );
+
+    const qrSource =
+        useChromaKeySource(
+            qrCodeUrl || "",
+            qrChromaKey
+        );
 
     const handleDownload = (event) => {
-
         if (event) {
             event.preventDefault();
         }
 
         if (typeof onDownload === "function") {
             onDownload();
-            return;
+        } else {
+            console.warn(
+                "MatrixTillSlip: onDownload handler was not supplied."
+            );
         }
-
-        console.warn(
-            "MatrixTillSlip: onDownload handler was not supplied."
-        );
     };
 
+    const showWatermark =
+        config.receipt?.showWatermark !== false;
 
-    // ============================================================
-    // RENDER
-    // ============================================================
+    const showVoucher =
+        config.receipt?.showVoucher !== false;
+
+    const showDownloadButton =
+        config.receipt?.showDownloadButton !== false;
+
+    const businessNameStyle = buildGradingStyle(
+        businessNameConfig.colors || {},
+        primaryColor,
+        true
+    );
+
+    const addressStyle = buildGradingStyle(
+        addressConfig.colors || {},
+        primaryColor,
+        true
+    );
+
+    const emailStyle = buildGradingStyle(
+        emailConfig.colors || {},
+        primaryColor,
+        true
+    );
+
+    const itemsStyle = buildGradingStyle(
+        itemsConfig.colors || {},
+        primaryColor,
+        true
+    );
+
+    const vatStyle = buildGradingStyle(
+        vatConfig.colors || {},
+        primaryColor,
+        true
+    );
+
+    const totalStyle = buildGradingStyle(
+        totalConfig.colors || {},
+        primaryColor,
+        true
+    );
+
+    const logoStyle = buildGradingStyle(
+        logoGrading,
+        primaryColor,
+        false
+    );
+
+    const qrStyle = buildGradingStyle(
+        qrGrading,
+        primaryColor,
+        false
+    );
+
+    const logoImageCropStyle = {
+        ...shapeStyle(
+            logoShape,
+            Number(logoLayout.cornerRadius ?? 18)
+        ),
+        width: logoWidth,
+        height: logoHeight,
+        objectFit:
+            logoLayout.objectFit || "contain",
+        opacity: logoOpacity,
+        transform:
+            `scale(${logoScale * logoZoom})`,
+        transformOrigin: "center",
+        filter: logoStyle.filter,
+        boxShadow: logoStyle.boxShadow
+    };
+
+    const qrImageCropStyle = {
+        ...shapeStyle(
+            qrShape,
+            qrCornerRadius
+        ),
+        width: `${qrBaseSize}px`,
+        height: `${qrBaseSize}px`,
+        objectFit: "contain",
+        opacity: qrOpacity,
+        transform:
+            `scale(${qrScale * qrZoom})`,
+        transformOrigin: "center",
+        filter: qrStyle.filter,
+        boxShadow: qrStyle.boxShadow
+    };
+
+    const cropContainerStyle = (crop) => ({
+        position: "relative",
+        overflow: "hidden",
+        clipPath:
+            crop.top ||
+                crop.right ||
+                crop.bottom ||
+                crop.left
+                ? `inset(${crop.top}% ${crop.right}% ${crop.bottom}% ${crop.left}%)`
+                : undefined
+    });
+
+    const clickable = (id) => ({
+        id,
+        selectedElementId,
+        onSelectElement
+    });
 
     return (
         <div
             id="till-slip-capture"
             className="matrix-till-slip-root"
             style={{
-                width: themeReceiptWidth,
-                padding: `${themeOuterPadding}px`,
-                border: `${themeBorderWidth}px solid ${primaryColor}`,
-                boxShadow: receiptGlow,
-                background: backgroundColor,
+                width: receiptWidth,
+                padding: `${receiptPadding}px`,
+                border:
+                    `${receiptBorderWidth}px solid ${primaryColor}`,
+                borderRadius:
+                    `${receiptBorderRadius}px`,
+                background:
+                    backgroundColor,
+                color: textColor,
+                boxSizing: "border-box",
                 position: "relative",
                 overflow: "hidden",
-                boxSizing: "border-box",
+                boxShadow:
+                    `0 0 10px ${primaryColor}66,
+                     0 0 30px ${primaryColor}22,
+                     0 25px 60px rgba(0,0,0,0.65)`,
                 ...containerStyle
             }}
         >
-
             <style>{`
-                @keyframes ruachInfiniteRotation {
-                    from { transform: rotateY(0deg); }
-                    to { transform: rotateY(360deg); }
+                .matrix-till-slip-root,
+                .matrix-till-slip-root * {
+                    box-sizing: border-box;
                 }
-                @keyframes ruachFloat {
-                    0%, 100% { transform: translate3d(0, 0, 0); }
-                    50% { transform: translate3d(0, -${floatingEffect.amplitude || 7}px, 0); }
-                }
-                @keyframes ruachMetallicSweep {
-                    0% { background-position: -220% 0; }
-                    100% { background-position: 220% 0; }
-                }
-                @keyframes ruachHolographic {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-                @keyframes ruachGradient {
-                    0% { background-position: 0% 50%; }
-                    50% { background-position: 100% 50%; }
-                    100% { background-position: 0% 50%; }
-                }
-                @keyframes ruachQrPulse {
-                    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
-                    50% { transform: scale(1.035); filter: drop-shadow(0 0 10px ${resolveEffectColor(animatedQrEffect.glowColor, primaryColor)}66); }
-                }
-                @keyframes ruachQrScan {
-                    0% { transform: translateY(-55px); opacity: 0; }
-                    15% { opacity: .75; }
-                    85% { opacity: .75; }
-                    100% { transform: translateY(55px); opacity: 0; }
-                }
-                @keyframes ruachParticleDrift {
-                    0% { transform: translate3d(0, 0, 0); opacity: 0; }
-                    15% { opacity: var(--particle-opacity); }
-                    85% { opacity: var(--particle-opacity); }
-                    100% { transform: translate3d(var(--particle-x), var(--particle-y), 0); opacity: 0; }
-                }
-                @keyframes ruachNeonPulse {
-                    0%, 100% { opacity: .72; }
-                    50% { opacity: 1; }
-                }
-                .matrix-effect-target {
-                    transition: all ${transitionDuration} ${transitionEasing};
-                }
-                .matrix-hover-target:hover {
-                    transform: translate3d(0, ${hoverEffect.translateY ?? -3}px, 0) scale(${hoverEffect.scale || 1.025}) rotate(${hoverEffect.rotate || 0}deg);
-                    filter: drop-shadow(0 10px 22px ${resolveEffectColor(hoverEffect.glowColor, primaryColor)}33);
-                }
-                .matrix-rotation-target {
-                    animation: ruachInfiniteRotation ${rotationEffect.speed || "18s"} linear infinite;
-                    animation-direction: ${rotationEffect.direction === "reverse" ? "reverse" : "normal"};
-                    transform-style: preserve-3d;
-                }
-                .matrix-float-target {
-                    animation: ruachFloat ${floatingEffect.duration || "4s"} ease-in-out infinite;
-                    animation-delay: ${floatingEffect.delay || "0s"};
-                }
-                .matrix-metallic-target {
-                    position: relative;
-                    isolation: isolate;
-                }
-                .matrix-metallic-target::after {
-                    content: "";
-                    position: absolute;
-                    inset: 0;
-                    pointer-events: none;
-                    background: linear-gradient(115deg, transparent 25%, rgba(255,255,255,${metallicEffect.intensity ?? .28}) 48%, transparent 68%);
-                    background-size: 220% 100%;
-                    animation: ruachMetallicSweep ${metallicEffect.speed || "3.5s"} linear infinite;
-                    mix-blend-mode: screen;
-                    border-radius: inherit;
-                    z-index: 3;
-                }
-                .matrix-glass-target {
-                    backdrop-filter: blur(${glassEffect.blur || "14px"}) saturate(${glassEffect.saturation || "140%"});
-                    -webkit-backdrop-filter: blur(${glassEffect.blur || "14px"}) saturate(${glassEffect.saturation || "140%"});
-                    background: rgba(255,255,255,${glassEffect.opacity ?? .08}) !important;
-                    border-color: rgba(255,255,255,${glassEffect.borderOpacity ?? .18}) !important;
-                }
-                .matrix-neon-target {
-                    animation: ${neonEffect.pulse === false ? "none" : "ruachNeonPulse 2.2s ease-in-out infinite"};
-                    box-shadow: 0 0 ${neonEffect.radius || 24}px ${resolveEffectColor(neonEffect.color, primaryColor)}${Math.round((neonEffect.intensity ?? .55) * 99).toString(16).padStart(2, "0")};
-                }
-                .matrix-holographic-target {
-                    background-image: linear-gradient(120deg, ${((holographicEffect.colors || [primaryColor, secondaryColor, "#FF4FD8"]).join(", "))}) !important;
-                    background-size: 300% 300% !important;
-                    animation: ruachHolographic ${holographicEffect.speed || "5s"} ease infinite;
-                }
-                .matrix-dynamic-gradient-target {
-                    background-image: linear-gradient(${dynamicGradientEffect.angle || "135deg"}, ${((dynamicGradientEffect.colors || [primaryColor, secondaryColor]).join(", "))}) !important;
-                    background-size: 240% 240% !important;
-                    animation: ruachGradient ${dynamicGradientEffect.speed || "6s"} ease infinite;
-                }
-                .matrix-qr-animated {
-                    animation: ${animatedQrEffect.pulse === false ? "none" : `ruachQrPulse ${animatedQrEffect.speed || "2.4s"} ease-in-out infinite`};
-                }
-                .matrix-qr-scanline {
-                    position: absolute;
-                    left: 8px;
-                    right: 8px;
-                    top: 50%;
-                    height: 2px;
-                    background: ${resolveEffectColor(animatedQrEffect.scanlineColor, primaryColor)};
-                    box-shadow: 0 0 8px ${resolveEffectColor(animatedQrEffect.scanlineColor, primaryColor)};
-                    animation: ruachQrScan ${animatedQrEffect.speed || "2.2s"} linear infinite;
-                    pointer-events: none;
-                    z-index: 4;
-                }
-                .matrix-premium-transition {
-                    transition: all ${transitionDuration} ${transitionEasing};
-                }
-                @media print {
-                    .matrix-rotation-target,
-                    .matrix-float-target,
-                    .matrix-metallic-target::after,
-                    .matrix-neon-target,
-                    .matrix-holographic-target,
-                    .matrix-dynamic-gradient-target,
-                    .matrix-qr-animated,
-                    .matrix-qr-scanline,
-                    .matrix-till-slip-root > div[aria-hidden="true"] {
-                        animation: none !important;
-                    }
-                    .matrix-hover-target {
-                        transform: none !important;
-                    }
-                }
-            `}</style>
 
-            {particlesEnabled && (
-                <div
-                    aria-hidden="true"
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        overflow: "hidden",
-                        pointerEvents: "none",
-                        zIndex: 4
-                    }}
-                >
-                    {Array.from({ length: Math.min(60, Math.max(1, Number(particleEffect.count) || 14)) }).map((_, index) => (
-                        <span
-                            key={`particle-${index}`}
-                            style={{
-                                position: "absolute",
-                                left: `${(index * 37) % 100}%`,
-                                top: `${(index * 61) % 100}%`,
-                                width: `${particleEffect.size || 2}px`,
-                                height: `${particleEffect.size || 2}px`,
-                                borderRadius: "50%",
-                                background: resolveEffectColor(particleEffect.color, primaryColor),
-                                boxShadow: `0 0 8px ${resolveEffectColor(particleEffect.color, primaryColor)}`,
-                                opacity: 0,
-                                ["--particle-x"]: `${((index % 2 ? 1 : -1) * (20 + (index % 5) * 10))}px`,
-                                ["--particle-y"]: `${-(20 + (index % 7) * 12)}px`,
-                                ["--particle-opacity"]: particleEffect.opacity ?? 0.55,
-                                animation: `ruachParticleDrift ${particleEffect.duration || "4s"} ease-in-out ${(index * .17).toFixed(2)}s infinite`
-                            }}
-                        />
-                    ))}
-                </div>
-            )}
-
-            {/* =====================================================
-                TOP GLOW EFFECT
-            ====================================================== */}
-
-            <div
-                style={{
-                    position: "absolute",
-                    top: "-120px",
-                    right: "-120px",
-                    width: "240px",
-                    height: "240px",
-                    borderRadius: "50%",
+                .matrix-receipt-surface {
+                    width: 100%;
+                    min-height: 100%;
                     background:
-                        `radial-gradient(
-                            circle,
-                            ${primaryColor}30,
-                            transparent 70%
-                        )`,
-                    filter:
-                        effects.glowBlur || "blur(10px)",
-                    pointerEvents: "none"
-                }}
-            />
-
-
-            {/* =====================================================
-                HEADER
-            ====================================================== */}
-
-            <h3
-                style={{
-                    margin: "0 0 18px 0",
-                    fontSize: "12px",
-                    fontWeight: "800",
-                    color: primaryColor,
-                    letterSpacing: "2px",
-                    textTransform: "uppercase",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    position: "relative",
-                    zIndex: 2
-                }}
-            >
-                ⚡ Live Inbox Email Till Slip Mirror
-            </h3>
-
-
-            {/* =====================================================
-                RECEIPT CONTAINER
-            ====================================================== */}
-
-            <div
-                className={[
-                    "matrix-receipt-surface",
-                    "matrix-effect-target",
-                    (glassEnabled || themeGlassEnabled) ? "matrix-glass-target" : "",
-                    (neonEnabled || themeNeonEnabled) ? "matrix-neon-target" : "",
-                    (holographicEnabled || themeHolographicEnabled) ? "matrix-holographic-target" : "",
-                    (dynamicGradientEnabled || themeDynamicGradientEnabled) ? "matrix-dynamic-gradient-target" : "",
-                    (metallicEnabled || themeMetallicEnabled) ? "matrix-metallic-target" : ""
-                ].filter(Boolean).join(" ")}
-                style={{
-                    background: `
                         linear-gradient(
                             180deg,
-                            #041116 0%,
-                            #07181E 45%,
-                            #041116 100%
-                        )
-                    `,
-                    backgroundImage: `
+                            ${surfaceColor} 0%,
+                            #041116 48%,
+                            #030A0F 100%
+                        );
+                    background-image:
                         linear-gradient(
-                            ${primaryColor}14 1px,
+                            ${primaryColor}12 1px,
                             transparent 1px
                         ),
                         linear-gradient(
                             90deg,
-                            ${primaryColor}14 1px,
+                            ${primaryColor}12 1px,
                             transparent 1px
-                        )
-                    `,
-                    backgroundSize: "24px 24px",
-                    color: textColor,
-                    borderRadius: `${themeBorderRadius}px`,
-                    padding: `${themeOuterPadding}px`,
-                    boxShadow: receiptGlow,
-                    fontFamily: '"Courier New", monospace',
-                    position: "relative",
-                    overflow: "hidden",
-                    border: `${themeBorderWidth}px solid ${primaryColor}`
+                        );
+                    background-size: 24px 24px;
+                    border:
+                        1px solid ${primaryColor}55;
+                    border-radius:
+                        ${Math.max(8, receiptBorderRadius - 6)}px;
+                    color: ${textColor};
+                    padding: ${receiptPadding}px;
+                    font-family:
+                        "Courier New",
+                        Courier,
+                        monospace;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                .matrix-receipt-divider {
+                    height: 1px;
+                    width: 100%;
+                    margin-bottom: ${sectionSpacing}px;
+                    background:
+                        linear-gradient(
+                            90deg,
+                            transparent,
+                            ${primaryColor}66,
+                            ${secondaryColor}55,
+                            transparent
+                        );
+                }
+
+                .matrix-receipt-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    gap: 12px;
+                    padding: 7px 0;
+                    border-bottom:
+                        1px dashed rgba(255,255,255,0.10);
+                }
+
+                .matrix-receipt-selected {
+                    outline:
+                        1px solid rgba(0,240,255,0.95);
+                    outline-offset: 4px;
+                    box-shadow:
+                        0 0 0 1px rgba(0,240,255,0.18),
+                        0 0 18px rgba(0,240,255,0.20);
+                }
+
+                .matrix-receipt-total {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 12px;
+                    margin-top: ${sectionSpacing}px;
+                    padding: 14px;
+                    border:
+                        2px solid ${primaryColor};
+                    border-radius: 16px;
+                    background:
+                        linear-gradient(
+                            90deg,
+                            ${primaryColor}1A,
+                            ${secondaryColor}0D
+                        );
+                }
+
+                .matrix-receipt-logo-stage,
+                .matrix-receipt-qr-stage {
+                    position: relative;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    overflow: hidden;
+                }
+
+                .matrix-receipt-logo-stage {
+                    min-width: 52px;
+                    min-height: 52px;
+                    padding: 8px;
+                    background: rgba(255,255,255,0.035);
+                }
+
+                .matrix-receipt-qr-stage {
+                    padding: 12px;
+                    background: #FFFFFF;
+                }
+
+                .matrix-receipt-sparkle {
+                    pointer-events: none;
+                }
+
+                @media print {
+                    .matrix-receipt-selected {
+                        outline: none !important;
+                        box-shadow: none !important;
+                    }
+                }
+            `}</style>
+
+            <div
+                style={{
+                    position: "absolute",
+                    top: "-90px",
+                    right: "-90px",
+                    width: "220px",
+                    height: "220px",
+                    borderRadius: "50%",
+                    background:
+                        `radial-gradient(
+                            circle,
+                            ${primaryColor}28,
+                            transparent 70%
+                        )`,
+                    filter: "blur(12px)",
+                    pointerEvents: "none"
+                }}
+                aria-hidden="true"
+            />
+
+            <div
+                className="matrix-receipt-surface"
+                data-receipt-element="receipt"
+                onClick={(event) => {
+                    event.stopPropagation();
+
+                    if (
+                        typeof onSelectElement ===
+                        "function"
+                    ) {
+                        onSelectElement("receipt");
+                    }
                 }}
             >
-
-                {/* =================================================
-                    RECEIPT CORNER LIGHT
-                ================================================== */}
-
-                <div
-                    style={{
-                        position: "absolute",
-                        top: "-80px",
-                        left: "-80px",
-                        width: "30px",
-                        height: "30px",
-                        background:
-                            `radial-gradient(
-                                circle,
-                                ${primaryColor}14,
-                                transparent 70%
-                            )`,
-                        borderRadius: "50%"
-                    }}
-                />
-
-
-                {/* =================================================
-                    CENTRAL LOGO WATERMARK
-                ================================================== */}
-
-                {settings?.logo_url &&
-                    logoEnabled &&
+                {logoSource &&
+                    logoConfig.enabled !== false &&
                     showWatermark && (
                         <div
-                            className={[
-                                "matrix-effect-target",
-                                (logoRotationEnabled || (rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all"))) ? "matrix-rotation-target" : "",
-                                (logoHoverEnabled || (hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all"))) ? "matrix-hover-target" : "",
-                                (logoFloatingEnabled || (floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all"))) ? "matrix-float-target" : "",
-                                logoMetallicEnabled ? "matrix-metallic-target" : "",
-                                logoGlassEnabled ? "matrix-glass-target" : "",
-                                logoNeonEnabled ? "matrix-neon-target" : "",
-                                logoHolographicEnabled ? "matrix-holographic-target" : ""
-                            ].filter(Boolean).join(" ")}
+                            aria-hidden="true"
                             style={{
                                 position: "absolute",
-                                width: logoWidth,
-                                height: logoHeight,
-                                backgroundImage:
-                                    `url(${settings.logo_url})`,
-                                backgroundSize: "contain",
-                                backgroundPosition: "center",
-                                backgroundRepeat: "no-repeat",
+                                inset: 0,
+                                pointerEvents: "none",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
                                 opacity:
                                     logoConfig.watermarkOpacity ??
                                     0.035,
-                                pointerEvents: "none",
-                                zIndex: 1,
-                                ...logoPosition
+                                zIndex: 0
                             }}
-                        />
+                        >
+                            <img
+                                src={logoSource}
+                                alt=""
+                                style={{
+                                    width: logoWidth,
+                                    height: logoHeight,
+                                    objectFit: "contain",
+                                    ...shapeStyle(
+                                        logoShape,
+                                        18
+                                    ),
+                                    filter:
+                                        logoStyle.filter
+                                }}
+                            />
+                        </div>
                     )}
-
-
-                {/* =================================================
-                    RECEIPT CONTENT
-                ================================================== */}
 
                 <div
                     style={{
@@ -729,55 +1271,48 @@ export default function MatrixTillSlip({
                         zIndex: 2
                     }}
                 >
-
-                    {/* =================================================
-                        TOP METADATA
-                    ================================================== */}
+                    {/* TOP METADATA */}
 
                     <div
                         style={{
                             display: "flex",
-                            justifyContent: "space-between",
+                            justifyContent:
+                                "space-between",
                             alignItems: "flex-start",
-                            fontSize: "10px",
+                            gap: 12,
+                            fontSize: 10,
                             color: mutedTextColor,
-                            marginBottom: "9px"
+                            marginBottom: sectionSpacing
                         }}
                     >
-
                         <div
                             style={{
-                                padding: "2px 5px",
-                                borderRadius: "999px",
+                                padding: "3px 7px",
+                                borderRadius: 999,
                                 background:
-                                    `${primaryColor}1F`,
+                                    `${primaryColor}1C`,
                                 border:
-                                    `2px solid ${primaryColor}`,
-                                boxShadow: `
-                                    0 0 6px ${primaryColor}99,
-                                    inset 0 0 12px ${primaryColor}2E
-                                `,
+                                    `1px solid ${primaryColor}`,
                                 color: primaryColor,
-                                fontWeight: "800",
-                                letterSpacing: "0.5px"
+                                fontWeight: 900,
+                                letterSpacing: "0.6px"
                             }}
                         >
                             VERIFIED NODE
                         </div>
 
-
                         <div
                             style={{
                                 textAlign: "right",
-                                lineHeight: "1.5"
+                                lineHeight: 1.5
                             }}
                         >
                             <div
                                 style={{
-                                    fontWeight: "900",
+                                    fontWeight: 900,
                                     color: "#C5CCDA",
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.5px"
+                                    textTransform:
+                                        "uppercase"
                                 }}
                             >
                                 Transaction
@@ -790,153 +1325,147 @@ export default function MatrixTillSlip({
                             {receiptId && (
                                 <div
                                     style={{
-                                        marginTop: "3px",
-                                        fontSize: "8px",
+                                        marginTop: 3,
+                                        fontSize: 8,
                                         opacity: 0.6
                                     }}
                                 >
-                                    #{receiptId.slice(0, 8)}
+                                    #{String(
+                                        receiptId
+                                    ).slice(0, 8)}
                                 </div>
                             )}
                         </div>
-
                     </div>
 
+                    {/* LOGO */}
 
-                    {/* =================================================
-                        TOP MINI LOGO
-                    ================================================== */}
-
-                    <div
+                    <ElementFrame
+                        {...clickable("logo")}
                         style={{
-                            textAlign: "center",
-                            marginBottom: "9px"
+                            display: "flex",
+                            justifyContent:
+                                "center",
+                            alignItems: "center",
+                            marginBottom:
+                                sectionSpacing
                         }}
                     >
-
-                        {settings?.logo_url &&
-                            logoEnabled ? (
-
+                        {logoSource &&
+                            logoConfig.enabled !== false ? (
                             <div
+                                className="matrix-receipt-logo-stage"
                                 style={{
-                                    display: "inline-flex",
-                                    padding: "10px 18px",
-                                    borderRadius: "18px",
-                                    background:
-                                        "rgba(15,23,42,0.06)",
-                                    border:
-                                        "1px solid rgba(15,23,42,0.06)",
-                                    boxShadow:
-                                        "0 10px 24px rgba(0,0,0,0.08)"
+                                    width:
+                                        logoWidth,
+                                    height:
+                                        logoHeight,
+                                    ...shapeStyle(
+                                        logoShape,
+                                        Number(
+                                            logoLayout.cornerRadius ??
+                                            18
+                                        )
+                                    )
                                 }}
                             >
-
-                                <img
-                                    src={settings.logo_url}
-                                    alt="Merchant Logo"
-                                    className={[
-                                        "matrix-merchant-logo",
-                                        "matrix-effect-target",
-                                        (logoRotationEnabled || (rotationEnabled && (rotationEffect.target === "logo" || rotationEffect.target === "all"))) ? "matrix-rotation-target" : "",
-                                        (logoHoverEnabled || (hoverEnabled && (hoverEffect.target === "logo" || hoverEffect.target === "all"))) ? "matrix-hover-target" : "",
-                                        (logoFloatingEnabled || (floatingEnabled && (floatingEffect.target === "logo" || floatingEffect.target === "all"))) ? "matrix-float-target" : "",
-                                        logoMetallicEnabled ? "matrix-metallic-target" : "",
-                                        logoGlassEnabled ? "matrix-glass-target" : "",
-                                        logoNeonEnabled ? "matrix-neon-target" : "",
-                                        logoHolographicEnabled ? "matrix-holographic-target" : ""
-                                    ].filter(Boolean).join(" ")}
+                                <div
                                     style={{
-                                        width: logoWidth,
-                                        height: logoHeight,
-                                        maxWidth: logoMaxWidth,
-                                        maxHeight: logoMaxHeight,
-                                        objectFit: logoConfig.objectFit || "contain",
-                                        aspectRatio: logoConfig.aspectRatio || "auto",
-                                        opacity: logoOpacity,
-                                        borderRadius: logoLayout.borderRadius || logoConfig.borderRadius || undefined,
-                                        padding: logoLayout.padding || logoConfig.padding || undefined,
-                                        mixBlendMode: logoLayout.blendMode || logoConfig.blendMode || "normal",
-                                        aspectRatio: logoLockAspectRatio ? (logoAspectRatio || "auto") : "auto",
-                                        transform: `scale(${numericLogoScale}) rotate(${logoRotation}deg)`,
-                                        transformOrigin: "center",
-                                        filter: (() => {
-                                            const mode = logoColors.mode || "original";
-                                            const brightness = Number(logoColors.brightness ?? 1);
-                                            const contrast = Number(logoColors.contrast ?? 1);
-                                            const saturation = Number(logoColors.saturation ?? 1);
-                                            const filters = [
-                                                mode === "grayscale" || mode === "monochrome" ? "grayscale(1)" : "",
-                                                mode === "tint" && logoColors.tintColor ? `drop-shadow(0 0 0 ${logoColors.tintColor})` : "",
-                                                `brightness(${brightness})`,
-                                                `contrast(${contrast})`,
-                                                `saturate(${saturation})`
-                                            ].filter(Boolean);
-                                            return filters.length ? filters.join(" ") : undefined;
-                                        })(),
-                                        transition: `all ${transitionDuration} ${transitionEasing}`
+                                        ...cropContainerStyle(
+                                            logoCrop
+                                        ),
+                                        width: "100%",
+                                        height: "100%"
                                     }}
+                                >
+                                    <img
+                                        src={logoSource}
+                                        alt="Merchant Logo"
+                                        style={{
+                                            ...logoImageCropStyle,
+                                            width: "100%",
+                                            height: "100%"
+                                        }}
+                                    />
+                                </div>
+
+                                <SparkleOverlay
+                                    grading={
+                                        logoGrading
+                                    }
+                                    color={
+                                        primaryColor
+                                    }
                                 />
-
                             </div>
-
                         ) : (
-
                             <div
                                 style={{
+                                    padding: 12,
+                                    color:
+                                        mutedTextColor,
                                     border:
                                         `1px dashed ${mutedTextColor}`,
-                                    padding: "10px",
-                                    color: mutedTextColor,
-                                    fontSize: "10px",
-                                    fontWeight: "bold",
-                                    borderRadius: "12px"
+                                    borderRadius: 12,
+                                    fontSize: 10
                                 }}
                             >
-                                [ NO LOGO RECORDED ]
+                                NO LOGO RECORDED
                             </div>
-
                         )}
+                    </ElementFrame>
 
-                    </div>
+                    {/* BUSINESS NAME */}
 
-
-                    {/* =================================================
-                        BRAND DETAILS
-                    ================================================== */}
-
-                    <div
+                    <ElementFrame
+                        {...clickable(
+                            "businessName"
+                        )}
                         style={{
                             textAlign: "center",
-                            marginBottom: "11px"
+                            marginBottom:
+                                sectionSpacing,
+                            ...buildGradingStyle(
+                                businessNameConfig.colors ||
+                                {},
+                                primaryColor,
+                                true
+                            )
                         }}
                     >
-
                         <strong
                             style={{
-                                fontSize: businessNameSize,
-                                fontWeight: businessNameWeight,
-                                textTransform: "uppercase",
-                                letterSpacing:
-                                    typography.businessNameSpacing ||
-                                    "1px",
                                 display: "block",
-                                color: textColor,
-                                textShadow:
-                                    effects.businessNameGlow ||
-                                    `0 0 10px ${primaryColor}26`
+                                fontSize:
+                                    businessNameConfig.fontSize
+                                        ? `${businessNameConfig.fontSize}px`
+                                        : "18px",
+                                fontWeight:
+                                    businessNameConfig.fontWeight ||
+                                    900,
+                                letterSpacing:
+                                    businessNameConfig.letterSpacing !==
+                                        undefined
+                                        ? `${businessNameConfig.letterSpacing}px`
+                                        : "1px",
+                                color:
+                                    businessNameConfig.colors?.textColor ||
+                                    textColor,
+                                textTransform:
+                                    "uppercase",
+                                ...businessNameStyle
                             }}
                         >
                             {settings?.business_name ||
                                 "MY BUSINESS BRAND"}
                         </strong>
 
-
                         <div
                             style={{
-                                width: "70px",
-                                height: "2px",
-                                margin: "10px auto",
-                                borderRadius: "999px",
+                                width: 70,
+                                height: 2,
+                                margin: "9px auto",
+                                borderRadius: 999,
                                 background:
                                     `linear-gradient(
                                         90deg,
@@ -946,562 +1475,598 @@ export default function MatrixTillSlip({
                             }}
                         />
 
-
-                        <div
+                        <ElementFrame
+                            {...clickable("address")}
                             style={{
-                                ...bodyVisualStyle,
+                                ...addressStyle,
                                 color:
-                                    bodyText.color ||
-                                    colors.address ||
-                                    "rgba(255,255,255,0.85)",
-                                marginTop: "6px",
-                                whiteSpace: "pre-wrap",
-                                lineHeight: "1.6",
-                                fontWeight: "700"
+                                    addressConfig.colors?.textColor ||
+                                    mutedTextColor,
+                                fontSize:
+                                    addressConfig.fontSize
+                                        ? `${addressConfig.fontSize}px`
+                                        : 11,
+                                fontWeight:
+                                    addressConfig.fontWeight ||
+                                    700,
+                                letterSpacing:
+                                    addressConfig.letterSpacing !==
+                                        undefined
+                                        ? `${addressConfig.letterSpacing}px`
+                                        : undefined,
+                                whiteSpace:
+                                    "pre-wrap",
+                                lineHeight: 1.6
                             }}
                         >
                             {settings?.store_address ||
                                 "Outlet Physical Address Street\nKrugersdorp, South Africa"}
-                        </div>
+                        </ElementFrame>
 
-
-                        <div
+                        <ElementFrame
+                            {...clickable("email")}
                             style={{
-                                fontSize: "11px",
+                                ...emailStyle,
+                                marginTop: 6,
                                 color:
-                                    colors.email ||
-                                    "rgba(220,255,250,0.5)",
-                                marginTop: "6px",
-                                fontFamily:
-                                    "system-ui, sans-serif"
+                                    emailConfig.colors?.textColor ||
+                                    mutedTextColor,
+                                fontSize:
+                                    emailConfig.fontSize
+                                        ? `${emailConfig.fontSize}px`
+                                        : 10
                             }}
                         >
                             {user?.email ||
                                 receiptData?.customer_email ||
                                 "info@merchantnode.com"}
-                        </div>
+                        </ElementFrame>
+                    </ElementFrame>
 
-                    </div>
+                    {/* DIVIDER */}
 
-
-                    {/* =================================================
-                        SEPARATOR
-                    ================================================== */}
-
-                    <div
+                    <ElementFrame
+                        {...clickable("divider")}
                         style={{
-                            height: "1px",
-                            background:
-                                `linear-gradient(
-                                    90deg,
-                                    transparent,
-                                    ${primaryColor}33,
-                                    transparent
-                                )`,
-                            marginBottom: "9px"
-                        }}
-                    />
-
-
-                    {/* =================================================
-                        ITEMS
-                    ================================================== */}
-
-                    <div
-                        style={{
-                            fontSize: "11px",
-                            lineHeight: "1.9",
-                            marginBottom: "6px",
-                            fontWeight: "700"
+                            marginBottom:
+                                sectionSpacing
                         }}
                     >
+                        <div
+                            className="matrix-receipt-divider"
+                            style={{
+                                marginBottom: 0,
+                                opacity:
+                                    dividerConfig.colors?.opacity ??
+                                    1,
+                                ...buildGradingStyle(
+                                    dividerConfig.colors ||
+                                    {},
+                                    primaryColor,
+                                    false
+                                )
+                            }}
+                        />
+                    </ElementFrame>
 
+                    {/* ITEMS */}
+
+                    <ElementFrame
+                        {...clickable("items")}
+                        style={{
+                            marginBottom:
+                                sectionSpacing,
+                            ...buildGradingStyle(
+                                itemsConfig.colors ||
+                                {},
+                                primaryColor,
+                                false
+                            )
+                        }}
+                    >
                         <div
                             style={{
-                                fontSize: "10px",
-                                textTransform: "uppercase",
-                                letterSpacing: "1px",
-                                marginBottom: "6px",
-                                color: `${primaryColor}99`,
-                                fontWeight: "900"
+                                fontSize: 10,
+                                textTransform:
+                                    "uppercase",
+                                letterSpacing: 1,
+                                marginBottom: 6,
+                                color:
+                                    itemsConfig.colors?.headingColor ||
+                                    primaryColor,
+                                fontWeight: 900
                             }}
                         >
                             Items Purchased
                         </div>
 
+                        {receiptDataItems.length >
+                            0 ? (
+                            receiptDataItems.map(
+                                (
+                                    item,
+                                    index
+                                ) => {
+                                    const itemId =
+                                        `item:${index}`;
 
-                        {items.length > 0 ? (
+                                    const itemConfig =
+                                        getElementConfig(
+                                            config,
+                                            itemId,
+                                            config.text?.item
+                                        );
 
-                            items.map((item, index) => (
+                                    const itemGrading =
+                                        mergeObjects(
+                                            itemsConfig.colors,
+                                            itemConfig.colors,
+                                            getElementGrading(
+                                                config,
+                                                itemId
+                                            )
+                                        );
 
-                                <div
-                                    key={
-                                        item?.id ??
-                                        index
-                                    }
-                                    className={[
-                                        "matrix-product-item",
-                                        "matrix-effect-target",
-                                        floatingEnabled && (floatingEffect.target === "products" || floatingEffect.target === "items" || floatingEffect.target === "all") ? "matrix-float-target" : "",
-                                        hoverEnabled && (hoverEffect.target === "products" || hoverEffect.target === "items" || hoverEffect.target === "all") ? "matrix-hover-target" : ""
-                                    ].filter(Boolean).join(" ")}
-                                    style={{
-                                        display: "flex",
-                                        justifyContent:
-                                            "space-between",
-                                        marginBottom: "4px",
-                                        padding: "8px 0",
-                                        borderBottom:
-                                            "1px dashed rgba(15,23,42,0.12)",
-                                        gap: "12px"
-                                    }}
-                                >
+                                    return (
+                                        <ElementFrame
+                                            key={
+                                                item?.id ??
+                                                index
+                                            }
+                                            {...clickable(
+                                                itemId
+                                            )}
+                                            className="matrix-receipt-item"
+                                            style={{
+                                                ...buildGradingStyle(
+                                                    itemGrading,
+                                                    primaryColor,
+                                                    false
+                                                )
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    maxWidth:
+                                                        "75%",
+                                                    color:
+                                                        itemGrading.textColor ||
+                                                        textColor,
+                                                    fontSize:
+                                                        itemConfig.fontSize
+                                                            ? `${itemConfig.fontSize}px`
+                                                            : 11,
+                                                    fontWeight:
+                                                        itemConfig.fontWeight ||
+                                                        700
+                                                }}
+                                            >
+                                                {item?.name ||
+                                                    "Unnamed item"}
+                                            </span>
 
-                                    <span
-                                        style={{
-                                            ...bodyVisualStyle,
-                                            maxWidth: "75%",
-                                            color: bodyText.color || textColor
-                                        }}
-                                    >
-                                        {item?.name ||
-                                            "Unnamed item"}
-                                    </span>
+                                            <span
+                                                style={{
+                                                    whiteSpace:
+                                                        "nowrap",
+                                                    color:
+                                                        itemGrading.priceColor ||
+                                                        "#BFC1C8",
+                                                    fontWeight:
+                                                        900
+                                                }}
+                                            >
+                                                {item?.price ??
+                                                    ""}
+                                            </span>
 
-
-                                    <span
-                                        style={{
-                                            fontWeight: "900",
-                                            color:
-                                                colors.itemPrice ||
-                                                "#BFC1C8",
-                                            whiteSpace:
-                                                "nowrap"
-                                        }}
-                                    >
-                                        {item?.price ?? ""}
-                                    </span>
-
-                                </div>
-
-                            ))
-
+                                            <SparkleOverlay
+                                                grading={
+                                                    itemGrading
+                                                }
+                                                color={
+                                                    primaryColor
+                                                }
+                                            />
+                                        </ElementFrame>
+                                    );
+                                }
+                            )
                         ) : (
-
                             <div
                                 style={{
-                                    padding: "12px 0",
-                                    color: mutedTextColor,
-                                    textAlign: "center",
-                                    fontSize: "10px"
+                                    padding:
+                                        "12px 0",
+                                    color:
+                                        mutedTextColor,
+                                    textAlign:
+                                        "center",
+                                    fontSize: 10
                                 }}
                             >
-                                No transaction items recorded.
+                                No transaction items
+                                recorded.
                             </div>
-
                         )}
 
-
-                        {/* =================================================
-                            VAT
-                        ================================================== */}
+                        {/* VAT */}
 
                         {vat !== null &&
                             vat !== undefined && (
-
-                                <div
+                                <ElementFrame
+                                    {...clickable(
+                                        "vat"
+                                    )}
                                     style={{
-                                        display: "flex",
+                                        display:
+                                            "flex",
                                         justifyContent:
                                             "space-between",
-                                        marginTop: "10px",
-                                        padding: "8px 0",
-                                        color: mutedTextColor
+                                        marginTop: 8,
+                                        padding:
+                                            "8px 0",
+                                        color:
+                                            vatConfig.colors?.textColor ||
+                                            mutedTextColor,
+                                        fontSize:
+                                            vatConfig.fontSize
+                                                ? `${vatConfig.fontSize}px`
+                                                : 11,
+                                        ...vatStyle
                                     }}
                                 >
-                                    <span>VAT</span>
-                                    <span>{vat}</span>
-                                </div>
+                                    <span>
+                                        VAT
+                                    </span>
+                                    <span>
+                                        {vat}
+                                    </span>
+                                </ElementFrame>
                             )}
+                    </ElementFrame>
 
+                    {/* TOTAL */}
 
-                        {/* =================================================
-                            TOTAL
-                        ================================================== */}
+                    <ElementFrame
+                        {...clickable("total")}
+                        className="matrix-receipt-total"
+                        style={{
+                            ...totalStyle,
+                            color:
+                                totalConfig.colors?.textColor ||
+                                "#B1B5C6",
+                            fontSize:
+                                totalConfig.fontSize
+                                    ? `${totalConfig.fontSize}px`
+                                    : 14,
+                            fontWeight:
+                                totalConfig.fontWeight ||
+                                900
+                        }}
+                    >
+                        <span>
+                            TOTAL DUE
+                        </span>
 
-                        <div
+                        <span
                             style={{
-                                display: "flex",
-                                justifyContent:
-                                    "space-between",
-                                marginTop: "14px",
-                                padding: "16px",
-                                borderRadius: "16px",
-                                background:
-                                    `linear-gradient(
-                                        90deg,
-                                        ${primaryColor}1A,
-                                        ${primaryColor}0F
-                                    )`,
-                                border:
-                                    `2px solid ${primaryColor}`,
-                                boxShadow: `
-                                    0 0 8px ${primaryColor}73,
-                                    inset 0 0 18px ${primaryColor}0F
-                                `,
-                                ...totalVisualStyle,
                                 color:
-                                    totalText.color ||
-                                    colors.totalLabel ||
-                                    "#B1B5C6"
+                                    totalConfig.colors?.valueColor ||
+                                    primaryColor
                             }}
                         >
+                            {total}
+                        </span>
 
-                            <span>
-                                TOTAL DUE
-                            </span>
+                        <SparkleOverlay
+                            grading={
+                                totalConfig.colors ||
+                                {}
+                            }
+                            color={
+                                primaryColor
+                            }
+                        />
+                    </ElementFrame>
 
-                            <span
-                                style={{
-                                    color:
-                                        colors.totalValue ||
-                                        "#00A884",
-                                    textShadow:
-                                        totalText.effects?.neon?.enabled || totalText.effects?.glow?.enabled
-                                            ? `0 0 10px ${primaryColor}88`
-                                            : `0 0 10px ${primaryColor}26`
-                                }}
-                            >
-                                {total}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    {/* =================================================
-                        VOUCHER
-                    ================================================== */}
+                    {/* VOUCHER + QR */}
 
                     {showVoucher && (
-
-                        <div
+                        <ElementFrame
+                            {...clickable(
+                                "voucher"
+                            )}
                             style={{
-                                background:
-                                    "rgba(10,20,28,0.6)",
+                                marginTop:
+                                    sectionSpacing,
+                                padding: 12,
                                 border:
                                     `2px solid ${primaryColor}`,
-                                boxShadow: `
-                                    0 0 8px ${primaryColor}59,
-                                    inset 0 0 12px ${primaryColor}0F
-                                `,
-                                borderRadius: "22px",
-                                padding: "12px",
-                                textAlign: "center",
-                                marginTop: "24px",
-                                position: "relative",
-                                overflow: "hidden"
+                                borderRadius: 20,
+                                background:
+                                    "rgba(10,20,28,0.68)",
+                                textAlign:
+                                    "center",
+                                ...buildGradingStyle(
+                                    voucherConfig.colors ||
+                                    {},
+                                    primaryColor,
+                                    false
+                                )
                             }}
                         >
-
-                            {/* Inner glow */}
-
                             <div
                                 style={{
-                                    position: "absolute",
-                                    top: "-40px",
-                                    right: "-40px",
-                                    width: "120px",
-                                    height: "120px",
-                                    borderRadius: "50%",
-                                    background:
-                                        `radial-gradient(
-                                            circle,
-                                            ${primaryColor}1F,
-                                            transparent 70%
-                                        )`
+                                    fontSize: 9,
+                                    color:
+                                        primaryColor,
+                                    fontWeight:
+                                        900,
+                                    letterSpacing:
+                                        1,
+                                    marginBottom: 7
                                 }}
-                            />
+                            >
+                                NEXT VISIT VOUCHER
+                            </div>
 
+                            {/* QR */}
 
-                            <span
+                            <ElementFrame
+                                {...clickable(
+                                    "qr"
+                                )}
                                 style={{
-                                    fontSize: "9px",
-                                    color: primaryColor,
-                                    fontWeight: "900",
-                                    display: "flex",
-                                    alignItems: "center",
+                                    display:
+                                        "inline-flex",
+                                    alignItems:
+                                        "center",
                                     justifyContent:
                                         "center",
-                                    gap: "6px",
-                                    marginBottom: "6px",
-                                    letterSpacing: "1px",
-                                    textTransform:
-                                        "uppercase"
+                                    marginBottom:
+                                        7,
+                                    ...qrStyle
                                 }}
                             >
-                                ⚡ Next Visit Voucher Code Inside
-                            </span>
-
-
-                            {/* =================================================
-                                QR
-                            ================================================== */}
-
-                            <div
-                                className={[
-                                    "matrix-qr-container",
-                                    "matrix-effect-target",
-                                    (animatedQrEnabled || qrPulseEnabled) ? "matrix-qr-animated" : "",
-                                    qrHolographicEnabled ? "matrix-holographic-target" : "",
-                                    qrGlowEnabled ? "matrix-neon-target" : "",
-                                    qrAnimatedBorderEnabled ? "matrix-neon-target" : "",
-                                    hoverEnabled && (hoverEffect.target === "qr" || hoverEffect.target === "all") ? "matrix-hover-target" : ""
-                                ].filter(Boolean).join(" ")}
-                                style={{
-                                    display: "inline-block",
-                                    position: "relative",
-                                    padding: "12px",
-                                    background: qrBackground,
-                                    borderRadius: `${qrCornerRadius}px`,
-                                    border:
-                                        `1px solid ${primaryColor}26`,
-                                    boxShadow: `
-                                        0 12px 25px rgba(0,0,0,0.35),
-                                        0 0 20px ${primaryColor}26
-                                    `,
-                                    marginBottom: "5px"
-                                }}
-                            >
-
-                                {(animatedQrEnabled || qrScanlineEnabled) && animatedQrEffect.scanline !== false && (
-                                    <span className="matrix-qr-scanline" aria-hidden="true" />
-                                )}
-
-                                {qrCodeUrl ? (
-
-                                    <img
-                                        src={qrCodeUrl}
-                                        alt="Voucher Token QR"
-                                        style={{
-                                            width: qrCodeSize,
-                                            height: qrCodeSize,
-                                            transform: `scale(${Number.isFinite(qrScale) ? qrScale : 1}) rotate(${qrRotation}deg)`,
-                                            transformOrigin: "center",
-                                            opacity: qrOpacity,
-                                            display: "block",
-                                            objectFit: "contain",
-                                            filter: qrForeground !== "#050608" ? `drop-shadow(0 0 2px ${qrForeground})` : undefined
-                                        }}
-                                    />
-
-                                ) : (
-
-                                    <div
-                                        style={{
-                                            width: qrCodeSize,
-                                            height: qrCodeSize,
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent:
-                                                "center",
-                                            color: "#11161D",
-                                            fontSize: "8px",
-                                            textAlign: "center"
-                                        }}
-                                    >
-                                        QR
-                                        <br />
-                                        UNAVAILABLE
-                                    </div>
-
-                                )}
-
-                            </div>
-
-
-                            {/* =================================================
-                                CLAIM DISCOUNT
-                            ================================================== */}
-
-                            <div
-                                style={{
-                                    fontSize: "9px",
-                                    color:
-                                        "rgba(255,255,255,0.9)",
-                                    textTransform:
-                                        "uppercase",
-                                    letterSpacing: "1px",
-                                    fontWeight: "900",
-                                    marginBottom: "4px"
-                                }}
-                            >
-                                Claim Discount
-                            </div>
-
-
-                            <div
-                                style={{
-                                    fontSize: "11px",
-                                    color:
-                                        "rgba(220,255,250,0.7)",
-                                    lineHeight: "1.6",
-                                    fontFamily:
-                                        "system-ui, -apple-system, sans-serif",
-                                    padding: "0 6px"
-                                }}
-                            >
-                                Scan to instantly claim your{" "}
-
-                                <strong
+                                <div
+                                    className="matrix-receipt-qr-stage"
                                     style={{
-                                        color: primaryColor,
-                                        fontWeight: "900"
+                                        width:
+                                            `${qrBaseSize}px`,
+                                        height:
+                                            `${qrBaseSize}px`,
+                                        ...shapeStyle(
+                                            qrShape,
+                                            qrCornerRadius
+                                        )
                                     }}
                                 >
-                                    {
-                                        settings?.discount_percentage ??
-                                        10
-                                    }% discount
+                                    <div
+                                        style={{
+                                            ...cropContainerStyle(
+                                                qrCrop
+                                            ),
+                                            width: "100%",
+                                            height: "100%"
+                                        }}
+                                    >
+                                        {qrSource ? (
+                                            <img
+                                                src={
+                                                    qrSource
+                                                }
+                                                alt="Voucher QR Code"
+                                                style={{
+                                                    ...qrImageCropStyle,
+                                                    width: "100%",
+                                                    height: "100%"
+                                                }}
+                                            />
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    width:
+                                                        "100%",
+                                                    height:
+                                                        "100%",
+                                                    display:
+                                                        "flex",
+                                                    alignItems:
+                                                        "center",
+                                                    justifyContent:
+                                                        "center",
+                                                    color:
+                                                        "#11161D",
+                                                    background:
+                                                        "#FFFFFF",
+                                                    fontSize:
+                                                        8,
+                                                    textAlign:
+                                                        "center"
+                                                }}
+                                            >
+                                                QR
+                                                <br />
+                                                UNAVAILABLE
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <SparkleOverlay
+                                        grading={
+                                            qrGrading
+                                        }
+                                        color={
+                                            primaryColor
+                                        }
+                                    />
+                                </div>
+                            </ElementFrame>
+
+                            <div
+                                style={{
+                                    fontSize: 9,
+                                    color:
+                                        "#FFFFFF",
+                                    fontWeight:
+                                        900,
+                                    letterSpacing:
+                                        1,
+                                    marginBottom: 4
+                                }}
+                            >
+                                CLAIM DISCOUNT
+                            </div>
+
+                            <div
+                                style={{
+                                    fontSize: 10,
+                                    color:
+                                        mutedTextColor,
+                                    lineHeight: 1.6
+                                }}
+                            >
+                                Scan to instantly
+                                claim your{" "}
+                                <strong
+                                    style={{
+                                        color:
+                                            primaryColor
+                                    }}
+                                >
+                                    {settings?.discount_percentage ??
+                                        10}
+                                    % discount
                                 </strong>{" "}
                                 balance.
                             </div>
 
-
-                            {/* =================================================
-                                VOUCHER STATUS
-                            ================================================== */}
-
                             <div
                                 style={{
-                                    fontSize: "10px",
-                                    color: mutedTextColor,
-                                    marginTop: "10px",
-                                    paddingTop: "8px",
+                                    marginTop: 9,
+                                    paddingTop: 8,
                                     borderTop:
-                                        "1px dashed rgba(255,255,255,0.08)",
-                                    fontFamily:
-                                        '"Courier New", monospace',
-                                    fontWeight: "bold",
-                                    letterSpacing: "0.5px"
+                                        "1px dashed rgba(255,255,255,0.10)",
+                                    fontSize: 9,
+                                    color:
+                                        mutedTextColor
                                 }}
                             >
-
                                 {isExpired ? (
-
                                     <>
                                         VOUCHER STATUS:{" "}
                                         <span
                                             style={{
-                                                color: "#EF4444"
+                                                color:
+                                                    "#EF4444"
                                             }}
                                         >
                                             EXPIRED
                                         </span>
                                     </>
-
                                 ) : (
-
                                     <>
                                         EXPIRES IN:{" "}
                                         <span
                                             style={{
                                                 color:
-                                                    daysRemaining <= 3
-                                                        ? "#F59E0B"
-                                                        : primaryColor
+                                                    primaryColor
                                             }}
                                         >
                                             {daysRemaining ||
                                                 settings?.voucher_expiration_days ||
-                                                30} DAYS
+                                                30}{" "}
+                                            DAYS
                                         </span>
                                     </>
-
                                 )}
-
                             </div>
 
-
-                            {/* Voucher token when available */}
-
                             {voucher?.voucher_token && (
-
                                 <div
                                     style={{
-                                        marginTop: "8px",
-                                        fontSize: "8px",
+                                        marginTop: 8,
+                                        fontSize: 8,
                                         color:
-                                            "rgba(255,255,255,0.4)",
+                                            "rgba(255,255,255,0.35)",
                                         wordBreak:
                                             "break-all"
                                     }}
                                 >
                                     TOKEN:{" "}
-                                    {voucher.voucher_token}
+                                    {
+                                        voucher.voucher_token
+                                    }
                                 </div>
                             )}
-
-                        </div>
+                        </ElementFrame>
                     )}
 
+                    {/* FOOTER */}
 
-                    {/* =================================================
-                        DOWNLOAD BUTTON
-                    ================================================== */}
-
-                    {showDownloadButton && (
-
-                        <div
-                            style={{
-                                marginTop: "28px",
-                                textAlign: "center"
-                            }}
-                        >
-
-                            <a
-                                href="#download"
-                                onClick={handleDownload}
-                                style={{
-                                    display: "block",
-                                    background:
-                                        `linear-gradient(
-                                            90deg,
-                                            ${primaryColor},
-                                            ${secondaryColor}
-                                        )`,
-                                    color: "#041014",
-                                    textDecoration: "none",
-                                    padding: "16px",
-                                    borderRadius: "16px",
-                                    fontSize: "12px",
-                                    fontWeight: "900",
-                                    fontFamily:
-                                        "system-ui, sans-serif",
-                                    letterSpacing: "0.8px",
-                                    textTransform:
-                                        "uppercase",
-                                    boxShadow: `
-                                        0 12px 30px ${primaryColor}40,
-                                        0 0 24px ${primaryColor}26
-                                    `,
-                                    transition:
-                                        "all 0.25s ease"
-                                }}
-                            >
-                                Download Official Invoice PDF
-                            </a>
-
-                        </div>
-                    )}
-
+                    <ElementFrame
+                        {...clickable(
+                            "footer"
+                        )}
+                        style={{
+                            marginTop:
+                                sectionSpacing,
+                            textAlign:
+                                "center",
+                            color:
+                                mutedTextColor,
+                            fontSize: 9,
+                            ...buildGradingStyle(
+                                config.text?.footer?.colors ||
+                                getElementGrading(
+                                    config,
+                                    "footer"
+                                ),
+                                primaryColor,
+                                true
+                            )
+                        }}
+                    >
+                        Powered by RuachAgent AI
+                    </ElementFrame>
                 </div>
-
             </div>
 
+            {showDownloadButton && (
+                <div
+                    style={{
+                        marginTop: 18,
+                        textAlign: "center"
+                    }}
+                >
+                    <a
+                        href="#download"
+                        onClick={handleDownload}
+                        style={{
+                            display: "block",
+                            background:
+                                `linear-gradient(
+                                    90deg,
+                                    ${primaryColor},
+                                    ${secondaryColor}
+                                )`,
+                            color: "#041014",
+                            textDecoration: "none",
+                            padding: 14,
+                            borderRadius: 14,
+                            fontSize: 11,
+                            fontWeight: 900,
+                            letterSpacing: "0.7px",
+                            textTransform:
+                                "uppercase",
+                            boxShadow:
+                                `0 10px 28px ${primaryColor}38`
+                        }}
+                    >
+                        Download Official Invoice PDF
+                    </a>
+                </div>
+            )}
         </div>
     );
 }
-
-
