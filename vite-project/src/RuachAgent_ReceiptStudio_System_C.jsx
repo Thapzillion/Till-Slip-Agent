@@ -188,6 +188,18 @@ export default function RuachAgentReceiptStudioSystemC({
     onDesignConfigChange = null,
 
     /* --------------------------------------------------------
+       ELEMENT SELECTION
+       -------------------------------------------------------- */
+
+    selectedElementId = null,
+
+    selectedObjectId = null,
+
+    onSelectElement = null,
+
+    onSelectObject = null,
+
+    /* --------------------------------------------------------
        OPTIONAL RECEIPT DATA UPDATER
        -------------------------------------------------------- */
 
@@ -255,6 +267,26 @@ export default function RuachAgentReceiptStudioSystemC({
 
     const [canvas, setCanvas] =
         useState(DEFAULT_CANVAS);
+
+
+    /* ========================================================
+       SELECTED RECEIPT ELEMENT
+       ======================================================== */
+
+    const [internalSelectedElementId, setInternalSelectedElementId] =
+        useState(
+            designConfig?.colorGrading?.selectedElementId ||
+            designConfig?.selectedElementId ||
+            null
+        );
+
+    const activeSelectedElementId =
+        selectedElementId ||
+        selectedObjectId ||
+        internalSelectedElementId ||
+        designConfig?.colorGrading?.selectedElementId ||
+        designConfig?.selectedElementId ||
+        null;
 
 
     /* ========================================================
@@ -373,6 +405,32 @@ export default function RuachAgentReceiptStudioSystemC({
 
 
     /* ========================================================
+       KEEP ELEMENT SELECTION IN SYNC WITH DESIGN CONFIG
+       ======================================================== */
+
+    useEffect(() => {
+
+        const configuredSelection =
+            designConfig?.colorGrading?.selectedElementId ||
+            designConfig?.selectedElementId ||
+            null;
+
+        if (
+            configuredSelection &&
+            configuredSelection !== internalSelectedElementId
+        ) {
+            setInternalSelectedElementId(
+                configuredSelection
+            );
+        }
+
+    }, [
+        designConfig?.colorGrading?.selectedElementId,
+        designConfig?.selectedElementId
+    ]);
+
+
+    /* ========================================================
        KEEP CANVAS POSITION IN SYNC WITH DESIGN CONFIG
        ======================================================== */
 
@@ -460,6 +518,56 @@ export default function RuachAgentReceiptStudioSystemC({
             onDesignConfigChange
         ]
     );
+
+
+    /* ========================================================
+       SELECT RECEIPT ELEMENT
+       ======================================================== */
+
+    const handleElementSelect = useCallback(
+        (elementId) => {
+
+            if (!elementId) {
+                return;
+            }
+
+            setInternalSelectedElementId(
+                elementId
+            );
+
+            const nextConfig =
+                setNestedValue(
+                    designConfig || {},
+                    [
+                        "colorGrading",
+                        "selectedElementId"
+                    ],
+                    elementId
+                );
+
+            emitDesignConfig(
+                nextConfig
+            );
+
+            onSelectElement?.(
+                elementId,
+                nextConfig
+            );
+
+            onSelectObject?.(
+                elementId,
+                nextConfig
+            );
+
+        },
+        [
+            designConfig,
+            emitDesignConfig,
+            onSelectElement,
+            onSelectObject
+        ]
+    );
+
 
 
     /* ========================================================
@@ -582,9 +690,29 @@ export default function RuachAgentReceiptStudioSystemC({
 
 
                 /*
-                 * Prevent browser dragging.
+                 * Clicking an editable receipt element is a
+                 * selection action, not a receipt-drag action.
+                 *
+                 * MatrixTillSlip exposes every editable element
+                 * using data-receipt-element.
                  */
+                const targetElement =
+                    event.target instanceof Element
+                        ? event.target
+                        : null;
 
+                const receiptElement =
+                    targetElement?.closest(
+                        "[data-receipt-element]"
+                    );
+
+                if (receiptElement) {
+                    return;
+                }
+
+                /*
+                 * Blank receipt surface = move the entire receipt.
+                 */
                 event.preventDefault();
 
                 event.stopPropagation();
@@ -1048,7 +1176,13 @@ export default function RuachAgentReceiptStudioSystemC({
 
             onDownload,
 
-            activeCurrencySymbol
+            activeCurrencySymbol,
+
+            selectedElementId:
+                activeSelectedElementId,
+
+            onSelectElement:
+                handleElementSelect
 
         }), [
             receiptData,
@@ -1062,7 +1196,9 @@ export default function RuachAgentReceiptStudioSystemC({
             checkoutPayloadLink,
             receiptId,
             onDownload,
-            activeCurrencySymbol
+            activeCurrencySymbol,
+            activeSelectedElementId,
+            handleElementSelect
         ]);
 
 
@@ -1641,6 +1777,38 @@ export default function RuachAgentReceiptStudioSystemC({
                                 style={
                                     styles.receiptContainer
                                 }
+
+                                onClick={
+                                    (event) => {
+
+                                        const targetElement =
+                                            event.target instanceof Element
+                                                ? event.target
+                                                : null;
+
+                                        const receiptElement =
+                                            targetElement?.closest(
+                                                "[data-receipt-element]"
+                                            );
+
+                                        /*
+                                         * ElementFrame stops propagation
+                                         * for Logo, Business Name, QR,
+                                         * Items, Total, etc. Therefore
+                                         * reaching this handler means the
+                                         * user clicked the receipt surface.
+                                         */
+                                        if (
+                                            receiptElement
+                                        ) {
+                                            return;
+                                        }
+
+                                        handleElementSelect(
+                                            "background"
+                                        );
+                                    }
+                                }
                             >
 
                                 {renderReceipt()}
@@ -1735,6 +1903,22 @@ export default function RuachAgentReceiptStudioSystemC({
                                 {canvas.grid
                                     ? "Grid on"
                                     : "Grid off"}
+                            </span>
+                        </div>
+
+                        <div
+                            style={
+                                styles.hudItem
+                            }
+                        >
+                            <MousePointer2
+                                size={12}
+                            />
+
+                            <span>
+                                Selected:
+                                {" "}
+                                {activeSelectedElementId || "None"}
                             </span>
                         </div>
 
