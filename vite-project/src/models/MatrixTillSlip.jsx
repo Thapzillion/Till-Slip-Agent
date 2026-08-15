@@ -186,6 +186,15 @@ const getCropInsets = (crop) => {
         };
     }
 
+    if (crop.enabled === false) {
+        return {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        };
+    }
+
     return {
         top: clamp(crop.top, 0, 49),
         right: clamp(crop.right, 0, 49),
@@ -597,6 +606,7 @@ const ElementFrame = ({
     children,
     style = {},
     className = "",
+    editStyle = {},
     ...props
 }) => {
     const selected =
@@ -630,6 +640,7 @@ const ElementFrame = ({
                     typeof onSelectElement === "function"
                         ? "pointer"
                         : "default",
+                ...editStyle,
                 ...style
             }}
             {...props}
@@ -825,6 +836,49 @@ export default function MatrixTillSlip({
         config?.colorGrading?.selectedElementId ||
         config?.selectedElementId ||
         null;
+
+    /*
+     * System B — generic element editing.
+     *
+     * Logo and QR have their own image-stage rendering below, so their
+     * zoom/crop values are handled by logoLayout / qrLayout. Every other
+     * receipt element receives its zoom and crop here through ElementFrame.
+     */
+    const getGenericElementEditStyle = (id) => {
+        if (id === "logo" || id === "qr") {
+            return {};
+        }
+
+        const directLayout = config?.[id]?.layout || {};
+        const elementLayout = config?.elements?.[id]?.layout || {};
+        const layout = mergeObjects(directLayout, elementLayout);
+
+        const zoom = clamp(
+            Number(layout.zoom ?? layout.scale ?? 1),
+            0.1,
+            10
+        );
+
+        const crop = getCropInsets(layout.crop);
+        const hasCrop =
+            crop.top ||
+            crop.right ||
+            crop.bottom ||
+            crop.left;
+
+        return {
+            transform: zoom !== 1
+                ? `scale(${zoom})`
+                : undefined,
+            transformOrigin: "center center",
+            clipPath: hasCrop
+                ? `inset(${crop.top}% ${crop.right}% ${crop.bottom}% ${crop.left}%)`
+                : undefined,
+            overflow: hasCrop
+                ? "hidden"
+                : undefined
+        };
+    };
 
     /*
      * Logo properties.
@@ -1043,7 +1097,8 @@ export default function MatrixTillSlip({
     const clickable = (id) => ({
         id,
         selectedElementId,
-        onSelectElement
+        onSelectElement,
+        editStyle: getGenericElementEditStyle(id)
     });
 
     return (

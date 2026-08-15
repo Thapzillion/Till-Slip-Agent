@@ -449,110 +449,27 @@ export default function RuachAgentReceiptStudioSystemB({
      ======================================================== */
 
   const getObjectConfiguration = (objectId) => {
+    const layout = getPath(
+      designConfig,
+      `${objectId}.layout`,
+      {}
+    ) || {};
 
-    switch (objectId) {
-
-      case "logo":
-
-        return {
-          scale: Number(
-            getPath(
-              designConfig,
-              "logo.layout.scale",
-              getPath(
-                designConfig,
-                "logo.scale",
-                1
-              )
-            )
-          ),
-
-          rotation: Number(
-            getPath(
-              designConfig,
-              "logo.layout.rotation",
-              0
-            )
-          ),
-
-          opacity: Number(
-            getPath(
-              designConfig,
-              "logo.layout.opacity",
-              1
-            )
-          ),
-
-          position: getPath(
-            designConfig,
-            "logo.layout.position",
-            "top-center"
-          ),
-
-          width: getPath(
-            designConfig,
-            "logo.layout.width",
-            ""
-          ),
-
-          height: getPath(
-            designConfig,
-            "logo.layout.height",
-            ""
-          ),
-
-          shape: getPath(
-            designConfig,
-            "logo.layout.shape",
-            "original"
-          )
-        };
-
-
-      case "qrCode":
-
-        return {
-
-          scale: Number(
-            getPath(
-              designConfig,
-              "qrCode.layout.scale",
-              1
-            )
-          ),
-
-          rotation: Number(
-            getPath(
-              designConfig,
-              "qrCode.layout.rotation",
-              0
-            )
-          ),
-
-          cornerRadius: Number(
-            getPath(
-              designConfig,
-              "qrCode.layout.cornerRadius",
-              18
-            )
-          ),
-
-          shape: getPath(
-            designConfig,
-            "qrCode.layout.shape",
-            "rounded"
-          )
-        };
-
-
-      default:
-
-        return {
-          scale: 1,
-          rotation: 0,
-          opacity: 1
-        };
-    }
+    return {
+      zoom: Number(layout.zoom ?? layout.scale ?? 1),
+      opacity: Number(layout.opacity ?? 1),
+      width: layout.width ?? "",
+      height: layout.height ?? "",
+      shape: layout.shape ?? (objectId === "qrCode" ? "rounded" : "original"),
+      cornerRadius: Number(layout.cornerRadius ?? 18),
+      crop: {
+        enabled: Boolean(layout.crop?.enabled),
+        top: Number(layout.crop?.top ?? 0),
+        right: Number(layout.crop?.right ?? 0),
+        bottom: Number(layout.crop?.bottom ?? 0),
+        left: Number(layout.crop?.left ?? 0)
+      }
+    };
   };
 
 
@@ -568,349 +485,200 @@ export default function RuachAgentReceiptStudioSystemB({
     step = 0.01,
     suffix = "",
     onChange
-  }) => {
-
-    return (
-      <div style={styles.controlRow}>
-
-        <div style={styles.controlLabel}>
-          {label}
+  }) => (
+    <div style={styles.controlRow}>
+      <div style={styles.controlLabel}>{label}</div>
+      <div style={styles.numericControl}>
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={Number.isFinite(Number(value)) ? value : min}
+          onChange={(event) => onChange(Number(event.target.value))}
+          style={styles.range}
+        />
+        <div style={styles.numericValue}>
+          {Number(value).toFixed(step < 1 ? 2 : 0)}{suffix}
         </div>
-
-        <div style={styles.numericControl}>
-
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={step}
-            value={Number.isFinite(Number(value))
-              ? value
-              : min
-            }
-            onChange={(event) =>
-              onChange(
-                Number(event.target.value)
-              )
-            }
-            style={styles.range}
-          />
-
-          <div style={styles.numericValue}>
-            {value}
-            {suffix}
-          </div>
-
-        </div>
-
       </div>
-    );
-  };
+    </div>
+  );
 
 
   /* ========================================================
      SELECT CONTROL
      ======================================================== */
 
-  const SelectControl = ({
-    label,
-    value,
-    options,
-    onChange
-  }) => {
-
-    return (
-      <div style={styles.controlRow}>
-
-        <div style={styles.controlLabel}>
-          {label}
-        </div>
-
-        <select
-          value={value}
-          onChange={(event) =>
-            onChange(event.target.value)
-          }
-          style={styles.select}
-        >
-
-          {options.map((option) => (
-
-            <option
-              key={option.value}
-              value={option.value}
-            >
-              {option.label}
-            </option>
-
-          ))}
-
-        </select>
-
-      </div>
-    );
-  };
+  const SelectControl = ({ label, value, options, onChange }) => (
+    <div style={styles.controlRow}>
+      <div style={styles.controlLabel}>{label}</div>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        style={styles.select}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
 
   /* ========================================================
-     OBJECT TOOLBAR
+     OBJECT TOOLS
+
+     IMPORTANT:
+     Crop / Zoom / Unzoom are intentionally available for every
+     receipt object. Shape is restricted to Logo and QR Code.
+     Chroma Key starts the Studio-wide colour picker through the
+     parent callback.
      ======================================================== */
 
   const ObjectTools = ({ objectId }) => {
+    const configuration = getObjectConfiguration(objectId);
+    const isShapeSupported = objectId === "logo" || objectId === "qrCode";
+    const isImageObject = objectId === "logo" || objectId === "qrCode";
 
-    const configuration =
-      getObjectConfiguration(objectId);
+    const updateLayout = (key, value) => {
+      updateConfig(`${objectId}.layout.${key}`, value);
+    };
 
-    const isTransformable =
-      objectId === "logo" ||
-      objectId === "qrCode";
+    const updateCrop = (key, value) => {
+      updateConfig(`${objectId}.layout.crop.${key}`, value);
+    };
 
-    const isShapeSupported =
-      objectId === "logo" ||
-      objectId === "qrCode";
+    const toggleCrop = () => {
+      const enabled = !configuration.crop.enabled;
 
-    const isChromaSupported =
-      objectId === "logo";
+      updateConfig(
+        `${objectId}.layout.crop`,
+        {
+          enabled,
+          top: configuration.crop.top || (enabled ? 5 : 0),
+          right: configuration.crop.right || (enabled ? 5 : 0),
+          bottom: configuration.crop.bottom || (enabled ? 5 : 0),
+          left: configuration.crop.left || (enabled ? 5 : 0)
+        }
+      );
+    };
 
+    const changeZoom = (amount) => {
+      const current = Number(configuration.zoom || 1);
+      const next = Math.min(4, Math.max(0.1, current + amount));
 
-    if (!isTransformable) {
-      return (
+      updateLayout("zoom", Number(next.toFixed(2)));
+    };
+
+    const cycleShape = () => {
+      const shapes = objectId === "logo"
+        ? ["original", "circle", "rounded", "square"]
+        : ["square", "rounded", "circle"];
+
+      const current = configuration.shape;
+      const index = shapes.indexOf(current);
+      const next = shapes[(index + 1) % shapes.length];
+
+      updateLayout("shape", next);
+    };
+
+    const startChromaKey = () => {
+      if (typeof onStartChromaKey === "function") {
+        onStartChromaKey(objectId);
+        return;
+      }
+
+      /* Fallback event for System A / AdminPanel implementations that
+         listen for the Studio-wide picker themselves. */
+      window.dispatchEvent(
+        new CustomEvent("ruachagent:start-chroma-key", {
+          detail: { objectId }
+        })
+      );
+    };
+
+    return (
+      <div>
         <div style={styles.toolStrip}>
-
           <ToolButton
             icon={Crop}
             label="Crop"
-            disabled
+            active={configuration.crop.enabled}
+            onClick={toggleCrop}
           />
 
           <ToolButton
             icon={ZoomIn}
             label="Zoom"
-            disabled
+            onClick={() => changeZoom(0.1)}
           />
 
           <ToolButton
             icon={ZoomOut}
             label="Unzoom"
-            disabled
+            onClick={() => changeZoom(-0.1)}
           />
 
-          <ToolButton
-            icon={Shapes}
-            label="Shape"
-            disabled
-          />
+          {isShapeSupported && (
+            <ToolButton
+              icon={Shapes}
+              label="Shape"
+              onClick={cycleShape}
+              active
+            />
+          )}
 
           <ToolButton
             icon={Pipette}
             label="Chroma Key"
-            disabled
+            onClick={startChromaKey}
           />
-
-        </div>
-      );
-    }
-
-
-    return (
-      <div>
-
-        {/* ============================================
-                   QUICK TOOLS
-                ============================================= */}
-
-        <div style={styles.toolStrip}>
-
-          <ToolButton
-            icon={Crop}
-            label="Crop"
-            onClick={() => {
-
-              updateConfig(
-                `${objectId}.layout.crop.enabled`,
-                !getPath(
-                  designConfig,
-                  `${objectId}.layout.crop.enabled`,
-                  false
-                )
-              );
-
-            }}
-          />
-
-
-          <ToolButton
-            icon={ZoomIn}
-            label="Zoom"
-            onClick={() => {
-
-              const nextScale =
-                Math.min(
-                  4,
-                  Number(
-                    configuration.scale ||
-                    1
-                  ) + 0.1
-                );
-
-              updateConfig(
-                `${objectId}.layout.scale`,
-                Number(
-                  nextScale.toFixed(2)
-                )
-              );
-
-            }}
-          />
-
-
-          <ToolButton
-            icon={ZoomOut}
-            label="Unzoom"
-            onClick={() => {
-
-              const nextScale =
-                Math.max(
-                  0.1,
-                  Number(
-                    configuration.scale ||
-                    1
-                  ) - 0.1
-                );
-
-              updateConfig(
-                `${objectId}.layout.scale`,
-                Number(
-                  nextScale.toFixed(2)
-                )
-              );
-
-            }}
-          />
-
-
-          {isShapeSupported && (
-
-            <ToolButton
-              icon={Shapes}
-              label="Shape"
-              onClick={() => {
-
-                const current =
-                  getPath(
-                    designConfig,
-                    `${objectId}.layout.shape`,
-                    objectId === "qrCode"
-                      ? "rounded"
-                      : "original"
-                  );
-
-                const shapes =
-                  objectId === "logo"
-                    ? [
-                      "original",
-                      "circle",
-                      "rounded",
-                      "square"
-                    ]
-                    : [
-                      "square",
-                      "rounded",
-                      "circle"
-                    ];
-
-                const index =
-                  shapes.indexOf(current);
-
-                const next =
-                  shapes[
-                  (index + 1) %
-                  shapes.length
-                  ];
-
-                updateConfig(
-                  `${objectId}.layout.shape`,
-                  next
-                );
-
-              }}
-            />
-
-          )}
-
-
-          {isChromaSupported && (
-
-            <ToolButton
-              icon={Pipette}
-              label="Chroma Key"
-              onClick={() => {
-
-                if (
-                  typeof onStartChromaKey ===
-                  "function"
-                ) {
-                  onStartChromaKey(
-                    objectId
-                  );
-                } else {
-                  console.warn(
-                    "RuachAgent Properties: onStartChromaKey was not supplied."
-                  );
-                }
-
-              }}
-            />
-
-          )}
-
         </div>
 
+        {configuration.crop.enabled && (
+          <div style={styles.subPanel}>
+            <div style={styles.subPanelTitle}>Crop Area</div>
 
-        {/* ============================================
-                   TRANSFORM CONTROLS
-                ============================================= */}
+            {[
+              ["Top", "top"],
+              ["Right", "right"],
+              ["Bottom", "bottom"],
+              ["Left", "left"]
+            ].map(([label, key]) => (
+              <NumericControl
+                key={key}
+                label={label}
+                value={configuration.crop[key]}
+                min={0}
+                max={49}
+                step={1}
+                suffix="%"
+                onChange={(value) => updateCrop(key, value)}
+              />
+            ))}
+          </div>
+        )}
 
         <div style={styles.subPanel}>
-
-          <div style={styles.subPanelTitle}>
-            Transform
-          </div>
-
+          <div style={styles.subPanelTitle}>Scale</div>
 
           <NumericControl
-            label="Scale"
-            value={configuration.scale}
+            label="Zoom"
+            value={configuration.zoom}
             min={0.1}
             max={4}
             step={0.01}
             suffix="×"
-            onChange={(value) =>
-              updateConfig(
-                `${objectId}.layout.scale`,
-                value
-              )
-            }
+            onChange={(value) => updateLayout("zoom", value)}
           />
+        </div>
 
-
-          <NumericControl
-            label="Rotation"
-            value={configuration.rotation}
-            min={-180}
-            max={180}
-            step={1}
-            suffix="°"
-            onChange={(value) =>
-              updateConfig(
-                `${objectId}.layout.rotation`,
-                value
-              )
-            }
-          />
-
-
-          {objectId === "logo" && (
+        {isImageObject && (
+          <div style={styles.subPanel}>
+            <div style={styles.subPanelTitle}>Image</div>
 
             <NumericControl
               label="Opacity"
@@ -918,184 +686,46 @@ export default function RuachAgentReceiptStudioSystemB({
               min={0}
               max={1}
               step={0.01}
-              onChange={(value) =>
-                updateConfig(
-                  "logo.layout.opacity",
-                  value
-                )
-              }
+              suffix=""
+              onChange={(value) => updateLayout("opacity", value)}
             />
 
-          )}
-
-
-          {objectId === "qrCode" && (
-
-            <NumericControl
-              label="Corner Radius"
-              value={
-                configuration.cornerRadius
-              }
-              min={0}
-              max={100}
-              step={1}
-              suffix="px"
-              onChange={(value) =>
-                updateConfig(
-                  "qrCode.layout.cornerRadius",
-                  value
-                )
-              }
-            />
-
-          )}
-
-        </div>
-
-
-        {/* ============================================
-                   LOGO DIMENSIONS
-                ============================================= */}
+            {objectId === "qrCode" && (
+              <NumericControl
+                label="Corner Radius"
+                value={configuration.cornerRadius}
+                min={0}
+                max={100}
+                step={1}
+                suffix="px"
+                onChange={(value) => updateLayout("cornerRadius", value)}
+              />
+            )}
+          </div>
+        )}
 
         {objectId === "logo" && (
-
           <div style={styles.subPanel}>
-
-            <div style={styles.subPanelTitle}>
-              Dimensions
-            </div>
-
-
-            <div style={styles.dimensionHeader}>
-
-              <span>
-                Width
-              </span>
-
-              <button
-                type="button"
-                style={styles.lockButton}
-                onClick={() =>
-                  setAspectLocks(
-                    (current) => ({
-                      ...current,
-                      logo:
-                        !current.logo
-                    })
-                  )
-                }
-              >
-                {aspectLocks.logo
-                  ? <Lock size={13} />
-                  : <Unlock size={13} />
-                }
-              </button>
-
-              <span>
-                Height
-              </span>
-
-            </div>
-
+            <div style={styles.subPanelTitle}>Logo Size</div>
 
             <DimensionInput
               label="Width"
-              value={getPath(
-                designConfig,
-                "logo.layout.width",
-                ""
-              )}
+              value={configuration.width}
               placeholder="Auto"
-              onChange={(value) =>
-                updateConfig(
-                  "logo.layout.width",
-                  value
-                )
-              }
+              onChange={(value) => updateLayout("width", value)}
             />
-
 
             <DimensionInput
               label="Height"
-              value={getPath(
-                designConfig,
-                "logo.layout.height",
-                ""
-              )}
+              value={configuration.height}
               placeholder="Auto"
-              onChange={(value) =>
-                updateConfig(
-                  "logo.layout.height",
-                  value
-                )
-              }
+              onChange={(value) => updateLayout("height", value)}
             />
-
           </div>
-
         )}
-
-
-        {/* ============================================
-                   POSITION
-                ============================================= */}
-
-        <div style={styles.subPanel}>
-
-          <div style={styles.subPanelTitle}>
-            Position
-          </div>
-
-          <SelectControl
-            label="Position"
-            value={
-              configuration.position ||
-              "top-center"
-            }
-            options={[
-              {
-                value: "top-left",
-                label: "Top Left"
-              },
-              {
-                value: "top-center",
-                label: "Top Center"
-              },
-              {
-                value: "top-right",
-                label: "Top Right"
-              },
-              {
-                value: "center",
-                label: "Center"
-              },
-              {
-                value: "bottom-left",
-                label: "Bottom Left"
-              },
-              {
-                value: "bottom-center",
-                label: "Bottom Center"
-              },
-              {
-                value: "bottom-right",
-                label: "Bottom Right"
-              }
-            ]}
-            onChange={(value) =>
-              updateConfig(
-                `${objectId}.layout.position`,
-                value
-              )
-            }
-          />
-
-        </div>
-
       </div>
     );
   };
-
 
   /* ========================================================
      DIMENSION INPUT
@@ -1138,7 +768,8 @@ export default function RuachAgentReceiptStudioSystemB({
     icon: Icon,
     label,
     onClick,
-    disabled = false
+    disabled = false,
+    active = false
   }) => {
 
     return (
@@ -1150,6 +781,9 @@ export default function RuachAgentReceiptStudioSystemB({
           ...styles.toolButton,
           ...(disabled
             ? styles.toolButtonDisabled
+            : {}),
+          ...(active
+            ? styles.toolButtonActive
             : {})
         }}
         title={
@@ -1261,11 +895,16 @@ export default function RuachAgentReceiptStudioSystemB({
                                OBJECT HEADER
                             ================================== */}
 
-              <button
-                type="button"
-                onClick={() =>
-                  toggleGroup(object.id)
-                }
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => toggleGroup(object.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleGroup(object.id);
+                  }
+                }}
                 style={styles.objectHeader}
               >
 
@@ -1339,7 +978,7 @@ export default function RuachAgentReceiptStudioSystemB({
 
                 </button>
 
-              </button>
+              </div>
 
 
               {/* =================================
@@ -1711,6 +1350,13 @@ const styles = {
   toolButtonDisabled: {
     opacity: 0.28,
     cursor: "not-allowed"
+  },
+
+
+  toolButtonActive: {
+    color: "#00D9FF",
+    background: "rgba(0,198,255,.08)",
+    boxShadow: "inset 0 -2px 0 #00C8FF"
   },
 
 
