@@ -1337,38 +1337,6 @@ export default function RuachAgentReceiptStudioSystemC({
                     }
                 >
 
-                    <div
-                        style={
-                            styles.liveIndicator
-                        }
-                    >
-                        <span
-                            style={
-                                styles.liveDot
-                            }
-                        />
-
-                        LIVE
-                    </div>
-
-                    <div>
-                        <strong
-                            style={
-                                styles.headerTitle
-                            }
-                        >
-                            Receipt Canvas
-                        </strong>
-
-                        <span
-                            style={
-                                styles.headerSubtitle
-                            }
-                        >
-                            {effectiveTemplateId}
-                        </span>
-                    </div>
-
                 </div>
 
 
@@ -1381,58 +1349,6 @@ export default function RuachAgentReceiptStudioSystemC({
                         styles.canvasToolbar
                     }
                 >
-
-                    <button
-                        type="button"
-                        title="Select"
-                        onClick={() =>
-                            setCanvasMode(
-                                "select"
-                            )
-                        }
-                        style={{
-                            ...styles.toolButton,
-
-                            ...(canvas.mode ===
-                                "select"
-                                ? styles.toolButtonActive
-                                : {})
-                        }}
-                    >
-                        <MousePointer2
-                            size={16}
-                        />
-                    </button>
-
-
-                    <button
-                        type="button"
-                        title="Pan canvas"
-                        onClick={() =>
-                            setCanvasMode(
-                                "hand"
-                            )
-                        }
-                        style={{
-                            ...styles.toolButton,
-
-                            ...(canvas.mode ===
-                                "hand"
-                                ? styles.toolButtonActive
-                                : {})
-                        }}
-                    >
-                        <Hand
-                            size={16}
-                        />
-                    </button>
-
-
-                    <div
-                        style={
-                            styles.toolbarDivider
-                        }
-                    />
 
 
                     <button
@@ -1488,61 +1404,6 @@ export default function RuachAgentReceiptStudioSystemC({
                         style={
                             styles.toolbarDivider
                         } />
-
-
-                    <button
-                        type="button"
-                        title="Fit receipt"
-                        onClick={
-                            fitReceipt
-                        }
-                        style={
-                            styles.toolButton
-                        }
-                    >
-                        <Maximize2
-                            size={16}
-                        />
-                    </button>
-
-
-                    <button
-                        type="button"
-                        title="Center receipt"
-                        onClick={
-                            centerReceipt
-                        }
-                        style={
-                            styles.toolButton
-                        }
-                    >
-                        <Crosshair
-                            size={16}
-                        />
-                    </button>
-
-
-                    <button
-                        type="button"
-                        title="Reset view"
-                        onClick={
-                            resetCanvasView
-                        }
-                        style={
-                            styles.toolButton
-                        }
-                    >
-                        <RotateCcw
-                            size={16}
-                        />
-                    </button>
-
-
-                    <div
-                        style={
-                            styles.toolbarDivider
-                        }
-                    />
 
 
                     <button
@@ -1960,112 +1821,6 @@ export default function RuachAgentReceiptStudioSystemC({
                     styles.canvasFooter
                 }
             >
-
-                <div
-                    style={
-                        styles.footerLeft
-                    }
-                >
-
-                    <span
-                        style={
-                            styles.footerLive
-                        }
-                    >
-                        <span
-                            style={
-                                styles.liveDot
-                            }
-                        />
-
-                        LIVE DESIGN CONFIG
-                    </span>
-
-                    <span>
-                        {configKeys.length} configuration
-                        {configKeys.length === 1
-                            ? ""
-                            : "s"} loaded
-                    </span>
-
-                </div>
-
-
-                <div
-                    style={
-                        styles.footerCenter
-                    }
-                >
-
-                    <span>
-                        X:
-                        {" "}
-                        {Math.round(
-                            receiptPosition.x
-                        )}
-                    </span>
-
-                    <span>
-                        Y:
-                        {" "}
-                        {Math.round(
-                            receiptPosition.y
-                        )}
-                    </span>
-
-                    <span>
-                        Zoom:
-                        {" "}
-                        {Math.round(
-                            canvas.zoom *
-                            100
-                        )}
-                        %
-                    </span>
-
-                </div>
-
-
-                <div
-                    style={
-                        styles.footerRight
-                    }
-                >
-
-                    <button
-                        type="button"
-                        onClick={
-                            centerReceipt
-                        }
-                        style={
-                            styles.footerButton
-                        }
-                    >
-                        <Crosshair
-                            size={13}
-                        />
-
-                        Center
-                    </button>
-
-
-                    <button
-                        type="button"
-                        onClick={
-                            fitReceipt
-                        }
-                        style={
-                            styles.footerButton
-                        }
-                    >
-                        <Maximize2
-                            size={13}
-                        />
-
-                        Fit
-                    </button>
-
-                </div>
 
             </div>
 

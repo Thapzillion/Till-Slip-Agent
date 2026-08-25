@@ -523,150 +523,35 @@ export default function ReceiptStudioShell({
           </div>
         </div>
 
-        <div style={styles.topCenter}>
-          <span style={styles.documentName}>{documentName}</span>
-          <span style={styles.live}>
-            <span style={styles.dot} />
-            LIVE DOCUMENT
-          </span>
-        </div>
 
-        <div style={styles.topRight}>
-          <div style={styles.group}>
-            <button type="button" style={styles.iconBtn} title="Undo">
-              <Undo2 size={14} />
-            </button>
-            <button type="button" style={styles.iconBtn} title="Redo">
-              <Redo2 size={14} />
-            </button>
-          </div>
+        <button type="button" style={styles.exportBtn} onClick={onExport}>
+          <Download size={13} />
+          Export
+        </button>
 
-          <div style={styles.group}>
-            <button
-              type="button"
-              style={styles.iconBtn}
-              onClick={() => setZoom((value) => Math.max(25, value - 5))}
-              title="Zoom out"
-            >
-              <ZoomOut size={13} />
-            </button>
-            <span
-              style={{
-                padding: "0 7px",
-                color: "#a8bdd0",
-                fontSize: 9,
-                fontWeight: 800,
-              }}
-            >
-              {zoom}%
-            </span>
-            <button
-              type="button"
-              style={styles.iconBtn}
-              onClick={() => setZoom((value) => Math.min(200, value + 5))}
-              title="Zoom in"
-            >
-              <ZoomIn size={13} />
-            </button>
-          </div>
-
-          <div style={styles.group}>
-            <button
-              type="button"
-              onClick={() => setGrid((value) => !value)}
-              style={{
-                ...styles.iconBtn,
-                ...(grid ? styles.activeBtn : {}),
-              }}
-              title="Toggle grid"
-            >
-              <Grid3X3 size={13} />
-            </button>
-            <button
-              type="button"
-              onClick={() => setSnap((value) => !value)}
-              style={{
-                ...styles.iconBtn,
-                ...(snap ? styles.activeBtn : {}),
-              }}
-              title="Toggle snap"
-            >
-              <Magnet size={13} />
-            </button>
-            <button type="button" style={styles.iconBtn} title="Rulers">
-              <Ruler size={13} />
-            </button>
-          </div>
-
-          <button type="button" style={styles.aiBtn} onClick={onAIAssist}>
-            <Sparkles size={13} />
-            AI Assist
-            <ChevronDown size={10} />
-          </button>
-
-          <button type="button" style={styles.exportBtn} onClick={onExport}>
-            <Download size={13} />
-            Export
-          </button>
-
-          <button
-            type="button"
-            style={{
-              ...styles.saveBtn,
-              opacity: isSaveSyncing ? 0.65 : 1,
-            }}
-            disabled={isSaveSyncing}
-            onClick={onSave}
-          >
-            <Save size={13} />
-            {isSaveSyncing ? "Saving..." : "Save"}
-          </button>
-        </div>
+        <button
+          type="button"
+          style={{
+            ...styles.saveBtn,
+            opacity: isSaveSyncing ? 0.65 : 1,
+          }}
+          disabled={isSaveSyncing}
+          onClick={onSave}
+        >
+          <Save size={13} />
+          {isSaveSyncing ? "Saving..." : "Save"}
+        </button>
       </header>
 
       {/* ============================================================
           SYSTEM A — WORKSPACE FRAME
           The actual editing systems are supplied through {children}.
          ============================================================ */}
-      <div style={styles.body}>
-        <aside style={styles.rail} aria-label="Studio navigation">
-          {railTools.map((tool, index) => (
-            <button
-              key={tool.id}
-              type="button"
-              title={tool.label}
-              onClick={() => setActiveTool(tool.id)}
-              style={{
-                ...styles.railBtn,
-                ...(activeTool === tool.id || (index === 0 && !activeTool)
-                  ? styles.railActive
-                  : {}),
-              }}
-            >
-              {index === 0 && <Grid3X3 size={17} />}
-              {index === 1 && <PanelRight size={17} />}
-              {index === 2 && <Monitor size={17} />}
-              {index === 3 && <Tablet size={17} />}
-              {index === 4 && <Smartphone size={17} />}
-            </button>
-          ))}
 
-          <div style={styles.railSpacer} />
-
-          <button
-            type="button"
-            style={styles.railBtn}
-            title="Studio workspace"
-            onClick={() => setActiveTool("studio")}
-          >
-            <PanelBottom size={16} />
-          </button>
-        </aside>
-
-        <section style={styles.workspace}>
-          <div style={styles.backdrop} />
-          <div style={styles.workspaceInner}>
-            {/* ========================================================
+      <section style={styles.workspace}>
+        <div style={styles.backdrop} />
+        <div style={styles.workspaceInner}>
+          {/* ========================================================
                 SYSTEMS B + C + D
 
                 System A is the composition root. The three modules below
@@ -679,65 +564,64 @@ export default function ReceiptStudioShell({
                 All three receive the same live designConfig and therefore
                 edit/render the same receipt document.
                ======================================================== */}
-            <div style={styles.workspaceGrid}>
-              {/* --------------------------------------------------------
+          <div style={styles.workspaceGrid}>
+            {/* --------------------------------------------------------
                   SYSTEM B — PROPERTIES
                  -------------------------------------------------------- */}
-              <RuachAgentReceiptStudioSystemB
-                receiptData={receiptData}
-                settings={settings}
-                user={user}
-                designConfig={designConfig}
-                selectedTemplateId={selectedTemplateId}
-                selectedObjectId={selectedObjectId || selectedElementId}
-                initialObjectGraph={initialObjectGraph}
-                onObjectGraphChange={onObjectGraphChange}
-                onDesignConfigChange={handleDesignConfigChange}
-                onSelectObject={handleObjectSelect}
-                onSelectElement={handleElementSelect}
-              />
+            <RuachAgentReceiptStudioSystemB
+              receiptData={receiptData}
+              settings={settings}
+              user={user}
+              designConfig={designConfig}
+              selectedTemplateId={selectedTemplateId}
+              selectedObjectId={selectedObjectId || selectedElementId}
+              initialObjectGraph={initialObjectGraph}
+              onObjectGraphChange={onObjectGraphChange}
+              onDesignConfigChange={handleDesignConfigChange}
+              onSelectObject={handleObjectSelect}
+              onSelectElement={handleElementSelect}
+            />
 
-              {/* --------------------------------------------------------
+            {/* --------------------------------------------------------
                   SYSTEM C — RECEIPT CANVAS
                  -------------------------------------------------------- */}
-              <RuachAgentReceiptStudioSystemC
-                receiptData={receiptData}
-                settings={settings}
-                user={user}
-                designConfig={designConfig}
-                selectedTemplateId={selectedTemplateId}
-                selectedObjectId={selectedObjectId || selectedElementId}
-                onSelectObject={handleObjectSelect}
-                onSelectElement={handleElementSelect}
-                onDesignConfigChange={handleDesignConfigChange}
-              />
+            <RuachAgentReceiptStudioSystemC
+              receiptData={receiptData}
+              settings={settings}
+              user={user}
+              designConfig={designConfig}
+              selectedTemplateId={selectedTemplateId}
+              selectedObjectId={selectedObjectId || selectedElementId}
+              onSelectObject={handleObjectSelect}
+              onSelectElement={handleElementSelect}
+              onDesignConfigChange={handleDesignConfigChange}
+            />
 
-              {/* --------------------------------------------------------
+            {/* --------------------------------------------------------
                   SYSTEM D — COLOR GRADING
                  -------------------------------------------------------- */}
-              <RuachAgentReceiptStudioSystemD
-                receiptData={receiptData}
-                settings={settings}
-                user={user}
-                designConfig={designConfig}
-                selectedTemplateId={selectedTemplateId}
-                selectedObjectId={selectedObjectId || selectedElementId}
-                selectedElementId={selectedElementId || selectedObjectId}
-                onSelectObject={handleObjectSelect}
-                onSelectElement={handleElementSelect}
-                onDesignConfigChange={handleDesignConfigChange}
-              />
-            </div>
+            <RuachAgentReceiptStudioSystemD
+              receiptData={receiptData}
+              settings={settings}
+              user={user}
+              designConfig={designConfig}
+              selectedTemplateId={selectedTemplateId}
+              selectedObjectId={selectedObjectId || selectedElementId}
+              selectedElementId={selectedElementId || selectedObjectId}
+              onSelectObject={handleObjectSelect}
+              onSelectElement={handleElementSelect}
+              onDesignConfigChange={handleDesignConfigChange}
+            />
           </div>
+        </div>
 
-          {/*
+        {/*
            * System E / Animation Timeline has intentionally been removed
            * from the current studio architecture. The shell keeps the
            * bottom-dock state out of the active composition until that
            * system is reintroduced.
            */}
-        </section>
-      </div>
+      </section>
 
       {/* ============================================================
           SYSTEM A — GLOBAL STATUS BAR
