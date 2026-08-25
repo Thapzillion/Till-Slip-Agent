@@ -2050,7 +2050,9 @@ export default function AdminPanel() {
                 selectedTemplateId={selectedTemplateId}
 
                 /* Shared designConfig bridge */
-                onDesignConfigChange={setDesignConfig}
+                onDesignConfigChange={(newConfig) => {
+                  setDesignConfig(JSON.parse(JSON.stringify(newConfig)));
+                }}
 
                 /* Shared element selection bridge */
                 selectedObjectId={selectedStudioElement}

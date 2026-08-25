@@ -1101,6 +1101,121 @@ export default function MatrixTillSlip({
         editStyle: getGenericElementEditStyle(id)
     });
 
+
+    // NEW COLOR GRADING PASSERS
+
+    // Helper inside MatrixTillSlip.jsx to extract full color grading styles for an element
+    const getElementGradingStyle = (elementId, config) => {
+        const targets = config?.colorGrading?.targets || config?.color_grading?.targets || {};
+        const targetGrading = targets[elementId];
+
+        if (!targetGrading) return {};
+
+        const styles = {};
+        let filters = [];
+
+        // 1. Basic Adjustments (Exposure, Contrast, Highlights, Shadows, Saturation, Whites, Blacks)
+        if (targetGrading.basic) {
+            const { exposure, contrast, highlights, shadows, saturation, whites, blacks } = targetGrading.basic;
+
+            if (exposure !== undefined && exposure !== 0) {
+                filters.push(`brightness(${100 + Number(exposure)}%)`);
+            }
+            if (contrast !== undefined && contrast !== 0) {
+                filters.push(`contrast(${100 + Number(contrast)}%)`);
+            }
+            if (saturation !== undefined && saturation !== 0) {
+                filters.push(`saturate(${100 + Number(saturation)}%)`);
+            }
+            // Proxy approximations for filters not natively standard in CSS
+            if (highlights !== undefined && highlights !== 0) {
+                filters.push(`brightness(${100 + (Number(highlights) * 0.5)}%)`);
+            }
+            if (shadows !== undefined && shadows !== 0) {
+                filters.push(`contrast(${100 + (Number(shadows) * 0.3)}%)`);
+            }
+        }
+
+        // 2. Advanced Adjustments (Hue Shift, Temperature, Sharpen/Blur)
+        if (targetGrading.advanced) {
+            const { hueShift, colorTemperature, sharpen } = targetGrading.advanced;
+
+            if (hueShift !== undefined && hueShift !== 0) {
+                filters.push(`hue-rotate(${hueShift}deg)`);
+            }
+            // Approximate color temperature with sepia/saturate balance if shifting from neutral 6500K
+            if (colorTemperature !== undefined && colorTemperature !== 6500) {
+                const tempDiff = colorTemperature - 6500;
+                if (tempDiff > 0) {
+                    filters.push(`sepia(${Math.min(tempDiff / 200, 30)}%)`); // Warmer
+                } else {
+                    filters.push(`hue-rotate(${Math.max(tempDiff / 100, -20)}deg)`); // Cooler
+                }
+            }
+            if (sharpen !== undefined && sharpen > 10) {
+                // High contrast boost simulates crispness
+                filters.push(`contrast(${100 + (sharpen * 0.2)}%)`);
+            }
+        }
+
+        // Apply combined CSS filters if any exist
+        if (filters.length > 0) {
+            styles.filter = filters.join(" ");
+        }
+
+        // 3. Neon Effects
+        if (targetGrading.neon?.enabled) {
+            const color = targetGrading.neon.color || "#00F0FF";
+            const intensity = targetGrading.neon.intensity ?? 80;
+            const spread = targetGrading.neon.spread ?? 50;
+            const glow = targetGrading.neon.glow ?? 70;
+
+            styles.color = color;
+            const blurRadius = (intensity / 100) * 15 + (spread / 10);
+            const outerBlur = (glow / 100) * 30;
+            styles.textShadow = `0 0 ${blurRadius}px ${color}, 0 0 ${outerBlur}px ${color}`;
+        }
+
+        // 4. Glow Effects (Box or general glow context)
+        if (targetGrading.glow?.enabled) {
+            const intensity = targetGrading.glow.intensity ?? 60;
+            const radius = targetGrading.glow.radius ?? 80;
+            const glowColor = targetGrading.neon?.enabled ? targetGrading.neon.color : "#00eaff";
+            const alpha = (intensity / 100).toFixed(2);
+            styles.boxShadow = `0 0 ${radius}px rgba(0, 234, 255, ${alpha})`;
+        }
+
+        // 5. Lighting / Highlights (Key, Fill, Rim styling simulation)
+        if (targetGrading.light?.enabled || targetGrading.light?.intensity > 0) {
+            const keyColor = targetGrading.light.keyColor || "#FFD7CE";
+            const intensityFactor = ((targetGrading.light.intensity || 65) / 100).toFixed(2);
+            styles.boxShadow = `inset 0 0 15px rgba(255, 215, 206, ${intensityFactor * 0.4})`;
+        }
+
+        // 6. Gradient Text or Background
+        if (targetGrading.gradient?.enabled) {
+            const type = targetGrading.gradient.type || "linear";
+            const start = targetGrading.gradient.startColor || "#00F0FF";
+            const end = targetGrading.gradient.endColor || "#0066FF";
+            const angle = targetGrading.gradient.angle || 0;
+            const opacity = (targetGrading.gradient.opacity ?? 100) / 100;
+
+            if (type === "radial") {
+                styles.background = `radial-gradient(circle, ${start}, ${end})`;
+            } else if (type === "conic") {
+                styles.background = `conic-gradient(from ${angle}deg, ${start}, ${end})`;
+            } else {
+                styles.background = `linear-gradient(${angle}deg, ${start}, ${end})`;
+            }
+
+            styles.opacity = opacity;
+            styles.WebkitBackgroundClip = "text";
+            styles.WebkitTextFillColor = "transparent";
+        }
+
+        return styles;
+    };
+
     return (
         <div
             id="till-slip-capture"
