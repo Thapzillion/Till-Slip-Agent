@@ -239,7 +239,7 @@ function ensureTargetConfig(config, targetId) {
 
 export default function RuachAgentReceiptStudioSystemD({
     designConfig = {},
-    selectedElement = "logo",
+    selectedElement = null,
     onDesignConfigChange,
     onSelectElement,
     disabled = false,
@@ -251,13 +251,13 @@ export default function RuachAgentReceiptStudioSystemD({
 
     const resolvedTarget = useMemo(() => {
         if (!selectedElement) {
-            return TARGETS[0];
+            return null;
         }
 
         return (
             TARGETS.find(
                 (target) => target.id === selectedElement
-            ) || TARGETS[0]
+            ) || null
         );
     }, [selectedElement]);
 
@@ -291,6 +291,11 @@ export default function RuachAgentReceiptStudioSystemD({
        ---------------------------------------------------------------------- */
 
     useEffect(() => {
+
+        if (!resolvedTarget) {
+            setGrading(createDefaultTargetGrading());
+            return;
+        }
 
         const normalized = ensureTargetConfig(
             designConfig,
@@ -350,6 +355,10 @@ export default function RuachAgentReceiptStudioSystemD({
        ========================================================================== */
 
     const commitGrading = (nextGrading) => {
+
+        if (!resolvedTarget) {
+            return;
+        }
 
         setGrading(nextGrading);
 
@@ -653,6 +662,24 @@ export default function RuachAgentReceiptStudioSystemD({
     /* ==========================================================================
        RENDER
        ========================================================================== */
+
+    if (!resolvedTarget) {
+        return (
+            <section style={styles.root}>
+                <div style={styles.emptyState}>
+                    <Target size={22} />
+                    <strong style={styles.emptyStateStrong}>
+                        Select an element
+                    </strong>
+                    <span style={styles.emptyStateSpan}>
+                        Click a logo, text, QR code, total,
+                        item or another part of the receipt
+                        to begin editing.
+                    </span>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section style={styles.root}>
@@ -1676,6 +1703,34 @@ const styles = {
             "0 20px 60px rgba(0,0,0,0.42)",
     },
 
+
+    emptyState: {
+        flex: 1,
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "10px",
+        padding: "32px",
+        textAlign: "center",
+        color: "#b9d9e8",
+        background:
+            "radial-gradient(circle at center, rgba(0, 217, 255, 0.08), transparent 52%)",
+    },
+
+    emptyStateStrong: {
+        color: "#f1fbff",
+        fontSize: "14px",
+        letterSpacing: "0.04em",
+    },
+
+    emptyStateSpan: {
+        maxWidth: "300px",
+        color: "#7895a4",
+        fontSize: "12px",
+        lineHeight: 1.6,
+    },
 
     /* ----------------------------------------------------------------------
        HEADER

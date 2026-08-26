@@ -273,20 +273,29 @@ export default function RuachAgentReceiptStudioSystemC({
        SELECTED RECEIPT ELEMENT
        ======================================================== */
 
+    // System C owns the active receipt-element selection.
+    // The default target is the Logo, while existing external
+    // selection/configuration values remain supported below.
+    const [selectedElement, setSelectedElement] =
+        useState("logo");
+
     const [internalSelectedElementId, setInternalSelectedElementId] =
         useState(
+            selectedElementId ||
+            selectedObjectId ||
             designConfig?.colorGrading?.selectedElementId ||
             designConfig?.selectedElementId ||
-            null
+            "logo"
         );
 
     const activeSelectedElementId =
+        selectedElement ||
         selectedElementId ||
         selectedObjectId ||
         internalSelectedElementId ||
         designConfig?.colorGrading?.selectedElementId ||
         designConfig?.selectedElementId ||
-        null;
+        "logo";
 
 
     /* ========================================================
@@ -422,6 +431,10 @@ export default function RuachAgentReceiptStudioSystemC({
             setInternalSelectedElementId(
                 configuredSelection
             );
+
+            setSelectedElement(
+                configuredSelection
+            );
         }
 
     }, [
@@ -530,6 +543,8 @@ export default function RuachAgentReceiptStudioSystemC({
             if (!elementId) {
                 return;
             }
+
+            setSelectedElement(elementId);
 
             setInternalSelectedElementId(
                 elementId
@@ -1178,6 +1193,9 @@ export default function RuachAgentReceiptStudioSystemC({
 
             activeCurrencySymbol,
 
+            selectedElement:
+                selectedElement,
+
             selectedElementId:
                 activeSelectedElementId,
 
@@ -1197,6 +1215,7 @@ export default function RuachAgentReceiptStudioSystemC({
             receiptId,
             onDownload,
             activeCurrencySymbol,
+            selectedElement,
             activeSelectedElementId,
             handleElementSelect
         ]);
