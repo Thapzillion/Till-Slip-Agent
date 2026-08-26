@@ -613,7 +613,15 @@ const ElementFrame = ({
         selectedElementId === id;
 
     const handlePointerDown = (event) => {
+        // This boundary belongs to the individual receipt element.
+        // Stop both React propagation and native propagation so System C's
+        // whole-receipt drag handler cannot interpret this interaction as a drag.
+        event.preventDefault();
         event.stopPropagation();
+
+        if (event.nativeEvent?.stopImmediatePropagation) {
+            event.nativeEvent.stopImmediatePropagation();
+        }
 
         if (typeof onSelectElement === "function") {
             onSelectElement(id);
@@ -624,6 +632,13 @@ const ElementFrame = ({
         <div
             data-receipt-element={id}
             className={className}
+            onPointerDownCapture={(event) => {
+                event.stopPropagation();
+
+                if (event.nativeEvent?.stopImmediatePropagation) {
+                    event.nativeEvent.stopImmediatePropagation();
+                }
+            }}
             onPointerDown={handlePointerDown}
             style={{
                 position: "relative",
@@ -640,6 +655,9 @@ const ElementFrame = ({
                     typeof onSelectElement === "function"
                         ? "pointer"
                         : "default",
+                touchAction: "manipulation",
+                userSelect: "none",
+                WebkitUserSelect: "none",
                 ...editStyle,
                 ...style
             }}
