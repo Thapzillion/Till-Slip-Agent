@@ -692,75 +692,70 @@ export default function RuachAgentReceiptStudioSystemC({
     const handleReceiptPointerDown =
         useCallback(
             (event) => {
-
                 /*
-                 * Only primary mouse button.
+                 * IMPORTANT:
+                 * The receipt itself is NOT a single draggable object.
+                 *
+                 * MatrixTillSlip owns the interactive receipt elements.
+                 * When the pointer lands on Logo, Business Name, QR,
+                 * Total, Items, Voucher, etc., that element must receive
+                 * the interaction and call onSelectElement().
+                 *
+                 * Therefore System C only starts receipt dragging when
+                 * the pointer is placed on the receipt selection frame
+                 * itself (the small frame/padding around the receipt),
+                 * never when it lands on receipt content.
                  */
 
-                if (
-                    event.button !== 0
-                ) {
+                if (event.button !== 0) {
                     return;
                 }
 
-
-                /*
-                 * Clicking an editable receipt element is a
-                 * selection action, not a receipt-drag action.
-                 *
-                 * MatrixTillSlip exposes every editable element
-                 * using data-receipt-element.
-                 */
-                const targetElement =
+                const target =
                     event.target instanceof Element
                         ? event.target
                         : null;
 
-                const receiptElement =
-                    targetElement?.closest(
+                /*
+                 * Never start whole-receipt dragging from an actual
+                 * receipt element.
+                 */
+                if (
+                    target?.closest?.(
                         "[data-receipt-element]"
-                    );
-
-                if (receiptElement) {
+                    )
+                ) {
                     return;
                 }
 
                 /*
-                 * Blank receipt surface = move the entire receipt.
+                 * Only the selection frame itself may start a receipt drag.
+                 * This prevents clicks on the rendered receipt surface,
+                 * text, logo, QR, voucher, items, etc. from becoming grabs.
                  */
-                event.preventDefault();
+                if (
+                    event.target !== event.currentTarget
+                ) {
+                    return;
+                }
 
+                event.preventDefault();
                 event.stopPropagation();
 
-
-                setIsDraggingReceipt(
-                    true
-                );
-
+                setIsDraggingReceipt(true);
 
                 dragStartRef.current = {
-                    pointerX:
-                        event.clientX,
-
-                    pointerY:
-                        event.clientY,
-
-                    originalX:
-                        receiptPosition.x,
-
-                    originalY:
-                        receiptPosition.y
+                    pointerX: event.clientX,
+                    pointerY: event.clientY,
+                    originalX: receiptPosition.x,
+                    originalY: receiptPosition.y
                 };
-
 
                 event.currentTarget.setPointerCapture?.(
                     event.pointerId
                 );
-
             },
-            [
-                receiptPosition
-            ]
+            [receiptPosition]
         );
 
 
@@ -1627,6 +1622,10 @@ export default function RuachAgentReceiptStudioSystemC({
                             style={{
                                 ...styles.receiptSelection,
 
+                                cursor: isDraggingReceipt
+                                    ? "grabbing"
+                                    : "default",
+
                                 ...(isDraggingReceipt
                                     ? styles.receiptSelectionDragging
                                     : {})
@@ -1766,7 +1765,7 @@ export default function RuachAgentReceiptStudioSystemC({
                             />
 
                             <span>
-                                Drag receipt
+                                Select receipt elements
                             </span>
                         </div>
 
