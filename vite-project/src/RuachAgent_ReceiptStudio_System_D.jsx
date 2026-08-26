@@ -291,7 +291,6 @@ export default function RuachAgentReceiptStudioSystemD({
        ---------------------------------------------------------------------- */
 
     useEffect(() => {
-
         if (!resolvedTarget) {
             setGrading(createDefaultTargetGrading());
             return;
@@ -347,7 +346,7 @@ export default function RuachAgentReceiptStudioSystemD({
             },
         });
 
-    }, [designConfig, resolvedTarget.id]);
+    }, [designConfig, resolvedTarget?.id]);
 
 
     /* ==========================================================================
