@@ -609,59 +609,44 @@ const ElementFrame = ({
     editStyle = {},
     ...props
 }) => {
-    const selected =
-        selectedElementId === id;
+    const selected = selectedElementId === id;
 
-    const handlePointerDown = (event) => {
-        // This boundary belongs to the individual receipt element.
-        // Stop both React propagation and native propagation so System C's
-        // whole-receipt drag handler cannot interpret this interaction as a drag.
-        event.preventDefault();
+    const selectElement = (event) => {
         event.stopPropagation();
-
         if (event.nativeEvent?.stopImmediatePropagation) {
             event.nativeEvent.stopImmediatePropagation();
         }
-
-        if (typeof onSelectElement === "function") {
-            onSelectElement(id);
-        }
+        onSelectElement?.(id);
     };
 
     return (
         <div
+            {...props}
             data-receipt-element={id}
             className={className}
-            onPointerDownCapture={(event) => {
+            onPointerDownCapture={selectElement}
+            onPointerDown={selectElement}
+            onClick={(event) => {
                 event.stopPropagation();
-
-                if (event.nativeEvent?.stopImmediatePropagation) {
-                    event.nativeEvent.stopImmediatePropagation();
-                }
+                onSelectElement?.(id);
             }}
-            onPointerDown={handlePointerDown}
             style={{
                 position: "relative",
                 outline: selected
                     ? "1px solid rgba(0,240,255,0.95)"
                     : "none",
-                outlineOffset: selected
-                    ? "4px"
-                    : "0",
+                outlineOffset: selected ? "4px" : "0",
                 boxShadow: selected
                     ? "0 0 0 1px rgba(0,240,255,0.2), 0 0 18px rgba(0,240,255,0.22)"
                     : style.boxShadow,
-                cursor:
-                    typeof onSelectElement === "function"
-                        ? "pointer"
-                        : "default",
+                cursor: "pointer",
                 touchAction: "manipulation",
                 userSelect: "none",
                 WebkitUserSelect: "none",
+                pointerEvents: "auto",
                 ...editStyle,
                 ...style
             }}
-            {...props}
         >
             {children}
         </div>
