@@ -474,16 +474,7 @@ export default function ReceiptStudioShell({
     }
   };
 
-  const handleElementSelect = (id) => {
-    if (typeof onSelectElement === "function") {
-      onSelectElement(id);
-    }
-    // Some existing canvas implementations use selectedObjectId.
-    // Forward the same selection so all three systems stay synchronized.
-    if (typeof onSelectObject === "function") {
-      onSelectObject(id);
-    }
-  };
+  // REMOVED BLOCK AREA OF HANDLESELECTELEMENT
 
   const railTools = [
     { id: "studio", label: "Studio" },
