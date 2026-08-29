@@ -1209,217 +1209,202 @@ export default function AgentParameters() {
 
   }
 
+
   return (
-    <div
-      style={{
-        width: '100%',
-        minHeight: '100%',
-        background:
-          'radial-gradient(circle at 15% 0%, rgba(0,122,255,0.08), transparent 28%), radial-gradient(circle at 90% 20%, rgba(0,180,255,0.045), transparent 25%), #05070a',
-        color: '#ffffff',
-        fontFamily:
-          'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+    <div style={styles.page}>
 
       {/* =========================================================
-        AMBIENT TESLA LIGHTING
+        AMBIENT TESLA BACKGROUND
     ========================================================= */}
+
+      <div style={styles.pageBackground} />
+      <div style={styles.gridOverlay} />
 
       <div
         style={{
           position: 'absolute',
-          top: '-220px',
+          top: '-180px',
           left: '-180px',
           width: '520px',
           height: '520px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(0,130,255,0.09), transparent 68%)',
+            'radial-gradient(circle, rgba(0,125,255,0.13), transparent 68%)',
           pointerEvents: 'none',
+          filter: 'blur(4px)',
         }}
       />
 
       <div
         style={{
           position: 'absolute',
-          top: '35%',
-          right: '-280px',
+          top: '28%',
+          right: '-300px',
           width: '620px',
           height: '620px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(0,180,255,0.045), transparent 68%)',
+            'radial-gradient(circle, rgba(0,90,255,0.08), transparent 68%)',
           pointerEvents: 'none',
         }}
       />
 
       {/* =========================================================
-        PAGE WRAPPER
+        PAGE CONTENT
     ========================================================= */}
 
-      <div
-        style={{
-          width: '100%',
-          maxWidth: '1700px',
-          margin: '0 auto',
-          padding: '30px 34px 60px',
-          position: 'relative',
-          zIndex: 2,
-          boxSizing: 'border-box',
-        }}
-      >
+      <div style={styles.content}>
 
         {/* =======================================================
-          PREMIUM PAGE HEADER
+          PREMIUM AGENT PARAMETERS HEADER
       ======================================================= */}
 
-        <section
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            gap: '25px',
-            marginBottom: '26px',
-            paddingBottom: '22px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-          }}
-        >
+        <header style={styles.header}>
 
-          <div>
+          <div style={styles.headerLeft}>
 
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '9px',
-                marginBottom: '9px',
-              }}
-            >
-
-              <div
-                style={{
-                  width: '7px',
-                  height: '7px',
-                  borderRadius: '50%',
-                  background: '#00aaff',
-                  boxShadow:
-                    '0 0 8px rgba(0,170,255,0.95), 0 0 20px rgba(0,120,255,0.5)',
-                }}
-              />
-
-              <span
-                style={{
-                  fontSize: '9px',
-                  fontWeight: '700',
-                  letterSpacing: '1.8px',
-                  color: '#4daeff',
-                  textTransform: 'uppercase',
-                }}
-              >
-                RUACHAGENT / CONTROL CENTER
-              </span>
-
+            <div style={styles.headerOrb}>
+              <div style={styles.headerOrbCore} />
             </div>
 
-            <h1
-              style={{
-                margin: 0,
-                fontSize: '30px',
-                lineHeight: 1.1,
-                fontWeight: '600',
-                letterSpacing: '-0.8px',
-                color: '#ffffff',
-              }}
-            >
-              Agent Parameters
-            </h1>
+            <div style={{ minWidth: 0 }}>
 
-            <p
-              style={{
-                margin: '9px 0 0',
-                color: '#6d7785',
-                fontSize: '12px',
-                lineHeight: 1.6,
-                maxWidth: '650px',
-              }}
-            >
-              Configure the identity, transaction intelligence, webhook
-              infrastructure and voucher behavior powering your RuachAgent
-              merchant agent.
-            </p>
+              <div style={styles.eyebrow}>
+                RUACHAGENT / MERCHANT CONTROL
+              </div>
+
+              <h1 style={styles.pageTitle}>
+                Agent Parameters
+              </h1>
+
+              <p style={styles.pageSubtitle}>
+                Configure your merchant identity, AI commerce rules,
+                webhook infrastructure and live receipt behaviour.
+              </p>
+
+            </div>
 
           </div>
 
-          {/* HEADER STATUS */}
+          <div style={styles.headerRight}>
 
-          <div
-            style={{
-              minWidth: '220px',
-              padding: '13px 15px',
-              borderRadius: '12px',
-              background:
-                'linear-gradient(145deg, rgba(12,17,24,0.96), rgba(5,8,12,0.96))',
-              border: '1px solid rgba(0,142,255,0.20)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.035), 0 15px 45px rgba(0,0,0,0.25)',
-            }}
-          >
+            <div style={styles.statusPill}>
+              <span style={styles.statusDot} />
 
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-
-              <span
-                style={{
-                  fontSize: '9px',
-                  color: '#65707d',
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                }}
-              >
-                AGENT STATUS
-              </span>
-
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  fontSize: '9px',
-                  color: '#55d8ff',
-                  fontWeight: '700',
-                }}
-              >
-                <span
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    background: '#28cfff',
-                    boxShadow: '0 0 10px rgba(40,207,255,0.8)',
-                  }}
-                />
-                ONLINE
-              </span>
-
+              {isLoadingSettings
+                ? 'LOADING PROFILE'
+                : isSaveSyncing
+                  ? 'SYNCING PROFILE'
+                  : 'AGENT ONLINE'}
             </div>
 
             <div
               style={{
-                marginTop: '10px',
-                fontFamily: 'monospace',
-                fontSize: '10px',
-                color: '#9ba8b8',
+                padding: '8px 11px',
+                borderRadius: '999px',
+                border: '1px solid rgba(75,139,198,0.20)',
+                background: 'rgba(6,11,17,0.78)',
+                color: '#6d8298',
+                fontSize: '8px',
+                fontWeight: '700',
+                letterSpacing: '1px',
               }}
             >
-              {user?.email || 'Authenticated merchant'}
+              GOOGLE GENAI
+            </div>
+
+          </div>
+
+        </header>
+
+
+        {/* =======================================================
+          METRICS ROW
+      ======================================================= */}
+
+        <section style={styles.metricsGrid}>
+
+          <div style={styles.metricCard}>
+
+            <div style={styles.metricGlow} />
+
+            <div style={styles.metricLabel}>
+              AGENT STATUS
+            </div>
+
+            <div style={styles.metricValue}>
+              ONLINE
+            </div>
+
+            <div style={styles.metricMeta}>
+              <span style={styles.metricAccent}>●</span>
+              Configuration engine ready
+            </div>
+
+          </div>
+
+
+          <div style={styles.metricCard}>
+
+            <div style={styles.metricGlow} />
+
+            <div style={styles.metricLabel}>
+              CURRENCY
+            </div>
+
+            <div style={styles.metricValue}>
+              {settings?.currency || 'ZAR'}
+            </div>
+
+            <div style={styles.metricMeta}>
+              Operational settlement currency
+            </div>
+
+          </div>
+
+
+          <div style={styles.metricCard}>
+
+            <div style={styles.metricGlow} />
+
+            <div style={styles.metricLabel}>
+              AI DISCOUNT
+            </div>
+
+            <div style={styles.metricValue}>
+              {settings?.discount_percentage ?? 10}%
+            </div>
+
+            <div style={styles.metricMeta}>
+              Automated voucher compiler
+            </div>
+
+          </div>
+
+
+          <div style={styles.metricCard}>
+
+            <div style={styles.metricGlow} />
+
+            <div style={styles.metricLabel}>
+              VOUCHER LIFETIME
+            </div>
+
+            <div style={styles.metricValue}>
+              {settings?.voucher_expiration_days ?? 30}
+              <span
+                style={{
+                  fontSize: '10px',
+                  marginLeft: '5px',
+                  color: '#66798b',
+                }}
+              >
+                DAYS
+              </span>
+            </div>
+
+            <div style={styles.metricMeta}>
+              Current voucher policy
             </div>
 
           </div>
@@ -1428,512 +1413,194 @@ export default function AgentParameters() {
 
 
         {/* =======================================================
-          EXECUTIVE METRICS
-      ======================================================= */}
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns:
-              'repeat(auto-fit, minmax(190px, 1fr))',
-            gap: '12px',
-            marginBottom: '18px',
-          }}
-        >
-
-          {/* CONFIGURATION HEALTH */}
-
-          <div
-            style={{
-              padding: '17px',
-              borderRadius: '14px',
-              background:
-                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
-              border: '1px solid rgba(0,135,255,0.18)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
-            }}
-          >
-
-            <div
-              style={{
-                color: '#697687',
-                fontSize: '9px',
-                letterSpacing: '1.1px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Configuration Health
-            </div>
-
-            <div
-              style={{
-                marginTop: '9px',
-                fontSize: '25px',
-                fontWeight: '600',
-                color: '#ffffff',
-              }}
-            >
-              {settings?.business_name &&
-                settings?.webhook_slug
-                ? '100%'
-                : '72%'}
-            </div>
-
-            <div
-              style={{
-                marginTop: '5px',
-                color: '#4dbdff',
-                fontSize: '9px',
-              }}
-            >
-              PARAMETERS READY
-            </div>
-
-          </div>
-
-
-          {/* CURRENCY */}
-
-          <div
-            style={{
-              padding: '17px',
-              borderRadius: '14px',
-              background:
-                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
-              border: '1px solid rgba(0,135,255,0.18)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
-            }}
-          >
-
-            <div
-              style={{
-                color: '#697687',
-                fontSize: '9px',
-                letterSpacing: '1.1px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Operational Currency
-            </div>
-
-            <div
-              style={{
-                marginTop: '9px',
-                fontSize: '25px',
-                fontWeight: '600',
-              }}
-            >
-              {settings?.currency || 'ZAR'}
-            </div>
-
-            <div
-              style={{
-                marginTop: '5px',
-                color: '#697687',
-                fontSize: '9px',
-              }}
-            >
-              TRANSACTION ENGINE
-            </div>
-
-          </div>
-
-
-          {/* DISCOUNT */}
-
-          <div
-            style={{
-              padding: '17px',
-              borderRadius: '14px',
-              background:
-                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
-              border: '1px solid rgba(0,135,255,0.18)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
-            }}
-          >
-
-            <div
-              style={{
-                color: '#697687',
-                fontSize: '9px',
-                letterSpacing: '1.1px',
-                textTransform: 'uppercase',
-              }}
-            >
-              AI Discount Compiler
-            </div>
-
-            <div
-              style={{
-                marginTop: '9px',
-                fontSize: '25px',
-                fontWeight: '600',
-              }}
-            >
-              {settings?.discount_percentage ?? 10}%
-            </div>
-
-            <div
-              style={{
-                marginTop: '5px',
-                color: '#697687',
-                fontSize: '9px',
-              }}
-            >
-              ACTIVE POLICY
-            </div>
-
-          </div>
-
-
-          {/* VOUCHER */}
-
-          <div
-            style={{
-              padding: '17px',
-              borderRadius: '14px',
-              background:
-                'linear-gradient(145deg, rgba(13,18,25,0.96), rgba(7,10,14,0.96))',
-              border: '1px solid rgba(0,135,255,0.18)',
-              boxShadow:
-                'inset 0 1px 0 rgba(255,255,255,0.035), 0 14px 35px rgba(0,0,0,0.25)',
-            }}
-          >
-
-            <div
-              style={{
-                color: '#697687',
-                fontSize: '9px',
-                letterSpacing: '1.1px',
-                textTransform: 'uppercase',
-              }}
-            >
-              Voucher Lifetime
-            </div>
-
-            <div
-              style={{
-                marginTop: '9px',
-                fontSize: '25px',
-                fontWeight: '600',
-              }}
-            >
-              {settings?.voucher_expiration_days ?? 30}
-              <span
-                style={{
-                  fontSize: '11px',
-                  color: '#6b7685',
-                  marginLeft: '5px',
-                }}
-              >
-                DAYS
-              </span>
-            </div>
-
-            <div
-              style={{
-                marginTop: '5px',
-                color: '#697687',
-                fontSize: '9px',
-              }}
-            >
-              EXPIRATION POLICY
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* =======================================================
           MAIN DASHBOARD GRID
       ======================================================= */}
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns:
-              'minmax(0, 1.15fr) minmax(340px, 0.85fr)',
-            gap: '18px',
-            alignItems: 'start',
-          }}
-        >
-
+        <div style={styles.dashboardGrid}>
 
           {/* =====================================================
             LEFT COLUMN
         ===================================================== */}
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '18px',
-              minWidth: 0,
-            }}
-          >
+          <div style={styles.leftColumn}>
 
 
             {/* ===================================================
               BUSINESS IDENTITY
           =================================================== */}
 
-            <section
-              style={{
-                position: 'relative',
-                overflow: 'hidden',
-                borderRadius: '18px',
-                padding: '22px',
-                background:
-                  'linear-gradient(145deg, rgba(12,17,24,0.98), rgba(5,8,12,0.98))',
-                border: '1px solid rgba(0,142,255,0.22)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 20px 60px rgba(0,0,0,0.32)',
-              }}
-            >
+            <section style={styles.card}>
 
-              {/* BLUE EDGE LIGHT */}
+              <div style={styles.cardHeader}>
 
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '7%',
-                  right: '7%',
-                  height: '1px',
-                  background:
-                    'linear-gradient(90deg, transparent, rgba(0,157,255,0.75), transparent)',
-                  boxShadow: '0 0 18px rgba(0,130,255,0.4)',
-                }}
-              />
+                <div style={styles.cardHeaderLeft}>
 
-              {/* HEADER */}
-
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  marginBottom: '22px',
-                }}
-              >
-
-                <div>
-
-                  <div
-                    style={{
-                      fontSize: '9px',
-                      color: '#389eff',
-                      letterSpacing: '1.5px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    01 / BUSINESS IDENTITY
+                  <div style={styles.cardIcon}>
+                    ◈
                   </div>
 
-                  <h2
-                    style={{
-                      margin: '7px 0 0',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                      letterSpacing: '-0.2px',
-                    }}
-                  >
-                    Merchant Profile
-                  </h2>
+                  <div>
 
-                  <p
-                    style={{
-                      margin: '6px 0 0',
-                      color: '#687482',
-                      fontSize: '10px',
-                    }}
-                  >
-                    The identity printed across your intelligent till slips.
-                  </p>
+                    <h2 style={styles.cardTitle}>
+                      Business Identity
+                    </h2>
+
+                    <p style={styles.cardDescription}>
+                      Merchant information used across your
+                      receipts, vouchers and commerce integrations.
+                    </p>
+
+                  </div>
 
                 </div>
 
                 <div
                   style={{
-                    padding: '6px 9px',
-                    borderRadius: '7px',
-                    border: '1px solid rgba(0,145,255,0.18)',
-                    background: 'rgba(0,110,255,0.04)',
-                    color: '#4eaeff',
-                    fontSize: '8px',
+                    fontSize: '7px',
+                    color: '#4c83b5',
                     letterSpacing: '1px',
+                    fontWeight: '700',
                   }}
                 >
-                  MERCHANT CORE
+                  BUSINESS_SETTINGS
                 </div>
 
               </div>
 
 
-              {/* LOGO AREA */}
+              <div style={styles.cardBody}>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns:
-                    'minmax(190px, 0.8fr) minmax(0, 1.2fr)',
-                  gap: '18px',
-                  marginBottom: '20px',
-                }}
-              >
-
-                {/* LOGO UPLOADER */}
-
-                <label
-                  htmlFor="logo-upload"
-                  style={{
-                    position: 'relative',
-                    minHeight: '190px',
-                    borderRadius: '15px',
-                    border:
-                      '1px dashed rgba(0,150,255,0.35)',
-                    background:
-                      'radial-gradient(circle at center, rgba(0,110,255,0.07), transparent 65%), #070b10',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    overflow: 'hidden',
-                    boxSizing: 'border-box',
-                  }}
-                >
-
-                  <div
-                    style={{
-                      position: 'absolute',
-                      inset: '10px',
-                      border:
-                        '1px solid rgba(255,255,255,0.035)',
-                      borderRadius: '11px',
-                      pointerEvents: 'none',
-                    }}
-                  />
-
-                  {settings?.logo_url ? (
-
-                    <img
-                      src={settings.logo_url}
-                      alt="Business Logo"
-                      style={{
-                        width: '110px',
-                        height: '110px',
-                        objectFit: 'contain',
-                        borderRadius: '12px',
-                        position: 'relative',
-                        zIndex: 2,
-                      }}
-                    />
-
-                  ) : (
-
-                    <div
-                      style={{
-                        width: '78px',
-                        height: '78px',
-                        borderRadius: '18px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '30px',
-                        color: '#27303a',
-                        background:
-                          'linear-gradient(145deg, #111820, #06090d)',
-                        border:
-                          '1px solid rgba(0,140,255,0.18)',
-                        boxShadow:
-                          'inset 0 1px 0 rgba(255,255,255,0.04)',
-                      }}
-                    >
-                      ◇
-                    </div>
-
-                  )}
-
-                  <div
-                    style={{
-                      marginTop: '13px',
-                      color: '#ffffff',
-                      fontSize: '10px',
-                      fontWeight: '600',
-                      letterSpacing: '0.5px',
-                    }}
-                  >
-                    {settings?.logo_url
-                      ? 'REPLACE BRAND LOGO'
-                      : 'UPLOAD BRAND LOGO'}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: '5px',
-                      color: '#5f6b78',
-                      fontSize: '8px',
-                    }}
-                  >
-                    PNG / JPG / WEBP
-                  </div>
-
-                  <input
-                    id="logo-upload"
-                    name="logo_url"
-                    type="file"
-                    accept="image/*"
-                    autoComplete="off"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-
-                      if (file) {
-                        const localUrl =
-                          URL.createObjectURL(file);
-
-                        setSettings(prev => ({
-                          ...prev,
-                          logo_url: localUrl
-                        }));
-
-                        setPendingLogoFile(file);
-                      }
-                    }}
-                    style={{ display: 'none' }}
-                  />
-
-                </label>
-
-
-                {/* BUSINESS INFORMATION */}
+                {/* ===============================================
+                  LOGO AREA
+              =============================================== */}
 
                 <div
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '13px',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 155px',
+                    gap: '16px',
+                    marginBottom: '18px',
                   }}
+                  className="agent-parameters-logo-grid"
                 >
 
-                  <div>
+                  <label
+                    htmlFor="logo-upload"
+                    style={{
+                      ...styles.uploadZone,
+                      cursor: 'pointer',
+                    }}
+                  >
+
+                    <div style={styles.uploadContent}>
+
+                      <div style={styles.uploadIcon}>
+                        {settings?.logo_url ? '✓' : '↑'}
+                      </div>
+
+                      <div style={styles.uploadTitle}>
+                        {settings?.logo_url
+                          ? 'REPLACE BUSINESS LOGO'
+                          : 'UPLOAD BUSINESS LOGO'}
+                      </div>
+
+                      <div style={styles.uploadHint}>
+                        PNG / JPG / WEBP • Receipt-ready branding
+                      </div>
+
+                    </div>
+
+                    <input
+                      id="logo-upload"
+                      name="logo_url"
+                      type="file"
+                      accept="image/*"
+                      autoComplete="off"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+
+                        if (file) {
+                          const localUrl =
+                            URL.createObjectURL(file);
+
+                          setSettings(prev => ({
+                            ...prev,
+                            logo_url: localUrl,
+                          }));
+
+                          setPendingLogoFile(file);
+                        }
+                      }}
+                      style={{ display: 'none' }}
+                    />
+
+                  </label>
+
+
+                  <div style={styles.logoPreview}>
+
+                    {settings?.logo_url ? (
+
+                      <img
+                        src={settings.logo_url}
+                        alt="Business logo preview"
+                        style={styles.logoImage}
+                      />
+
+                    ) : (
+
+                      <div
+                        style={{
+                          textAlign: 'center',
+                          color: '#435466',
+                        }}
+                      >
+                        <div
+                          style={{
+                            fontSize: '24px',
+                            marginBottom: '7px',
+                          }}
+                        >
+                          ◇
+                        </div>
+
+                        <div
+                          style={{
+                            fontSize: '7px',
+                            letterSpacing: '1px',
+                            fontWeight: '700',
+                          }}
+                        >
+                          LOGO PREVIEW
+                        </div>
+                      </div>
+
+                    )}
+
+                  </div>
+
+                </div>
+
+
+                {/* ===============================================
+                  BUSINESS INFORMATION
+              =============================================== */}
+
+                <div style={styles.fieldGrid}>
+
+                  <div style={styles.field}>
 
                     <label
                       htmlFor="business-name"
-                      style={{
-                        display: 'block',
-                        marginBottom: '7px',
-                        color: '#66717e',
-                        fontSize: '8px',
-                        letterSpacing: '1.1px',
-                        fontWeight: '700',
-                      }}
+                      style={styles.label}
                     >
-                      BUSINESS BRAND NAME
+                      <span>
+                        BUSINESS BRAND NAME
+                      </span>
+
+                      <span style={styles.labelHint}>
+                        Required
+                      </span>
                     </label>
 
                     <input
@@ -1943,43 +1610,82 @@ export default function AgentParameters() {
                       autoComplete="organization"
                       value={settings?.business_name || ''}
                       onChange={(e) => {
+                        const val = e.target.value;
+
                         setSettings(prev => ({
                           ...prev,
-                          business_name: e.target.value
+                          business_name: val,
                         }));
                       }}
                       placeholder="Your business name"
+                      style={styles.input}
+                    />
+
+                  </div>
+
+
+                  <div style={styles.field}>
+
+                    <label
+                      htmlFor="webhook-slug"
+                      style={styles.label}
+                    >
+                      <span>
+                        LIVE WEBHOOK SLUG
+                      </span>
+
+                      <span style={styles.labelHint}>
+                        Unique endpoint ID
+                      </span>
+                    </label>
+
+                    <input
+                      id="webhook-slug"
+                      name="webhook_slug"
+                      type="text"
+                      autoComplete="off"
+                      placeholder="e.g. eddienetwork"
+                      value={settings?.webhook_slug || ''}
+                      onChange={(e) => {
+
+                        const cleanValue =
+                          e.target.value
+                            .toLowerCase()
+                            .replace(/[^a-z0-9-_]/g, '');
+
+                        setSettings(prev => ({
+                          ...prev,
+                          webhook_slug: cleanValue,
+                        }));
+
+                      }}
                       style={{
                         ...styles.input,
-                        width: '100%',
-                        boxSizing: 'border-box',
-                        padding: '13px 14px',
-                        fontSize: '11px',
                         fontFamily: 'monospace',
-                        background: '#070b10',
-                        border:
-                          '1px solid rgba(0,130,255,0.18)',
-                        borderRadius: '9px',
                       }}
                     />
 
                   </div>
 
 
-                  <div>
+                  <div
+                    style={{
+                      ...styles.field,
+                      ...styles.fieldFull,
+                    }}
+                  >
 
                     <label
                       htmlFor="store-address"
-                      style={{
-                        display: 'block',
-                        marginBottom: '7px',
-                        color: '#66717e',
-                        fontSize: '8px',
-                        letterSpacing: '1.1px',
-                        fontWeight: '700',
-                      }}
+                      style={styles.label}
                     >
-                      PHYSICAL OUTLET ADDRESS
+                      <span>
+                        PHYSICAL OUTLET ADDRESS
+                      </span>
+
+                      <span style={styles.labelHint}>
+                        Printed on receipts
+                      </span>
                     </label>
 
                     <textarea
@@ -1990,25 +1696,11 @@ export default function AgentParameters() {
                       onChange={(e) => {
                         setSettings(prev => ({
                           ...prev,
-                          store_address: e.target.value
+                          store_address: e.target.value,
                         }));
                       }}
-                      placeholder="Business address"
-                      style={{
-                        ...styles.input,
-                        width: '100%',
-                        minHeight: '78px',
-                        boxSizing: 'border-box',
-                        padding: '13px 14px',
-                        resize: 'none',
-                        fontSize: '10px',
-                        fontFamily: 'monospace',
-                        lineHeight: 1.5,
-                        background: '#070b10',
-                        border:
-                          '1px solid rgba(0,130,255,0.18)',
-                        borderRadius: '9px',
-                      }}
+                      placeholder="Physical business address"
+                      style={styles.textarea}
                     />
 
                   </div>
@@ -2017,147 +1709,183 @@ export default function AgentParameters() {
 
               </div>
 
+            </section>
 
-              {/* WEBHOOK SECTION */}
 
-              <div
-                style={{
-                  borderRadius: '13px',
-                  padding: '16px',
-                  background:
-                    'linear-gradient(145deg, rgba(0,80,150,0.06), rgba(0,0,0,0.12))',
-                  border:
-                    '1px solid rgba(0,142,255,0.15)',
-                }}
-              >
+            {/* ===================================================
+              WEBHOOK INFRASTRUCTURE
+          =================================================== */}
 
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '11px',
-                  }}
-                >
+            <section style={styles.card}>
+
+              <div style={styles.cardHeader}>
+
+                <div style={styles.cardHeaderLeft}>
+
+                  <div style={styles.cardIcon}>
+                    ↗
+                  </div>
 
                   <div>
 
-                    <div
-                      style={{
-                        color: '#4baeff',
-                        fontSize: '8px',
-                        fontWeight: '700',
-                        letterSpacing: '1.2px',
-                      }}
-                    >
-                      LIVE RECEIPT PIPELINE
+                    <h2 style={styles.cardTitle}>
+                      Live Webhook Infrastructure
+                    </h2>
+
+                    <p style={styles.cardDescription}>
+                      Endpoint used by your store to communicate
+                      with the RuachAgent receipt engine.
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div style={styles.statusPill}>
+                  <span style={styles.statusDot} />
+                  {settings?.webhook_slug
+                    ? 'READY'
+                    : 'CONFIGURATION REQUIRED'}
+                </div>
+
+              </div>
+
+
+              <div style={styles.cardBody}>
+
+                <div style={styles.webhookPanel}>
+
+                  <div style={styles.webhookPreview}>
+
+                    <div style={styles.webhookLabel}>
+                      LIVE RECEIPT AGENT ENDPOINT
                     </div>
 
-                    <div
-                      style={{
-                        marginTop: '4px',
-                        color: '#ffffff',
-                        fontSize: '11px',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Webhook Endpoint
+                    <div style={styles.webhookUrl}>
+
+                      {settings?.webhook_slug
+                        ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
+                        : 'Enter a webhook slug above to generate your live endpoint.'}
+
                     </div>
 
                   </div>
 
-                  <span
-                    style={{
-                      padding: '5px 8px',
-                      borderRadius: '6px',
-                      background:
-                        settings?.webhook_slug
-                          ? 'rgba(0,190,255,0.08)'
-                          : 'rgba(255,180,0,0.06)',
-                      color:
-                        settings?.webhook_slug
-                          ? '#48cfff'
-                          : '#b8954c',
-                      fontSize: '8px',
-                      fontWeight: '700',
-                      letterSpacing: '0.6px',
-                    }}
-                  >
-                    {settings?.webhook_slug
-                      ? 'READY'
-                      : 'ACTION REQUIRED'}
-                  </span>
 
-                </div>
+                  <div style={styles.webhookActions}>
+
+                    <button
+                      type="button"
+                      style={styles.secondaryButton}
+                      onClick={async () => {
+
+                        if (!settings?.webhook_slug) {
+                          alert('Define a webhook slug first.');
+                          return;
+                        }
+
+                        const endpoint =
+                          `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`;
+
+                        try {
+
+                          await navigator.clipboard.writeText(endpoint);
+
+                          alert('Webhook endpoint copied.');
+
+                        } catch (error) {
+
+                          console.error(
+                            'Unable to copy webhook:',
+                            error
+                          );
+
+                          alert(
+                            'Unable to copy endpoint automatically.'
+                          );
+
+                        }
+
+                      }}
+                    >
+                      COPY ENDPOINT
+                    </button>
 
 
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '8px',
-                    alignItems: 'stretch',
-                  }}
-                >
-
-                  <input
-                    readOnly
-                    value={
-                      settings?.webhook_slug
-                        ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
-                        : 'Define a unique webhook slug first...'
-                    }
-                    style={{
-                      ...styles.input,
-                      flex: 1,
-                      minWidth: 0,
-                      padding: '12px',
-                      fontSize: '9px',
-                      fontFamily: 'monospace',
-                      color: settings?.webhook_slug
-                        ? '#7fcfff'
-                        : '#4f5965',
-                      background: '#05080c',
-                      border:
-                        '1px solid rgba(0,130,255,0.16)',
-                      borderRadius: '8px',
-                    }}
-                  />
-
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      if (!settings?.webhook_slug) return;
-
-                      const endpoint =
-                        `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`;
-
-                      try {
-                        await navigator.clipboard.writeText(endpoint);
-                        alert('Webhook endpoint copied.');
-                      } catch (error) {
-                        console.error(
-                          'Webhook copy failed:',
-                          error
+                    <button
+                      type="button"
+                      style={styles.secondaryButton}
+                      onClick={() => {
+                        alert(
+                          'Connection testing will be connected to the receipt-agent health check.'
                         );
-                      }
-                    }}
+                      }}
+                    >
+                      TEST CONNECTION
+                    </button>
+
+                  </div>
+
+
+                  <div
                     style={{
-                      ...styles.button,
-                      minWidth: '92px',
-                      padding: '0 13px',
-                      fontSize: '9px',
-                      borderRadius: '8px',
-                      background:
-                        'linear-gradient(145deg, #0d151d, #070b10)',
-                      color: '#ffffff',
+                      padding: '12px 13px',
+                      borderRadius: '10px',
                       border:
-                        '1px solid rgba(0,150,255,0.28)',
-                      boxShadow:
-                        '0 0 20px rgba(0,110,255,0.06)',
+                        '1px solid rgba(70,110,150,0.18)',
+                      background:
+                        'rgba(3,8,13,0.68)',
+                      display: 'flex',
+                      gap: '10px',
+                      alignItems: 'flex-start',
                     }}
                   >
-                    COPY WEBHOOK
-                  </button>
+
+                    <div
+                      style={{
+                        width: '6px',
+                        height: '6px',
+                        marginTop: '4px',
+                        borderRadius: '50%',
+                        background: settings?.webhook_slug
+                          ? '#55b5ff'
+                          : '#566473',
+                        boxShadow: settings?.webhook_slug
+                          ? '0 0 10px rgba(85,181,255,0.8)'
+                          : 'none',
+                      }}
+                    />
+
+                    <div>
+
+                      <div
+                        style={{
+                          fontSize: '8px',
+                          fontWeight: '700',
+                          color: '#9cb3c9',
+                          letterSpacing: '0.8px',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        CONNECTION STATUS
+                      </div>
+
+                      <div
+                        style={{
+                          marginTop: '4px',
+                          fontSize: '8px',
+                          lineHeight: 1.5,
+                          color: '#566a7d',
+                        }}
+                      >
+                        {settings?.webhook_slug
+                          ? 'A merchant-specific receipt endpoint has been generated from the current webhook slug.'
+                          : 'Your endpoint becomes available immediately after a valid webhook slug is defined.'}
+                      </div>
+
+                    </div>
+
+                  </div>
 
                 </div>
 
@@ -2170,239 +1898,152 @@ export default function AgentParameters() {
               AI CONFIGURATION
           =================================================== */}
 
-            <section
-              style={{
-                position: 'relative',
-                overflow: 'hidden',
-                borderRadius: '18px',
-                padding: '22px',
-                background:
-                  'linear-gradient(145deg, rgba(12,17,24,0.98), rgba(5,8,12,0.98))',
-                border: '1px solid rgba(0,142,255,0.22)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 20px 60px rgba(0,0,0,0.30)',
-              }}
-            >
+            <section style={styles.card}>
 
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: '8%',
-                  width: '150px',
-                  height: '1px',
-                  background:
-                    'linear-gradient(90deg, transparent, rgba(0,170,255,0.75))',
-                  boxShadow: '0 0 18px rgba(0,150,255,0.4)',
-                }}
-              />
+              <div style={styles.cardHeader}>
 
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  marginBottom: '22px',
-                }}
-              >
+                <div style={styles.cardHeaderLeft}>
 
-                <div>
-
-                  <div
-                    style={{
-                      fontSize: '9px',
-                      color: '#389eff',
-                      letterSpacing: '1.5px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    02 / AI CONFIGURATION
+                  <div style={styles.cardIcon}>
+                    AI
                   </div>
 
-                  <h2
-                    style={{
-                      margin: '7px 0 0',
-                      fontSize: '18px',
-                      fontWeight: '600',
-                    }}
-                  >
-                    RuachAgent Intelligence
-                  </h2>
+                  <div>
 
-                  <p
-                    style={{
-                      margin: '6px 0 0',
-                      color: '#687482',
-                      fontSize: '10px',
-                    }}
-                  >
-                    Transaction rules interpreted by your AI agent.
-                  </p>
+                    <h2 style={styles.cardTitle}>
+                      AI Commerce Configuration
+                    </h2>
+
+                    <p style={styles.cardDescription}>
+                      Configure the commerce rules used by
+                      RuachAgent's Google GenAI-powered engine.
+                    </p>
+
+                  </div>
 
                 </div>
 
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '7px',
-                    color: '#46caff',
-                    fontSize: '8px',
-                    fontWeight: '700',
-                    letterSpacing: '0.8px',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '6px',
-                      height: '6px',
-                      borderRadius: '50%',
-                      background: '#2dcfff',
-                      boxShadow: '0 0 10px #2dcfff',
-                    }}
-                  />
-                  GOOGLE GENAI CORE
+                <div style={styles.statusPill}>
+                  <span style={styles.statusDot} />
+                  GOOGLE GENAI
                 </div>
 
               </div>
 
 
-              {/* CONFIGURATION CONTROLS */}
+              <div style={styles.cardBody}>
 
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns:
-                    'repeat(auto-fit, minmax(190px, 1fr))',
-                  gap: '13px',
-                }}
-              >
+                <div style={styles.aiBanner}>
 
-                {/* CURRENCY */}
+                  <div style={styles.aiPulse} />
 
-                <div
-                  style={{
-                    padding: '16px',
-                    borderRadius: '11px',
-                    background: '#080c11',
-                    border:
-                      '1px solid rgba(0,130,255,0.13)',
-                  }}
-                >
+                  <div>
 
-                  <label
-                    htmlFor="currency"
-                    style={{
-                      display: 'block',
-                      marginBottom: '8px',
-                      color: '#697584',
-                      fontSize: '8px',
-                      letterSpacing: '1px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    OPERATIONAL CURRENCY
-                  </label>
+                    <div style={styles.aiBannerTitle}>
+                      RuachAgent AI Engine Connected
+                    </div>
 
-                  <div
-                    style={{
-                      position: 'relative',
-                    }}
-                  >
-
-                    <select
-                      id="currency"
-                      name="currency"
-                      value={settings?.currency || 'ZAR'}
-                      onChange={(e) => {
-                        setSettings(prev => ({
-                          ...prev,
-                          currency: e.target.value
-                        }));
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: '100%',
-                        boxSizing: 'border-box',
-                        padding: '12px 32px 12px 12px',
-                        fontSize: '10px',
-                        fontFamily: 'monospace',
-                        appearance: 'none',
-                        cursor: 'pointer',
-                        background: '#05080c',
-                        border:
-                          '1px solid rgba(0,130,255,0.16)',
-                        borderRadius: '8px',
-                      }}
-                    >
-
-                      {CURRENCY_OPTIONS.map(curr => (
-                        <option
-                          key={curr.code}
-                          value={curr.code}
-                          style={{
-                            background: '#080c11',
-                            color: '#ffffff',
-                          }}
-                        >
-                          {curr.name} ({curr.symbol})
-                        </option>
-                      ))}
-
-                    </select>
-
-                    <span
-                      style={{
-                        position: 'absolute',
-                        right: '12px',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: '#3dafff',
-                        fontSize: '8px',
-                        pointerEvents: 'none',
-                      }}
-                    >
-                      ▼
-                    </span>
+                    <div style={styles.aiBannerText}>
+                      Merchant configuration is exposed to the
+                      agent through the existing business settings
+                      synchronization pipeline.
+                    </div>
 
                   </div>
 
                 </div>
 
 
-                {/* DISCOUNT */}
+                <div style={styles.fieldGrid}>
 
-                <div
-                  style={{
-                    padding: '16px',
-                    borderRadius: '11px',
-                    background: '#080c11',
-                    border:
-                      '1px solid rgba(0,130,255,0.13)',
-                  }}
-                >
+                  {/* CURRENCY */}
 
-                  <label
-                    htmlFor="discount-percentage"
-                    style={{
-                      display: 'block',
-                      marginBottom: '8px',
-                      color: '#697584',
-                      fontSize: '8px',
-                      letterSpacing: '1px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    AI DISCOUNT COMPILER
-                  </label>
+                  <div style={styles.field}>
 
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                    }}
-                  >
+                    <label
+                      htmlFor="currency"
+                      style={styles.label}
+                    >
+                      <span>
+                        OPERATIONAL CURRENCY
+                      </span>
+
+                      <span style={styles.labelHint}>
+                        Settlement
+                      </span>
+                    </label>
+
+                    <div style={{ position: 'relative' }}>
+
+                      <select
+                        id="currency"
+                        name="currency"
+                        value={settings?.currency || 'ZAR'}
+                        onChange={(e) => {
+
+                          const val = e.target.value;
+
+                          setSettings(prev => ({
+                            ...prev,
+                            currency: val,
+                          }));
+
+                        }}
+                        style={styles.select}
+                      >
+
+                        {CURRENCY_OPTIONS.map((curr) => (
+
+                          <option
+                            key={curr.code}
+                            value={curr.code}
+                            style={{
+                              background: '#070b10',
+                              color: '#ffffff',
+                            }}
+                          >
+                            {curr.name} ({curr.symbol})
+                          </option>
+
+                        ))}
+
+                      </select>
+
+                      <span
+                        style={{
+                          position: 'absolute',
+                          right: '13px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          color: '#4e6b85',
+                          fontSize: '8px',
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        ▼
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+                  {/* DISCOUNT */}
+
+                  <div style={styles.field}>
+
+                    <label
+                      htmlFor="discount-percentage"
+                      style={styles.label}
+                    >
+                      <span>
+                        AI DISCOUNT COMPILER
+                      </span>
+
+                      <span style={styles.rangeValue}>
+                        {settings?.discount_percentage ?? 10}%
+                      </span>
+                    </label>
 
                     <input
                       id="discount-percentage"
@@ -2410,117 +2051,196 @@ export default function AgentParameters() {
                       type="number"
                       min="0"
                       max="100"
+                      autoComplete="off"
                       value={settings?.discount_percentage ?? 10}
                       onChange={(e) => {
+
                         const val =
                           parseInt(e.target.value) || 0;
 
                         setSettings(prev => ({
                           ...prev,
-                          discount_percentage: val
+                          discount_percentage: val,
                         }));
-                      }}
-                      style={{
-                        ...styles.input,
-                        width: '100%',
-                        padding: '12px',
-                        fontSize: '12px',
-                        fontFamily: 'monospace',
-                        background: '#05080c',
-                        border:
-                          '1px solid rgba(0,130,255,0.16)',
-                        borderRadius: '8px',
-                      }}
-                    />
 
-                    <span
-                      style={{
-                        color: '#3caeff',
-                        fontSize: '14px',
-                        fontFamily: 'monospace',
                       }}
-                    >
-                      %
-                    </span>
+                      style={styles.input}
+                    />
 
                   </div>
 
-                </div>
 
-
-                {/* VOUCHER */}
-
-                <div
-                  style={{
-                    padding: '16px',
-                    borderRadius: '11px',
-                    background: '#080c11',
-                    border:
-                      '1px solid rgba(0,130,255,0.13)',
-                  }}
-                >
-
-                  <label
-                    htmlFor="voucher-expiry-days"
-                    style={{
-                      display: 'block',
-                      marginBottom: '8px',
-                      color: '#697584',
-                      fontSize: '8px',
-                      letterSpacing: '1px',
-                      fontWeight: '700',
-                    }}
-                  >
-                    VOUCHER EXPIRATION
-                  </label>
+                  {/* VOUCHER */}
 
                   <div
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
+                      ...styles.field,
+                      ...styles.fieldFull,
                     }}
                   >
+
+                    <label
+                      htmlFor="voucher-expiry-days"
+                      style={styles.label}
+                    >
+                      <span>
+                        VOUCHER EXPIRATION POLICY
+                      </span>
+
+                      <span style={styles.labelHint}>
+                        Days
+                      </span>
+                    </label>
 
                     <input
                       id="voucher-expiry-days"
                       name="voucher_expiration_days"
                       type="number"
                       min="1"
+                      autoComplete="off"
+                      placeholder="30"
                       value={
                         settings?.voucher_expiration_days ?? 30
                       }
                       onChange={(e) => {
+
                         const val =
                           parseInt(e.target.value) || 0;
 
                         setSettings(prev => ({
                           ...prev,
-                          voucher_expiration_days: val
+                          voucher_expiration_days: val,
                         }));
+
                       }}
-                      style={{
-                        ...styles.input,
-                        width: '100%',
-                        padding: '12px',
-                        fontSize: '12px',
-                        fontFamily: 'monospace',
-                        background: '#05080c',
-                        border:
-                          '1px solid rgba(0,130,255,0.16)',
-                        borderRadius: '8px',
-                      }}
+                      style={styles.input}
                     />
 
-                    <span
+                  </div>
+
+                </div>
+
+
+                {/* ===============================================
+                  AI RECOMMENDATIONS
+              =============================================== */}
+
+                <div style={styles.recommendationPanel}>
+
+                  <div style={styles.recommendationHeader}>
+
+                    <div style={styles.recommendationTitle}>
+                      AI CONFIGURATION RECOMMENDATIONS
+                    </div>
+
+                    <div
                       style={{
-                        color: '#687482',
-                        fontSize: '9px',
-                        whiteSpace: 'nowrap',
+                        fontSize: '7px',
+                        color: '#477aa7',
+                        fontFamily: 'monospace',
                       }}
                     >
-                      DAYS
-                    </span>
+                      LIVE ANALYSIS
+                    </div>
+
+                  </div>
+
+
+                  <div style={styles.recommendationList}>
+
+                    <div style={styles.recommendationItem}>
+
+                      <span style={styles.recommendationBullet} />
+
+                      <span>
+                        A {settings?.discount_percentage ?? 10}%
+                        discount policy is currently configured
+                        for the AI voucher compiler.
+                      </span>
+
+                    </div>
+
+
+                    <div style={styles.recommendationItem}>
+
+                      <span style={styles.recommendationBullet} />
+
+                      <span>
+                        Vouchers remain valid for{' '}
+                        {settings?.voucher_expiration_days ?? 30}
+                        {' '}days before expiration.
+                      </span>
+
+                    </div>
+
+
+                    <div style={styles.recommendationItem}>
+
+                      <span style={styles.recommendationBullet} />
+
+                      <span>
+                        {settings?.webhook_slug
+                          ? 'Your webhook identity is configured and ready to generate the merchant-specific receipt endpoint.'
+                          : 'Define a unique webhook slug so your merchant can receive receipt-agent requests.'}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+                {/* ===============================================
+                  LIVE CONFIGURATION SUMMARY
+              =============================================== */}
+
+                <div
+                  style={{
+                    marginTop: '12px',
+                    display: 'grid',
+                    gridTemplateColumns:
+                      'repeat(3, minmax(0, 1fr))',
+                    gap: '9px',
+                  }}
+                  className="agent-parameters-insight-grid"
+                >
+
+                  <div style={styles.insight}>
+
+                    <div style={styles.insightLabel}>
+                      CURRENCY
+                    </div>
+
+                    <div style={styles.insightValue}>
+                      {settings?.currency || 'ZAR'}
+                    </div>
+
+                  </div>
+
+
+                  <div style={styles.insight}>
+
+                    <div style={styles.insightLabel}>
+                      DISCOUNT
+                    </div>
+
+                    <div style={styles.insightValue}>
+                      {settings?.discount_percentage ?? 10}%
+                    </div>
+
+                  </div>
+
+
+                  <div style={styles.insight}>
+
+                    <div style={styles.insightLabel}>
+                      EXPIRATION
+                    </div>
+
+                    <div style={styles.insightValue}>
+                      {settings?.voucher_expiration_days ?? 30} DAYS
+                    </div>
 
                   </div>
 
@@ -2528,46 +2248,86 @@ export default function AgentParameters() {
 
               </div>
 
+            </section>
 
-              {/* AI INSIGHT */}
 
-              <div
-                style={{
-                  marginTop: '15px',
-                  padding: '14px 15px',
-                  borderRadius: '10px',
-                  background:
-                    'linear-gradient(90deg, rgba(0,120,255,0.07), rgba(0,0,0,0))',
-                  borderLeft:
-                    '2px solid rgba(0,155,255,0.65)',
-                }}
-              >
+            {/* ===================================================
+              SAVE & SYNC FOOTER
+          =================================================== */}
 
-                <div
-                  style={{
-                    color: '#55baff',
-                    fontSize: '8px',
-                    letterSpacing: '1px',
-                    fontWeight: '700',
-                    marginBottom: '6px',
-                  }}
-                >
-                  RUACHAGENT AI RECOMMENDATION
+            <section style={styles.saveFooter}>
+
+              <div style={styles.saveInfo}>
+
+                <div style={styles.saveTitle}>
+
+                  <span
+                    style={{
+                      display: 'inline-block',
+                      width: '7px',
+                      height: '7px',
+                      marginRight: '8px',
+                      borderRadius: '50%',
+                      background: isSaveSyncing
+                        ? '#66717d'
+                        : '#35cfff',
+                      boxShadow: isSaveSyncing
+                        ? 'none'
+                        : '0 0 12px rgba(50,205,255,0.8)',
+                    }}
+                  />
+
+                  {isSaveSyncing
+                    ? 'SYNCHRONIZING MERCHANT PROFILE'
+                    : 'AGENT CONFIGURATION READY'}
+
                 </div>
 
-                <div
-                  style={{
-                    color: '#8793a1',
-                    fontSize: '10px',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {settings?.discount_percentage > 25
-                    ? 'Your discount compiler is configured aggressively. Consider reviewing margin impact before deploying this policy.'
-                    : 'Your current discount configuration is within a conservative operating range. RuachAgent can use this value when generating eligible voucher recommendations.'}
+                <div style={styles.saveDescription}>
+                  Changes are persisted to your merchant
+                  business settings profile.
                 </div>
 
               </div>
+
+
+              <button
+                type="button"
+                onClick={(e) => {
+
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  if (!isSaveSyncing) {
+                    handleSave(e);
+                  }
+
+                }}
+                disabled={isSaveSyncing}
+                style={{
+                  ...styles.primaryButton,
+                  minWidth: '205px',
+                  background: isSaveSyncing
+                    ? '#11171e'
+                    : styles.primaryButton.background,
+                  color: isSaveSyncing
+                    ? '#606b77'
+                    : styles.primaryButton.color,
+                  border: isSaveSyncing
+                    ? '1px solid rgba(255,255,255,0.05)'
+                    : styles.primaryButton.border,
+                  boxShadow: isSaveSyncing
+                    ? 'none'
+                    : styles.primaryButton.boxShadow,
+                  cursor: isSaveSyncing
+                    ? 'not-allowed'
+                    : 'pointer',
+                }}
+              >
+                {isSaveSyncing
+                  ? 'SYNCING PROFILE...'
+                  : 'SAVE & SYNC LIVE PROFILE'}
+              </button>
 
             </section>
 
@@ -2578,285 +2338,210 @@ export default function AgentParameters() {
             RIGHT COLUMN
         ===================================================== */}
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '18px',
-              minWidth: 0,
-            }}
-          >
-
+          <div style={styles.rightColumn}>
 
             {/* ===================================================
               TILL SLIP PREVIEW
           =================================================== */}
 
-            <section
-              style={{
-                position: 'relative',
-                minHeight: '540px',
-                borderRadius: '18px',
-                overflow: 'hidden',
-                background:
-                  'linear-gradient(145deg, #0c1117, #05070a)',
-                border:
-                  '1px solid rgba(0,142,255,0.22)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 20px 60px rgba(0,0,0,0.32)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
+            <section style={styles.previewCard}>
 
-              {/* HEADER */}
-
-              <div
-                style={{
-                  padding: '20px 21px',
-                  borderBottom:
-                    '1px solid rgba(255,255,255,0.055)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
+              <div style={styles.previewHeader}>
 
                 <div>
 
-                  <div
-                    style={{
-                      color: '#389eff',
-                      fontSize: '8px',
-                      fontWeight: '700',
-                      letterSpacing: '1.5px',
-                    }}
-                  >
-                    03 / LIVE OUTPUT
+                  <div style={styles.previewTitle}>
+                    LIVE TILL SLIP PREVIEW
                   </div>
 
-                  <h2
+                  <div
                     style={{
-                      margin: '6px 0 0',
-                      fontSize: '17px',
-                      fontWeight: '600',
+                      marginTop: '4px',
+                      fontSize: '7px',
+                      color: '#4f6070',
+                      letterSpacing: '0.7px',
                     }}
                   >
-                    Till Slip Preview
-                  </h2>
+                    MERCHANT RECEIPT SIMULATION
+                  </div>
 
                 </div>
 
-                <div
-                  style={{
-                    padding: '6px 9px',
-                    borderRadius: '6px',
-                    border:
-                      '1px solid rgba(0,145,255,0.16)',
-                    color: '#6d7886',
-                    fontSize: '8px',
-                    letterSpacing: '0.8px',
-                  }}
-                >
-                  LIVE MIRROR
+                <div style={styles.previewStatus}>
+                  LIVE
                 </div>
 
               </div>
 
 
-              {/* PREVIEW STAGE */}
+              <div style={styles.paperStage}>
 
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '28px',
-                  position: 'relative',
-                  background:
-                    'radial-gradient(circle at center, rgba(0,110,255,0.05), transparent 60%)',
-                }}
-              >
+                <div style={styles.paper}>
 
-                {/* GRID */}
+                  <div style={styles.paperHeader}>
 
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    opacity: 0.22,
-                    backgroundImage:
-                      'linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)',
-                    backgroundSize: '25px 25px',
-                    pointerEvents: 'none',
-                  }}
-                />
+                    <div style={styles.paperLogoPlaceholder}>
 
-
-                {/* BLACK / WHITE PAPER */}
-
-                <div
-                  style={{
-                    position: 'relative',
-                    width: '245px',
-                    minHeight: '405px',
-                    background: '#ffffff',
-                    color: '#080808',
-                    boxShadow:
-                      '0 30px 70px rgba(0,0,0,0.65), 0 0 35px rgba(0,130,255,0.07)',
-                    padding: '26px 21px',
-                    boxSizing: 'border-box',
-                    fontFamily: 'monospace',
-                  }}
-                >
-
-                  {/* PAPER HEADER */}
-
-                  <div
-                    style={{
-                      textAlign: 'center',
-                      borderBottom:
-                        '1px dashed #999',
-                      paddingBottom: '13px',
-                    }}
-                  >
-
-                    <div
-                      style={{
-                        width: '44px',
-                        height: '44px',
-                        border:
-                          '1px solid #111',
-                        margin: '0 auto 10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '18px',
-                      }}
-                    >
                       {settings?.logo_url ? (
+
                         <img
                           src={settings.logo_url}
-                          alt=""
+                          alt="Receipt logo"
                           style={{
                             width: '100%',
                             height: '100%',
                             objectFit: 'contain',
                           }}
                         />
+
                       ) : (
-                        '◇'
+                        'LOGO'
                       )}
+
                     </div>
 
-                    <div
-                      style={{
-                        fontWeight: '700',
-                        fontSize: '12px',
-                      }}
-                    >
+
+                    <div style={styles.paperBusinessName}>
+
                       {settings?.business_name ||
                         'YOUR BUSINESS'}
+
                     </div>
 
-                    <div
-                      style={{
-                        marginTop: '4px',
-                        fontSize: '7px',
-                      }}
-                    >
-                      TILL SLIP / AGENT PREVIEW
+
+                    <div style={styles.paperText}>
+
+                      {settings?.store_address ||
+                        'Physical outlet address'}
+
                     </div>
 
                   </div>
 
 
-                  {/* PAPER ITEMS */}
+                  <div style={styles.paperText}>
 
-                  <div
-                    style={{
-                      marginTop: '17px',
-                      fontSize: '8px',
-                    }}
-                  >
+                    RECEIPT #RA-000001
+                    <br />
+                    29 AUG 2026
+                    <br />
+                    CUSTOMER COPY
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: '8px',
-                      }}
-                    >
-                      <span>ITEM / SERVICE</span>
-                      <span>AMOUNT</span>
-                    </div>
+                  </div>
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: '7px',
-                      }}
-                    >
-                      <span>Sample Product</span>
-                      <span>
-                        {activeCurrencySymbol} 100.00
-                      </span>
-                    </div>
 
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        marginBottom: '7px',
-                      }}
-                    >
-                      <span>AI Voucher</span>
-                      <span>
-                        -{settings?.discount_percentage ?? 10}%
-                      </span>
-                    </div>
+                  <div style={styles.paperDivider} />
 
-                    <div
-                      style={{
-                        borderTop:
-                          '1px dashed #999',
-                        marginTop: '13px',
-                        paddingTop: '12px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        fontWeight: '700',
-                      }}
-                    >
-                      <span>TOTAL</span>
-                      <span>
-                        {activeCurrencySymbol} 90.00
-                      </span>
-                    </div>
+
+                  <div style={styles.paperLine}>
+
+                    <span>
+                      SAMPLE PRODUCT
+                    </span>
+
+                    <span>
+                      {activeCurrencySymbol} 100.00
+                    </span>
+
+                  </div>
+
+
+                  <div style={styles.paperLine}>
+
+                    <span>
+                      AI VOUCHER
+                    </span>
+
+                    <span>
+                      -{settings?.discount_percentage ?? 10}%
+                    </span>
+
+                  </div>
+
+
+                  <div style={styles.paperDivider} />
+
+
+                  <div style={styles.paperTotal}>
+
+                    <span>
+                      TOTAL
+                    </span>
+
+                    <span>
+                      {activeCurrencySymbol}{' '}
+                      {(
+                        100 -
+                        (100 *
+                          (settings?.discount_percentage ?? 10)) /
+                        100
+                      ).toFixed(2)}
+                    </span>
 
                   </div>
 
 
                   <div
                     style={{
-                      marginTop: '34px',
-                      paddingTop: '13px',
-                      borderTop:
-                        '1px dashed #999',
+                      marginTop: '25px',
                       textAlign: 'center',
                       fontSize: '7px',
                       lineHeight: 1.6,
                     }}
                   >
 
-                    {settings?.store_address ||
-                      'Physical outlet address'}
+                    Voucher valid for{' '}
+                    {settings?.voucher_expiration_days ?? 30}
+                    {' '}days.
 
                     <br />
 
                     Powered by RuachAgent AI
 
+                  </div>
+
+
+                  <div style={styles.paperQr} />
+
+                </div>
+
+              </div>
+
+
+              {/* PREVIEW INFORMATION */}
+
+              <div
+                style={{
+                  marginTop: '12px',
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(2, minmax(0, 1fr))',
+                  gap: '9px',
+                }}
+              >
+
+                <div style={styles.insight}>
+
+                  <div style={styles.insightLabel}>
+                    TEMPLATE
+                  </div>
+
+                  <div style={styles.insightValue}>
+                    {settings?.receipt_template ||
+                      'matrix-grid'}
+                  </div>
+
+                </div>
+
+
+                <div style={styles.insight}>
+
+                  <div style={styles.insightLabel}>
+                    AGENT
+                  </div>
+
+                  <div style={styles.insightValue}>
+                    GOOGLE GENAI
                   </div>
 
                 </div>
@@ -2867,209 +2552,131 @@ export default function AgentParameters() {
 
 
             {/* ===================================================
-              BUSINESS INTELLIGENCE PANEL
+              BUSINESS INTELLIGENCE
           =================================================== */}
 
-            <section
-              style={{
-                padding: '20px',
-                borderRadius: '18px',
-                background:
-                  'linear-gradient(145deg, rgba(12,17,24,0.98), rgba(5,8,12,0.98))',
-                border:
-                  '1px solid rgba(0,142,255,0.20)',
-                boxShadow:
-                  'inset 0 1px 0 rgba(255,255,255,0.035), 0 18px 50px rgba(0,0,0,0.25)',
-              }}
-            >
+            <section style={styles.card}>
 
-              <div
-                style={{
-                  color: '#389eff',
-                  fontSize: '8px',
-                  letterSpacing: '1.4px',
-                  fontWeight: '700',
-                }}
-              >
-                BUSINESS INTELLIGENCE
-              </div>
+              <div style={styles.cardHeader}>
 
-              <h3
-                style={{
-                  margin: '7px 0 15px',
-                  fontSize: '15px',
-                  fontWeight: '600',
-                }}
-              >
-                Agent Readiness
-              </h3>
+                <div style={styles.cardHeaderLeft}>
 
+                  <div style={styles.cardIcon}>
+                    ∿
+                  </div>
 
-              {/* READINESS BARS */}
+                  <div>
 
-              {[
-                [
-                  'Business Identity',
-                  settings?.business_name ? 100 : 35
-                ],
-                [
-                  'Webhook Infrastructure',
-                  settings?.webhook_slug ? 100 : 20
-                ],
-                [
-                  'AI Configuration',
-                  settings?.currency &&
-                    settings?.discount_percentage != null &&
-                    settings?.voucher_expiration_days != null
-                    ? 100
-                    : 60
-                ],
-              ].map(([label, value]) => (
+                    <h2 style={styles.cardTitle}>
+                      Commerce Intelligence
+                    </h2>
 
-                <div
-                  key={label}
-                  style={{
-                    marginBottom: '14px',
-                  }}
-                >
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      marginBottom: '6px',
-                    }}
-                  >
-
-                    <span
-                      style={{
-                        color: '#7c8794',
-                        fontSize: '9px',
-                      }}
-                    >
-                      {label}
-                    </span>
-
-                    <span
-                      style={{
-                        color: '#4cb8ff',
-                        fontSize: '9px',
-                        fontFamily: 'monospace',
-                      }}
-                    >
-                      {value}%
-                    </span>
+                    <p style={styles.cardDescription}>
+                      Live configuration indicators for your
+                      merchant environment.
+                    </p>
 
                   </div>
 
-                  <div
-                    style={{
-                      height: '4px',
-                      background: '#10151b',
-                      borderRadius: '10px',
-                      overflow: 'hidden',
-                    }}
-                  >
+                </div>
+
+              </div>
+
+
+              <div style={styles.cardBody}>
+
+                <div style={styles.insightGrid}>
+
+                  <div style={styles.insight}>
+
+                    <div style={styles.insightLabel}>
+                      BUSINESS
+                    </div>
 
                     <div
                       style={{
-                        width: `${value}%`,
-                        height: '100%',
-                        background:
-                          'linear-gradient(90deg, #006cff, #38cfff)',
-                        boxShadow:
-                          '0 0 10px rgba(0,150,255,0.45)',
+                        ...styles.insightValue,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
                       }}
-                    />
+                    >
+                      {settings?.business_name ||
+                        'Not configured'}
+                    </div>
+
+                  </div>
+
+
+                  <div style={styles.insight}>
+
+                    <div style={styles.insightLabel}>
+                      WEBHOOK
+                    </div>
+
+                    <div style={styles.insightValue}>
+                      {settings?.webhook_slug
+                        ? 'ACTIVE'
+                        : 'PENDING'}
+                    </div>
+
+                  </div>
+
+
+                  <div style={styles.insight}>
+
+                    <div style={styles.insightLabel}>
+                      LOGO
+                    </div>
+
+                    <div style={styles.insightValue}>
+                      {settings?.logo_url
+                        ? 'CONFIGURED'
+                        : 'MISSING'}
+                    </div>
 
                   </div>
 
                 </div>
 
-              ))}
-
-
-              {/* SECURITY */}
-
-              <div
-                style={{
-                  marginTop: '17px',
-                  paddingTop: '15px',
-                  borderTop:
-                    '1px solid rgba(255,255,255,0.05)',
-                  display: 'grid',
-                  gridTemplateColumns:
-                    'repeat(2, minmax(0, 1fr))',
-                  gap: '9px',
-                }}
-              >
 
                 <div
                   style={{
-                    padding: '11px',
-                    borderRadius: '8px',
-                    background: '#080c11',
+                    marginTop: '12px',
+                    padding: '12px',
+                    borderRadius: '10px',
                     border:
-                      '1px solid rgba(255,255,255,0.045)',
+                      '1px solid rgba(66,105,140,0.18)',
+                    background:
+                      'rgba(4,8,13,0.62)',
                   }}
                 >
 
                   <div
                     style={{
-                      color: '#56616e',
                       fontSize: '7px',
-                      letterSpacing: '0.8px',
-                    }}
-                  >
-                    AUTHENTICATION
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: '5px',
-                      color: '#51c9ff',
-                      fontSize: '9px',
                       fontWeight: '700',
+                      color: '#4d78a0',
+                      letterSpacing: '1.2px',
+                      textTransform: 'uppercase',
+                      marginBottom: '6px',
                     }}
                   >
-                    ● SECURE
-                  </div>
-
-                </div>
-
-                <div
-                  style={{
-                    padding: '11px',
-                    borderRadius: '8px',
-                    background: '#080c11',
-                    border:
-                      '1px solid rgba(255,255,255,0.045)',
-                  }}
-                >
-
-                  <div
-                    style={{
-                      color: '#56616e',
-                      fontSize: '7px',
-                      letterSpacing: '0.8px',
-                    }}
-                  >
-                    WEBHOOK
+                    SYSTEM NOTE
                   </div>
 
                   <div
                     style={{
-                      marginTop: '5px',
-                      color: settings?.webhook_slug
-                        ? '#51c9ff'
-                        : '#8d6e3e',
-                      fontSize: '9px',
-                      fontWeight: '700',
+                      fontSize: '8px',
+                      lineHeight: 1.6,
+                      color: '#596d80',
                     }}
                   >
-                    {settings?.webhook_slug
-                      ? '● READY'
-                      : '● PENDING'}
+                    This page edits the merchant configuration
+                    represented by the existing business settings
+                    state. Saving the profile sends the current
+                    configuration through your existing Supabase
+                    synchronization pipeline.
                   </div>
 
                 </div>
@@ -3082,155 +2689,55 @@ export default function AgentParameters() {
 
         </div>
 
-
-        {/* =======================================================
-          SAVE / SYNC COMMAND FOOTER
-      ======================================================= */}
-
-        <section
-          style={{
-            marginTop: '18px',
-            padding: '17px 19px',
-            borderRadius: '15px',
-            background:
-              'linear-gradient(90deg, rgba(0,70,140,0.09), rgba(8,12,17,0.96))',
-            border:
-              '1px solid rgba(0,142,255,0.20)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '18px',
-            flexWrap: 'wrap',
-          }}
-        >
-
-          <div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-
-              <span
-                style={{
-                  width: '7px',
-                  height: '7px',
-                  borderRadius: '50%',
-                  background: isSaveSyncing
-                    ? '#66717d'
-                    : '#35cfff',
-                  boxShadow: isSaveSyncing
-                    ? 'none'
-                    : '0 0 12px rgba(50,205,255,0.8)',
-                }}
-              />
-
-              <span
-                style={{
-                  fontSize: '9px',
-                  fontWeight: '700',
-                  letterSpacing: '1px',
-                  color: '#ffffff',
-                }}
-              >
-                {isSaveSyncing
-                  ? 'SYNCHRONIZING MERCHANT PROFILE'
-                  : 'AGENT CONFIGURATION READY'}
-              </span>
-
-            </div>
-
-            <div
-              style={{
-                marginTop: '5px',
-                color: '#626e7b',
-                fontSize: '9px',
-              }}
-            >
-              Changes are persisted through your existing business settings
-              synchronization pipeline.
-            </div>
-
-          </div>
-
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-
-              if (!isSaveSyncing) {
-                handleSave(e);
-              }
-            }}
-            disabled={isSaveSyncing}
-            style={{
-              ...styles.button,
-              minWidth: '205px',
-              padding: '13px 19px',
-              borderRadius: '9px',
-              fontSize: '9px',
-              fontWeight: '700',
-              letterSpacing: '1px',
-              textTransform: 'uppercase',
-              background: isSaveSyncing
-                ? '#11171e'
-                : 'linear-gradient(135deg, #19bfff, #0874ff)',
-              color: isSaveSyncing
-                ? '#606b77'
-                : '#021018',
-              border: isSaveSyncing
-                ? '1px solid rgba(255,255,255,0.05)'
-                : '1px solid rgba(92,210,255,0.6)',
-              boxShadow: isSaveSyncing
-                ? 'none'
-                : '0 0 25px rgba(0,140,255,0.18)',
-              cursor: isSaveSyncing
-                ? 'not-allowed'
-                : 'pointer',
-            }}
-          >
-            {isSaveSyncing
-              ? 'SYNCING PROFILE...'
-              : 'SAVE & SYNC LIVE PROFILE'}
-          </button>
-
-        </section>
-
       </div>
 
 
       {/* =========================================================
-        RESPONSIVE CSS
-        Uses a scoped style tag so the page remains responsive
-        without changing your existing AdminPanel CSS.
+        RESPONSIVE OVERRIDES
     ========================================================= */}
 
       <style>
         {`
-        @media (max-width: 1100px) {
-          .agent-parameters-responsive-grid {
-            grid-template-columns: 1fr !important;
-          }
-        }
 
-        @media (max-width: 760px) {
+        @media (max-width: 1100px) {
+
           .agent-parameters-logo-grid {
             grid-template-columns: 1fr !important;
           }
 
-          .agent-parameters-page-padding {
-            padding: 20px 15px 40px !important;
-          }
         }
+
+        @media (max-width: 900px) {
+
+          .agent-parameters-insight-grid {
+            grid-template-columns: 1fr 1fr !important;
+          }
+
+        }
+
+        @media (max-width: 760px) {
+
+          .agent-parameters-responsive-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .agent-parameters-logo-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .agent-parameters-insight-grid {
+            grid-template-columns: 1fr !important;
+          }
+
+          .agent-parameters-page-padding {
+            padding: 18px 14px 40px !important;
+          }
+
+        }
+
       `}
       </style>
 
     </div>
   );
-
 }
