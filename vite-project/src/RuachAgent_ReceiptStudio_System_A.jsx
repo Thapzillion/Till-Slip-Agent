@@ -445,6 +445,12 @@ export default function ReceiptStudioShell({
   onSelectObject,
   onSelectElement,
 }) {
+
+  // System A is the single source of truth for receipt selection.
+  const [selectedElement, setSelectedElement] = useState(null);
+  const handleElementSelect = (elementId) => {
+    setSelectedElement(elementId || null);
+  };
   const [zoom, setZoom] = useState(78);
   const [grid, setGrid] = useState(true);
   const [snap, setSnap] = useState(true);
@@ -595,6 +601,8 @@ export default function ReceiptStudioShell({
               onSelectObject={handleObjectSelect}
               onSelectElement={handleElementSelect}
               onDesignConfigChange={handleDesignConfigChange}
+
+              selectedElementId={selectedElement}
             />
 
             {/* --------------------------------------------------------
@@ -611,6 +619,8 @@ export default function ReceiptStudioShell({
               onSelectObject={handleObjectSelect}
               onSelectElement={handleElementSelect}
               onDesignConfigChange={handleDesignConfigChange}
+
+              selectedElement={selectedElement}
             />
           </div>
         </div>
