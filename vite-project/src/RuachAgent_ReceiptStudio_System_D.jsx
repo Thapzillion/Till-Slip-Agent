@@ -420,19 +420,6 @@ export default function RuachAgentReceiptStudioSystemD({
 
 
     /* ==========================================================================
-       TOGGLE SECTION
-       ========================================================================== */
-
-    const toggleSection = (section) => {
-
-        setOpenSections((previous) => ({
-            ...previous,
-            [section]: !previous[section],
-        }));
-    };
-
-
-    /* ==========================================================================
        RESET CURRENT TARGET
        ========================================================================== */
 
@@ -815,7 +802,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Adjust brightness, contrast and more"
                 />
 
-                {openSections.basic && (
+                {openSection === "basic" && (
                     <div style={styles.sectionBody}>
 
                         <RangeControl
@@ -955,7 +942,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Control neon colors and intensity"
                 />
 
-                {openSections.neon && (
+                {openSection === "neon" && (
                     <div style={styles.sectionBody}>
 
                         <div style={styles.effectEnableRow}>
@@ -1060,7 +1047,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Add glow effects to elements"
                 />
 
-                {openSections.glow && (
+                {openSection === "glow" && (
                     <div style={styles.sectionBody}>
 
                         <div style={styles.effectEnableRow}>
@@ -1151,7 +1138,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Adjust lighting and highlights"
                 />
 
-                {openSections.light && (
+                {openSection === "light" && (
                     <div style={styles.sectionBody}>
 
                         <ColorControl
@@ -1296,7 +1283,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Add sparkle and particle effects"
                 />
 
-                {openSections.sparkle && (
+                {openSection === "sparkle" && (
                     <div style={styles.sectionBody}>
 
                         <RangeControl
@@ -1387,7 +1374,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Apply beautiful gradients"
                 />
 
-                {openSections.gradient && (
+                {openSection === "gradient" && (
                     <div style={styles.sectionBody}>
 
                         <div style={styles.effectEnableRow}>
@@ -1533,7 +1520,7 @@ export default function RuachAgentReceiptStudioSystemD({
                     description="Fine tune advanced controls"
                 />
 
-                {openSections.advanced && (
+                {openSection === "advanced" && (
                     <div style={styles.sectionBody}>
 
                         <RangeControl
