@@ -262,19 +262,18 @@ export default function RuachAgentReceiptStudioSystemD({
     }, [selectedElement]);
 
 
-    /* ----------------------------------------------------------------------
-       LOCAL OPEN/CLOSED STATES
-    ---------------------------------------------------------------------- */
+    // ============================================================
+    // ACCORDION STATE
+    // Only ONE inspector section can be open at a time.
+    // null = all sections collapsed.
+    // ============================================================
+    const [openSection, setOpenSection] = useState(null);
 
-    const [openSections, setOpenSections] = useState({
-        basic: true,
-        neon: true,
-        glow: true,
-        light: true,
-        sparkle: true,
-        gradient: true,
-        advanced: true,
-    });
+    const toggleSection = (sectionId) => {
+        setOpenSection((current) =>
+            current === sectionId ? null : sectionId
+        );
+    };
 
 
     /* ----------------------------------------------------------------------
@@ -602,8 +601,14 @@ export default function RuachAgentReceiptStudioSystemD({
 
 
     /* ==========================================================================
-       SECTION HEADER
-       ========================================================================== */
+   ACCORDION SECTION HEADER
+
+   UX:
+   - Every section starts collapsed.
+   - Clicking the > opens that section.
+   - Opening another section automatically closes the previous one.
+   - Clicking the currently open section closes it.
+   ========================================================================== */
 
     const SectionHeader = ({
         id,
@@ -611,26 +616,27 @@ export default function RuachAgentReceiptStudioSystemD({
         title,
         description,
     }) => {
-
-        const isOpen = openSections[id];
+        const isOpen = openSection === id;
 
         return (
             <button
                 type="button"
-                onClick={() =>
-                    toggleSection(id)
-                }
-                style={styles.sectionHeader}
+                onClick={() => toggleSection(id)}
+                style={{
+                    ...styles.sectionHeader,
+                    ...(isOpen
+                        ? styles.sectionHeaderActive || {}
+                        : {}),
+                }}
+                aria-expanded={isOpen}
+                aria-controls={`color-grading-section-${id}`}
             >
-
                 <div style={styles.sectionHeaderLeft}>
-
                     <div style={styles.sectionIcon}>
                         {icon}
                     </div>
 
                     <div>
-
                         <div style={styles.sectionTitle}>
                             {title}
                         </div>
@@ -638,21 +644,19 @@ export default function RuachAgentReceiptStudioSystemD({
                         <div style={styles.sectionDescription}>
                             {description}
                         </div>
-
                     </div>
-
                 </div>
 
-                {isOpen ? (
-                    <ChevronDown
-                        size={14}
-                    />
-                ) : (
-                    <ChevronRight
-                        size={14}
-                    />
-                )}
-
+                <div
+                    style={{
+                        ...styles.chevron,
+                        transform: isOpen
+                            ? "rotate(90deg)"
+                            : "rotate(0deg)",
+                    }}
+                >
+                    <ChevronRight size={15} />
+                </div>
             </button>
         );
     };

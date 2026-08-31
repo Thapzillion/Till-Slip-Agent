@@ -634,7 +634,8 @@ export default function RuachAgentReceiptStudioSystemB({
           <ToolButton
             icon={Pipette}
             label="Chroma Key"
-            onClick={startChromaKey}
+            active={Boolean(configuration.chromaKey?.enabled)}
+            onClick={() => startChromaKey()}
           />
         </div>
 

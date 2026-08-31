@@ -431,7 +431,7 @@ export default function ReceiptStudioShell({
   receiptData = {},
   settings = {},
   user = null,
-  designConfig = {},
+  designConfig: externalDesignConfig = {},
   selectedTemplateId = "matrix-grid",
   selectedObjectId = null,
   selectedElementId = null,
@@ -446,35 +446,190 @@ export default function ReceiptStudioShell({
   onSelectElement,
 }) {
 
-  // System A is the single source of truth for receipt selection.
-  const [selectedElement, setSelectedElement] = useState(null);
+  // ==============================================================
+  // SYSTEM A — SINGLE SOURCE OF TRUTH
+  // ==============================================================
+
+  /*
+   * System A owns the active receipt element.
+   *
+   * Examples:
+   *
+   * "logo"
+   * "businessName"
+   * "qrCode"
+   * "total"
+   * "items"
+   * "voucher"
+   * "background"
+   * "surface"
+   */
+  const [selectedElement, setSelectedElement] = useState(
+    selectedElementId ||
+    selectedObjectId ||
+    null
+  );
+
+
+  /*
+   * System A also owns the LIVE design configuration.
+   *
+   * This is extremely important.
+   *
+   * System D modifies this object.
+   * System B modifies this object.
+   * System C renders this object.
+   *
+   * AdminPanel remains responsible for persistence.
+   */
+  const [liveDesignConfig, setLiveDesignConfig] = useState(
+    externalDesignConfig || {}
+  );
+
+
+  // ==============================================================
+  // KEEP SYSTEM A SYNCHRONIZED WITH ADMINPANEL
+  // ==============================================================
+
+  /*
+   * When AdminPanel changes the design configuration externally
+   * (for example after loading a saved design from Supabase),
+   * System A adopts that configuration.
+   */
+  useEffect(() => {
+    setLiveDesignConfig(externalDesignConfig || {});
+  }, [externalDesignConfig]);
+
+
+  /*
+   * If AdminPanel loads a selected element from outside the studio,
+   * synchronize it into System A.
+   */
+  useEffect(() => {
+    const incomingSelection =
+      selectedElementId ||
+      selectedObjectId ||
+      null;
+
+    if (incomingSelection !== selectedElement) {
+      setSelectedElement(incomingSelection);
+    }
+  }, [selectedElementId, selectedObjectId]);
+
+
+  // ==============================================================
+  // ELEMENT SELECTION — SYSTEM A OWNS THIS
+  // ==============================================================
+
   const handleElementSelect = (elementId) => {
-    setSelectedElement(elementId || null);
+
+    const normalizedElement =
+      elementId || null;
+
+    // System A state
+    setSelectedElement(normalizedElement);
+
+    // Synchronize with AdminPanel if a callback exists
+    if (typeof onSelectElement === "function") {
+      onSelectElement(normalizedElement);
+    }
+
+    // Keep legacy/object selection bridge synchronized
+    if (typeof onSelectObject === "function") {
+      onSelectObject(normalizedElement);
+    }
   };
+
+
+  // ==============================================================
+  // DESIGN CONFIGURATION — SYSTEM A OWNS THE LIVE VERSION
+  // ==============================================================
+
+  const handleDesignConfigChange = (nextConfig) => {
+
+    const normalizedConfig =
+      nextConfig && typeof nextConfig === "object"
+        ? nextConfig
+        : {};
+
+    /*
+     * FIRST:
+     *
+     * Update System A immediately.
+     *
+     * This causes System C to receive the new configuration
+     * immediately and therefore causes MatrixTillSlip to render it.
+     */
+    setLiveDesignConfig(normalizedConfig);
+
+
+    /*
+     * SECOND:
+     *
+     * Notify AdminPanel.
+     *
+     * AdminPanel can use this to update its receiptData/design state
+     * and eventually persist it through handleSave().
+     */
+    if (typeof onDesignConfigChange === "function") {
+      onDesignConfigChange(normalizedConfig);
+    }
+  };
+
+
+  // ==============================================================
+  // OBJECT SELECTION BRIDGE
+  // ==============================================================
+
+  const handleObjectSelect = (id) => {
+
+    const normalizedId = id || null;
+
+    /*
+     * Object selection is also reflected as element selection.
+     *
+     * This prevents System B/C/D from becoming disconnected.
+     */
+    if (normalizedId) {
+      setSelectedElement(normalizedId);
+    }
+
+    if (typeof onSelectObject === "function") {
+      onSelectObject(normalizedId);
+    }
+
+    if (typeof onSelectElement === "function") {
+      onSelectElement(normalizedId);
+    }
+  };
+
+  // ==============================================================
+  // CHROMA KEY STATE
+  // ==============================================================
+
+  const [chromaKeyMode, setChromaKeyMode] = useState(false);
+  const [chromaKeyTarget, setChromaKeyTarget] = useState(null);
+
+  const handleStartChromaKey = (objectId) => {
+    setChromaKeyTarget(objectId);
+    setChromaKeyMode(true);
+  };
+
+
+  // ==============================================================
+  // STUDIO UI STATE
+  // ==============================================================
+
   const [zoom, setZoom] = useState(78);
   const [grid, setGrid] = useState(true);
   const [snap, setSnap] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
   const [activeTool, setActiveTool] = useState("studio");
 
-  // --------------------------------------------------------------
-  // System bridge
-  // --------------------------------------------------------------
-  // Every editing system writes back to the SAME designConfig object.
-  // AdminPanel remains the owner of persistence (Save/Revert/Supabase).
-  const handleDesignConfigChange = (nextConfig) => {
-    if (typeof onDesignConfigChange === "function") {
-      onDesignConfigChange(nextConfig || {});
-    }
-  };
 
-  const handleObjectSelect = (id) => {
-    if (typeof onSelectObject === "function") {
-      onSelectObject(id);
-    }
-  };
-
-  // REMOVED BLOCK AREA OF HANDLESELECTELEMENT
+  // ==============================================================
+  // RAIL TOOLS
+  // ==============================================================
 
   const railTools = [
     { id: "studio", label: "Studio" },
@@ -484,25 +639,53 @@ export default function ReceiptStudioShell({
     { id: "settings", label: "Settings" },
   ];
 
+
+  // ==============================================================
+  // FULLSCREEN
+  // ==============================================================
+
   const toggleFullscreen = () => {
-    if (typeof document === "undefined") return;
+
+    if (typeof document === "undefined") {
+      return;
+    }
 
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen?.().catch(() => { });
+
+      document.documentElement
+        .requestFullscreen?.()
+        .catch(() => { });
+
       setFullscreen(true);
+
     } else {
+
       document.exitFullscreen?.().catch(() => { });
+
       setFullscreen(false);
     }
   };
 
+
+  // ==============================================================
+  // RENDER
+  // ==============================================================
+
   return (
-    <div style={styles.shell} data-ruachagent-studio-shell="true">
-      {/* ============================================================
+
+    <div
+      style={styles.shell}
+      data-ruachagent-studio-shell="true"
+    >
+
+      {/* ==========================================================
           SYSTEM A — TOP APPLICATION CHROME
-         ============================================================ */}
+         ========================================================== */}
+
       <header style={styles.topbar}>
+
         <div style={styles.topLeft}>
+
           <button
             type="button"
             style={styles.menu}
@@ -512,19 +695,46 @@ export default function ReceiptStudioShell({
             <Menu size={17} />
           </button>
 
+
           <div style={styles.crumb}>
-            <span style={styles.crumbMuted}>RUACHAGENT / DESIGN STUDIO</span>
-            <span style={{ color: "#3f566b", fontSize: 11 }}>›</span>
-            <span style={styles.crumbStrong}>Receipt Editing Studio</span>
-            <span style={styles.pro}>PRO</span>
+
+            <span style={styles.crumbMuted}>
+              RUACHAGENT / DESIGN STUDIO
+            </span>
+
+            <span
+              style={{
+                color: "#3f566b",
+                fontSize: 11,
+              }}
+            >
+              ›
+            </span>
+
+            <span style={styles.crumbStrong}>
+              Receipt Editing Studio
+            </span>
+
+            <span style={styles.pro}>
+              PRO
+            </span>
+
           </div>
+
         </div>
 
 
-        <button type="button" style={styles.exportBtn} onClick={onExport}>
-          <Download size={13} />
-          Export
-        </button>
+        {/* ========================================================
+            TOPBAR SPACE
+            This pushes Save completely to the far right.
+           ======================================================== */}
+
+        <div style={styles.topbarSpacer} />
+
+
+        {/* ========================================================
+            SAVE
+           ======================================================== */}
 
         <button
           type="button"
@@ -535,143 +745,267 @@ export default function ReceiptStudioShell({
           disabled={isSaveSyncing}
           onClick={onSave}
         >
+
           <Save size={13} />
-          {isSaveSyncing ? "Saving..." : "Save"}
+
+          {isSaveSyncing
+            ? "Saving..."
+            : "Save"}
+
         </button>
+
       </header>
 
-      {/* ============================================================
-          SYSTEM A — WORKSPACE FRAME
-          The actual editing systems are supplied through {children}.
-         ============================================================ */}
+
+      {/* ==========================================================
+          SYSTEM A — WORKSPACE
+         ========================================================== */}
 
       <section style={styles.workspace}>
+
         <div style={styles.backdrop} />
+
         <div style={styles.workspaceInner}>
-          {/* ========================================================
-                SYSTEMS B + C + D
 
-                System A is the composition root. The three modules below
-                are deliberately mounted here rather than in AdminPanel.
-
-                B = Properties
-                C = Receipt Canvas
-                D = Color Grading
-
-                All three receive the same live designConfig and therefore
-                edit/render the same receipt document.
-               ======================================================== */}
           <div style={styles.workspaceGrid}>
-            {/* --------------------------------------------------------
-                  SYSTEM B — PROPERTIES
-                 -------------------------------------------------------- */}
+
+            {/* ==================================================
+                SYSTEM B — PROPERTIES
+               ================================================== */}
+
             <RuachAgentReceiptStudioSystemB
               receiptData={receiptData}
               settings={settings}
               user={user}
-              designConfig={designConfig}
+
+              /*
+               * IMPORTANT:
+               *
+               * B receives System A's live configuration.
+               */
+              designConfig={liveDesignConfig}
+
               selectedTemplateId={selectedTemplateId}
-              selectedObjectId={selectedObjectId || selectedElementId}
+
+              /*
+               * System A's selection is the source of truth.
+               */
+              selectedObjectId={selectedElement}
+              selectedElement={selectedElement}
+
               initialObjectGraph={initialObjectGraph}
+
               onObjectGraphChange={onObjectGraphChange}
-              onDesignConfigChange={handleDesignConfigChange}
-              onSelectObject={handleObjectSelect}
-              onSelectElement={handleElementSelect}
+
+              /*
+               * All changes return to System A.
+               */
+              onDesignConfigChange={
+                handleDesignConfigChange
+              }
+
+              onObjectSelect={
+                handleObjectSelect
+              }
+
+              onSelectObject={
+                handleObjectSelect
+              }
+
+              onSelectElement={
+                handleElementSelect
+              }
+
+              onStartChromaKey={handleStartChromaKey}
             />
 
-            {/* --------------------------------------------------------
-                  SYSTEM C — RECEIPT CANVAS
-                 -------------------------------------------------------- */}
+
+            {/* ==================================================
+                SYSTEM C — RECEIPT CANVAS
+               ================================================== */}
+
             <RuachAgentReceiptStudioSystemC
               receiptData={receiptData}
               settings={settings}
               user={user}
-              designConfig={designConfig}
-              selectedTemplateId={selectedTemplateId}
-              selectedObjectId={selectedObjectId || selectedElementId}
-              onSelectObject={handleObjectSelect}
-              onSelectElement={handleElementSelect}
-              onDesignConfigChange={handleDesignConfigChange}
 
+              /*
+               * THIS IS THE IMPORTANT CONNECTION.
+               *
+               * MatrixTillSlip receives the exact same
+               * configuration that System D modifies.
+               */
+              designConfig={liveDesignConfig}
+
+              selectedTemplateId={selectedTemplateId}
+
+              /*
+               * Same selected element.
+               */
+              selectedObjectId={selectedElement}
               selectedElementId={selectedElement}
+              selectedElement={selectedElement}
+
+              /*
+               * Selection travels upward to System A.
+               */
+              onSelectObject={
+                handleObjectSelect
+              }
+
+              onSelectElement={
+                handleElementSelect
+              }
+
+              /*
+               * Design changes travel upward to System A.
+               */
+              onDesignConfigChange={
+                handleDesignConfigChange
+              }
             />
 
-            {/* --------------------------------------------------------
-                  SYSTEM D — COLOR GRADING
-                 -------------------------------------------------------- */}
+
+            {/* ==================================================
+                SYSTEM D — COLOR GRADING
+               ================================================== */}
+
             <RuachAgentReceiptStudioSystemD
               receiptData={receiptData}
               settings={settings}
               user={user}
-              designConfig={designConfig}
-              selectedTemplateId={selectedTemplateId}
-              selectedObjectId={selectedObjectId || selectedElementId}
-              selectedElementId={selectedElementId || selectedObjectId}
-              onSelectObject={handleObjectSelect}
-              onSelectElement={handleElementSelect}
-              onDesignConfigChange={handleDesignConfigChange}
 
+              /*
+               * SAME LIVE CONFIGURATION.
+               */
+              designConfig={liveDesignConfig}
+
+              selectedTemplateId={selectedTemplateId}
+
+              /*
+               * SAME SELECTED ELEMENT.
+               */
+              selectedObjectId={selectedElement}
+              selectedElementId={selectedElement}
               selectedElement={selectedElement}
+
+              /*
+               * Selection is owned by System A.
+               */
+              onSelectObject={
+                handleObjectSelect
+              }
+
+              onSelectElement={
+                handleElementSelect
+              }
+
+              /*
+               * D sends every color-grading change
+               * back into System A.
+               */
+              onDesignConfigChange={
+                handleDesignConfigChange
+              }
             />
+
           </div>
+
         </div>
 
-        {/*
-           * System E / Animation Timeline has intentionally been removed
-           * from the current studio architecture. The shell keeps the
-           * bottom-dock state out of the active composition until that
-           * system is reintroduced.
-           */}
       </section>
 
-      {/* ============================================================
+
+      {/* ==========================================================
           SYSTEM A — GLOBAL STATUS BAR
-         ============================================================ */}
+         ========================================================== */}
+
       <footer style={styles.bottom}>
+
         <div style={styles.statusGroup}>
+
           <span style={styles.status}>
-            <CircleDot size={10} color="#17e5a2" />
-            {isLoading ? "Rendering..." : "Studio Ready"}
+
+            <CircleDot
+              size={10}
+              color="#17e5a2"
+            />
+
+            {isLoading
+              ? "Rendering..."
+              : "Studio Ready"}
+
+          </span>
+
+
+          <span style={styles.shortcutHint}>
+            {grid
+              ? "GRID 16px"
+              : "GRID OFF"}
           </span>
 
           <span style={styles.shortcutHint}>
-            {grid ? "GRID 16px" : "GRID OFF"}
+            •
           </span>
-          <span style={styles.shortcutHint}>•</span>
+
           <span style={styles.shortcutHint}>
-            {snap ? "SNAP ON" : "SNAP OFF"}
+            {snap
+              ? "SNAP ON"
+              : "SNAP OFF"}
           </span>
-          <span style={styles.shortcutHint}>•</span>
-          <span style={styles.shortcutHint}>{zoom}% VIEW</span>
+
+          <span style={styles.shortcutHint}>
+            •
+          </span>
+
+          <span style={styles.shortcutHint}>
+            {zoom}% VIEW
+          </span>
+
         </div>
 
+
         <div style={styles.statusGroup}>
+
           <button
             type="button"
             style={styles.iconBtn}
-            onClick={() => setGrid((value) => !value)}
+            onClick={() =>
+              setGrid((value) => !value)
+            }
             title="Toggle canvas grid"
           >
             <Grid3X3 size={13} />
           </button>
 
+
           <button
             type="button"
             style={styles.iconBtn}
             onClick={toggleFullscreen}
-            title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
+            title={
+              fullscreen
+                ? "Exit fullscreen"
+                : "Fullscreen"
+            }
           >
             <Maximize2 size={13} />
           </button>
+
         </div>
+
       </footer>
 
-      {/*
-       * onRevert is accepted by the shell as a persistence callback owned
-       * by AdminPanel. The actual Supabase implementation remains outside
-       * System A so the studio systems never own backend persistence.
-       */}
-      <span style={{ display: "none" }} data-revert-handler={!!onRevert} />
+
+      {/* ==========================================================
+          BACKEND REVERT BRIDGE
+         ========================================================== */}
+
+      <span
+        style={{ display: "none" }}
+        data-revert-handler={!!onRevert}
+      />
+
     </div>
   );
 }
