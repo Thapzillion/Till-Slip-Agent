@@ -1829,9 +1829,23 @@ export default function AdminPanel() {
 
               {activeTab === "connected-stores" && <ConnectedStores />}
 
-              {activeTab === "agent-parameters" && <AgentParameters />}
+              {activeTab === "agent-parameters" && (
+                <AgentParameters
+                  selectedTemplateId={selectedTemplateId}
+                  setSelectedTemplateId={setSelectedTemplateId}
+                  receipt={receipt}
+                  setReceipt={setReceipt}
+                />
+              )}
 
-              {activeTab === "till-slips-collection" && <TillSlipsCollection />}
+              {activeTab === "till-slips-collection" && (
+                <TillSlipsCollection
+                  selectedTemplateId={selectedTemplateId}
+                  setSelectedTemplateId={setSelectedTemplateId}
+                  receipt={receipt}
+                  setReceipt={setReceipt}
+                />
+              )}
             </main>
 
             {/* Close the authenticated admin workspace branch. */}

@@ -3,6 +3,8 @@ import { supabase } from "./supabaseClient";
 
 import { useBusiness } from "./backend/businessService";
 
+import MatrixTillSlip from "./models/MatrixTillSlip";
+
 // --------------------
 // Static data
 // --------------------
@@ -14,7 +16,27 @@ const CURRENCY_OPTIONS = [
   { code: "NGN", symbol: "₦", name: "Nigerian Naira" }
 ];
 
-export default function AgentParameters() {
+export default function AgentParameters({ selectedTemplateId, setSelectedTemplateId, receipt, setReceipt }) {
+
+  const [currentTemplate, setCurrentTemplate] = useState(
+    selectedTemplateId || localStorage.getItem("ruachagent:selectedTillSlipDesign") || "matrix-grid"
+  );
+
+  // Keep synced if user changes it in TillSlipsCollection
+  useEffect(() => {
+    if (selectedTemplateId) {
+      setCurrentTemplate(selectedTemplateId);
+    }
+  }, [selectedTemplateId]);
+
+  useEffect(() => {
+    const handleDesignChange = (e) => {
+      setCurrentTemplate(e.detail);
+    };
+    window.addEventListener("ruachagent:tillSlipDesignSelected", handleDesignChange);
+    return () => window.removeEventListener("ruachagent:tillSlipDesignSelected", handleDesignChange);
+  }, []);
+
   const {
     user,
     settings,
@@ -2331,180 +2353,98 @@ export default function AgentParameters() {
 
             </section>
 
-          </div>
-
-
-          {/* =====================================================
-            RIGHT COLUMN
-        ===================================================== */}
-
-          <div style={styles.rightColumn}>
-
-            {/* ===================================================
-              TILL SLIP PREVIEW
-          =================================================== */}
 
             <section style={styles.previewCard}>
 
-              <div style={styles.previewHeader}>
-
-                <div>
-
-                  <div style={styles.previewTitle}>
-                    LIVE TILL SLIP PREVIEW
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: '4px',
-                      fontSize: '7px',
-                      color: '#4f6070',
-                      letterSpacing: '0.7px',
-                    }}
-                  >
-                    MERCHANT RECEIPT SIMULATION
-                  </div>
-
-                </div>
-
-                <div style={styles.previewStatus}>
-                  LIVE
-                </div>
-
-              </div>
-
-
               <div style={styles.paperStage}>
+                <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
 
-                <div style={styles.paper}>
+                  {/* Dynamic Template Switcher */}
+                  {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
+                    <MatrixTillSlip
+                      receiptData={receipt || settings}
+                      settings={settings}
+                      user={user}
+                      activeCurrencySymbol={activeCurrencySymbol}
+                    />
+                  ) : currentTemplate === "minimalist-mono" ? (
+                    <MinimalistMonoTillSlip
+                      receiptData={receipt || settings}
+                      settings={settings}
+                      user={user}
+                      activeCurrencySymbol={activeCurrencySymbol}
+                    />
+                  ) : currentTemplate === "neon-cyber" ? (
+                    <NeonCyberTillSlip
+                      receiptData={receipt || settings}
+                      settings={settings}
+                      user={user}
+                      activeCurrencySymbol={activeCurrencySymbol}
+                    />
+                  ) : (
+                    /* Fallback / Generic View using your original paper structure if no matching component is found */
+                    <div style={styles.paper}>
+                      <div style={styles.paperHeader}>
+                        <div style={styles.paperLogoPlaceholder}>
+                          {settings?.logo_url ? (
+                            <img
+                              src={settings.logo_url}
+                              alt="Receipt logo"
+                              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                          ) : (
+                            'LOGO'
+                          )}
+                        </div>
+                        <div style={styles.paperBusinessName}>
+                          {settings?.business_name || 'YOUR BUSINESS'}
+                        </div>
+                        <div style={styles.paperText}>
+                          {settings?.store_address || 'Physical outlet address'}
+                        </div>
+                      </div>
 
-                  <div style={styles.paperHeader}>
+                      <div style={styles.paperText}>
+                        RECEIPT #RA-000001
+                        <br />
+                        29 AUG 2026
+                        <br />
+                        CUSTOMER COPY
+                      </div>
 
-                    <div style={styles.paperLogoPlaceholder}>
+                      <div style={styles.paperDivider} />
 
-                      {settings?.logo_url ? (
+                      <div style={styles.paperLine}>
+                        <span>SAMPLE PRODUCT</span>
+                        <span>{activeCurrencySymbol} 100.00</span>
+                      </div>
 
-                        <img
-                          src={settings.logo_url}
-                          alt="Receipt logo"
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'contain',
-                          }}
-                        />
+                      <div style={styles.paperLine}>
+                        <span>AI VOUCHER</span>
+                        <span>-{settings?.discount_percentage ?? 10}%</span>
+                      </div>
 
-                      ) : (
-                        'LOGO'
-                      )}
+                      <div style={styles.paperDivider} />
 
+                      <div style={styles.paperTotal}>
+                        <span>TOTAL</span>
+                        <span>
+                          {activeCurrencySymbol}{' '}
+                          {(100 - (100 * (settings?.discount_percentage ?? 10)) / 100).toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div style={{ marginTop: '25px', textAlign: 'center', fontSize: '7px', lineHeight: 1.6 }}>
+                        Voucher valid for {settings?.voucher_expiration_days ?? 30} days.
+                        <br />
+                        Powered by RuachAgent AI - [Design: {currentTemplate}]
+                      </div>
+
+                      <div style={styles.paperQr} />
                     </div>
-
-
-                    <div style={styles.paperBusinessName}>
-
-                      {settings?.business_name ||
-                        'YOUR BUSINESS'}
-
-                    </div>
-
-
-                    <div style={styles.paperText}>
-
-                      {settings?.store_address ||
-                        'Physical outlet address'}
-
-                    </div>
-
-                  </div>
-
-
-                  <div style={styles.paperText}>
-
-                    RECEIPT #RA-000001
-                    <br />
-                    29 AUG 2026
-                    <br />
-                    CUSTOMER COPY
-
-                  </div>
-
-
-                  <div style={styles.paperDivider} />
-
-
-                  <div style={styles.paperLine}>
-
-                    <span>
-                      SAMPLE PRODUCT
-                    </span>
-
-                    <span>
-                      {activeCurrencySymbol} 100.00
-                    </span>
-
-                  </div>
-
-
-                  <div style={styles.paperLine}>
-
-                    <span>
-                      AI VOUCHER
-                    </span>
-
-                    <span>
-                      -{settings?.discount_percentage ?? 10}%
-                    </span>
-
-                  </div>
-
-
-                  <div style={styles.paperDivider} />
-
-
-                  <div style={styles.paperTotal}>
-
-                    <span>
-                      TOTAL
-                    </span>
-
-                    <span>
-                      {activeCurrencySymbol}{' '}
-                      {(
-                        100 -
-                        (100 *
-                          (settings?.discount_percentage ?? 10)) /
-                        100
-                      ).toFixed(2)}
-                    </span>
-
-                  </div>
-
-
-                  <div
-                    style={{
-                      marginTop: '25px',
-                      textAlign: 'center',
-                      fontSize: '7px',
-                      lineHeight: 1.6,
-                    }}
-                  >
-
-                    Voucher valid for{' '}
-                    {settings?.voucher_expiration_days ?? 30}
-                    {' '}days.
-
-                    <br />
-
-                    Powered by RuachAgent AI
-
-                  </div>
-
-
-                  <div style={styles.paperQr} />
+                  )}
 
                 </div>
-
               </div>
 
 
@@ -2550,32 +2490,91 @@ export default function AgentParameters() {
 
             </section>
 
+          </div>
 
-            {/* ===================================================
+
+          {/* ===================================================
               BUSINESS INTELLIGENCE
           =================================================== */}
 
-            <section style={styles.card}>
+          <section style={styles.card}>
 
-              <div style={styles.cardHeader}>
+            <div style={styles.cardHeader}>
 
-                <div style={styles.cardHeaderLeft}>
+              <div style={styles.cardHeaderLeft}>
 
-                  <div style={styles.cardIcon}>
-                    ∿
+                <div style={styles.cardIcon}>
+                  ∿
+                </div>
+
+                <div>
+
+                  <h2 style={styles.cardTitle}>
+                    Commerce Intelligence
+                  </h2>
+
+                  <p style={styles.cardDescription}>
+                    Live configuration indicators for your
+                    merchant environment.
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div style={styles.cardBody}>
+
+              <div style={styles.insightGrid}>
+
+                <div style={styles.insight}>
+
+                  <div style={styles.insightLabel}>
+                    BUSINESS
                   </div>
 
-                  <div>
+                  <div
+                    style={{
+                      ...styles.insightValue,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {settings?.business_name ||
+                      'Not configured'}
+                  </div>
 
-                    <h2 style={styles.cardTitle}>
-                      Commerce Intelligence
-                    </h2>
+                </div>
 
-                    <p style={styles.cardDescription}>
-                      Live configuration indicators for your
-                      merchant environment.
-                    </p>
 
+                <div style={styles.insight}>
+
+                  <div style={styles.insightLabel}>
+                    WEBHOOK
+                  </div>
+
+                  <div style={styles.insightValue}>
+                    {settings?.webhook_slug
+                      ? 'ACTIVE'
+                      : 'PENDING'}
+                  </div>
+
+                </div>
+
+
+                <div style={styles.insight}>
+
+                  <div style={styles.insightLabel}>
+                    LOGO
+                  </div>
+
+                  <div style={styles.insightValue}>
+                    {settings?.logo_url
+                      ? 'CONFIGURED'
+                      : 'MISSING'}
                   </div>
 
                 </div>
@@ -2583,120 +2582,60 @@ export default function AgentParameters() {
               </div>
 
 
-              <div style={styles.cardBody}>
-
-                <div style={styles.insightGrid}>
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      BUSINESS
-                    </div>
-
-                    <div
-                      style={{
-                        ...styles.insightValue,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      {settings?.business_name ||
-                        'Not configured'}
-                    </div>
-
-                  </div>
-
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      WEBHOOK
-                    </div>
-
-                    <div style={styles.insightValue}>
-                      {settings?.webhook_slug
-                        ? 'ACTIVE'
-                        : 'PENDING'}
-                    </div>
-
-                  </div>
-
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      LOGO
-                    </div>
-
-                    <div style={styles.insightValue}>
-                      {settings?.logo_url
-                        ? 'CONFIGURED'
-                        : 'MISSING'}
-                    </div>
-
-                  </div>
-
-                </div>
-
+              <div
+                style={{
+                  marginTop: '12px',
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border:
+                    '1px solid rgba(66,105,140,0.18)',
+                  background:
+                    'rgba(4,8,13,0.62)',
+                }}
+              >
 
                 <div
                   style={{
-                    marginTop: '12px',
-                    padding: '12px',
-                    borderRadius: '10px',
-                    border:
-                      '1px solid rgba(66,105,140,0.18)',
-                    background:
-                      'rgba(4,8,13,0.62)',
+                    fontSize: '7px',
+                    fontWeight: '700',
+                    color: '#4d78a0',
+                    letterSpacing: '1.2px',
+                    textTransform: 'uppercase',
+                    marginBottom: '6px',
                   }}
                 >
+                  SYSTEM NOTE
+                </div>
 
-                  <div
-                    style={{
-                      fontSize: '7px',
-                      fontWeight: '700',
-                      color: '#4d78a0',
-                      letterSpacing: '1.2px',
-                      textTransform: 'uppercase',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    SYSTEM NOTE
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: '8px',
-                      lineHeight: 1.6,
-                      color: '#596d80',
-                    }}
-                  >
-                    This page edits the merchant configuration
-                    represented by the existing business settings
-                    state. Saving the profile sends the current
-                    configuration through your existing Supabase
-                    synchronization pipeline.
-                  </div>
-
+                <div
+                  style={{
+                    fontSize: '8px',
+                    lineHeight: 1.6,
+                    color: '#596d80',
+                  }}
+                >
+                  This page edits the merchant configuration
+                  represented by the existing business settings
+                  state. Saving the profile sends the current
+                  configuration through your existing Supabase
+                  synchronization pipeline.
                 </div>
 
               </div>
 
-            </section>
+            </div>
 
-          </div>
+          </section>
 
         </div>
 
-      </div>
-
+      </div >
 
       {/* =========================================================
         RESPONSIVE OVERRIDES
     ========================================================= */}
 
-      <style>
+      < style >
         {`
 
         @media (max-width: 1100px) {
@@ -2736,8 +2675,8 @@ export default function AgentParameters() {
         }
 
       `}
-      </style>
+      </style >
 
-    </div>
+    </div >
   );
 }
