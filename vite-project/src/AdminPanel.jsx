@@ -7,7 +7,10 @@ import { useBusiness } from "./backend/businessService";
 
 import { useNavigate } from "react-router-dom";
 
-import RuachAgentReceiptStudioSystemA from "./RuachAgent_ReceiptStudio_System_A";
+import Analysis from "./Analysis";
+import ConnectedStores from "./ConnectedStores";
+import AgentParameters from "./AgentParameters";
+import TillSlipsCollection from "./TillSlipsCollection";
 
 import {
   LayoutDashboard,
@@ -35,6 +38,8 @@ import {
 } from "lucide-react";
 
 export default function AdminPanel() {
+
+  const [activeTab, setActiveTab] = useState("agent-parameters");
 
   // -----------------------------
   // BACKEND
@@ -129,200 +134,6 @@ export default function AdminPanel() {
   const navigate = useNavigate();
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
-
-  // Snapshot the persisted design so AI changes can be discarded locally.
-  // This never changes the JSX receipt template or transaction data.
-  const originalDesignConfigRef = useRef(null);
-  const [hasDesignChanges, setHasDesignChanges] = useState(false);
-
-  // Receipt Editing Studio state. All controls modify designConfig only.
-  const [activeStudioObject, setActiveStudioObject] = useState("logo");
-  const [openStudioPanel, setOpenStudioPanel] = useState("layout");
-  const [selectedTextTarget, setSelectedTextTarget] = useState("heading");
-
-  // Shared selection state for the Receipt Studio.
-  // Systems B, C and D all operate on the same selected receipt element.
-  const [selectedStudioElement, setSelectedStudioElement] = useState("receipt");
-
-  const handleStudioElementSelect = (elementId) => {
-    if (!elementId) return;
-    setSelectedStudioElement(elementId);
-  };
-
-  const cloneConfig = (value) =>
-    JSON.parse(JSON.stringify(value ?? {}));
-
-  const getNestedValue = (object, path, fallback = "") => {
-    return path.reduce((current, key) => {
-      if (current === null || current === undefined) return fallback;
-      return current[key] === undefined ? fallback : current[key];
-    }, object);
-  };
-
-  const setNestedValue = (object, path, value) => {
-    const next = cloneConfig(object);
-    let cursor = next;
-
-    path.forEach((key, index) => {
-      if (index === path.length - 1) {
-        cursor[key] = value;
-        return;
-      }
-
-      if (!cursor[key] || typeof cursor[key] !== "object" || Array.isArray(cursor[key])) {
-        cursor[key] = {};
-      }
-
-      cursor = cursor[key];
-    });
-
-    return next;
-  };
-
-  const updateDesignConfig = (path, value) => {
-    setReceiptData((current) => ({
-      ...current,
-      design_config: setNestedValue(
-        current?.design_config || {},
-        path,
-        value
-      )
-    }));
-
-    setHasDesignChanges(true);
-  };
-
-  const toggleDesignEffect = (path, enabled) => {
-    updateDesignConfig(path, enabled);
-  };
-
-  const designConfig = receiptData?.design_config || {};
-
-  /*
-   * ================================================================
-   * SHARED DESIGN CONFIGURATION BRIDGE
-   * ================================================================
-   *
-   * Systems B, C and E are independent UI modules, but they must
-   * operate on ONE shared configuration object. System D consumes
-   * this same object to render the live receipt.
-   *
-   * Supported forms:
-   *   setDesignConfig(nextObject)
-   *   setDesignConfig(current => nextObject)
-   *
-   * This never edits the receipt JSX.
-   */
-  const setDesignConfig = (nextConfigOrUpdater) => {
-    setReceiptData((current) => {
-      const currentConfig = current?.design_config || {};
-
-      const nextConfig =
-        typeof nextConfigOrUpdater === "function"
-          ? nextConfigOrUpdater(currentConfig)
-          : nextConfigOrUpdater;
-
-      return {
-        ...current,
-        design_config: cloneConfig(nextConfig || {})
-      };
-    });
-
-    setHasDesignChanges(true);
-  };
-
-  const textTargetPath = {
-    heading: ["text", "heading"],
-    body: ["text", "body"],
-    total: ["text", "total"]
-  }[selectedTextTarget];
-
-  const textTarget = getNestedValue(
-    designConfig,
-    textTargetPath || ["text", "heading"],
-    {}
-  );
-
-  const studioObjects = [
-    { id: "logo", label: "Logo", icon: <Layers size={18} /> },
-    { id: "qr", label: "QR Code", icon: <QrCode size={18} /> },
-    { id: "text", label: "Text", icon: <Type size={18} /> },
-    { id: "theme", label: "Theme", icon: <Palette size={18} /> }
-  ];
-
-  const toggleStudioPanel = (panel) => {
-    setOpenStudioPanel((current) => (current === panel ? "" : panel));
-  };
-
-
-  useEffect(() => {
-    if (!receiptData || !selectedTemplateId) return;
-
-    const incomingConfig = receiptData?.design_config || {};
-
-    if (
-      originalDesignConfigRef.current === null ||
-      originalDesignConfigRef.current.templateId !== selectedTemplateId
-    ) {
-      originalDesignConfigRef.current = {
-        templateId: selectedTemplateId,
-        config: JSON.parse(JSON.stringify(incomingConfig))
-      };
-      setHasDesignChanges(false);
-    }
-  }, [receiptData, selectedTemplateId]);
-
-  const handlePromptWithDesignTracking = async () => {
-    if (!inputPrompt?.trim() || isLoading) return;
-    setHasDesignChanges(true);
-    return handleSendPrompt();
-  };
-
-  const handleRevertToOriginal = () => {
-    const snapshot = originalDesignConfigRef.current;
-
-    if (!snapshot || !receiptData) return;
-
-    setReceiptData((current) => ({
-      ...current,
-      design_config: JSON.parse(JSON.stringify(snapshot.config))
-    }));
-
-    setHasDesignChanges(false);
-
-    setMessages((current) => [
-      ...current,
-      {
-        role: "assistant",
-        text: "Reverted the till slip to its original saved design."
-      }
-    ]);
-  };
-
-  useEffect(() => {
-    const handleTemplateSelected = (event) => {
-      const templateId =
-        event?.detail ||
-        localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
-        "matrix-grid";
-
-      setSelectedTemplateId(templateId);
-    };
-
-    handleTemplateSelected();
-
-    window.addEventListener(
-      "ruachagent:tillSlipDesignSelected",
-      handleTemplateSelected
-    );
-
-    return () => {
-      window.removeEventListener(
-        "ruachagent:tillSlipDesignSelected",
-        handleTemplateSelected
-      );
-    };
-  }, []);
 
   const styles = {
     container: {
@@ -1850,46 +1661,46 @@ export default function AdminPanel() {
                 </div>
               </div>
 
+              {/* SETTINGS */}
+
+              <div className="sidebar-section">
+                <p className="sidebar-title">SETTINGS</p>
+
+                <button className={`sidebar-item ${activeTab === "agent-parameters" ? "active" : ""}`}
+                  onClick={() => setActiveTab("agent-parameters")}
+                >
+                  <SlidersHorizontal size={18} />
+                  <span>Agent Parameters</span>
+                </button>
+
+                <button className={`sidebar-item ${activeTab === "till-slips-collection" ? "active" : ""}`}
+                  onClick={() => setActiveTab("till-slips-collection")}
+                >
+                  <FileText size={18} />
+
+                  <span>Till Slips Collection</span>
+                </button>
+              </div>
+
               {/* PREVIEWS */}
 
               <div className="sidebar-section">
                 <p className="sidebar-title">PREVIEWS</p>
 
-                <button className="sidebar-item active"
-                  onClick={() => navigate("/analysis")}
+                <button className={`sidebar-item ${activeTab === "analysis" ? "active" : ""}`}
+                  onClick={() => setActiveTab("analysis")}
                 >
                   <LayoutDashboard size={18} />
 
                   <span>Analysis</span>
                 </button>
 
-                <button className="sidebar-item"
-                  onClick={() => navigate("/connected-stores")}
+                <button className={`sidebar-item ${activeTab === "connected-stores" ? "active" : ""}`}
+                  onClick={() => setActiveTab("connected-stores")}
                 >
                   <Store size={18} />
 
                   <span>Connected Stores</span>
-                </button>
-              </div>
-
-              {/* SETTINGS */}
-
-              <div className="sidebar-section">
-                <p className="sidebar-title">SETTINGS</p>
-
-                <button className="sidebar-item"
-                  onClick={() => navigate("/agent-parameters")}
-                >
-                  <SlidersHorizontal size={18} />
-                  <span>Agent Parameters</span>
-                </button>
-
-                <button className="sidebar-item"
-                  onClick={() => navigate("/till-slips-collection")}
-                >
-                  <FileText size={18} />
-
-                  <span>Till Slips Collection</span>
                 </button>
               </div>
 
@@ -2008,58 +1819,19 @@ export default function AdminPanel() {
             <main
               className="main-content"
               style={{
-                padding: 0,
+                padding: "24px",
                 minWidth: 0,
                 minHeight: 0,
-                overflow: "hidden"
+                overflowY: "auto"
               }}
             >
-              {/* ==========================================================
-                  RUACHAGENT RECEIPT STUDIO
+              {activeTab === "analysis" && <Analysis />}
 
-                  AdminPanel is the host and persistence owner.
-                  System A is the outer Studio Shell and internally mounts:
-                    • System B — Properties
-                    • System C — Receipt Canvas
-                    • System D — Color Grading
+              {activeTab === "connected-stores" && <ConnectedStores />}
 
-                  The three systems therefore share this SAME live document:
-                    receiptData.design_config
+              {activeTab === "agent-parameters" && <AgentParameters />}
 
-                  AdminPanel continues to own Save/Revert/Supabase.
-                 ========================================================== */}
-              <RuachAgentReceiptStudioSystemA
-                documentName={
-                  settings?.business_name
-                    ? `${settings.business_name} — Receipt Studio`
-                    : "Matrix Neon Receipt"
-                }
-
-                /* Backend / persistence */
-                onSave={handleSave}
-                onRevert={handleRevertToOriginal}
-                onAIAssist={handlePromptWithDesignTracking}
-                isSaveSyncing={isSaveSyncing}
-                isLoading={isLoading}
-
-                /* Live receipt document */
-                receiptData={receiptData}
-                settings={settings}
-                user={user}
-                designConfig={designConfig}
-                selectedTemplateId={selectedTemplateId}
-
-                /* Shared designConfig bridge */
-                onDesignConfigChange={(newConfig) => {
-                  setDesignConfig(JSON.parse(JSON.stringify(newConfig)));
-                }}
-
-                /* Shared element selection bridge */
-                selectedObjectId={selectedStudioElement}
-                selectedElementId={selectedStudioElement}
-                onSelectObject={handleStudioElementSelect}
-                onSelectElement={handleStudioElementSelect}
-              />
+              {activeTab === "till-slips-collection" && <TillSlipsCollection />}
             </main>
 
             {/* Close the authenticated admin workspace branch. */}

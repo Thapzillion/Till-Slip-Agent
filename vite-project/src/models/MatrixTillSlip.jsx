@@ -83,6 +83,8 @@ import React, { useEffect, useState } from "react";
  * }
  */
 
+// I'M GOING TO HAVE TO REMOVE EVERY FUNCTION THAT IS MEANT TO ENABLE USERS TO MODIFY THIS TILL SLIP THROUHG DESIGNCONFIG AND MANY OTHER FUNCTIONS.
+
 const clamp = (value, min, max) =>
     Math.min(max, Math.max(min, Number(value) || 0));
 
