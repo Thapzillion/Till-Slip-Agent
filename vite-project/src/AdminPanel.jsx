@@ -139,7 +139,7 @@ export default function AdminPanel() {
     container: {
       minHeight: '100vh',
       width: '100%',
-      background: '#050608',
+      background: '#000000',
       color: '#ffffff',
       boxSizing: 'border-box'
     },
@@ -150,14 +150,14 @@ export default function AdminPanel() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px'
+      padding: '44px'
     },
     flatCard: {
-      padding: '28px',
-      border: '1px solid rgba(38,216,255,0.2)',
+      padding: '48px',
+      border: '1px solid rgba(0, 217, 255, 0)',
       borderRadius: '18px',
-      background: 'rgba(17,21,27,0.96)',
-      boxShadow: '0 22px 60px rgba(0,0,0,0.45)',
+      background: 'rgba(1, 4, 6, 0.96)',
+      boxShadow: '0 22px 60px rgba(3, 102, 141, 0.45)',
       boxSizing: 'border-box'
     },
     button: {
@@ -173,16 +173,16 @@ export default function AdminPanel() {
     header: {
       width: '100%',
       minHeight: '82px',
-      padding: '12px 24px',
+      padding: '22px 44px',
       boxSizing: 'border-box',
       background: 'rgba(9,11,15,0.82)',
-      borderBottom: '1px solid #1c2430'
+      borderBottom: '1px solid #000000'
     },
     input: {
       width: '100%',
       minHeight: '44px',
-      padding: '10px 12px',
-      border: '1px solid #1c2430',
+      padding: '20px 22px',
+      border: '1px solid #000000',
       borderRadius: '10px',
       background: '#0b0d11',
       color: '#ffffff',
@@ -714,6 +714,23 @@ export default function AdminPanel() {
     studioResponsiveNarrow: {
       gridTemplateColumns: '92px minmax(0, 1fr)'
     }
+  };
+
+  const accountMenuButtonStyle = {
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    padding: "11px 12px",
+    border: "none",
+    borderRadius: "10px",
+    background: "transparent",
+    color: "#dce7f2",
+    fontSize: "13px",
+    fontWeight: 500,
+    cursor: "pointer",
+    textAlign: "left",
+    transition: "all .2s ease"
   };
 
 
@@ -1651,13 +1668,50 @@ export default function AdminPanel() {
 
             <aside className="sidebar">
               {/* Logo */}
-
-              <div className="sidebar-logo">
-                <div className="logo-icon">R</div>
+              <div
+                className="sidebar-logo"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px"
+                }}
+              >
+                <img
+                  src="/RuachAgentLogo.png"
+                  alt="RuachAgent"
+                  style={{
+                    width: "52px",
+                    height: "52px",
+                    objectFit: "contain",
+                    display: "block",
+                    flexShrink: 0
+                  }}
+                />
 
                 <div>
-                  <h2>RuachAgent AI</h2>
-                  <span>Intelligent Till Slip Assistant</span>
+                  <h2
+                    style={{
+                      margin: 0,
+                      color: "#ffffff",
+                      fontSize: "18px",
+                      fontWeight: 700,
+                      letterSpacing: "-0.3px"
+                    }}
+                  >
+                    RuachAgent
+                  </h2>
+
+                  <span
+                    style={{
+                      display: "block",
+                      marginTop: "3px",
+                      color: "#7d8a99",
+                      fontSize: "11px",
+                      letterSpacing: "0.2px"
+                    }}
+                  >
+                    Till Slip Platform
+                  </span>
                 </div>
               </div>
 
@@ -1705,46 +1759,145 @@ export default function AdminPanel() {
               </div>
 
               {/* Bottom Card */}
-
-              <div className="sidebar-bottom">
+              <div className="sidebar-bottom" style={{ position: "relative" }}>
                 <div className="bottom-profile">
-                  <div className="bottom-logo">R</div>
 
-                  <div>
+                  {/* Account Button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowAccountMenu(prev => !prev)}
+                    aria-expanded={showAccountMenu}
+                    aria-haspopup="menu"
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "14px",
+                      padding: "14px",
+                      borderRadius: "14px",
+                      cursor: "pointer",
+                      transition: "all .25s ease",
+                      border: "1px solid rgba(0,180,255,.18)",
+                      background: "rgba(15,18,24,.92)",
+                      textAlign: "left",
+                      color: "#fff"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.border =
+                        "1px solid rgba(0,198,255,.45)";
+                      e.currentTarget.style.background =
+                        "rgba(20,25,32,.98)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.border =
+                        "1px solid rgba(0,180,255,.18)";
+                      e.currentTarget.style.background =
+                        "rgba(15,18,24,.92)";
+                    }}
+                  >
+                    {/* Avatar */}
                     <div
-                      onClick={() => setShowAccountMenu(prev => !prev)}
                       style={{
+                        width: "44px",
+                        height: "44px",
+                        minWidth: "44px",
+                        borderRadius: "50%",
+                        background:
+                          "linear-gradient(135deg,#00C6FF,#0084FF)",
                         display: "flex",
                         alignItems: "center",
-                        gap: "14px",
-                        padding: "14px",
-                        borderRadius: "14px",
-                        cursor: "pointer",
-                        transition: "all .25s ease",
-                        border: "1px solid rgba(0,180,255,.18)",
-                        background: "rgba(15,18,24,.92)"
+                        justifyContent: "center",
+                        color: "#fff",
+                        fontWeight: 700,
+                        fontSize: "17px",
+                        boxShadow: "0 0 18px rgba(0,198,255,.22)"
+                      }}
+                    >
+                      {(settings?.business_name || user?.email || "R")
+                        .charAt(0)
+                        .toUpperCase()}
+                    </div>
+
+                    {/* Account Information */}
+                    <div
+                      style={{
+                        flex: 1,
+                        minWidth: 0
                       }}
                     >
                       <div
                         style={{
-                          width: "44px",
-                          height: "44px",
-                          borderRadius: "50%",
-                          background: "linear-gradient(135deg,#00C6FF,#0084FF)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
                           color: "#fff",
-                          fontWeight: 700,
-                          fontSize: "17px"
+                          fontWeight: 600,
+                          fontSize: "14px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
                         }}
                       >
-                        {(settings?.business_name || user?.email || "R")
-                          .charAt(0)
-                          .toUpperCase()}
+                        {settings?.business_name || "RuachAgent AI"}
                       </div>
 
-                      <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          color: "#7d8a99",
+                          fontSize: "12px",
+                          marginTop: "3px",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                        }}
+                      >
+                        {user?.email}
+                      </div>
+                    </div>
+
+                    {/* Menu Indicator */}
+                    <div
+                      style={{
+                        color: "#00C6FF",
+                        fontSize: "16px",
+                        transform: showAccountMenu
+                          ? "rotate(180deg)"
+                          : "rotate(0deg)",
+                        transition: "transform .25s ease"
+                      }}
+                    >
+                      ▾
+                    </div>
+                  </button>
+
+                  {/* Account Popup */}
+                  {showAccountMenu && (
+                    <div
+                      className="account-menu"
+                      role="menu"
+                      style={{
+                        position: "absolute",
+                        left: "0",
+                        right: "0",
+                        bottom: "calc(100% + 10px)",
+                        zIndex: 1000,
+                        padding: "8px",
+                        borderRadius: "16px",
+                        border: "1px solid rgba(0,198,255,.22)",
+                        background:
+                          "linear-gradient(180deg, rgba(17,22,29,.98), rgba(8,11,15,.98))",
+                        boxShadow:
+                          "0 18px 50px rgba(0,0,0,.55), 0 0 25px rgba(0,160,255,.08)",
+                        backdropFilter: "blur(18px)"
+                      }}
+                    >
+
+                      {/* Popup Header */}
+                      <div
+                        style={{
+                          padding: "10px 12px 12px",
+                          borderBottom:
+                            "1px solid rgba(255,255,255,.07)",
+                          marginBottom: "6px"
+                        }}
+                      >
                         <div
                           style={{
                             color: "#fff",
@@ -1757,65 +1910,93 @@ export default function AdminPanel() {
 
                         <div
                           style={{
-                            color: "#7d8a99",
-                            fontSize: "12px"
+                            color: "#6f7d8d",
+                            fontSize: "11px",
+                            marginTop: "3px"
                           }}
                         >
                           {user?.email}
                         </div>
                       </div>
 
+                      {/* Profile */}
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                          setShowAccountMenu(false);
+                          navigate("/profile");
+                        }}
+                        style={accountMenuButtonStyle}
+                      >
+                        <span>👤</span>
+                        <span>Profile</span>
+                      </button>
+
+                      {/* Plan */}
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                          setShowAccountMenu(false);
+                          navigate("/billing");
+                        }}
+                        style={accountMenuButtonStyle}
+                      >
+                        <span>◈</span>
+                        <span>Plan</span>
+                      </button>
+
+                      {/* Help */}
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                          setShowAccountMenu(false);
+                          navigate("/help");
+                        }}
+                        style={accountMenuButtonStyle}
+                      >
+                        <span>?</span>
+                        <span>Help</span>
+                      </button>
+
+                      {/* Divider */}
                       <div
                         style={{
-                          color: "#00C6FF",
-                          fontSize: "18px"
+                          height: "1px",
+                          background: "rgba(255,255,255,.07)",
+                          margin: "6px 4px"
+                        }}
+                      />
+
+                      {/* Log Out */}
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={async () => {
+                          setShowAccountMenu(false);
+
+                          await supabase.auth.signOut();
+
+                          navigate("/");
+                        }}
+                        style={{
+                          ...accountMenuButtonStyle,
+                          color: "#ff6b6b"
                         }}
                       >
-                        ⚙
-                      </div>
+                        <span>↪</span>
+                        <span>Log Out</span>
+                      </button>
+
                     </div>
-                    {showAccountMenu && (
-                      <div className="account-menu">
+                  )}
 
-                        <div className="account-header">
-
-                          <h3>{settings?.business_name || "Business"}</h3>
-
-                          <p>{user?.email}</p>
-
-                        </div>
-
-                        <button onClick={() => navigate("/agent-parameters")}>
-                          Account Settings
-                        </button>
-
-                        <button onClick={() => navigate("/billing")}>
-                          Billing
-                        </button>
-
-                        <button onClick={() => navigate("/security")}>
-                          Security
-                        </button>
-
-                        <button
-                          onClick={async () => {
-
-                            await supabase.auth.signOut();
-
-                            navigate("/");
-
-                          }}
-                        >
-                          Log Out
-                        </button>
-
-                      </div>
-                    )}
-
-                  </div>
                 </div>
               </div>
             </aside>
+
             <main
               className="main-content"
               style={{
@@ -1847,14 +2028,9 @@ export default function AdminPanel() {
                 />
               )}
             </main>
-
-            {/* Close the authenticated admin workspace branch. */}
           </div>
         )}
-
-        {/* Close the persistent outer content <main>. */}
       </main>
     </div>
   );
 }
-// The sidebar and topbar should be visually compatible with AdminPanel.jsx(the chat section and till slip preview should be persistent), while Analysis, Connected Stores, Agent Parameters and Till Slips Collection themselves get their own content area.
