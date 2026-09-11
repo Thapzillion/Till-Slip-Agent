@@ -1251,7 +1251,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
           height: '520px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(0,125,255,0.13), transparent 68%)',
+            'radial-gradient(circle, rgba(0, 204, 255, 0.28), transparent 68%)',
           pointerEvents: 'none',
           filter: 'blur(4px)',
         }}
@@ -1266,7 +1266,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
           height: '620px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(0,90,255,0.08), transparent 68%)',
+            'radial-gradient(circle, rgba(0, 229, 255, 0.08), transparent 68%)',
           pointerEvents: 'none',
         }}
       />
@@ -1318,21 +1318,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                 : isSaveSyncing
                   ? 'SYNCING PROFILE'
                   : 'AGENT ONLINE'}
-            </div>
-
-            <div
-              style={{
-                padding: '8px 11px',
-                borderRadius: '999px',
-                border: '1px solid rgba(75,139,198,0.20)',
-                background: 'rgba(6,11,17,0.78)',
-                color: '#6d8298',
-                fontSize: '8px',
-                fontWeight: '700',
-                letterSpacing: '1px',
-              }}
-            >
-              GOOGLE GENAI
             </div>
 
           </div>
@@ -1938,16 +1923,11 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
                     <p style={styles.cardDescription}>
                       Configure the commerce rules used by
-                      RuachAgent's Google GenAI-powered engine.
+                      RuachAgent's system.
                     </p>
 
                   </div>
 
-                </div>
-
-                <div style={styles.statusPill}>
-                  <span style={styles.statusDot} />
-                  GOOGLE GENAI
                 </div>
 
               </div>
@@ -1960,10 +1940,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   <div style={styles.aiPulse} />
 
                   <div>
-
-                    <div style={styles.aiBannerTitle}>
-                      RuachAgent AI Engine Connected
-                    </div>
 
                     <div style={styles.aiBannerText}>
                       Merchant configuration is exposed to the
@@ -2152,7 +2128,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   <div style={styles.recommendationHeader}>
 
                     <div style={styles.recommendationTitle}>
-                      AI CONFIGURATION RECOMMENDATIONS
+                      RUACHAGENT CONFIGURATION UPDATE
                     </div>
 
                     <div
@@ -2473,19 +2449,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
                 </div>
 
-
-                <div style={styles.insight}>
-
-                  <div style={styles.insightLabel}>
-                    AGENT
-                  </div>
-
-                  <div style={styles.insightValue}>
-                    GOOGLE GENAI
-                  </div>
-
-                </div>
-
               </div>
 
             </section>
@@ -2617,7 +2580,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   This page edits the merchant configuration
                   represented by the existing business settings
                   state. Saving the profile sends the current
-                  configuration through your existing Supabase
+                  configuration through your existing database
                   synchronization pipeline.
                 </div>
 
