@@ -16,14 +16,14 @@
 
     --bg: #050608;
     --bg-secondary: #0b0d11;
-    --panel: #11151b;
-    --panel-light: #171c24;
+    --panel: #000000;
+    --panel-light: #000000;
 
     /* Borders */
 
     --border: #1c2430;
     --border-hover: #2ad4ff;
-    --divider: #222b37;
+    --divider: #202834;
 
     /* Accent */
 
@@ -61,10 +61,10 @@
     /* Glass */
 
     --glass:
-        rgba(255, 255, 255, .03);
+        rgba(8, 136, 210, 0.253);
 
     --glass-border:
-        rgba(255, 255, 255, .05);
+        rgba(3, 168, 234, 0.054);
 
     /* Radius */
 
@@ -3430,7 +3430,7 @@ button:active::after {
 
             transparent,
 
-            rgba(255, 255, 255, .08),
+            rgb(0, 0, 0),
 
             transparent);
 
