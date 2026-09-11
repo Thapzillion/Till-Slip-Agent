@@ -496,8 +496,8 @@ input::placeholder {
 
     background:
         linear-gradient(180deg,
-            rgba(18, 22, 28, .98),
-            rgba(8, 10, 13, .98));
+            rgba(0, 0, 0, 0.98),
+            rgba(0, 0, 0, 0.98));
 
     border-right: 1px solid var(--border);
 
@@ -678,7 +678,7 @@ input::placeholder {
 
     color: white;
 
-    background: rgba(255, 255, 255, .03);
+    background: rgb(0, 2, 7);
 
     border-color: rgba(38, 216, 255, .20);
 
@@ -692,9 +692,9 @@ input::placeholder {
 
         linear-gradient(90deg,
 
-            rgba(38, 216, 255, .14),
+            rgb(0, 0, 0),
 
-            rgba(38, 216, 255, .03));
+            rgb(0, 0, 0));
 
     border: 1px solid rgba(38, 216, 255, .25);
 
@@ -727,7 +727,7 @@ input::placeholder {
 
     border-radius: 18px;
 
-    background: rgba(255, 255, 255, .025);
+    background: rgb(0, 0, 0);
 
     border: 1px solid var(--border);
 
