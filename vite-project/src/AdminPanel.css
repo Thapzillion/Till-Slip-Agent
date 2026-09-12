@@ -280,9 +280,9 @@ input {
 
     width: 100%;
 
-    min-height: 100vh;
+    height: 100%;
 
-    height: auto;
+    min-height: 100dvh;
 
     display: flex;
 
@@ -290,11 +290,11 @@ input {
 
     background:
         radial-gradient(circle at top right,
-            rgba(38, 216, 255, .05),
+            rgb(0, 0, 0),
             transparent 30%),
 
         radial-gradient(circle at bottom left,
-            rgba(38, 216, 255, .04),
+            rgb(0, 0, 0),
             transparent 35%),
 
         var(--bg);
@@ -789,11 +789,11 @@ input::placeholder {
 
     min-width: 0;
 
+    min-height: 0;
+
     display: flex;
 
     flex-direction: column;
-
-    min-height: 100vh;
 
     overflow-x: hidden;
 

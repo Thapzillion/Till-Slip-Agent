@@ -1164,7 +1164,19 @@ export default function AdminPanel() {
 
       <input style={{ display: 'none' }} type="password" autoComplete="on" />
 
-      <main style={{ padding: '24px 12px', maxWidth: '1500px', margin: '0 auto' }}>
+      <main
+        style={{
+          width: '100%',
+          height: user ? '100dvh' : 'auto',
+          minHeight: user ? '100dvh' : undefined,
+          padding: user ? 0 : '24px 12px',
+          maxWidth: user ? 'none' : '1500px',
+          margin: user ? 0 : '0 auto',
+          boxSizing: 'border-box',
+          display: user ? 'flex' : undefined,
+          flexDirection: user ? 'column' : undefined
+        }}
+      >
         {!user ? (
           <section style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '85vh' }}>
             <div style={{
