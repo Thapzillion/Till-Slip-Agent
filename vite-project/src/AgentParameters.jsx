@@ -82,12 +82,12 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       radial-gradient(
         circle at 12% 8%,
-        rgba(0, 200, 255, 0.21),
+        rgba(0, 200, 255, 0.52),
         transparent 28%
       ),
       radial-gradient(
         circle at 88% 18%,
-        rgba(0, 213, 255, 0.09),
+        rgba(0, 213, 255, 0.36),
         transparent 30%
       ),
       linear-gradient(
