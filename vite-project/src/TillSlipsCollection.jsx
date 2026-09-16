@@ -406,7 +406,7 @@ export default function TillSlipsCollection() {
 
                             <Search
                                 size={18}
-                                color="#08E3D8"
+                                color="#03f2ff"
                                 style={{
                                     position: "absolute",
                                     left: 18,
@@ -436,7 +436,7 @@ export default function TillSlipsCollection() {
                                     background: "#000000",
 
                                     border:
-                                        "2px solid rgba(8, 223, 227, 0.38)",
+                                        "2px solid rgba(2, 213, 255, 0.67)",
 
                                     color: "#FFFFFF",
 
@@ -483,7 +483,7 @@ export default function TillSlipsCollection() {
                                 letterSpacing: ".6px",
 
                                 boxShadow:
-                                    "0 0 20px rgba(8,227,216,.20)"
+                                    "0 0 20px rgba(0, 229, 255, 0.8)"
                             }}
                         >
 
@@ -611,7 +611,7 @@ export default function TillSlipsCollection() {
                                     key={design.id}
                                     style={{
                                         background: `
-                                            linear-gradient(180deg,#4B5056,#30343A) padding-box,
+                                            linear-gradient(180deg,#000000,#000000) padding-box,
                                             linear-gradient(135deg,#000000,#626870,#000000) border-box
                                         `,
 
@@ -701,7 +701,7 @@ export default function TillSlipsCollection() {
                                                 border:
                                                     "1px solid #000000",
 
-                                                color: "#08d8e3",
+                                                color: "#FFFFFF",
 
                                                 fontSize: "8px",
 
@@ -790,11 +790,47 @@ export default function TillSlipsCollection() {
                                             LIVE DESIGN SLOT
                                         ==================================================== */}
 
+                                            <style>{`
+                                                .till-slip-live-slot {
+                                                    container-type: inline-size;
+                                                    container-name: till-slip-slot;
+                                                    display: flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    overflow: hidden;
+                                                }
+
+                                                .till-slip-live-slot > * {
+                                                    width: 100%;
+                                                    transform-origin: center top;
+                                                }
+
+                                                @container till-slip-slot (max-width: 220px) {
+                                                    .till-slip-live-slot > * {
+                                                        zoom: 0.78;
+                                                    }
+                                                }
+
+                                                @container till-slip-slot (max-width: 170px) {
+                                                    .till-slip-live-slot > * {
+                                                        zoom: 0.62;
+                                                    }
+                                                }
+
+                                                @container till-slip-slot (max-width: 140px) {
+                                                    .till-slip-live-slot > * {
+                                                        zoom: 0.5;
+                                                    }
+                                                }
+                                            `}</style>
+
                                             <div
+                                                className="till-slip-live-slot"
                                                 style={{
                                                     position: "relative",
                                                     zIndex: 2,
-                                                    width: "100%"
+                                                    width: "100%",
+                                                    minHeight: "210px"
                                                 }}
                                             >
                                                 {design.id === "matrix-grid" ? (
@@ -840,7 +876,7 @@ export default function TillSlipsCollection() {
                                             padding: "12px 14px",
                                             borderTop: "1px solid rgba(255,255,255,.05)",
                                             background:
-                                                "linear-gradient(180deg,#08131A,#060C11)",
+                                                "#000000",
 
                                             display: "flex",
                                             justifyContent: "space-between",
