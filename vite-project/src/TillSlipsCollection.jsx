@@ -580,7 +580,7 @@ export default function TillSlipsCollection() {
                         overflowX: "hidden",
                         padding: "16px",
                         background:
-                            "linear-gradient(180deg,#050B10 0%,#08131B 100%)"
+                            "linear-gradient(180deg,#24282D 0%,#171A1D 100%)"
                     }}
                 >
 
@@ -611,8 +611,8 @@ export default function TillSlipsCollection() {
                                     key={design.id}
                                     style={{
                                         background: `
-                                            linear-gradient(180deg,#6B7280,#4B5563) padding-box,
-                                            linear-gradient(135deg,#000000,#6B7280,#000000) border-box
+                                            linear-gradient(180deg,#4B5056,#30343A) padding-box,
+                                            linear-gradient(135deg,#000000,#626870,#000000) border-box
                                         `,
 
                                         border: "2px solid transparent",
@@ -748,8 +748,8 @@ export default function TillSlipsCollection() {
 
                                                 background:
                                                     `
-                                linear-gradient(180deg,#9CA3AF,#6B7280) padding-box,
-                                linear-gradient(135deg,#000000,#374151,#000000) border-box
+                                linear-gradient(180deg,#555B62,#363B41) padding-box,
+                                linear-gradient(135deg,#000000,#626870,#000000) border-box
                 `,
 
                                                 display: "flex",
