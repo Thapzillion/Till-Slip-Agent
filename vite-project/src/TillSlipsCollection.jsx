@@ -820,7 +820,7 @@ export default function TillSlipsCollection() {
 
                                                 @container till-slip-slot (max-width: 140px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.45;
+                                                        zoom: 0.85;
                                                     }
                                                 }
                                             `}</style>
