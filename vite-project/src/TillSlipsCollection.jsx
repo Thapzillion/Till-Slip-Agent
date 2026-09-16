@@ -593,9 +593,9 @@ export default function TillSlipsCollection() {
                             display: "grid",
 
                             gridTemplateColumns:
-                                "repeat(auto-fill, minmax(360px, 1fr))",
+                                "repeat(auto-fill, minmax(280px, 1fr))",
 
-                            gap: "28px",
+                            gap: "20px",
 
                             alignItems: "start"
                         }}
@@ -662,7 +662,7 @@ export default function TillSlipsCollection() {
 
                                     <div
                                         style={{
-                                            padding: "24px 28px",
+                                            padding: "18px 20px",
 
                                             display: "flex",
 
@@ -678,7 +678,7 @@ export default function TillSlipsCollection() {
                                         <div
                                             style={{
                                                 color: "#FFFFFF",
-                                                fontSize: "18px",
+                                                fontSize: "16px",
                                                 fontWeight: 800,
                                                 letterSpacing: ".3px"
                                             }}
@@ -688,7 +688,7 @@ export default function TillSlipsCollection() {
 
                                         <div
                                             style={{
-                                                padding: "8px 14px",
+                                                padding: "6px 10px",
 
                                                 borderRadius: "999px",
 
@@ -720,9 +720,9 @@ export default function TillSlipsCollection() {
 
                                     <div
                                         style={{
-                                            padding: "28px",
+                                            padding: "20px",
 
-                                            minHeight: "620px",
+                                            minHeight: "440px",
 
                                             display: "flex",
 
@@ -736,7 +736,7 @@ export default function TillSlipsCollection() {
                                             style={{
                                                 width: "100%",
 
-                                                minHeight: "560px",
+                                                minHeight: "400px",
 
                                                 borderRadius: "22px",
 
@@ -758,7 +758,7 @@ export default function TillSlipsCollection() {
 
                                                 alignItems: "center",
 
-                                                padding: "32px",
+                                                padding: "20px",
 
                                                 position: "relative",
 
@@ -776,8 +776,8 @@ export default function TillSlipsCollection() {
 
                                                     backgroundImage:
                                                         `
-                  linear-gradient(rgba(8,227,216,.05) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(8,227,216,.05) 1px, transparent 1px)
+                  linear-gradient(rgba(175, 211, 209, 0.43) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(162, 202, 200, 0.13) 1px, transparent 1px)
                   `,
 
                                                     backgroundSize: "22px 22px",
@@ -811,12 +811,12 @@ export default function TillSlipsCollection() {
                                                 ) : (
                                                     <div
                                                         style={{
-                                                            minHeight: "500px",
+                                                            minHeight: "360px",
                                                             display: "flex",
                                                             alignItems: "center",
                                                             justifyContent: "center",
                                                             textAlign: "center",
-                                                            color: "#64748B"
+                                                            color: "#79868c"    //THIS MIGHT BE THE SOURCE
                                                         }}
                                                     >
                                                         {/* Add the live {design.name} component here. */}
@@ -926,7 +926,7 @@ export default function TillSlipsCollection() {
                                                 transition: "all .25s ease",
 
                                                 boxShadow: `
-                0 0 16px rgba(8,227,216,.25),
+                0 0 16px rgba(8, 205, 227, 0.25),
                 0 10px 28px rgba(0,0,0,.25)
               `
                                             }}
@@ -936,7 +936,7 @@ export default function TillSlipsCollection() {
                                                     "translateY(-2px) scale(1.02)";
 
                                                 e.currentTarget.style.boxShadow = `
-                0 0 28px rgba(8,227,216,.45),
+                0 0 28px rgba(8, 216, 227, 0.45),
                 0 14px 36px rgba(0,0,0,.30)
               `;
 
@@ -947,7 +947,7 @@ export default function TillSlipsCollection() {
                                                     "translateY(0px) scale(1)";
 
                                                 e.currentTarget.style.boxShadow = `
-                0 0 16px rgba(8,227,216,.25),
+                0 0 16px rgba(8, 209, 227, 0.41),
                 0 10px 28px rgba(0,0,0,.25)
               `;
 
@@ -990,7 +990,7 @@ export default function TillSlipsCollection() {
                                         background:
                                             "linear-gradient(180deg,#08131A,#050B10)",
 
-                                        border: "1px solid rgba(8,227,216,.15)",
+                                        border: "1px solid rgba(8, 205, 227, 0.52)",
 
                                         borderRadius: "26px",
 
@@ -1005,7 +1005,7 @@ export default function TillSlipsCollection() {
 
                                     <Search
                                         size={60}
-                                        color="#08E3D8"
+                                        color="#08d4e3"
                                     />
 
                                     <h2
