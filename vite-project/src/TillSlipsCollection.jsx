@@ -578,7 +578,7 @@ export default function TillSlipsCollection() {
                         flex: 1,
                         overflowY: "auto",
                         overflowX: "hidden",
-                        padding: "40px",
+                        padding: "20px",
                         background:
                             "linear-gradient(180deg,#050B10 0%,#08131B 100%)"
                     }}
@@ -593,9 +593,9 @@ export default function TillSlipsCollection() {
                             display: "grid",
 
                             gridTemplateColumns:
-                                "repeat(auto-fill, minmax(280px, 1fr))",
+                                "repeat(auto-fill, minmax(140px, 1fr))",
 
-                            gap: "20px",
+                            gap: "10px",
 
                             alignItems: "start"
                         }}
@@ -747,8 +747,8 @@ export default function TillSlipsCollection() {
                                                     `
                 linear-gradient(
                   180deg,
-                  rgba(8,18,24,.65),
-                  rgba(4,10,14,.92)
+                  rgba(69, 86, 96, 0.65),
+                  rgba(58, 74, 85, 0.92)
                 )
                 `,
 
@@ -776,8 +776,8 @@ export default function TillSlipsCollection() {
 
                                                     backgroundImage:
                                                         `
-                  linear-gradient(rgba(175, 211, 209, 0.43) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(162, 202, 200, 0.13) 1px, transparent 1px)
+                  linear-gradient(rgb(0, 0, 0) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(16, 114, 127, 0.24) 1px, transparent 1px)
                   `,
 
                                                     backgroundSize: "22px 22px",
