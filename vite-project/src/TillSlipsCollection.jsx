@@ -798,28 +798,29 @@ export default function TillSlipsCollection() {
                                                     justify-content: center;
                                                     align-items: center;
                                                     overflow: hidden;
+                                                    width: 100%;
                                                 }
 
                                                 .till-slip-live-slot > * {
-                                                    width: 100%;
+                                                    width: 300px !important;
                                                     transform-origin: center top;
                                                 }
 
                                                 @container till-slip-slot (max-width: 220px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.78;
+                                                        zoom: 0.72;
                                                     }
                                                 }
 
                                                 @container till-slip-slot (max-width: 170px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.62;
+                                                        zoom: 0.55;
                                                     }
                                                 }
 
                                                 @container till-slip-slot (max-width: 140px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.5;
+                                                        zoom: 0.45;
                                                     }
                                                 }
                                             `}</style>
