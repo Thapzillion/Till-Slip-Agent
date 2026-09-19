@@ -623,8 +623,8 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        transform: "scale(0.95)",
-                                        transformOrigin: "top center",  //BOTH INCREASE ZOOMOUT FOR CARD
+                                        transform: "scale(0.65)",
+                                        transformOrigin: "top center",  //0.85 AND BOTH INCREASE ZOOMOUT FOR CARD
 
                                         boxShadow: isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
@@ -634,7 +634,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.95)";  //INCREASES ZOOMOUT FOR CARD
+                                            "translateY(-6px) scale(0.65)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -650,7 +650,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px) scale(0.95)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
+                                            "translateY(0px) scale(0.65)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -805,8 +805,7 @@ export default function TillSlipsCollection() {
                                                 }
 
                                                 .till-slip-live-slot > * {
-                                                width: 300px !important;
-                                                zoom: 0.58;          
+                                                width: 300px !important;          
                                                 transform-origin: center top;
                                                 }
 
