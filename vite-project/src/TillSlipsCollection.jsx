@@ -623,6 +623,8 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
+                                        zoom: 0.85,
+
                                         boxShadow: isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
                                             : "0 10px 24px rgba(0,0,0,.45)"
