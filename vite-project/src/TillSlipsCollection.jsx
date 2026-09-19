@@ -625,6 +625,9 @@ export default function TillSlipsCollection() {
 
                                         zoom: 0.85,
 
+                                        transform: "scale(0.85)",
+                                        transformOrigin: "top center",
+
                                         boxShadow: isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
                                             : "0 10px 24px rgba(0,0,0,.45)"
@@ -633,7 +636,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px)";
+                                            "translateY(-6px) scale(0.85)";
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -649,7 +652,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px)";
+                                            "translateY(0px) scale(0.85)";
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
