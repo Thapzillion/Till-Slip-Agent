@@ -593,9 +593,9 @@ export default function TillSlipsCollection() {
                             display: "grid",
 
                             gridTemplateColumns:
-                                "repeat(auto-fill, minmax(120px, 1fr))",
+                                "repeat(auto-fill, minmax(280px, 1fr))",
 
-                            gap: "8px",
+                            gap: "18px",
 
                             alignItems: "start"
                         }}
