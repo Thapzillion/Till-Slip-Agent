@@ -595,7 +595,7 @@ export default function TillSlipsCollection() {
                             gridTemplateColumns:
                                 "repeat(auto-fill, minmax(280px, 1fr))",
 
-                            gap: "18px",
+                            gap: "12px",
 
                             alignItems: "start"
                         }}
@@ -623,10 +623,8 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        zoom: 0.85,
-
-                                        transform: "scale(0.85)",
-                                        transformOrigin: "top center",
+                                        transform: "scale(0.95)",
+                                        transformOrigin: "top center",  //BOTH INCREASE ZOOMOUT FOR CARD
 
                                         boxShadow: isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
@@ -636,7 +634,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.85)";
+                                            "translateY(-6px) scale(0.95)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -652,7 +650,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px) scale(0.85)";
+                                            "translateY(0px) scale(0.95)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -782,7 +780,7 @@ export default function TillSlipsCollection() {
                                                     backgroundImage:
                                                         `
                   linear-gradient(rgb(93, 105, 110) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(162, 168, 167, 0.4) 1px, transparent 1px)
+                  linear-gradient(90deg, rgba(229, 232, 232, 0.4) 1px, transparent 1px)
                   `,
 
                                                     backgroundSize: "22px 22px",
@@ -794,7 +792,7 @@ export default function TillSlipsCollection() {
                                             {/* ===================================================
                                             LIVE DESIGN SLOT
                                         ==================================================== */}
-
+                                            {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP ==*/}
                                             <style>{`
                                                 .till-slip-live-slot {
                                                     container-type: inline-size;
@@ -808,7 +806,7 @@ export default function TillSlipsCollection() {
 
                                                 .till-slip-live-slot > * {
                                                 width: 300px !important;
-                                                zoom: 0.78;
+                                                zoom: 0.58;          
                                                 transform-origin: center top;
                                                 }
 
