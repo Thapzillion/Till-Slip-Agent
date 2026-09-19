@@ -776,8 +776,8 @@ export default function TillSlipsCollection() {
 
                                                     backgroundImage:
                                                         `
-                  linear-gradient(rgb(0, 0, 0) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(16, 114, 127, 0.24) 1px, transparent 1px)
+                  linear-gradient(rgb(93, 105, 110) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(162, 168, 167, 0.4) 1px, transparent 1px)
                   `,
 
                                                     backgroundSize: "22px 22px",
@@ -802,25 +802,26 @@ export default function TillSlipsCollection() {
                                                 }
 
                                                 .till-slip-live-slot > * {
-                                                    width: 500px !important;
+                                                    width: 300px !important;
                                                     transform-origin: center top;
                                                 }
 
-                                                @container till-slip-slot (max-width: 220px) {
+                                            
+                                                @container till-slip-slot (max-width: 280px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.72;
+                                                        zoom: 0.90; /* Larger zoom to fill preview area */
                                                     }
                                                 }
 
-                                                @container till-slip-slot (max-width: 170px) {
+                                                @container till-slip-slot (max-width: 230px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.55;
+                                                        zoom: 0.75;
                                                     }
                                                 }
 
-                                                @container till-slip-slot (max-width: 140px) {
+                                                @container till-slip-slot (max-width: 180px) {
                                                     .till-slip-live-slot > * {
-                                                        zoom: 0.85;
+                                                        zoom: 0.60;
                                                     }
                                                 }
                                             `}</style>
