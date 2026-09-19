@@ -802,8 +802,9 @@ export default function TillSlipsCollection() {
                                                 }
 
                                                 .till-slip-live-slot > * {
-                                                    width: 300px !important;
-                                                    transform-origin: center top;
+                                                width: 300px !important;
+                                                zoom: 0.78;
+                                                transform-origin: center top;
                                                 }
 
                                             
