@@ -180,25 +180,25 @@ export default function TillSlipsCollection() {
         },
         topLeftGlow: {
             position: "absolute",
-            top: "-18%",
-            left: "-12%",
-            width: "58%",
-            height: "58%",
+            top: "-24%",
+            left: "-18%",
+            width: "78%",
+            height: "78%",
             borderRadius: "50%",
             background:
-                "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 26%, transparent 68%)",
-            filter: "blur(10px)"
+                "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
+            filter: "blur(16px)"
         },
-        bottomrightGlow: {
+        bottomRightGlow: {
             position: "absolute",
-            top: "-10%",
-            right: "-14%",
-            width: "52%",
-            height: "60%",
+            bottom: "-24%",
+            right: "-18%",
+            width: "78%",
+            height: "78%",
             borderRadius: "50%",
             background:
-                "radial-gradient(circle at 88% 18%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 28%, transparent 70%)",
-            filter: "blur(12px)"
+                "radial-gradient(circle at 88% 92%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
+            filter: "blur(18px)"
         }
     };
 
@@ -241,12 +241,12 @@ export default function TillSlipsCollection() {
                         padding: "18px 24px",
 
                         borderBottom:
-                            "1px solid rgba(8,227,216,.10)",
+                            "1px solid rgb(0, 0, 0)",
 
                         backdropFilter: "blur(18px)",
 
                         background:
-                            "linear-gradient(180deg,rgba(0, 0, 1, 0.98),rgba(0, 0, 0, 0.98))"
+                            "linear-gradient(180deg,rgb(0, 0, 0),rgb(0, 0, 0))"
                     }}
                 >
 
@@ -624,7 +624,7 @@ export default function TillSlipsCollection() {
 
                     <div style={styles.pageBackground}>
                         <div style={styles.topLeftGlow} />
-                        <div style={styles.rightGlow} />
+                        <div style={styles.bottomRightGlow} />
                     </div>
 
                     {/* ===========================================================
