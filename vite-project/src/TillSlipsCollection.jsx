@@ -11,7 +11,8 @@ import {
     Search,
     LayoutGrid,
     Sparkles,
-    Filter
+    Filter,
+    PanelBottomClose
 } from "lucide-react";
 
 /* ============================================================================
@@ -189,12 +190,25 @@ export default function TillSlipsCollection() {
                 "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
             filter: "blur(19px)"
         },
-        RightGlow: {
-            position: "absolute",
-            top: "-24%",
+
+        centerGlow: {
+            position: "fixed",
+            center: "-24%",
+            top: "-18%",
+            width: "58%",
+            height: "58%",
+            borderRadius: "50%",
+            background:
+                "radial-gradient(circle at 88% 92%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
+            filter: "blur(14px)"
+        },
+
+        bottomRightGlow: {
+            position: "fixed",
+            bottom: "-24%",
             right: "-18%",
-            width: "78%",
-            height: "78%",
+            width: "98%",
+            height: "98%",
             borderRadius: "50%",
             background:
                 "radial-gradient(circle at 88% 92%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
