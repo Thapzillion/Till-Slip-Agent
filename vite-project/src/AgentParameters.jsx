@@ -800,7 +800,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
        --------------------------------------------------------- */
 
     previewCard: {
-      gridColumn: '2',
       position: 'sticky',
       top: '20px',
       borderRadius: '16px',
@@ -2339,256 +2338,259 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
             </div>
 
+            <div style={styles.rightColumn}>
 
-            {/* ===================================================
+              {/* ===================================================
               BUSINESS INTELLIGENCE
           =================================================== */}
 
-            <section style={styles.card}>
+              <section style={styles.card}>
 
-              <div style={styles.cardHeader}>
+                <div style={styles.cardHeader}>
 
-                <div style={styles.cardHeaderLeft}>
+                  <div style={styles.cardHeaderLeft}>
 
-                  <div style={styles.cardIcon}>
-                    ∿
-                  </div>
+                    <div style={styles.cardIcon}>
+                      ∿
+                    </div>
 
-                  <div>
+                    <div>
 
-                    <h2 style={styles.cardTitle}>
-                      Commerce Intelligence
-                    </h2>
+                      <h2 style={styles.cardTitle}>
+                        Commerce Intelligence
+                      </h2>
 
-                    <p style={styles.cardDescription}>
-                      Live configuration indicators for your
-                      merchant environment.
-                    </p>
+                      <p style={styles.cardDescription}>
+                        Live configuration indicators for your
+                        merchant environment.
+                      </p>
+
+                    </div>
 
                   </div>
 
                 </div>
 
-              </div>
+
+                <div style={styles.cardBody}>
+
+                  <div style={styles.insightGrid}>
+
+                    <div style={styles.insight}>
+
+                      <div style={styles.insightLabel}>
+                        BUSINESS
+                      </div>
+
+                      <div
+                        style={{
+                          ...styles.insightValue,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {settings?.business_name ||
+                          'Not configured'}
+                      </div>
+
+                    </div>
 
 
-              <div style={styles.cardBody}>
+                    <div style={styles.insight}>
 
-                <div style={styles.insightGrid}>
+                      <div style={styles.insightLabel}>
+                        WEBHOOK
+                      </div>
 
-                  <div style={styles.insight}>
+                      <div style={styles.insightValue}>
+                        {settings?.webhook_slug
+                          ? 'ACTIVE'
+                          : 'PENDING'}
+                      </div>
 
-                    <div style={styles.insightLabel}>
-                      BUSINESS
+                    </div>
+
+
+                    <div style={styles.insight}>
+
+                      <div style={styles.insightLabel}>
+                        LOGO
+                      </div>
+
+                      <div style={styles.insightValue}>
+                        {settings?.logo_url
+                          ? 'CONFIGURED'
+                          : 'MISSING'}
+                      </div>
+
+                    </div>
+
+                  </div>
+
+
+                  <div
+                    style={{
+                      marginTop: '12px',
+                      padding: '12px',
+                      borderRadius: '10px',
+                      border:
+                        '1px solid rgba(66,105,140,0.18)',
+                      background:
+                        'rgba(4,8,13,0.62)',
+                    }}
+                  >
+
+                    <div
+                      style={{
+                        fontSize: '7px',
+                        fontWeight: '700',
+                        color: '#4d78a0',
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      SYSTEM NOTE
                     </div>
 
                     <div
                       style={{
-                        ...styles.insightValue,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        fontSize: '8px',
+                        lineHeight: 1.6,
+                        color: '#596d80',
                       }}
                     >
-                      {settings?.business_name ||
-                        'Not configured'}
-                    </div>
-
-                  </div>
-
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      WEBHOOK
-                    </div>
-
-                    <div style={styles.insightValue}>
-                      {settings?.webhook_slug
-                        ? 'ACTIVE'
-                        : 'PENDING'}
-                    </div>
-
-                  </div>
-
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      LOGO
-                    </div>
-
-                    <div style={styles.insightValue}>
-                      {settings?.logo_url
-                        ? 'CONFIGURED'
-                        : 'MISSING'}
+                      This page edits the merchant configuration
+                      represented by the existing business settings
+                      state. Saving the profile sends the current
+                      configuration through your existing database
+                      synchronization pipeline.
                     </div>
 
                   </div>
 
                 </div>
 
+              </section>
+
+              <section style={styles.previewCard}>
+
+                <div style={styles.paperStage}>
+                  <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
+
+                    {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
+                      <MatrixTillSlip
+                        receiptData={receipt || settings}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "minimalist-mono" ? (
+                      <MinimalistMonoTillSlip
+                        receiptData={receipt || settings}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "neon-cyber" ? (
+                      <NeonCyberTillSlip
+                        receiptData={receipt || settings}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : (
+                      <div style={styles.paper}>
+                        <div style={styles.paperHeader}>
+                          <div style={styles.paperLogoPlaceholder}>
+                            {settings?.logo_url ? (
+                              <img
+                                src={settings.logo_url}
+                                alt="Receipt logo"
+                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                              />
+                            ) : (
+                              'LOGO'
+                            )}
+                          </div>
+                          <div style={styles.paperBusinessName}>
+                            {settings?.business_name || 'YOUR BUSINESS'}
+                          </div>
+                          <div style={styles.paperText}>
+                            {settings?.store_address || 'Physical outlet address'}
+                          </div>
+                        </div>
+
+                        <div style={styles.paperText}>
+                          RECEIPT #RA-000001
+                          <br />
+                          29 AUG 2026
+                          <br />
+                          CUSTOMER COPY
+                        </div>
+
+                        <div style={styles.paperDivider} />
+
+                        <div style={styles.paperLine}>
+                          <span>SAMPLE PRODUCT</span>
+                          <span>{activeCurrencySymbol} 100.00</span>
+                        </div>
+
+                        <div style={styles.paperLine}>
+                          <span>AI VOUCHER</span>
+                          <span>-{settings?.discount_percentage ?? 10}%</span>
+                        </div>
+
+                        <div style={styles.paperDivider} />
+
+                        <div style={styles.paperTotal}>
+                          <span>TOTAL</span>
+                          <span>
+                            {activeCurrencySymbol}{' '}
+                            {(100 - (100 * (settings?.discount_percentage ?? 10)) / 100).toFixed(2)}
+                          </span>
+                        </div>
+
+                        <div style={{ marginTop: '25px', textAlign: 'center', fontSize: '7px', lineHeight: 1.6 }}>
+                          Voucher valid for {settings?.voucher_expiration_days ?? 30} days.
+                          <br />
+                          Powered by RuachAgent AI - [Design: {currentTemplate}]
+                        </div>
+
+                        <div style={styles.paperQr} />
+                      </div>
+                    )}
+
+                  </div>
+                </div>
 
                 <div
                   style={{
                     marginTop: '12px',
-                    padding: '12px',
-                    borderRadius: '10px',
-                    border:
-                      '1px solid rgba(66,105,140,0.18)',
-                    background:
-                      'rgba(4,8,13,0.62)',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                    gap: '9px',
                   }}
                 >
 
-                  <div
-                    style={{
-                      fontSize: '7px',
-                      fontWeight: '700',
-                      color: '#4d78a0',
-                      letterSpacing: '1.2px',
-                      textTransform: 'uppercase',
-                      marginBottom: '6px',
-                    }}
-                  >
-                    SYSTEM NOTE
-                  </div>
+                  <div style={styles.insight}>
 
-                  <div
-                    style={{
-                      fontSize: '8px',
-                      lineHeight: 1.6,
-                      color: '#596d80',
-                    }}
-                  >
-                    This page edits the merchant configuration
-                    represented by the existing business settings
-                    state. Saving the profile sends the current
-                    configuration through your existing database
-                    synchronization pipeline.
-                  </div>
-
-                </div>
-
-              </div>
-
-            </section>
-
-            <section style={styles.previewCard}>
-
-              <div style={styles.paperStage}>
-                <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
-
-                  {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
-                    <MatrixTillSlip
-                      receiptData={receipt || settings}
-                      settings={settings}
-                      user={user}
-                      activeCurrencySymbol={activeCurrencySymbol}
-                    />
-                  ) : currentTemplate === "minimalist-mono" ? (
-                    <MinimalistMonoTillSlip
-                      receiptData={receipt || settings}
-                      settings={settings}
-                      user={user}
-                      activeCurrencySymbol={activeCurrencySymbol}
-                    />
-                  ) : currentTemplate === "neon-cyber" ? (
-                    <NeonCyberTillSlip
-                      receiptData={receipt || settings}
-                      settings={settings}
-                      user={user}
-                      activeCurrencySymbol={activeCurrencySymbol}
-                    />
-                  ) : (
-                    <div style={styles.paper}>
-                      <div style={styles.paperHeader}>
-                        <div style={styles.paperLogoPlaceholder}>
-                          {settings?.logo_url ? (
-                            <img
-                              src={settings.logo_url}
-                              alt="Receipt logo"
-                              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            />
-                          ) : (
-                            'LOGO'
-                          )}
-                        </div>
-                        <div style={styles.paperBusinessName}>
-                          {settings?.business_name || 'YOUR BUSINESS'}
-                        </div>
-                        <div style={styles.paperText}>
-                          {settings?.store_address || 'Physical outlet address'}
-                        </div>
-                      </div>
-
-                      <div style={styles.paperText}>
-                        RECEIPT #RA-000001
-                        <br />
-                        29 AUG 2026
-                        <br />
-                        CUSTOMER COPY
-                      </div>
-
-                      <div style={styles.paperDivider} />
-
-                      <div style={styles.paperLine}>
-                        <span>SAMPLE PRODUCT</span>
-                        <span>{activeCurrencySymbol} 100.00</span>
-                      </div>
-
-                      <div style={styles.paperLine}>
-                        <span>AI VOUCHER</span>
-                        <span>-{settings?.discount_percentage ?? 10}%</span>
-                      </div>
-
-                      <div style={styles.paperDivider} />
-
-                      <div style={styles.paperTotal}>
-                        <span>TOTAL</span>
-                        <span>
-                          {activeCurrencySymbol}{' '}
-                          {(100 - (100 * (settings?.discount_percentage ?? 10)) / 100).toFixed(2)}
-                        </span>
-                      </div>
-
-                      <div style={{ marginTop: '25px', textAlign: 'center', fontSize: '7px', lineHeight: 1.6 }}>
-                        Voucher valid for {settings?.voucher_expiration_days ?? 30} days.
-                        <br />
-                        Powered by RuachAgent AI - [Design: {currentTemplate}]
-                      </div>
-
-                      <div style={styles.paperQr} />
+                    <div style={styles.insightLabel}>
+                      TEMPLATE
                     </div>
-                  )}
 
-                </div>
-              </div>
+                    <div style={styles.insightValue}>
+                      {settings?.receipt_template || 'matrix-grid'}
+                    </div>
 
-              <div
-                style={{
-                  marginTop: '12px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                  gap: '9px',
-                }}
-              >
-
-                <div style={styles.insight}>
-
-                  <div style={styles.insightLabel}>
-                    TEMPLATE
-                  </div>
-
-                  <div style={styles.insightValue}>
-                    {settings?.receipt_template || 'matrix-grid'}
                   </div>
 
                 </div>
 
-              </div>
+              </section>
 
-            </section>
+            </div>
 
           </div>
 

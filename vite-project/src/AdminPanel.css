@@ -490,6 +490,10 @@ input::placeholder {
 
     height: 100vh;
 
+    min-height: 100vh;
+
+    flex: 0 0 auto;
+
     padding: 28px 18px;
 
     display: flex;
@@ -505,7 +509,9 @@ input::placeholder {
 
     border-right: 1px solid var(--border);
 
-    position: relative;
+    position: sticky;
+
+    top: 0;
 
     overflow: hidden;
 
@@ -3689,6 +3695,12 @@ button:active::after {
         min-width: 100%;
 
         height: auto;
+
+        min-height: auto;
+
+        position: relative;
+
+        top: auto;
 
         padding: 14px 18px;
 
