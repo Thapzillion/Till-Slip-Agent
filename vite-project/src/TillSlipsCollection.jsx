@@ -187,7 +187,7 @@ export default function TillSlipsCollection() {
             height: "78%",
             borderRadius: "50%",
             background:
-                "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(26, 215, 206) 32%, transparent 72%)",
+                "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
             filter: "blur(18px)"
         },
 
@@ -199,7 +199,7 @@ export default function TillSlipsCollection() {
             height: "98%",
             borderRadius: "50%",
             background:
-                "radial-gradient(circle at 88% 92%, rgb(0, 0, 0) 0%, rgb(30, 184, 198) 32%, transparent 72%)",
+                "radial-gradient(circle at 88% 92%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
             filter: "blur(18px)"
         }
     };
