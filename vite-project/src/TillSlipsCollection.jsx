@@ -591,9 +591,12 @@ export default function TillSlipsCollection() {
                     <div
                         style={{
                             display: "grid",
+
                             gridTemplateColumns:
-                                "repeat(auto-fill, minmax(220px, 1fr))", // Slightly tighter min-width for better fit
-                            gap: "16px",
+                                "repeat(auto-fill, minmax(280px, 1fr))",
+
+                            gap: "12px",
+
                             alignItems: "start"
                         }}
                     >
@@ -611,32 +614,50 @@ export default function TillSlipsCollection() {
                         linear-gradient(180deg,#000000,#000000) padding-box,
                         linear-gradient(135deg,#000000,#626870,#000000) border-box
                     `,
+
                                         border: "2px solid transparent",
+
                                         borderRadius: "16px",
+
                                         overflow: "hidden",
+
                                         transition: "all .25s ease",
-                                        // REMOVED transform: scale(0.65) so the layout footprint matches the visual size!
+
+                                        zoom: "0.65",
+
                                         boxShadow: isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
                                             : "0 10px 24px rgba(0,0,0,.45)"
                                     }}
 
                                     onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = "translateY(-6px)"; // Only shift up, no scaling
-                                        e.currentTarget.style.border = "2px solid transparent";
+
+                                        e.currentTarget.style.transform =
+                                            "translateY(-6px)";
+
+                                        e.currentTarget.style.border =
+                                            "2px solid transparent";
+
                                         e.currentTarget.style.boxShadow = `
                         0 0 0 2px rgba(0,0,0,.9),
                         0 0 34px rgba(0,0,0,.95),
                         0 16px 32px rgba(0,0,0,.8)
                     `;
+
                                     }}
 
                                     onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = "translateY(0px)"; // Reset position
-                                        e.currentTarget.style.border = "2px solid transparent";
+
+                                        e.currentTarget.style.transform =
+                                            "translateY(0px)";
+
+                                        e.currentTarget.style.border =
+                                            "2px solid transparent";
+
                                         e.currentTarget.style.boxShadow = isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
                                             : "0 10px 24px rgba(0,0,0,.45)";
+
                                     }}
                                 >
 
