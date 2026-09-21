@@ -182,16 +182,16 @@ export default function TillSlipsCollection() {
             position: "absolute",
             top: "-24%",
             left: "-18%",
-            width: "78%",
-            height: "78%",
+            width: "98%",
+            height: "98%",
             borderRadius: "50%",
             background:
                 "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
-            filter: "blur(16px)"
+            filter: "blur(19px)"
         },
-        bottomRightGlow: {
+        RightGlow: {
             position: "absolute",
-            bottom: "-24%",
+            top: "-24%",
             right: "-18%",
             width: "78%",
             height: "78%",
