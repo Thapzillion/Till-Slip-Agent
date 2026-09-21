@@ -186,10 +186,10 @@ export default function TillSlipsCollection() {
             height: "58%",
             borderRadius: "50%",
             background:
-                "radial-gradient(circle at 12% 8%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 174, 255, 0.28) 26%, transparent 68%)",
+                "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 26%, transparent 68%)",
             filter: "blur(10px)"
         },
-        rightGlow: {
+        bottomrightGlow: {
             position: "absolute",
             top: "-10%",
             right: "-14%",
@@ -197,7 +197,7 @@ export default function TillSlipsCollection() {
             height: "60%",
             borderRadius: "50%",
             background:
-                "radial-gradient(circle at 88% 18%, rgba(0, 0, 0, 0.88) 0%, rgba(0, 174, 255, 0.22) 28%, transparent 70%)",
+                "radial-gradient(circle at 88% 18%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 28%, transparent 70%)",
             filter: "blur(12px)"
         }
     };
@@ -668,7 +668,7 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        transform: "scale(0.85)",
+                                        transform: "scale(0.75)",
                                         transformOrigin: "top center",  //0.85 AND BOTH INCREASE ZOOMOUT FOR CARD
 
                                         // Reduces the unused vertical space caused by scale(0.65)
@@ -682,7 +682,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.85)";  //INCREASES ZOOMOUT FOR CARD
+                                            "translateY(-6px) scale(0.75)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -698,7 +698,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px) scale(0.85)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
+                                            "translateY(0px) scale(0.75)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
