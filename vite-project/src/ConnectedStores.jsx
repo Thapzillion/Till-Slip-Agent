@@ -349,9 +349,9 @@ export default function ConnectedStores() {
 
     const styles = {
         page: {
-            zoom: 0.70,
+            zoom: 0.60,
             minHeight: "100vh",
-            background: "#050608",
+            background: "#000000",
             color: "#ffffff",
             padding: "28px 32px 60px",
             fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",

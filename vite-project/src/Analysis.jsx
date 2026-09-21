@@ -156,10 +156,10 @@ export default function Analysis() {
     // -----------------------------------------------------
 
     container: {
-      zoom: 0.70,
+      zoom: 0.60,
       minHeight: "100vh",
       width: "100%",
-      background: "#050608",
+      background: "#000000",
       color: "#ffffff",
       boxSizing: "border-box",
       fontFamily:
@@ -177,7 +177,7 @@ export default function Analysis() {
       boxSizing: "border-box",
       padding: "28px",
       background:
-        "radial-gradient(circle at 70% 0%, rgba(0,198,255,0.035), transparent 35%), #050608"
+        "radial-gradient(circle at 70% 0%, rgb(0, 0, 0), transparent 35%), #000000"
     },
 
 
