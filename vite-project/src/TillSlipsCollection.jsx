@@ -634,7 +634,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.65)";  //INCREASES ZOOMOUT FOR CARD
+                                            "translateY(-3px) scale(0.65)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
