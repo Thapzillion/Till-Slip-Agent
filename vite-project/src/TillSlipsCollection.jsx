@@ -585,8 +585,8 @@ export default function TillSlipsCollection() {
                 >
 
                     {/* ===========================================================
-    RESPONSIVE CARD GRID
-============================================================ */}
+      RESPONSIVE CARD GRID
+  ============================================================ */}
 
                     <div
                         style={{
@@ -611,9 +611,9 @@ export default function TillSlipsCollection() {
                                     key={design.id}
                                     style={{
                                         background: `
-                        linear-gradient(180deg,#000000,#000000) padding-box,
-                        linear-gradient(135deg,#000000,#626870,#000000) border-box
-                    `,
+                                            linear-gradient(180deg,#000000,#000000) padding-box,
+                                            linear-gradient(135deg,#000000,#626870,#000000) border-box
+                                        `,
 
                                         border: "2px solid transparent",
 
@@ -623,7 +623,11 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        zoom: "0.65",
+                                        transform: "scale(0.65)",
+                                        transformOrigin: "top center",  //0.85 AND BOTH INCREASE ZOOMOUT FOR CARD
+
+                                        // Reduces the unused vertical space caused by scale(0.65)
+                                        marginBottom: "-200px",
 
                                         boxShadow: isSelected
                                             ? "0 0 0 2px rgba(0,0,0,.8), 0 0 28px rgba(0,0,0,.95), 0 14px 28px rgba(0,0,0,.75)"
@@ -633,23 +637,23 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px)";
+                                            "translateY(-6px) scale(0.65)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
 
                                         e.currentTarget.style.boxShadow = `
-                        0 0 0 2px rgba(0,0,0,.9),
-                        0 0 34px rgba(0,0,0,.95),
-                        0 16px 32px rgba(0,0,0,.8)
-                    `;
+            0 0 0 2px rgba(0,0,0,.9),
+            0 0 34px rgba(0,0,0,.95),
+            0 16px 32px rgba(0,0,0,.8)
+          `;
 
                                     }}
 
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px)";
+                                            "translateY(0px) scale(0.65)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
