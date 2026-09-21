@@ -1678,7 +1678,7 @@ export default function AdminPanel() {
             LEFT SIDEBAR
       =============================== */}
 
-            <aside className="sidebar">
+            <aside className="sidebar" style={{ zoom: 0.70 }}>
               {/* Logo */}
               <div
                 className="sidebar-logo"

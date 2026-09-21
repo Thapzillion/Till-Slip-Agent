@@ -349,6 +349,7 @@ export default function ConnectedStores() {
 
     const styles = {
         page: {
+            zoom: 0.70,
             minHeight: "100vh",
             background: "#050608",
             color: "#ffffff",

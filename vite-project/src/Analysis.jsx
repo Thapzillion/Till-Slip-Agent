@@ -156,6 +156,7 @@ export default function Analysis() {
     // -----------------------------------------------------
 
     container: {
+      zoom: 0.70,
       minHeight: "100vh",
       width: "100%",
       background: "#050608",
@@ -554,60 +555,6 @@ export default function Analysis() {
                 ================================================= */}
 
         <main className="main-content">
-
-          {/* =================================================
-                            TOPBAR
-                    ================================================= */}
-
-          <header className="topbar">
-
-            <div className="topbar-center">
-
-              <h1>
-                RuachAgent AI
-              </h1>
-
-              <p>
-                Your intelligent till slip assistant
-              </p>
-
-            </div>
-
-
-            <div className="topbar-actions">
-
-              <button
-                className="icon-button"
-                title="Help"
-              >
-                <HelpCircle size={20} />
-              </button>
-
-
-              <button
-                className="icon-button"
-                title="Notifications"
-              >
-                <Bell size={20} />
-              </button>
-
-
-              <button
-                className="icon-button"
-                title="Account"
-                onClick={() =>
-                  setShowAccountMenu(
-                    previous =>
-                      !previous
-                  )
-                }
-              >
-                <UserCircle2 size={24} />
-              </button>
-
-            </div>
-
-          </header>
 
 
           {/* =================================================
