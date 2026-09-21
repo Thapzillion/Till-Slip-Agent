@@ -12,11 +12,11 @@
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(circle at 12% 0%, rgba(0, 168, 255, .12), transparent 32%),
-    radial-gradient(circle at 100% 100%, rgba(0, 229, 255, .07), transparent 30%),
-    linear-gradient(145deg, #05080d 0%, #080d14 52%, #03060a 100%);
-  border: 1px solid rgba(56, 163, 255, .16);
-  box-shadow: 0 25px 80px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .035);
+    radial-gradient(circle at 12% 0%, rgb(0, 0, 0), transparent 32%),
+    radial-gradient(circle at 100% 100%, rgb(11, 11, 11), transparent 30%),
+    linear-gradient(145deg, #05080d 0%, #000000 52%, #000000 100%);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: 0 25px 80px rgb(0, 0, 0), inset 0 1px 0 rgb(0, 0, 0);
 }
 
 .studio-topbar {
@@ -25,8 +25,8 @@
   justify-content: space-between;
   gap: 20px;
   padding: 20px 22px 16px;
-  border-bottom: 1px solid rgba(74, 159, 230, .12);
-  background: linear-gradient(180deg, rgba(13, 22, 33, .96), rgba(7, 12, 18, .86));
+  border-bottom: 1px solid rgb(0, 0, 0);
+  background: linear-gradient(180deg, rgb(0, 0, 0), rgb(0, 0, 0));
 }
 
 .studio-title-block {
