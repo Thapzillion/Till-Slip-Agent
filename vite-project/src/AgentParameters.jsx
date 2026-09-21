@@ -800,6 +800,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
        --------------------------------------------------------- */
 
     previewCard: {
+      gridColumn: '2',
       position: 'sticky',
       top: '20px',
       borderRadius: '16px',
@@ -2336,129 +2337,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
               </section>
 
 
-              <section style={styles.previewCard}>
-
-                <div style={styles.paperStage}>
-                  <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
-
-                    {/* Dynamic Template Switcher */}
-                    {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
-                      <MatrixTillSlip
-                        receiptData={receipt || settings}
-                        settings={settings}
-                        user={user}
-                        activeCurrencySymbol={activeCurrencySymbol}
-                      />
-                    ) : currentTemplate === "minimalist-mono" ? (
-                      <MinimalistMonoTillSlip
-                        receiptData={receipt || settings}
-                        settings={settings}
-                        user={user}
-                        activeCurrencySymbol={activeCurrencySymbol}
-                      />
-                    ) : currentTemplate === "neon-cyber" ? (
-                      <NeonCyberTillSlip
-                        receiptData={receipt || settings}
-                        settings={settings}
-                        user={user}
-                        activeCurrencySymbol={activeCurrencySymbol}
-                      />
-                    ) : (
-                      /* Fallback / Generic View using your original paper structure if no matching component is found */
-                      <div style={styles.paper}>
-                        <div style={styles.paperHeader}>
-                          <div style={styles.paperLogoPlaceholder}>
-                            {settings?.logo_url ? (
-                              <img
-                                src={settings.logo_url}
-                                alt="Receipt logo"
-                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                              />
-                            ) : (
-                              'LOGO'
-                            )}
-                          </div>
-                          <div style={styles.paperBusinessName}>
-                            {settings?.business_name || 'YOUR BUSINESS'}
-                          </div>
-                          <div style={styles.paperText}>
-                            {settings?.store_address || 'Physical outlet address'}
-                          </div>
-                        </div>
-
-                        <div style={styles.paperText}>
-                          RECEIPT #RA-000001
-                          <br />
-                          29 AUG 2026
-                          <br />
-                          CUSTOMER COPY
-                        </div>
-
-                        <div style={styles.paperDivider} />
-
-                        <div style={styles.paperLine}>
-                          <span>SAMPLE PRODUCT</span>
-                          <span>{activeCurrencySymbol} 100.00</span>
-                        </div>
-
-                        <div style={styles.paperLine}>
-                          <span>AI VOUCHER</span>
-                          <span>-{settings?.discount_percentage ?? 10}%</span>
-                        </div>
-
-                        <div style={styles.paperDivider} />
-
-                        <div style={styles.paperTotal}>
-                          <span>TOTAL</span>
-                          <span>
-                            {activeCurrencySymbol}{' '}
-                            {(100 - (100 * (settings?.discount_percentage ?? 10)) / 100).toFixed(2)}
-                          </span>
-                        </div>
-
-                        <div style={{ marginTop: '25px', textAlign: 'center', fontSize: '7px', lineHeight: 1.6 }}>
-                          Voucher valid for {settings?.voucher_expiration_days ?? 30} days.
-                          <br />
-                          Powered by RuachAgent AI - [Design: {currentTemplate}]
-                        </div>
-
-                        <div style={styles.paperQr} />
-                      </div>
-                    )}
-
-                  </div>
-                </div>
-
-
-                {/* PREVIEW INFORMATION */}
-
-                <div
-                  style={{
-                    marginTop: '12px',
-                    display: 'grid',
-                    gridTemplateColumns:
-                      'repeat(2, minmax(0, 1fr))',
-                    gap: '9px',
-                  }}
-                >
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      TEMPLATE
-                    </div>
-
-                    <div style={styles.insightValue}>
-                      {settings?.receipt_template ||
-                        'matrix-grid'}
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </section>
-
             </div>
 
 
@@ -2588,6 +2466,122 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                     state. Saving the profile sends the current
                     configuration through your existing database
                     synchronization pipeline.
+                  </div>
+
+                </div>
+
+              </div>
+
+            </section>
+
+            <section style={styles.previewCard}>
+
+              <div style={styles.paperStage}>
+                <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
+
+                  {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
+                    <MatrixTillSlip
+                      receiptData={receipt || settings}
+                      settings={settings}
+                      user={user}
+                      activeCurrencySymbol={activeCurrencySymbol}
+                    />
+                  ) : currentTemplate === "minimalist-mono" ? (
+                    <MinimalistMonoTillSlip
+                      receiptData={receipt || settings}
+                      settings={settings}
+                      user={user}
+                      activeCurrencySymbol={activeCurrencySymbol}
+                    />
+                  ) : currentTemplate === "neon-cyber" ? (
+                    <NeonCyberTillSlip
+                      receiptData={receipt || settings}
+                      settings={settings}
+                      user={user}
+                      activeCurrencySymbol={activeCurrencySymbol}
+                    />
+                  ) : (
+                    <div style={styles.paper}>
+                      <div style={styles.paperHeader}>
+                        <div style={styles.paperLogoPlaceholder}>
+                          {settings?.logo_url ? (
+                            <img
+                              src={settings.logo_url}
+                              alt="Receipt logo"
+                              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                            />
+                          ) : (
+                            'LOGO'
+                          )}
+                        </div>
+                        <div style={styles.paperBusinessName}>
+                          {settings?.business_name || 'YOUR BUSINESS'}
+                        </div>
+                        <div style={styles.paperText}>
+                          {settings?.store_address || 'Physical outlet address'}
+                        </div>
+                      </div>
+
+                      <div style={styles.paperText}>
+                        RECEIPT #RA-000001
+                        <br />
+                        29 AUG 2026
+                        <br />
+                        CUSTOMER COPY
+                      </div>
+
+                      <div style={styles.paperDivider} />
+
+                      <div style={styles.paperLine}>
+                        <span>SAMPLE PRODUCT</span>
+                        <span>{activeCurrencySymbol} 100.00</span>
+                      </div>
+
+                      <div style={styles.paperLine}>
+                        <span>AI VOUCHER</span>
+                        <span>-{settings?.discount_percentage ?? 10}%</span>
+                      </div>
+
+                      <div style={styles.paperDivider} />
+
+                      <div style={styles.paperTotal}>
+                        <span>TOTAL</span>
+                        <span>
+                          {activeCurrencySymbol}{' '}
+                          {(100 - (100 * (settings?.discount_percentage ?? 10)) / 100).toFixed(2)}
+                        </span>
+                      </div>
+
+                      <div style={{ marginTop: '25px', textAlign: 'center', fontSize: '7px', lineHeight: 1.6 }}>
+                        Voucher valid for {settings?.voucher_expiration_days ?? 30} days.
+                        <br />
+                        Powered by RuachAgent AI - [Design: {currentTemplate}]
+                      </div>
+
+                      <div style={styles.paperQr} />
+                    </div>
+                  )}
+
+                </div>
+              </div>
+
+              <div
+                style={{
+                  marginTop: '12px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                  gap: '9px',
+                }}
+              >
+
+                <div style={styles.insight}>
+
+                  <div style={styles.insightLabel}>
+                    TEMPLATE
+                  </div>
+
+                  <div style={styles.insightValue}>
+                    {settings?.receipt_template || 'matrix-grid'}
                   </div>
 
                 </div>

@@ -170,6 +170,38 @@ export default function TillSlipsCollection() {
             ? `${totalDesigns} Till Slip Designs`
             : `${totalDesigns} ${activeCategory} Design${totalDesigns === 1 ? "" : "s"}`;
 
+    const styles = {
+        pageBackground: {
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            overflow: "hidden"
+        },
+        topLeftGlow: {
+            position: "absolute",
+            top: "-18%",
+            left: "-12%",
+            width: "58%",
+            height: "58%",
+            borderRadius: "50%",
+            background:
+                "radial-gradient(circle at 12% 8%, rgba(0, 0, 0, 0.92) 0%, rgba(0, 174, 255, 0.28) 26%, transparent 68%)",
+            filter: "blur(10px)"
+        },
+        rightGlow: {
+            position: "absolute",
+            top: "-10%",
+            right: "-14%",
+            width: "52%",
+            height: "60%",
+            borderRadius: "50%",
+            background:
+                "radial-gradient(circle at 88% 18%, rgba(0, 0, 0, 0.88) 0%, rgba(0, 174, 255, 0.22) 28%, transparent 70%)",
+            filter: "blur(12px)"
+        }
+    };
+
     /* ==========================================================================
        JSX STARTS IN PART 1B
        ========================================================================== */
@@ -290,7 +322,7 @@ export default function TillSlipsCollection() {
                                     <div
                                         style={{
                                             marginTop: 4,
-                                            color: "#8BCDF6",
+                                            color: "#99a8b1",
                                             fontSize: 11,
                                             fontWeight: 700,
                                             letterSpacing: ".6px"
@@ -332,7 +364,7 @@ export default function TillSlipsCollection() {
                                         "rgb(0, 0, 0)",
 
                                     border:
-                                        "1px solid rgba(8, 209, 227, 0.18)"
+                                        "1px solid rgba(163, 170, 171, 0.67)"
                                 }}
                             >
 
@@ -343,7 +375,7 @@ export default function TillSlipsCollection() {
 
                                 <span
                                     style={{
-                                        color: "#08E3D8",
+                                        color: "#839291",
                                         fontWeight: 800,
                                         fontSize: 12,
                                         letterSpacing: ".8px",
@@ -367,7 +399,7 @@ export default function TillSlipsCollection() {
                                         "rgba(59,130,246,.10)",
 
                                     border:
-                                        "1px solid rgba(59, 131, 246, 0.2)",
+                                        "1px solid rgba(59, 118, 246, 0.2)",
 
                                     color: "#7DD3FC",
 
@@ -580,6 +612,7 @@ export default function TillSlipsCollection() {
                         flex: 1,
                         overflowY: "auto",
                         overflowX: "hidden",
+                        position: "relative",
 
                         zoom: 0.70, // Gallery zoom: affects the entire gallery area
 
@@ -589,6 +622,11 @@ export default function TillSlipsCollection() {
                     }}
                 >
 
+                    <div style={styles.pageBackground}>
+                        <div style={styles.topLeftGlow} />
+                        <div style={styles.rightGlow} />
+                    </div>
+
                     {/* ===========================================================
       RESPONSIVE CARD GRID
   ============================================================ */}
@@ -596,6 +634,8 @@ export default function TillSlipsCollection() {
                     <div
                         style={{
                             display: "grid",
+                            position: "relative",
+                            zIndex: 1,
 
                             gridTemplateColumns:
                                 "repeat(auto-fill, minmax(280px, 1fr))",
@@ -628,7 +668,7 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        transform: "scale(0.65)",
+                                        transform: "scale(0.85)",
                                         transformOrigin: "top center",  //0.85 AND BOTH INCREASE ZOOMOUT FOR CARD
 
                                         // Reduces the unused vertical space caused by scale(0.65)
@@ -642,7 +682,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.65)";  //INCREASES ZOOMOUT FOR CARD
+                                            "translateY(-6px) scale(0.85)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -658,7 +698,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px) scale(0.65)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
+                                            "translateY(0px) scale(0.85)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
