@@ -290,7 +290,7 @@ input {
 
     overflow-x: hidden;
 
-    overflow-y: hidden;
+    overflow-y: auto;
 
     background:
         radial-gradient(circle at top right,
@@ -488,9 +488,9 @@ input::placeholder {
 
     min-width: calc(var(--sidebar-width) - 20px);
 
-    height: 100vh;
+    height: calc(100vh / 0.70);
 
-    min-height: 100vh;
+    min-height: calc(100vh / 0.70);
 
     flex: 0 0 auto;
 
