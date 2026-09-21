@@ -204,6 +204,8 @@ export default function TillSlipsCollection() {
                         zIndex: 50,
                         flexShrink: 0,
 
+                        zoom: 0.90, // Header zoom: increase to 1.0 or decrease to 0.80
+
                         padding: "18px 24px",
 
                         borderBottom:
@@ -578,6 +580,9 @@ export default function TillSlipsCollection() {
                         flex: 1,
                         overflowY: "auto",
                         overflowX: "hidden",
+
+                        zoom: 0.90, // Gallery zoom: affects the entire gallery area
+
                         padding: "16px",
                         background:
                             "linear-gradient(180deg,#24282D 0%,#171A1D 100%)"
