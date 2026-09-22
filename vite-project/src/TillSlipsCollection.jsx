@@ -19,6 +19,8 @@ import {
    DESIGN CATEGORIES
    ============================================================================ */
 
+const GALLERY_BACKGROUND_VIDEO = "/videos/till-slips-gallery.mp4";
+
 const DESIGN_CATEGORIES = [
     "All",
     "Modern",
@@ -190,9 +192,8 @@ export default function TillSlipsCollection() {
                 "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
             filter: "blur(18px)"
         },
-
         bottomRightGlow: {
-            position: "fixed",
+            position: "absolute",
             bottom: "-24%",
             right: "-18%",
             width: "98%",
@@ -237,18 +238,13 @@ export default function TillSlipsCollection() {
                         top: 0,
                         zIndex: 50,
                         flexShrink: 0,
-
-                        zoom: 0.70, // Header zoom: increase to 1.0 or decrease to 0.80
-
-                        padding: "18px 24px",
-
-                        borderBottom:
-                            "1px solid rgb(0, 0, 0)",
-
-                        backdropFilter: "blur(18px)",
-
+                        zoom: 0.70,
+                        padding: "20px 26px 18px",
+                        borderBottom: "1px solid rgba(70, 214, 255, 0.18)",
+                        backdropFilter: "blur(22px) saturate(135%)",
                         background:
-                            "linear-gradient(180deg,rgb(0, 0, 0),rgb(0, 0, 0))"
+                            "linear-gradient(180deg, rgba(3, 10, 15, 0.97) 0%, rgba(5, 15, 22, 0.93) 68%, rgba(3, 9, 14, 0.96) 100%)",
+                        boxShadow: "0 12px 35px rgba(0,0,0,.38), inset 0 -1px 0 rgba(255,255,255,.025)"
                     }}
                 >
 
@@ -623,6 +619,41 @@ export default function TillSlipsCollection() {
                             "linear-gradient(180deg,#24282D 0%,#171A1D 100%)"
                     }}
                 >
+
+                    {/* GALLERY-ONLY BACKGROUND VIDEO: replace GALLERY_BACKGROUND_VIDEO above with your own MP4/WebM path. */}
+                    <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                        aria-hidden="true"
+                        style={{
+                            position: "absolute",
+                            inset: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            zIndex: 0,
+                            pointerEvents: "none",
+                            opacity: 0.32,
+                            filter: "brightness(.55) saturate(.8) contrast(1.08)"
+                        }}
+                    >
+                        <source src={GALLERY_BACKGROUND_VIDEO} type="video/mp4" />
+                    </video>
+
+                    <div
+                        aria-hidden="true"
+                        style={{
+                            position: "absolute",
+                            inset: 0,
+                            zIndex: 0,
+                            pointerEvents: "none",
+                            background:
+                                "linear-gradient(180deg, rgba(4, 10, 14, .42), rgba(3, 8, 12, .60)), radial-gradient(circle at 50% 25%, rgba(0, 174, 255, .08), transparent 55%)"
+                        }}
+                    />
 
                     <div style={styles.pageBackground}>
                         <div style={styles.topLeftGlow} />
