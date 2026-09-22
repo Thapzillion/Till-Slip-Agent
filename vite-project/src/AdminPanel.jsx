@@ -137,6 +137,7 @@ export default function AdminPanel() {
 
   const styles = {
     container: {
+      zoom: 0.70,
       minHeight: '100vh',
       width: '100%',
       background: '#000000',
@@ -1678,7 +1679,7 @@ export default function AdminPanel() {
             LEFT SIDEBAR
       =============================== */}
 
-            <aside className="sidebar" style={{ zoom: 0.70 }}>
+            <aside className="sidebar">
               {/* Logo */}
               <div
                 className="sidebar-logo"

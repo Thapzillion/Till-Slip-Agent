@@ -183,25 +183,25 @@ export default function TillSlipsCollection() {
         },
         topLeftGlow: {
             position: "absolute",
-            top: "-24%",
-            left: "-18%",
-            width: "78%",
-            height: "78%",
-            borderRadius: "50%",
+            top: "0%",
+            left: "0%",
+            width: "0%",
+            height: "0%",
+            borderRadius: "0%",
             background:
-                "radial-gradient(circle at 12% 8%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
-            filter: "blur(18px)"
+                "radial-gradient(circle at 0% 0%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 0%, transparent 0%)",
+            filter: "blur(0px)"
         },
         bottomRightGlow: {
             position: "absolute",
-            bottom: "-24%",
-            right: "-18%",
-            width: "98%",
-            height: "98%",
-            borderRadius: "50%",
+            bottom: "0%",
+            right: "0%",
+            width: "0%",
+            height: "0%",
+            borderRadius: "0%",
             background:
-                "radial-gradient(circle at 88% 92%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 32%, transparent 72%)",
-            filter: "blur(18px)"
+                "radial-gradient(circle at 0% 0%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 0%, transparent 0%)",
+            filter: "blur(0px)"
         }
     };
 
@@ -629,7 +629,7 @@ export default function TillSlipsCollection() {
                         preload="auto"
                         aria-hidden="true"
                         style={{
-                            position: "absolute",
+                            position: "fixed",
                             inset: 0,
                             width: "100%",
                             height: "100%",
@@ -646,7 +646,7 @@ export default function TillSlipsCollection() {
                     <div
                         aria-hidden="true"
                         style={{
-                            position: "absolute",
+                            position: "fixed",
                             inset: 0,
                             zIndex: 0,
                             pointerEvents: "none",
