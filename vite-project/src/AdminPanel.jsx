@@ -135,10 +135,154 @@ export default function AdminPanel() {
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
 
+  // ------------------------------------------------------------
+  // PAGE / DATABASE SYNCHRONIZATION
+  // Every sidebar navigation request first reads the relevant
+  // Supabase data. The RuachAgent loader remains visible until
+  // those database reads have completed.
+  // ------------------------------------------------------------
+  const [isPageLoading, setIsPageLoading] = useState(false);
+  const [pageLoadingProgress, setPageLoadingProgress] = useState(0);
+  const [pageLoadingMessage, setPageLoadingMessage] = useState(
+    "Preparing RuachAgent workspace..."
+  );
+  const [databaseRefreshKey, setDatabaseRefreshKey] = useState(0);
+
+  const pageLabels = {
+    analysis: "Analysis",
+    "connected-stores": "Connected Stores",
+    "agent-parameters": "Agent Parameters",
+    "till-slips-collection": "Till Slips Collection"
+  };
+
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  const loadPageFromSupabase = async (nextTab) => {
+    if (!user?.id) {
+      setActiveTab(nextTab);
+      return;
+    }
+
+    setShowAccountMenu(false);
+    setIsPageLoading(true);
+    setPageLoadingProgress(8);
+    setPageLoadingMessage(`Connecting to Supabase...`);
+
+    try {
+      // STEP 1 — business_settings is the central merchant record.
+      setPageLoadingProgress(24);
+      setPageLoadingMessage("Reading business settings...");
+
+      const { data: businessSettings, error: settingsError } = await supabase
+        .from("business_settings")
+        .select("*")
+        .eq("owner_id", user.id)
+        .maybeSingle();
+
+      if (settingsError) {
+        throw settingsError;
+      }
+
+      // Push the freshly-read database row into the existing AdminPanel
+      // state so Agent Parameters and any consumers of settings receive
+      // the actual persisted Supabase values.
+      if (businessSettings && typeof setSettings === "function") {
+        setSettings(businessSettings);
+      }
+
+      setPageLoadingProgress(46);
+
+      const businessId = businessSettings?.id || settings?.id || null;
+
+      // STEP 2 — read the tables relevant to the destination page.
+      // The loader does not complete until these Supabase reads resolve.
+      if (nextTab === "connected-stores") {
+        setPageLoadingMessage("Synchronizing connected stores...");
+
+        if (!businessId) {
+          throw new Error("No business profile was returned from business_settings.");
+        }
+
+        const { error: storesError } = await supabase
+          .from("connected_stores")
+          .select("*")
+          .eq("business_id", businessId);
+
+        if (storesError) throw storesError;
+      }
+
+      if (nextTab === "analysis") {
+        setPageLoadingMessage("Synchronizing merchant activity...");
+
+        if (!businessId) {
+          throw new Error("No business profile was returned from business_settings.");
+        }
+
+        const [receiptsResult, vouchersResult] = await Promise.all([
+          supabase
+            .from("receipts")
+            .select("*")
+            .eq("business_id", businessId),
+          supabase
+            .from("loyalty_vouchers")
+            .select("*")
+            .eq("business_id", businessId)
+        ]);
+
+        if (receiptsResult.error) throw receiptsResult.error;
+        if (vouchersResult.error) throw vouchersResult.error;
+      }
+
+      if (nextTab === "till-slips-collection") {
+        setPageLoadingMessage("Synchronizing saved receipt designs...");
+
+        // receipt_design_config is stored on business_settings, so the
+        // business_settings read above is the authoritative database
+        // synchronization for this page.
+        if (!businessSettings?.id) {
+          throw new Error("No business settings record is available.");
+        }
+
+        await sleep(180);
+      }
+
+      if (nextTab === "agent-parameters") {
+        setPageLoadingMessage("Loading saved agent parameters...");
+        await sleep(180);
+      }
+
+      // STEP 3 — the database synchronization has completed.
+      setPageLoadingProgress(78);
+      setPageLoadingMessage(`Applying ${pageLabels[nextTab]} data...`);
+
+      // Give React one render cycle to apply the newly retrieved state.
+      await sleep(220);
+
+      setDatabaseRefreshKey((value) => value + 1);
+      setPageLoadingProgress(100);
+      setPageLoadingMessage(`${pageLabels[nextTab]} ready.`);
+
+      // Keep the finished logo state visible very briefly so the transition
+      // feels intentional rather than flashing between two screens.
+      await sleep(360);
+
+      setActiveTab(nextTab);
+    } catch (syncError) {
+      console.error("RuachAgent page synchronization failed:", syncError);
+      setPageLoadingProgress(100);
+      setPageLoadingMessage(
+        "Database synchronization failed. Please try again."
+      );
+      await sleep(900);
+    } finally {
+      setIsPageLoading(false);
+    }
+  };
+
   const styles = {
     container: {
       zoom: 0.70,
-      minHeight: '100vh',
+      minHeight: 'calc(100vh / 0.70)',
       width: '100%',
       background: '#000000',
       color: '#ffffff',
@@ -1168,8 +1312,8 @@ export default function AdminPanel() {
       <main
         style={{
           width: '100%',
-          height: user ? '100dvh' : 'auto',
-          minHeight: user ? '100dvh' : undefined,
+          height: user ? 'calc(100dvh / 0.70)' : 'auto',
+          minHeight: user ? 'calc(100dvh / 0.70)' : undefined,
           padding: user ? 0 : '24px 12px',
           maxWidth: user ? 'none' : '1500px',
           margin: user ? 0 : '0 auto',
@@ -1734,14 +1878,14 @@ export default function AdminPanel() {
                 <p className="sidebar-title">SETTINGS</p>
 
                 <button className={`sidebar-item ${activeTab === "agent-parameters" ? "active" : ""}`}
-                  onClick={() => setActiveTab("agent-parameters")}
+                  onClick={() => loadPageFromSupabase("agent-parameters")}
                 >
                   <SlidersHorizontal size={18} />
                   <span>Agent Parameters</span>
                 </button>
 
                 <button className={`sidebar-item ${activeTab === "till-slips-collection" ? "active" : ""}`}
-                  onClick={() => setActiveTab("till-slips-collection")}
+                  onClick={() => loadPageFromSupabase("till-slips-collection")}
                 >
                   <FileText size={18} />
 
@@ -1755,7 +1899,7 @@ export default function AdminPanel() {
                 <p className="sidebar-title">PREVIEWS</p>
 
                 <button className={`sidebar-item ${activeTab === "analysis" ? "active" : ""}`}
-                  onClick={() => setActiveTab("analysis")}
+                  onClick={() => loadPageFromSupabase("analysis")}
                 >
                   <LayoutDashboard size={18} />
 
@@ -1763,7 +1907,7 @@ export default function AdminPanel() {
                 </button>
 
                 <button className={`sidebar-item ${activeTab === "connected-stores" ? "active" : ""}`}
-                  onClick={() => setActiveTab("connected-stores")}
+                  onClick={() => loadPageFromSupabase("connected-stores")}
                 >
                   <Store size={18} />
 
@@ -2013,32 +2157,229 @@ export default function AdminPanel() {
             <main
               className="main-content"
               style={{
+                position: "relative",
                 padding: "24px",
                 minWidth: 0,
                 minHeight: 0,
                 overflowY: "auto"
               }}
             >
-              {activeTab === "analysis" && <Analysis />}
+              {isPageLoading ? (
+                <div
+                  className="ruach-page-loader"
+                  role="status"
+                  aria-live="polite"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 50,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                    background:
+                      "radial-gradient(circle at center, rgba(0,154,255,.09), rgba(0,0,0,.97) 52%, #000 100%)",
+                    backdropFilter: "blur(10px)"
+                  }}
+                >
+                  <style>{`
+                    @keyframes ruachLoaderPulse {
+                      0%, 100% { transform: scale(.94); opacity: .72; }
+                      50% { transform: scale(1.03); opacity: 1; }
+                    }
+                    @keyframes ruachLoaderSpin {
+                      to { transform: rotate(360deg); }
+                    }
+                    @keyframes ruachLoaderSweep {
+                      0% { transform: translateX(-120%); }
+                      100% { transform: translateX(320%); }
+                    }
+                    @keyframes ruachLoaderScan {
+                      0% { top: 0%; opacity: 0; }
+                      15% { opacity: 1; }
+                      85% { opacity: 1; }
+                      100% { top: 100%; opacity: 0; }
+                    }
+                  `}</style>
 
-              {activeTab === "connected-stores" && <ConnectedStores />}
+                  <div
+                    style={{
+                      width: "min(420px, 82%)",
+                      padding: "38px 34px",
+                      textAlign: "center",
+                      border: "1px solid rgba(0,198,255,.24)",
+                      borderRadius: "24px",
+                      background:
+                        "linear-gradient(180deg, rgba(10,17,24,.97), rgba(2,5,9,.98))",
+                      boxShadow:
+                        "0 0 40px rgba(0,177,255,.10), 0 25px 80px rgba(0,0,0,.7)",
+                      position: "relative",
+                      overflow: "hidden"
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        pointerEvents: "none",
+                        background:
+                          "linear-gradient(90deg, transparent, rgba(0,198,255,.12), transparent)",
+                        animation: "ruachLoaderSweep 2.2s linear infinite"
+                      }}
+                    />
 
-              {activeTab === "agent-parameters" && (
-                <AgentParameters
-                  selectedTemplateId={selectedTemplateId}
-                  setSelectedTemplateId={setSelectedTemplateId}
-                  receipt={receipt}
-                  setReceipt={setReceipt}
-                />
-              )}
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "132px",
+                        height: "132px",
+                        margin: "0 auto 24px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          borderRadius: "50%",
+                          border: "1px solid rgba(0,198,255,.22)",
+                          borderTopColor: "#00d9ff",
+                          borderRightColor: "#008cff",
+                          animation: "ruachLoaderSpin 1.4s linear infinite",
+                          boxShadow: "0 0 24px rgba(0,198,255,.18)"
+                        }}
+                      />
 
-              {activeTab === "till-slips-collection" && (
-                <TillSlipsCollection
-                  selectedTemplateId={selectedTemplateId}
-                  setSelectedTemplateId={setSelectedTemplateId}
-                  receipt={receipt}
-                  setReceipt={setReceipt}
-                />
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: "9px",
+                          borderRadius: "50%",
+                          border: "1px solid rgba(0,198,255,.12)",
+                          borderBottomColor: "#00c6ff",
+                          animation: "ruachLoaderSpin 2.1s linear infinite reverse"
+                        }}
+                      />
+
+                      <img
+                        src="/RuachAgentLogo.png"
+                        alt="RuachAgent"
+                        style={{
+                          position: "relative",
+                          width: "88px",
+                          height: "88px",
+                          objectFit: "contain",
+                          animation: "ruachLoaderPulse 1.8s ease-in-out infinite",
+                          filter:
+                            "drop-shadow(0 0 12px rgba(0,210,255,.55))"
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      style={{
+                        color: "#5cdbff",
+                        fontSize: "10px",
+                        fontWeight: 800,
+                        letterSpacing: "3px",
+                        textTransform: "uppercase",
+                        marginBottom: "10px"
+                      }}
+                    >
+                      SUPABASE DATA LINK
+                    </div>
+
+                    <div
+                      style={{
+                        color: "#ffffff",
+                        fontSize: "18px",
+                        fontWeight: 700,
+                        marginBottom: "8px"
+                      }}
+                    >
+                      Synchronizing Workspace
+                    </div>
+
+                    <div
+                      style={{
+                        color: "#718696",
+                        fontSize: "12px",
+                        minHeight: "18px",
+                        marginBottom: "20px"
+                      }}
+                    >
+                      {pageLoadingMessage}
+                    </div>
+
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "4px",
+                        overflow: "hidden",
+                        borderRadius: "999px",
+                        background: "rgba(255,255,255,.07)",
+                        marginBottom: "9px"
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${pageLoadingProgress}%`,
+                          height: "100%",
+                          borderRadius: "999px",
+                          background:
+                            "linear-gradient(90deg, #007cff, #00d9ff)",
+                          boxShadow: "0 0 14px rgba(0,198,255,.65)",
+                          transition: "width .3s ease"
+                        }}
+                      />
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        color: "#526a79",
+                        fontSize: "9px",
+                        letterSpacing: "1px"
+                      }}
+                    >
+                      <span>DATABASE CONNECTED</span>
+                      <span>{pageLoadingProgress}%</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {activeTab === "analysis" && (
+                    <Analysis key={`analysis-${databaseRefreshKey}`} />
+                  )}
+
+                  {activeTab === "connected-stores" && (
+                    <ConnectedStores key={`stores-${databaseRefreshKey}`} />
+                  )}
+
+                  {activeTab === "agent-parameters" && (
+                    <AgentParameters
+                      key={`parameters-${databaseRefreshKey}`}
+                      selectedTemplateId={selectedTemplateId}
+                      setSelectedTemplateId={setSelectedTemplateId}
+                      receipt={receipt}
+                      setReceipt={setReceipt}
+                    />
+                  )}
+
+                  {activeTab === "till-slips-collection" && (
+                    <TillSlipsCollection
+                      key={`collection-${databaseRefreshKey}`}
+                      selectedTemplateId={selectedTemplateId}
+                      setSelectedTemplateId={setSelectedTemplateId}
+                      receipt={receipt}
+                      setReceipt={setReceipt}
+                    />
+                  )}
+                </>
               )}
             </main>
           </div>
