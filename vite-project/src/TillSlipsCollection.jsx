@@ -202,7 +202,35 @@ export default function TillSlipsCollection() {
             background:
                 "radial-gradient(circle at 0% 0%, rgb(0, 0, 0) 0%, rgb(0, 0, 0) 0%, transparent 0%)",
             filter: "blur(0px)"
-        }
+        },
+
+        /* ============= PREMIUM HEADER ============= */
+
+        eyebrow: {
+            fontSize: '9px',
+            fontWeight: '700',
+            letterSpacing: '2.2px',
+            color: '#15c0d3',
+            textTransform: 'uppercase',
+            marginBottom: '5px',
+        },
+
+        pageTitle: {
+            margin: 0,
+            fontSize: '25px',
+            lineHeight: 1.15,
+            fontWeight: '600',
+            letterSpacing: '-0.7px',
+            color: '#f5f8fc',
+        },
+
+        pageSubtitle: {
+            margin: '6px 0 0',
+            color: '#bdbfbf',
+            fontSize: '11px',
+            lineHeight: 1.5,
+            maxWidth: '650px',
+        },
     };
 
     /* ==========================================================================
@@ -240,7 +268,7 @@ export default function TillSlipsCollection() {
                         flexShrink: 0,
                         zoom: 0.90,
                         padding: "20px 26px 18px",
-                        borderBottom: "1px solid rgba(70, 214, 255, 0.18)",
+                        borderBottom: "1px solid rgba(0, 197, 251, 0.32)",
                         backdropFilter: "blur(22px) saturate(135%)",
                         background:
                             "linear-gradient(180deg, rgba(3, 10, 15, 0.97) 0%, rgba(5, 15, 22, 0.93) 68%, rgba(3, 9, 14, 0.96) 100%)",
@@ -285,48 +313,38 @@ export default function TillSlipsCollection() {
                                         alignItems: "center",
 
                                         background:
-                                            "linear-gradient(135deg,#08E3D8,#00A8FF)",
+                                            "linear-gradient(135deg,#000000,#000000)",
 
-                                        border: "2px solid #08E3D8",
+                                        border: "2px solid #39efef",
 
                                         boxShadow: `
-                0 0 10px rgba(8, 227, 220, 0.4),
-                0 0 35px rgba(8,227,216,.15)
+                0 0 10px rgba(38, 155, 197, 0.4),
+                0 0 35px rgba(47, 147, 177, 0.33)
               `
                                     }}
                                 >
 
                                     <LayoutGrid
                                         size={23}
-                                        color="#000000"
+                                        color="#45a2c7"
                                     />
 
                                 </div>
 
+                                <div style={styles.eyebrow}>
+                                    RUACHAGENT / TILL SLIPS AREA
+                                </div>
+
                                 <div>
 
-                                    <h1
-                                        style={{
-                                            margin: 0,
-                                            color: "#FFFFFF",
-                                            fontSize: 24,
-                                            fontWeight: 900,
-                                            letterSpacing: ".4px"
-                                        }}
-                                    >
+                                    <h1 style={styles.pageTitle}>
                                         Till Slips Collection
                                     </h1>
 
                                     <div
-                                        style={{
-                                            marginTop: 4,
-                                            color: "#99a8b1",
-                                            fontSize: 11,
-                                            fontWeight: 700,
-                                            letterSpacing: ".6px"
-                                        }}
+                                        style={styles.pageSubtitle}
                                     >
-                                        {pageSubtitle}
+                                        Choose Which Design You Want
                                     </div>
 
                                 </div>
@@ -362,7 +380,7 @@ export default function TillSlipsCollection() {
                                         "rgb(0, 0, 0)",
 
                                     border:
-                                        "1px solid rgba(163, 170, 171, 0.67)"
+                                        "1px solid rgba(63, 233, 255, 0.67)"
                                 }}
                             >
 
@@ -607,7 +625,9 @@ export default function TillSlipsCollection() {
 
                 <div
                     style={{
-                        flex: 1,
+                        flex: "1 1 0",
+                        minHeight: 0,
+                        height: 0,
                         overflowY: "auto",
                         overflowX: "hidden",
                         position: "relative",
