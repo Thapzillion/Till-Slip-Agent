@@ -263,17 +263,31 @@ export default function TillSlipsCollection() {
                 <div
                     className="till-slips-gallery-scroll"
                     style={{
-                        position: "sticky",
-                        top: 0,
-                        zIndex: 50,
-                        flexShrink: 0,
+                        flex: "1 1 0",
+                        minHeight: 0,
+                        height: 0,
+
+                        overflowY: "auto",
+                        overflowX: "hidden",
+
+                        position: "relative",
+
+                        isolation: "isolate",
+
+                        overscrollBehaviorY: "contain",
+
+                        scrollbarWidth: "thin",
+                        scrollbarColor:
+                            "rgba(140,164,163,.75) rgba(0,0,0,.35)",
+
                         zoom: 0.90,
-                        padding: "20px 26px 18px",
-                        borderBottom: "1px solid rgba(0, 197, 251, 0.6)",
-                        backdropFilter: "blur(22px) saturate(135%)",
+
+                        padding: "16px",
+
                         background:
-                            "linear-gradient(180deg, rgb(0, 0, 0) 0%, rgb(7, 7, 7) 68%, rgb(0, 0, 0) 100%)",
-                        boxShadow: "0 12px 35px rgba(0,0,0,.38), inset 0 -1px 0 rgba(255,255,255,.025)"
+                            "linear-gradient(180deg,#24282D 0%,#171A1D 100%)",
+
+                        boxSizing: "border-box"
                     }}
                 >
 
@@ -668,17 +682,35 @@ export default function TillSlipsCollection() {
                         }
                     `}</style>
 
-                    {/* GALLERY-ONLY BACKGROUND VIDEO: replace GALLERY_BACKGROUND_VIDEO above with your own MP4/WebM path. */}
+                    {/* ===============================================================
+    GALLERY-ONLY STICKY BACKGROUND VIDEO
+
+    IMPORTANT:
+    This video belongs ONLY to the gallery scroll container.
+    It never uses position: fixed, so it cannot escape into
+    the AdminPanel sidebar.
+=============================================================== */}
+
                     <div
+                        aria-hidden="true"
                         style={{
                             position: "sticky",
+
                             top: 0,
-                            height: "100%",
-                            minHeight: "100%",
-                            marginBottom: "-100%",
-                            inset: 0,
+
+                            width: "100%",
+
+                            height: "calc(100% - 32px)",
+
+                            minHeight: "520px",
+
+                            marginBottom: "calc(-100% + 32px)",
+
                             zIndex: 0,
+
                             pointerEvents: "none",
+
+                            overflow: "hidden"
                         }}
                     >
                         <video
@@ -690,32 +722,46 @@ export default function TillSlipsCollection() {
                             aria-hidden="true"
                             style={{
                                 position: "absolute",
-                                inset: 0,
+
+                                top: 0,
+                                left: 0,
+
                                 width: "100%",
                                 height: "100%",
+
                                 objectFit: "cover",
+
                                 pointerEvents: "none",
+
                                 opacity: 0.32,
-                                filter: "brightness(.55) saturate(.8) contrast(1.08)"
+
+                                filter:
+                                    "brightness(.55) saturate(.8) contrast(1.08)"
                             }}
                         >
-                            <source src={GALLERY_BACKGROUND_VIDEO} type="video/mp4" />
+                            <source
+                                src={GALLERY_BACKGROUND_VIDEO}
+                                type="video/mp4"
+                            />
                         </video>
 
+                        {/* Cinematic overlay */}
                         <div
                             aria-hidden="true"
                             style={{
                                 position: "absolute",
+
                                 inset: 0,
+
+                                pointerEvents: "none",
+
                                 background:
-                                    "linear-gradient(180deg, rgba(4, 10, 14, .42), rgba(3, 8, 12, .60)), radial-gradient(circle at 50% 25%, rgba(0, 174, 255, .08), transparent 55%)"
+                                    "linear-gradient(180deg, rgba(4,10,14,.42), rgba(3,8,12,.60)), radial-gradient(circle at 50% 25%, rgba(0,174,255,.08), transparent 55%)"
                             }}
                         />
                     </div>
 
                     <div style={styles.pageBackground}>
-                        <div style={styles.topLeftGlow} />
-                        <div style={styles.bottomRightGlow} />
                     </div>
 
                     {/* ===========================================================
