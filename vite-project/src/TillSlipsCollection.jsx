@@ -261,6 +261,7 @@ export default function TillSlipsCollection() {
   ================================================================ */}
 
                 <div
+                    className="till-slips-gallery-scroll"
                     style={{
                         position: "sticky",
                         top: 0,
@@ -331,20 +332,24 @@ export default function TillSlipsCollection() {
 
                                 </div>
 
-                                <div style={styles.eyebrow}>
-                                    RUACHAGENT / TILL SLIPS AREA
-                                </div>
+                                <div style={{ minWidth: 0 }}>
 
-                                <div>
+                                    <div style={styles.eyebrow}>
+                                        RUACHAGENT / TILL SLIPS AREA
+                                    </div>
 
-                                    <h1 style={styles.pageTitle}>
-                                        Till Slips Collection
-                                    </h1>
+                                    <div>
 
-                                    <div
-                                        style={styles.pageSubtitle}
-                                    >
-                                        Choose Which Design You Want
+                                        <h1 style={styles.pageTitle}>
+                                            Till Slips Collection
+                                        </h1>
+
+                                        <div
+                                            style={styles.pageSubtitle}
+                                        >
+                                            Pick From A Variety Of Professional Designs
+                                        </div>
+
                                     </div>
 
                                 </div>
@@ -630,6 +635,9 @@ export default function TillSlipsCollection() {
                         height: 0,
                         overflowY: "auto",
                         overflowX: "hidden",
+                        scrollbarWidth: "thin",
+                        scrollbarColor: "rgba(140, 164, 163, 0.75) rgba(0, 0, 0, .35)",
+                        overscrollBehaviorY: "contain",
                         position: "relative",
 
                         zoom: 0.90, // Gallery zoom: affects the entire gallery area
@@ -639,6 +647,26 @@ export default function TillSlipsCollection() {
                             "linear-gradient(180deg,#24282D 0%,#171A1D 100%)"
                     }}
                 >
+
+                    <style>{`
+                        .till-slips-gallery-scroll::-webkit-scrollbar {
+                            width: 10px;
+                        }
+
+                        .till-slips-gallery-scroll::-webkit-scrollbar-track {
+                            background: rgba(0, 0, 0, .35);
+                        }
+
+                        .till-slips-gallery-scroll::-webkit-scrollbar-thumb {
+                            background: rgba(8, 227, 216, .75);
+                            border-radius: 999px;
+                            border: 2px solid rgba(23, 26, 29, .9);
+                        }
+
+                        .till-slips-gallery-scroll::-webkit-scrollbar-thumb:hover {
+                            background: rgba(8, 227, 216, 1);
+                        }
+                    `}</style>
 
                     {/* GALLERY-ONLY BACKGROUND VIDEO: replace GALLERY_BACKGROUND_VIDEO above with your own MP4/WebM path. */}
                     <div
