@@ -269,10 +269,10 @@ export default function TillSlipsCollection() {
                         flexShrink: 0,
                         zoom: 0.90,
                         padding: "20px 26px 18px",
-                        borderBottom: "1px solid rgba(0, 197, 251, 0.32)",
+                        borderBottom: "1px solid rgba(0, 197, 251, 0.6)",
                         backdropFilter: "blur(22px) saturate(135%)",
                         background:
-                            "linear-gradient(180deg, rgba(3, 10, 15, 0.97) 0%, rgba(5, 15, 22, 0.93) 68%, rgba(3, 9, 14, 0.96) 100%)",
+                            "linear-gradient(180deg, rgb(0, 0, 0) 0%, rgb(7, 7, 7) 68%, rgb(0, 0, 0) 100%)",
                         boxShadow: "0 12px 35px rgba(0,0,0,.38), inset 0 -1px 0 rgba(255,255,255,.025)"
                     }}
                 >
@@ -316,7 +316,7 @@ export default function TillSlipsCollection() {
                                         background:
                                             "linear-gradient(135deg,#000000,#000000)",
 
-                                        border: "2px solid #39efef",
+                                        border: "2px solid #00e1ff",
 
                                         boxShadow: `
                 0 0 10px rgba(38, 155, 197, 0.4),
@@ -327,7 +327,7 @@ export default function TillSlipsCollection() {
 
                                     <LayoutGrid
                                         size={23}
-                                        color="#45a2c7"
+                                        color="#14a7c8"
                                     />
 
                                 </div>
