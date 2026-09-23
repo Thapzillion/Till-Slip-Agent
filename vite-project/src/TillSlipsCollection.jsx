@@ -238,7 +238,7 @@ export default function TillSlipsCollection() {
                         top: 0,
                         zIndex: 50,
                         flexShrink: 0,
-                        zoom: 0.70,
+                        zoom: 0.90,
                         padding: "20px 26px 18px",
                         borderBottom: "1px solid rgba(70, 214, 255, 0.18)",
                         backdropFilter: "blur(22px) saturate(135%)",
@@ -612,7 +612,7 @@ export default function TillSlipsCollection() {
                         overflowX: "hidden",
                         position: "relative",
 
-                        zoom: 0.70, // Gallery zoom: affects the entire gallery area
+                        zoom: 0.90, // Gallery zoom: affects the entire gallery area
 
                         padding: "16px",
                         background:
@@ -621,39 +621,49 @@ export default function TillSlipsCollection() {
                 >
 
                     {/* GALLERY-ONLY BACKGROUND VIDEO: replace GALLERY_BACKGROUND_VIDEO above with your own MP4/WebM path. */}
-                    <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        preload="auto"
-                        aria-hidden="true"
+                    <div
                         style={{
-                            position: "fixed",
-                            inset: 0,
-                            width: "100%",
+                            position: "sticky",
+                            top: 0,
                             height: "100%",
-                            objectFit: "cover",
+                            minHeight: "100%",
+                            marginBottom: "-100%",
+                            inset: 0,
                             zIndex: 0,
                             pointerEvents: "none",
-                            opacity: 0.32,
-                            filter: "brightness(.55) saturate(.8) contrast(1.08)"
                         }}
                     >
-                        <source src={GALLERY_BACKGROUND_VIDEO} type="video/mp4" />
-                    </video>
+                        <video
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            preload="auto"
+                            aria-hidden="true"
+                            style={{
+                                position: "absolute",
+                                inset: 0,
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                pointerEvents: "none",
+                                opacity: 0.32,
+                                filter: "brightness(.55) saturate(.8) contrast(1.08)"
+                            }}
+                        >
+                            <source src={GALLERY_BACKGROUND_VIDEO} type="video/mp4" />
+                        </video>
 
-                    <div
-                        aria-hidden="true"
-                        style={{
-                            position: "fixed",
-                            inset: 0,
-                            zIndex: 0,
-                            pointerEvents: "none",
-                            background:
-                                "linear-gradient(180deg, rgba(4, 10, 14, .42), rgba(3, 8, 12, .60)), radial-gradient(circle at 50% 25%, rgba(0, 174, 255, .08), transparent 55%)"
-                        }}
-                    />
+                        <div
+                            aria-hidden="true"
+                            style={{
+                                position: "absolute",
+                                inset: 0,
+                                background:
+                                    "linear-gradient(180deg, rgba(4, 10, 14, .42), rgba(3, 8, 12, .60)), radial-gradient(circle at 50% 25%, rgba(0, 174, 255, .08), transparent 55%)"
+                            }}
+                        />
+                    </div>
 
                     <div style={styles.pageBackground}>
                         <div style={styles.topLeftGlow} />

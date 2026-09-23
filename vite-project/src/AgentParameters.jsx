@@ -133,7 +133,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     },
 
     contentArea: {
-      zoom: 0.70,
+      zoom: 1.00,
     },
 
     /* ---------------------------------------------------------
@@ -141,7 +141,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
        --------------------------------------------------------- */
 
     header: {
-      zoom: 0.70,
+      zoom: 1.00,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',

@@ -156,7 +156,7 @@ export default function Analysis() {
     // -----------------------------------------------------
 
     container: {
-      zoom: 0.60,
+      zoom: 0.90,
       minHeight: "100vh",
       width: "100%",
       background: "#000000",
