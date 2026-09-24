@@ -262,31 +262,21 @@ export default function TillSlipsCollection() {
 
                 <div
                     style={{
-                        flex: "1 1 0",
-                        minHeight: 0,
-                        height: 0,
-
-                        overflowY: "auto",
-                        overflowX: "hidden",
-
+                        flex: "0 0 auto",
+                        flexShrink: 0,
+                        width: "100%",
+                        overflow: "visible",
                         position: "relative",
-
+                        zIndex: 20,
                         isolation: "isolate",
-
-                        overscrollBehaviorY: "contain",
-
-                        scrollbarWidth: "thin",
-                        scrollbarColor:
-                            "rgba(140,164,163,.75) rgba(0,0,0,.35)",
-
                         zoom: 0.90,
-
                         padding: "16px",
-
                         background:
-                            "linear-gradient(180deg,#24282D 0%,#171A1D 100%)",
-
-                        boxSizing: "border-box"
+                            "linear-gradient(180deg,#050B10 0%,#050B10 100%)",
+                        boxSizing: "border-box",
+                        borderBottom: "1px solid rgba(0, 197, 251, 0.38)",
+                        boxShadow:
+                            "0 10px 30px rgba(0,0,0,.32)"
                     }}
                 >
 
@@ -685,83 +675,90 @@ export default function TillSlipsCollection() {
                     {/* ===============================================================
     GALLERY-ONLY STICKY BACKGROUND VIDEO
 
+    The sticky element itself has ZERO layout height.
+    Its absolutely-positioned child is therefore only a visual
+    layer: it does not push/squeeze the gallery cards and it
+    cannot escape the gallery's overflow clipping.
+
     IMPORTANT:
-    This video belongs ONLY to the gallery scroll container.
-    It never uses position: fixed, so it cannot escape into
-    the AdminPanel sidebar.
+    - NOT fixed: cannot cover the AdminPanel sidebar.
+    - NOT absolute on the scrolling content: would scroll away.
+    - STICKY zero-height anchor: stays pinned to the gallery
+      viewport while the gallery itself remains fully scrollable.
 =============================================================== */}
 
                     <div
                         aria-hidden="true"
                         style={{
                             position: "sticky",
-
                             top: 0,
-
+                            height: 0,
                             width: "100%",
-
-                            height: "calc(100% - 32px)",
-
-                            minHeight: "520px",
-
-                            marginBottom: "calc(-100% + 32px)",
-
                             zIndex: 0,
-
                             pointerEvents: "none",
-
-                            overflow: "hidden"
+                            overflow: "visible"
                         }}
                     >
-                        <video
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            preload="auto"
-                            aria-hidden="true"
+                        <div
                             style={{
                                 position: "absolute",
-
                                 top: 0,
                                 left: 0,
-
                                 width: "100%",
-                                height: "100%",
-
-                                objectFit: "cover",
-
-                                pointerEvents: "none",
-
-                                opacity: 0.32,
-
-                                filter:
-                                    "brightness(.55) saturate(.8) contrast(1.08)"
+                                height: "calc(100vh - 120px)",
+                                minHeight: "420px",
+                                overflow: "hidden",
+                                pointerEvents: "none"
                             }}
                         >
-                            <source
-                                src={GALLERY_BACKGROUND_VIDEO}
-                                type="video/mp4"
+                            <video
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                preload="auto"
+                                aria-hidden="true"
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    objectFit: "cover",
+                                    pointerEvents: "none",
+                                    opacity: 0.32,
+                                    filter:
+                                        "brightness(.55) saturate(.8) contrast(1.08)"
+                                }}
+                            >
+                                <source
+                                    src={GALLERY_BACKGROUND_VIDEO}
+                                    type="video/mp4"
+                                />
+                            </video>
+
+                            {/* Cinematic overlay */}
+                            <div
+                                aria-hidden="true"
+                                style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    pointerEvents: "none",
+                                    background:
+                                        "linear-gradient(180deg, rgba(4,10,14,.42), rgba(3,8,12,.60)), radial-gradient(circle at 50% 25%, rgba(0,174,255,.08), transparent 55%)"
+                                }}
                             />
-                        </video>
-
-                        {/* Cinematic overlay */}
-                        <div
-                            aria-hidden="true"
-                            style={{
-                                position: "absolute",
-
-                                inset: 0,
-
-                                pointerEvents: "none",
-
-                                background:
-                                    "linear-gradient(180deg, rgba(4,10,14,.42), rgba(3,8,12,.60)), radial-gradient(circle at 50% 25%, rgba(0,174,255,.08), transparent 55%)"
-                            }}
-                        />
+                        </div>
                     </div>
 
-                    <div style={styles.pageBackground}>
+                    <div
+                        style={{
+                            ...styles.pageBackground,
+                            position: "absolute",
+                            inset: 0,
+                            zIndex: 0,
+                            pointerEvents: "none"
+                        }}
+                    >
                     </div>
 
                     {/* ===========================================================
