@@ -261,7 +261,6 @@ export default function TillSlipsCollection() {
   ================================================================ */}
 
                 <div
-                    className="till-slips-gallery-scroll"
                     style={{
                         flex: "1 1 0",
                         minHeight: 0,
@@ -643,6 +642,7 @@ export default function TillSlipsCollection() {
 =============================================================== */}
 
                 <div
+                    className="till-slips-gallery-scroll"
                     style={{
                         flex: "1 1 0",
                         minHeight: 0,
@@ -1196,95 +1196,68 @@ export default function TillSlipsCollection() {
       EMPTY SEARCH STATE
   ============================================================ */}
 
-                    {
-                        filteredDesigns.length === 0 && (
-
+                    {filteredDesigns.length === 0 && (
+                        <div
+                            style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                padding: "80px 20px"
+                            }}
+                        >
                             <div
                                 style={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    padding: "80px 20px"
+                                    width: "100%",
+                                    maxWidth: "650px",
+                                    background:
+                                        "linear-gradient(180deg,#08131A,#050B10)",
+                                    border: "1px solid rgba(8, 205, 227, 0.52)",
+                                    borderRadius: "26px",
+                                    padding: "60px 40px",
+                                    textAlign: "center",
+                                    boxShadow:
+                                        "0 18px 50px rgba(0,0,0,.35)"
                                 }}
                             >
+                                <Search
+                                    size={60}
+                                    color="#08d4e3"
+                                />
 
-                                <div
+                                <h2
                                     style={{
-                                        width: "100%",
-                                        maxWidth: "650px",
-
-                                        background:
-                                            "linear-gradient(180deg,#08131A,#050B10)",
-
-                                        border: "1px solid rgba(8, 205, 227, 0.52)",
-
-                                        borderRadius: "26px",
-
-                                        padding: "60px 40px",
-
-                                        textAlign: "center",
-
-                                        boxShadow:
-                                            "0 18px 50px rgba(0,0,0,.35)"
+                                        color: "#FFFFFF",
+                                        marginTop: "22px",
+                                        marginBottom: "12px",
+                                        fontSize: "28px",
+                                        fontWeight: 700,
+                                        lineHeight: 1.2
                                     }}
                                 >
+                                    No Designs Found
+                                </h2>
 
-                                    <Search
-                                        size={60}
-                                        color="#08d4e3"
-                                    />
-
-                                    <h2
-                                        style={{
-                                            color: "#FFFFFF",
-                                            marginTop: "22px",
-                                            marginBottom: "12px",
-                                            fontSize: "28px",
-                                            fontWeight: 900
-                                        }}
-                                    >
-                                        No Designs Found
-                                    </h2>
-
-                                    <p
-                                        style={{
-                                            margin: "0 auto",
-                                            maxWidth: "430px",
-
-                                            color: "#94A3B8",
-
-                                            fontSize: "14px",
-
-                                            lineHeight: "1.9"
-                                        }}
-                                    >
-                                        No till slip designs matched your search or
-                                        selected category.
-                                        <br />
-                                        Try a different keyword or choose another
-                                        category.
-                                    </p>
-
-                                </div>
-
+                                <p
+                                    style={{
+                                        margin: "0 auto",
+                                        maxWidth: "430px",
+                                        color: "#94A3B8",
+                                        fontSize: "14px",
+                                        lineHeight: "1.9"
+                                    }}
+                                >
+                                    No till slip designs matched your search or
+                                    selected category.
+                                    <br />
+                                    Try a different keyword or choose another
+                                    category.
+                                </p>
                             </div>
-
-                        )
-                    }
+                        </div>
+                    )}
 
                 </div>
-
-                {/* ===========================================================
-    END OF SCROLLABLE CONTENT
-=========================================================== */}
-
-            </div >
-
-            {/* ===========================================================
-    END OF TILL SLIPS COLLECTION PAGE
-=========================================================== */}
-
+            </div>
         </>
     );
-
 }
