@@ -330,7 +330,7 @@ export default function TillSlipsCollection() {
 
                                     <LayoutGrid
                                         size={23}
-                                        color="#14a7c8"
+                                        color="#26d0f6"
                                     />
 
                                 </div>
@@ -385,21 +385,21 @@ export default function TillSlipsCollection() {
                                     borderRadius: 999,
 
                                     background:
-                                        "rgb(0, 0, 0)",
+                                        "rgb(18, 23, 56)",
 
                                     border:
-                                        "1px solid rgba(63, 233, 255, 0.67)"
+                                        "1px solid rgba(0, 127, 230, 0.72)"
                                 }}
                             >
 
                                 <Sparkles
                                     size={14}
-                                    color="#08E3D8"
+                                    color="#0872e3"
                                 />
 
                                 <span
                                     style={{
-                                        color: "#839291",
+                                        color: "#71abdf",
                                         fontWeight: 800,
                                         fontSize: 12,
                                         letterSpacing: ".8px",
@@ -541,7 +541,7 @@ export default function TillSlipsCollection() {
                                 letterSpacing: ".6px",
 
                                 boxShadow:
-                                    "0 0 20px rgba(0, 229, 255, 0.8)"
+                                    "0 0 20px rgba(47, 222, 252, 0.8)"
                             }}
                         >
 
@@ -668,10 +668,16 @@ export default function TillSlipsCollection() {
 
                     {/* ===============================================================
     GALLERY BACKGROUND VIDEO
-    - Stays inside the gallery scroll container
-    - Does NOT use fixed
-    - Does NOT consume gallery layout space
-    - Covers the complete visible gallery viewport
+    ---------------------------------------------------------------
+    The sticky layer is intentionally 100vh tall.
+
+    The gallery itself clips it to the visible gallery viewport.
+    Therefore:
+      • no fixed positioning
+      • no sidebar leakage
+      • no dependence on header height
+      • no gray area appearing because of a short video layer
+      • video remains visually attached to the gallery while scrolling
 =============================================================== */}
 
                     <div
@@ -679,11 +685,13 @@ export default function TillSlipsCollection() {
                         style={{
                             position: "sticky",
                             top: 0,
-                            height: "calc(100vh - 177px)",
-                            minHeight: 0,
+                            left: 0,
                             width: "100%",
-                            margin: 0,
-                            marginBottom: "calc(-1 * (100vh - 177px))",
+                            height: "100vh",
+                            marginTop: "-16px",
+                            marginLeft: "-16px",
+                            marginBottom: "-100vh",
+                            width: "calc(100% + 32px)",
                             zIndex: 0,
                             pointerEvents: "none",
                             overflow: "hidden"
@@ -698,7 +706,8 @@ export default function TillSlipsCollection() {
                             aria-hidden="true"
                             style={{
                                 position: "absolute",
-                                inset: 0,
+                                top: 0,
+                                left: 0,
                                 width: "100%",
                                 height: "100%",
                                 objectFit: "cover",
@@ -727,17 +736,6 @@ export default function TillSlipsCollection() {
                         />
                     </div>
 
-                    <div
-                        style={{
-                            ...styles.pageBackground,
-                            position: "absolute",
-                            inset: 0,
-                            zIndex: 0,
-                            pointerEvents: "none"
-                        }}
-                    >
-                    </div>
-
                     {/* ===========================================================
       RESPONSIVE CARD GRID
   ============================================================ */}
@@ -751,7 +749,7 @@ export default function TillSlipsCollection() {
                             gridTemplateColumns:
                                 "repeat(auto-fill, minmax(280px, 1fr))",
 
-                            gap: "12px",
+                            gap: "18px",
 
                             alignItems: "start"
                         }}
@@ -779,7 +777,7 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        transform: "scale(0.85)",
+                                        transform: "scale(0.75)",
                                         transformOrigin: "top center",  //0.85 AND BOTH INCREASE ZOOMOUT FOR CARD
 
                                         // Reduces the unused vertical space caused by scale(0.65)
@@ -793,7 +791,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.85)";  //INCREASES ZOOMOUT FOR CARD
+                                            "translateY(-6px) scale(0.75)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -809,7 +807,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px) scale(0.85)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
+                                            "translateY(0px) scale(0.75)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -961,7 +959,7 @@ export default function TillSlipsCollection() {
                                                     align-items: center;
                                                     overflow: hidden;
                                                     width: 100%;
-                                                    zoom: 0.78;
+                                                    zoom: 0.98;
                                                 }
 
                                                 .till-slip-live-slot > * {
