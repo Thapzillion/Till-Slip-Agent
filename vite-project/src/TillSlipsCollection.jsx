@@ -779,7 +779,7 @@ export default function TillSlipsCollection() {
 
                                         transition: "all .25s ease",
 
-                                        transform: "scale(0.75)",
+                                        transform: "scale(0.85)",
                                         transformOrigin: "top center",  //0.85 AND BOTH INCREASE ZOOMOUT FOR CARD
 
                                         // Reduces the unused vertical space caused by scale(0.65)
@@ -793,7 +793,7 @@ export default function TillSlipsCollection() {
                                     onMouseEnter={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(-6px) scale(0.75)";  //INCREASES ZOOMOUT FOR CARD
+                                            "translateY(-6px) scale(0.85)";  //INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -809,7 +809,7 @@ export default function TillSlipsCollection() {
                                     onMouseLeave={(e) => {
 
                                         e.currentTarget.style.transform =
-                                            "translateY(0px) scale(0.75)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
+                                            "translateY(0px) scale(0.85)";    //SCALE 0.85 INCREASES ZOOMOUT FOR CARD
 
                                         e.currentTarget.style.border =
                                             "2px solid transparent";
@@ -858,7 +858,7 @@ export default function TillSlipsCollection() {
                                                 borderRadius: "999px",
 
                                                 background:
-                                                    "#111827",
+                                                    "#000000",
 
                                                 border:
                                                     "1px solid #000000",
@@ -922,7 +922,7 @@ export default function TillSlipsCollection() {
 
                                                 padding: "10px",
 
-                                                position: "relative",
+                                                position: "fixed",
 
                                                 overflow: "hidden"
                                             }}
