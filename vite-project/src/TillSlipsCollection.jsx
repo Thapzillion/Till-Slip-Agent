@@ -630,7 +630,6 @@ export default function TillSlipsCollection() {
     PART 1B.2A
     RESPONSIVE GALLERY GRID
 =============================================================== */}
-
                 <div
                     className="till-slips-gallery-scroll"
                     style={{
@@ -639,16 +638,11 @@ export default function TillSlipsCollection() {
                         height: 0,
                         overflowY: "auto",
                         overflowX: "hidden",
-                        scrollbarWidth: "thin",
-                        scrollbarColor: "rgba(140, 164, 163, 0.75) rgba(0, 0, 0, .35)",
-                        overscrollBehaviorY: "contain",
                         position: "relative",
-
-                        zoom: 0.90, // Gallery zoom: affects the entire gallery area
-
                         padding: "16px",
-                        background:
-                            "linear-gradient(180deg,#24282D 0%,#171A1D 100%)"
+                        boxSizing: "border-box",
+
+                        background: "#171A1D"
                     }}
                 >
 
@@ -673,18 +667,11 @@ export default function TillSlipsCollection() {
                     `}</style>
 
                     {/* ===============================================================
-    GALLERY-ONLY STICKY BACKGROUND VIDEO
-
-    The sticky element itself has ZERO layout height.
-    Its absolutely-positioned child is therefore only a visual
-    layer: it does not push/squeeze the gallery cards and it
-    cannot escape the gallery's overflow clipping.
-
-    IMPORTANT:
-    - NOT fixed: cannot cover the AdminPanel sidebar.
-    - NOT absolute on the scrolling content: would scroll away.
-    - STICKY zero-height anchor: stays pinned to the gallery
-      viewport while the gallery itself remains fully scrollable.
+    GALLERY BACKGROUND VIDEO
+    - Stays inside the gallery scroll container
+    - Does NOT use fixed
+    - Does NOT consume gallery layout space
+    - Covers the complete visible gallery viewport
 =============================================================== */}
 
                     <div
@@ -692,62 +679,52 @@ export default function TillSlipsCollection() {
                         style={{
                             position: "sticky",
                             top: 0,
-                            height: 0,
+                            height: "calc(100vh - 177px)",
+                            minHeight: 0,
                             width: "100%",
+                            margin: 0,
+                            marginBottom: "calc(-1 * (100vh - 177px))",
                             zIndex: 0,
                             pointerEvents: "none",
-                            overflow: "visible"
+                            overflow: "hidden"
                         }}
                     >
-                        <div
+                        <video
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            preload="auto"
+                            aria-hidden="true"
                             style={{
                                 position: "absolute",
-                                top: 0,
-                                left: 0,
+                                inset: 0,
                                 width: "100%",
-                                height: "calc(100vh - 120px)",
-                                minHeight: "420px",
-                                overflow: "hidden",
-                                pointerEvents: "none"
+                                height: "100%",
+                                objectFit: "cover",
+                                objectPosition: "center center",
+                                pointerEvents: "none",
+                                opacity: 0.32,
+                                filter:
+                                    "brightness(.55) saturate(.8) contrast(1.08)"
                             }}
                         >
-                            <video
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                preload="auto"
-                                aria-hidden="true"
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                    pointerEvents: "none",
-                                    opacity: 0.32,
-                                    filter:
-                                        "brightness(.55) saturate(.8) contrast(1.08)"
-                                }}
-                            >
-                                <source
-                                    src={GALLERY_BACKGROUND_VIDEO}
-                                    type="video/mp4"
-                                />
-                            </video>
-
-                            {/* Cinematic overlay */}
-                            <div
-                                aria-hidden="true"
-                                style={{
-                                    position: "absolute",
-                                    inset: 0,
-                                    pointerEvents: "none",
-                                    background:
-                                        "linear-gradient(180deg, rgba(4,10,14,.42), rgba(3,8,12,.60)), radial-gradient(circle at 50% 25%, rgba(0,174,255,.08), transparent 55%)"
-                                }}
+                            <source
+                                src={GALLERY_BACKGROUND_VIDEO}
+                                type="video/mp4"
                             />
-                        </div>
+                        </video>
+
+                        <div
+                            aria-hidden="true"
+                            style={{
+                                position: "absolute",
+                                inset: 0,
+                                pointerEvents: "none",
+                                background:
+                                    "linear-gradient(180deg, rgba(4,10,14,.42), rgba(3,8,12,.60)), radial-gradient(circle at 50% 25%, rgba(0,174,255,.08), transparent 55%)"
+                            }}
+                        />
                     </div>
 
                     <div
