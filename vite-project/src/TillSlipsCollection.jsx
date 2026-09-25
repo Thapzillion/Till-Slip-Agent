@@ -239,12 +239,12 @@ export default function TillSlipsCollection() {
             opacity: 0.18,
             backgroundImage: `
       linear-gradient(
-        rgb(0, 0, 0) 1px,
+        rgb(0, 29, 45) 1px,
         transparent 1px
       ),
       linear-gradient(
         90deg,
-        rgb(0, 0, 0) 1px,
+        rgb(0, 20, 27) 1px,
         transparent 1px
       )
     `},
