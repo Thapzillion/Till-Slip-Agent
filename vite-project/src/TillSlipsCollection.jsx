@@ -231,6 +231,23 @@ export default function TillSlipsCollection() {
             lineHeight: 1.5,
             maxWidth: '650px',
         },
+
+        gridOverlay: {
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            opacity: 0.18,
+            backgroundImage: `
+      linear-gradient(
+        rgb(0, 0, 0) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        90deg,
+        rgb(0, 0, 0) 1px,
+        transparent 1px
+      )
+    `},
     };
 
     /* ==========================================================================
@@ -259,6 +276,7 @@ export default function TillSlipsCollection() {
                 {/* ===============================================================
       PERSISTENT HEADER
   ================================================================ */}
+                <div style={styles.gridOverlay} />
 
                 <div
                     style={{

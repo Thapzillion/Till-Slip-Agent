@@ -1256,7 +1256,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
           height: '520px',
           borderRadius: '50%',
           background:
-            'radial-gradient(circle, rgba(0, 204, 255, 0.28), transparent 68%)',
+            'radial-gradient(circle, rgba(0, 204, 255, 0.39), transparent 68%)',
           pointerEvents: 'none',
           filter: 'blur(4px)',
         }}
