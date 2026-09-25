@@ -272,9 +272,9 @@ export default function TillSlipsCollection() {
                         zoom: 0.90,
                         padding: "16px",
                         background:
-                            "linear-gradient(180deg,#050B10 0%,#050B10 100%)",
+                            "linear-gradient(180deg,#000000 0%,#000000 100%)",
                         boxSizing: "border-box",
-                        borderBottom: "1px solid rgba(0, 197, 251, 0.38)",
+                        borderBottom: "1px solid rgba(0, 197, 251, 0.67)",
                         boxShadow:
                             "0 10px 30px rgba(0,0,0,.32)"
                     }}
@@ -464,7 +464,7 @@ export default function TillSlipsCollection() {
 
                             <Search
                                 size={18}
-                                color="#03f2ff"
+                                color="#b9cbcc"
                                 style={{
                                     position: "absolute",
                                     left: 18,
@@ -494,7 +494,7 @@ export default function TillSlipsCollection() {
                                     background: "#000000",
 
                                     border:
-                                        "2px solid rgba(2, 213, 255, 0.67)",
+                                        "2px solid rgba(226, 237, 238, 0.79)7)",
 
                                     color: "#FFFFFF",
 
@@ -922,7 +922,7 @@ export default function TillSlipsCollection() {
 
                                                 padding: "10px",
 
-                                                position: "fixed",
+                                                position: "relative",
 
                                                 overflow: "hidden"
                                             }}
@@ -938,8 +938,8 @@ export default function TillSlipsCollection() {
 
                                                     backgroundImage:
                                                         `
-                  linear-gradient(rgb(93, 105, 110) 1px, transparent 1px),
-                  linear-gradient(90deg, rgba(229, 232, 232, 0.4) 1px, transparent 1px)
+                  linear-gradient(rgb(63, 68, 70) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(74, 74, 74, 0.4) 1px, transparent 1px)
                   `,
 
                                                     backgroundSize: "22px 22px",
@@ -961,6 +961,7 @@ export default function TillSlipsCollection() {
                                                     align-items: center;
                                                     overflow: hidden;
                                                     width: 100%;
+                                                    zoom: 0.78;
                                                 }
 
                                                 .till-slip-live-slot > * {
