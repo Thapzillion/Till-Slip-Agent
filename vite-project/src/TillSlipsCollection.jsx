@@ -755,24 +755,6 @@ export default function TillSlipsCollection() {
                     </div>
 
                     {/* ===========================================================
-    GALLERY GRID ZOOM WRAPPER
-
-    IMPORTANT:
-    This zoom affects ONLY the gallery cards/content.
-    The background video remains outside this wrapper.
-=========================================================== */}
-
-                    <div
-                        style={{
-                            position: "relative",
-                            zIndex: 2,
-                            zoom: "0.80",
-                            width: "125%",
-                            boxSizing: "border-box"
-                        }}
-                    ></div>
-
-                    {/* ===========================================================
       FUTURISTIC TILL SLIP FRAME SYSTEM
   ============================================================ */}
                     <style>{`
@@ -884,15 +866,29 @@ export default function TillSlipsCollection() {
                             position: "relative",
                             zIndex: 1,
 
+                            /*
+                             * GALLERY GRID ZOOM ONLY
+                             *
+                             * This does NOT affect the background video.
+                             */
+                            zoom: 0.80,
+
+                            /*
+                             * Compensate for the 80% zoom so the grid
+                             * still occupies the full gallery width.
+                             */
+                            width: "125%",
+
                             gridTemplateColumns:
-                                "repeat(auto-fill, minmax(360px, 1fr))",
+                                "repeat(auto-fill, minmax(280px, 1fr))",
 
                             gap: "18px",
 
-                            alignItems: "start"
+                            alignItems: "start",
+
+                            boxSizing: "border-box"
                         }}
                     >
-
                         {filteredDesigns.map((design) => {
 
                             const isSelected = selectedDesign === design.id;
