@@ -659,6 +659,7 @@ export default function TillSlipsCollection() {
                         position: "relative",
                         padding: "16px",
                         boxSizing: "border-box",
+                        zoom: "0.80",
 
                         background: "#171A1D"
                     }}
@@ -764,10 +765,10 @@ export default function TillSlipsCollection() {
                             overflow: hidden;
                             min-width: 0;
                             background:
-                                radial-gradient(circle at 12% 8%, rgba(8,227,216,.12), transparent 24%),
+                                radial-gradient(circle at 12% 8%, rgba(8, 183, 227, 0.12), transparent 24%),
                                 radial-gradient(circle at 88% 92%, rgba(0,168,255,.10), transparent 26%),
                                 linear-gradient(145deg, rgba(3,10,15,.98), rgba(0,0,0,.98) 52%, rgba(5,15,22,.98));
-                            border: 1px solid rgba(8,227,216,.48);
+                            border: 1px solid rgba(8, 190, 227, 0.48);
                             clip-path: polygon(
                                 0 22px, 22px 0,
                                 calc(100% - 22px) 0, 100% 22px,
@@ -777,7 +778,7 @@ export default function TillSlipsCollection() {
                             );
                             box-shadow:
                                 0 0 0 1px rgba(0,168,255,.10),
-                                0 0 24px rgba(8,227,216,.10),
+                                0 0 24px rgba(8, 154, 227, 0.1),
                                 0 18px 40px rgba(0,0,0,.62);
                         }
                         .ruach-slip-frame::before {
@@ -786,12 +787,12 @@ export default function TillSlipsCollection() {
                             inset: 7px;
                             z-index: 0;
                             pointer-events: none;
-                            border: 1px solid rgba(8,227,216,.18);
+                            border: 1px solid rgba(8, 179, 227, 0.18);
                             background:
-                                linear-gradient(135deg, transparent 0 14%, rgba(8,227,216,.16) 14.2% 14.45%, transparent 14.7% 100%),
+                                linear-gradient(135deg, transparent 0 14%, rgba(8, 158, 227, 0.16) 14.2% 14.45%, transparent 14.7% 100%),
                                 linear-gradient(315deg, transparent 0 18%, rgba(0,168,255,.12) 18.2% 18.45%, transparent 18.7% 100%),
-                                repeating-linear-gradient(135deg, transparent 0 22px, rgba(8,227,216,.035) 22px 23px, transparent 23px 44px);
-                            box-shadow: inset 0 0 22px rgba(8,227,216,.045), 0 0 12px rgba(8,227,216,.08);
+                                repeating-linear-gradient(135deg, transparent 0 22px, rgba(8, 176, 227, 0.04) 22px 23px, transparent 23px 44px);
+                            box-shadow: inset 0 0 22px rgba(8, 158, 227, 0.04), 0 0 12px rgba(8, 172, 227, 0.08);
                         }
                         .ruach-slip-frame::after {
                             content: "";
@@ -802,8 +803,8 @@ export default function TillSlipsCollection() {
                             height: 2px;
                             z-index: 4;
                             pointer-events: none;
-                            background: linear-gradient(90deg, transparent, rgba(8,227,216,.9) 12%, rgba(0,168,255,.95) 50%, rgba(8,227,216,.9) 88%, transparent);
-                            box-shadow: 0 0 7px rgba(8,227,216,.85), 0 0 18px rgba(0,168,255,.42);
+                            background: linear-gradient(90deg, transparent, rgba(8, 212, 227, 0.9) 12%, rgba(0,168,255,.95) 50%, rgba(8, 205, 227, 0.9) 88%, transparent);
+                            box-shadow: 0 0 7px rgba(8, 212, 227, 0.85), 0 0 18px rgba(0,168,255,.42);
                         }
                         .ruach-slip-frame-content {
                             position: relative;
@@ -820,9 +821,9 @@ export default function TillSlipsCollection() {
                             padding: 18px 16px 16px;
                             box-sizing: border-box;
                             background:
-                                radial-gradient(circle at 50% 18%, rgba(8,227,216,.075), transparent 38%),
+                                radial-gradient(circle at 50% 18%, rgba(8, 190, 227, 0.07), transparent 38%),
                                 linear-gradient(180deg, rgba(2,9,13,.92), rgba(0,0,0,.96));
-                            border: 1px solid rgba(8,227,216,.20);
+                            border: 1px solid rgba(8, 201, 227, 0.2);
                         }
                         .ruach-slip-preview::before {
                             content: "";
@@ -831,28 +832,28 @@ export default function TillSlipsCollection() {
                             pointer-events: none;
                             opacity: .8;
                             background:
-                                linear-gradient(120deg, transparent 0 24%, rgba(8,227,216,.10) 24.15%, transparent 24.4% 100%),
+                                linear-gradient(120deg, transparent 0 24%, rgba(8, 190, 227, 0.1) 24.15%, transparent 24.4% 100%),
                                 linear-gradient(300deg, transparent 0 72%, rgba(0,168,255,.09) 72.15%, transparent 72.4% 100%),
-                                linear-gradient(90deg, transparent 49.7%, rgba(8,227,216,.045) 50%, transparent 50.3%);
+                                linear-gradient(90deg, transparent 49.7%, rgba(8, 194, 227, 0.04) 50%, transparent 50.3%);
                         }
                         .ruach-slip-footer {
                             position: relative;
                             z-index: 3;
                             background: linear-gradient(180deg, rgba(2,10,15,.94), rgba(0,0,0,.98));
-                            border-top: 1px solid rgba(8,227,216,.20);
+                            border-top: 1px solid rgba(8, 179, 227, 0.2);
                             box-shadow: inset 0 1px 0 rgba(0,168,255,.06);
                         }
                         .ruach-slip-choose {
-                            border: 1px solid rgba(8,227,216,.78) !important;
+                            border: 1px solid rgba(8, 190, 227, 0.78) !important;
                             border-radius: 6px !important;
-                            background: linear-gradient(135deg, rgba(8,227,216,.18), rgba(0,168,255,.16)), #031116 !important;
-                            color: #7DF9FF !important;
-                            box-shadow: inset 0 0 12px rgba(8,227,216,.08), 0 0 12px rgba(8,205,227,.18) !important;
+                            background: linear-gradient(135deg, rgba(8, 154, 227, 0.18), rgba(0,168,255,.16)), #031116 !important;
+                            color: #7dd6ff !important;
+                            box-shadow: inset 0 0 12px rgba(8, 165, 227, 0.08), 0 0 12px rgba(8, 179, 227, 0.18) !important;
                         }
                         .ruach-slip-choose:hover {
                             color: #031114 !important;
-                            background: linear-gradient(135deg, #08E3D8, #00A8FF) !important;
-                            box-shadow: 0 0 10px rgba(8,227,216,.8), 0 0 28px rgba(0,168,255,.35) !important;
+                            background: linear-gradient(135deg, #08c2e3, #00A8FF) !important;
+                            box-shadow: 0 0 10px rgba(8, 212, 227, 0.8), 0 0 28px rgba(0,168,255,.35) !important;
                         }
                     `}</style>
 
@@ -890,17 +891,17 @@ export default function TillSlipsCollection() {
                                         transformOrigin: "top center",
                                         marginBottom: "-95px",
                                         boxShadow: isSelected
-                                            ? "0 0 0 1px rgba(8,227,216,.55), 0 0 30px rgba(8,227,216,.24), 0 18px 42px rgba(0,0,0,.72)"
+                                            ? "0 0 0 1px rgba(8, 190, 227, 0.55), 0 0 30px rgba(8, 183, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
                                             : undefined
                                     }}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.transform = "translateY(-6px) scale(0.82)";
-                                        e.currentTarget.style.boxShadow = "0 0 0 1px rgba(8,227,216,.72), 0 0 34px rgba(8,227,216,.30), 0 20px 44px rgba(0,0,0,.78)";
+                                        e.currentTarget.style.boxShadow = "0 0 0 1px rgba(8, 194, 227, 0.72), 0 0 34px rgba(8, 194, 227, 0.3), 0 20px 44px rgba(0,0,0,.78)";
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.transform = "translateY(0px) scale(0.82)";
                                         e.currentTarget.style.boxShadow = isSelected
-                                            ? "0 0 0 1px rgba(8,227,216,.55), 0 0 30px rgba(8,227,216,.24), 0 18px 42px rgba(0,0,0,.72)"
+                                            ? "0 0 0 1px rgba(8, 205, 227, 0.55), 0 0 30px rgba(8, 179, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
                                             : "";
                                     }}
                                 >
@@ -985,8 +986,8 @@ export default function TillSlipsCollection() {
                                                     zIndex: 1,
                                                     pointerEvents: "none",
                                                     backgroundImage: `
-                                                        linear-gradient(rgba(8,227,216,.10) 1px, transparent 1px),
-                                                        linear-gradient(90deg, rgba(0,168,255,.08) 1px, transparent 1px)
+                                                        linear-gradient(rgba(8, 150, 227, 0.1) 1px, transparent 1px),
+                                                        linear-gradient(90deg, rgba(0, 145, 255, 0.08) 1px, transparent 1px)
                                                     `,
                                                     backgroundSize: "28px 28px",
                                                     maskImage: "linear-gradient(to bottom, rgba(0,0,0,.85), transparent 88%)"
