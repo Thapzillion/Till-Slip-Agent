@@ -659,7 +659,6 @@ export default function TillSlipsCollection() {
                         position: "relative",
                         padding: "16px",
                         boxSizing: "border-box",
-                        zoom: "0.80",
 
                         background: "#171A1D"
                     }}
@@ -675,13 +674,13 @@ export default function TillSlipsCollection() {
                         }
 
                         .till-slips-gallery-scroll::-webkit-scrollbar-thumb {
-                            background: rgba(8, 227, 216, .75);
+                            background: rgba(8, 198, 227, 0.75);
                             border-radius: 999px;
                             border: 2px solid rgba(23, 26, 29, .9);
                         }
 
                         .till-slips-gallery-scroll::-webkit-scrollbar-thumb:hover {
-                            background: rgba(8, 227, 216, 1);
+                            background: rgb(8, 198, 227);
                         }
                     `}</style>
 
@@ -756,6 +755,24 @@ export default function TillSlipsCollection() {
                     </div>
 
                     {/* ===========================================================
+    GALLERY GRID ZOOM WRAPPER
+
+    IMPORTANT:
+    This zoom affects ONLY the gallery cards/content.
+    The background video remains outside this wrapper.
+=========================================================== */}
+
+                    <div
+                        style={{
+                            position: "relative",
+                            zIndex: 2,
+                            zoom: "0.80",
+                            width: "125%",
+                            boxSizing: "border-box"
+                        }}
+                    ></div>
+
+                    {/* ===========================================================
       FUTURISTIC TILL SLIP FRAME SYSTEM
   ============================================================ */}
                     <style>{`
@@ -823,7 +840,7 @@ export default function TillSlipsCollection() {
                             background:
                                 radial-gradient(circle at 50% 18%, rgba(8, 190, 227, 0.07), transparent 38%),
                                 linear-gradient(180deg, rgba(2,9,13,.92), rgba(0,0,0,.96));
-                            border: 1px solid rgba(8, 201, 227, 0.2);
+                            border: 1px solid rgba(8, 179, 227, 0.46);
                         }
                         .ruach-slip-preview::before {
                             content: "";
@@ -840,7 +857,7 @@ export default function TillSlipsCollection() {
                             position: relative;
                             z-index: 3;
                             background: linear-gradient(180deg, rgba(2,10,15,.94), rgba(0,0,0,.98));
-                            border-top: 1px solid rgba(8, 179, 227, 0.2);
+                            border-top: 1px solid rgba(8, 154, 227, 0.2);
                             box-shadow: inset 0 1px 0 rgba(0,168,255,.06);
                         }
                         .ruach-slip-choose {
@@ -853,7 +870,7 @@ export default function TillSlipsCollection() {
                         .ruach-slip-choose:hover {
                             color: #031114 !important;
                             background: linear-gradient(135deg, #08c2e3, #00A8FF) !important;
-                            box-shadow: 0 0 10px rgba(8, 212, 227, 0.8), 0 0 28px rgba(0,168,255,.35) !important;
+                            box-shadow: 0 0 10px rgba(8, 198, 227, 0.82), 0 0 28px rgba(0,168,255,.35) !important;
                         }
                     `}</style>
 
@@ -891,7 +908,7 @@ export default function TillSlipsCollection() {
                                         transformOrigin: "top center",
                                         marginBottom: "-95px",
                                         boxShadow: isSelected
-                                            ? "0 0 0 1px rgba(8, 190, 227, 0.55), 0 0 30px rgba(8, 183, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
+                                            ? "0 0 0 1px rgba(8, 169, 227, 0.55), 0 0 30px rgba(8, 154, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
                                             : undefined
                                     }}
                                     onMouseEnter={(e) => {
