@@ -2178,7 +2178,7 @@ export default function AdminPanel() {
                     justifyContent: "center",
                     overflow: "hidden",
                     background:
-                      "radial-gradient(circle at center, rgba(0,154,255,.09), rgba(0,0,0,.97) 52%, #000 100%)",
+                      "radial-gradient(circle at center, rgba(8, 8, 8, 0.99), rgba(0,0,0,.97) 52%, #000 100%)",
                     backdropFilter: "blur(10px)"
                   }}
                 >
@@ -2207,10 +2207,10 @@ export default function AdminPanel() {
                       width: "min(420px, 82%)",
                       padding: "38px 34px",
                       textAlign: "center",
-                      border: "1px solid rgba(0,198,255,.24)",
+                      border: "1px solid rgba(0, 200, 255, 0.62)",
                       borderRadius: "24px",
                       background:
-                        "linear-gradient(180deg, rgba(10,17,24,.97), rgba(2,5,9,.98))",
+                        "linear-gradient(180deg, rgba(0, 0, 0, 0.97), rgba(0, 0, 0, 0.98))",
                       boxShadow:
                         "0 0 40px rgba(0,177,255,.10), 0 25px 80px rgba(0,0,0,.7)",
                       position: "relative",
@@ -2257,7 +2257,7 @@ export default function AdminPanel() {
                           position: "absolute",
                           inset: "9px",
                           borderRadius: "50%",
-                          border: "1px solid rgba(0,198,255,.12)",
+                          border: "1px solid rgba(0, 200, 255, 0.16)",
                           borderBottomColor: "#00c6ff",
                           animation: "ruachLoaderSpin 2.1s linear infinite reverse"
                         }}
@@ -2273,7 +2273,7 @@ export default function AdminPanel() {
                           objectFit: "contain",
                           animation: "ruachLoaderPulse 1.8s ease-in-out infinite",
                           filter:
-                            "drop-shadow(0 0 12px rgba(0,210,255,.55))"
+                            "drop-shadow(0 0 12px rgba(0, 208, 255, 0.81))"
                         }}
                       />
                     </div>
@@ -2319,7 +2319,7 @@ export default function AdminPanel() {
                         height: "4px",
                         overflow: "hidden",
                         borderRadius: "999px",
-                        background: "rgba(255,255,255,.07)",
+                        background: "rgb(0, 0, 0)",
                         marginBottom: "9px"
                       }}
                     >
@@ -2330,7 +2330,7 @@ export default function AdminPanel() {
                           borderRadius: "999px",
                           background:
                             "linear-gradient(90deg, #007cff, #00d9ff)",
-                          boxShadow: "0 0 14px rgba(0,198,255,.65)",
+                          boxShadow: "0 0 14px rgba(0, 200, 255, 0.91)",
                           transition: "width .3s ease"
                         }}
                       />
