@@ -212,7 +212,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       lineHeight: 1.15,
       fontWeight: '600',
       letterSpacing: '-0.7px',
-      color: '#f5f8fc',
+      color: '#ffffff',
     },
 
     pageSubtitle: {
@@ -272,16 +272,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       padding: '17px',
       borderRadius: '14px',
       background: `
-      linear-gradient(
-        145deg,
-        rgb(0, 0, 0),
-        rgb(0, 0, 0)
-      )
+      linear-gradient(145deg, rgba(15,18,21,.98), rgba(3,5,7,.99) 48%, #000 100%)
     `,
-      border: '1px solid rgba(3, 217, 255, 0.96)',
+      border: '1px solid rgba(103, 219, 255, 0.72)',
       boxShadow: `
       inset 0 1px 0 rgba(0, 0, 0, 0.96),
-      0 14px 40px rgba(11, 4, 4, 0.89)
+      0 10px 28px rgba(0, 0, 0, 0.78),
+      0 0 24px rgba(72, 205, 255, 0.10)
     `,
     },
 
@@ -300,7 +297,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     metricLabel: {
       fontSize: '8px',
       fontWeight: '700',
-      color: '#909d9f',   // ALL THE GRAY TEXTS
+      color: '#ffffff',
       letterSpacing: '1.5px',
       textTransform: 'uppercase',
       marginBottom: '10px',
@@ -310,7 +307,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       fontSize: '22px',
       lineHeight: 1,
       fontWeight: '600',
-      color: '#f5f8fc',
+      color: '#ffffff',
       letterSpacing: '-0.5px',
       fontFamily:
         'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
@@ -319,11 +316,11 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     metricMeta: {
       marginTop: '9px',
       fontSize: '9px',
-      color: '#22768b',  // ALL THE NAVY BLUE TEXTS
+      color: '#79dfff',
     },
 
     metricAccent: {
-      color: '#64d8ff',
+      color: '#7bdfff',
     },
 
     /* ---------------------------------------------------------
@@ -360,16 +357,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       overflow: 'hidden',
       borderRadius: '16px',
       background: `
-      linear-gradient(
-        145deg,
-        rgb(2, 3, 5),
-        rgba(0, 0, 0, 0.99)
-      )
+      linear-gradient(145deg, rgba(17,20,23,.99), rgba(7,9,11,.99) 42%, #000 100%)
     `,
-      border: '1px solid rgba(255, 255, 255, 0.09)',
+      border: '1px solid rgba(118, 222, 255, 0.42)',
       boxShadow: `
       inset 0 1px 0 rgba(133, 226, 234, 0.12),
-      0 18px 55px rgb(0, 0, 0)
+      0 18px 48px rgba(0, 0, 0, 0.82),
+      0 0 30px rgba(76, 207, 255, 0.07)
     `,
     },
 
@@ -379,7 +373,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       justifyContent: 'space-between',
       gap: '15px',
       padding: '19px 20px',
-      borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
+      background: 'linear-gradient(180deg, rgba(255,255,255,0.035), rgba(0,0,0,0))',
+      borderBottom: '1px solid rgba(111, 220, 255, 0.18)',
     },
 
     cardHeaderLeft: {
@@ -396,9 +391,9 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'rgb(0, 0, 0)',
-      border: '1px solid rgb(0, 217, 251)',
-      color: '#00c3ff',
+      background: 'linear-gradient(145deg, #101417, #000000)',
+      border: '1px solid rgba(113, 222, 255, 0.72)',
+      color: '#7cddff',
       fontSize: '12px',
       boxShadow: '0 0 18px rgba(0, 217, 255, 0.92)',
     },
@@ -407,14 +402,15 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       margin: 0,
       fontSize: '12px',
       fontWeight: '650',
-      color: '#edf3f9',
+      color: '#ffffff',
       letterSpacing: '0.15px',
     },
 
     cardDescription: {
       margin: '3px 0 0',
       fontSize: '9px',
-      color: '#909d9f',
+      color: '#ffffff',
+      opacity: 0.72,
       lineHeight: 1.45,
     },
 
@@ -805,16 +801,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       borderRadius: '16px',
       padding: '18px',
       background: `
-      linear-gradient(
-        145deg,
-        rgb(0, 0, 0),
-        rgb(0, 0, 0)
-      )
+      linear-gradient(145deg, rgba(18,21,24,.99), rgba(5,7,9,.99) 45%, #000 100%)
     `,
-      border: '1px solid rgba(85, 86, 86, 0.87)',
+      border: '1px solid rgba(118, 222, 255, 0.58)',
       boxShadow: `
       inset 0 1px 0 rgba(6, 6, 6, 0.04),
-      0 22px 65px rgba(0,0,0,0.32)
+      0 22px 58px rgba(0,0,0,0.86),
+      0 0 28px rgba(80,207,255,0.08)
     `,
     },
 
@@ -828,13 +821,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     previewTitle: {
       fontSize: '11px',
       fontWeight: '650',
-      color: '#e9f1f8',
+      color: '#ffffff',
     },
 
     previewStatus: {
       fontSize: '7px',
       fontWeight: '700',
-      color: '#69b8ff',
+      color: '#7bdfff',
       letterSpacing: '1px',
       textTransform: 'uppercase',
     },
@@ -847,14 +840,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       alignItems: 'flex-start',
       justifyContent: 'center',
       background: `
-      radial-gradient(
-        circle at 50% 15%,
-        rgb(0, 0, 0),
-        transparent 38%
-      ),
-      #000000
+      radial-gradient(circle at 50% 12%, rgba(92,218,255,.13), transparent 34%),
+      linear-gradient(180deg, #080b0e 0%, #000 100%)
     `,
-      border: '1px solid rgba(33, 33, 33, 0.58)',
+      border: '1px solid rgba(111, 221, 255, 0.22)',
       overflow: 'hidden',
     },
 
@@ -1019,13 +1008,9 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       justifyContent: 'space-between',
       gap: '15px',
       borderRadius: '13px',
-      border: '1px solid rgba(59, 104, 143, 0.23)',
+      border: '1px solid rgba(116, 222, 255, 0.52)',
       background: `
-      linear-gradient(
-        90deg,
-        rgba(8, 16, 25, 0.95),
-        rgba(5, 9, 14, 0.98)
-      )
+      linear-gradient(145deg, rgba(16,19,22,.99), rgba(5,7,9,.99) 48%, #000 100%)
     `,
     },
 
@@ -1034,7 +1019,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     },
 
     saveTitle: {
-      color: '#dbe8f3',
+      color: '#ffffff',
       fontSize: '9px',
       fontWeight: '700',
       letterSpacing: '0.7px',
@@ -1043,7 +1028,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
     saveDescription: {
       marginTop: '4px',
-      color: '#5f7081',
+      color: '#7bdfff',
+      opacity: 0.76,
       fontSize: '8px',
     },
 
