@@ -87,7 +87,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       ),
       radial-gradient(
         circle at 88% 18%,
-        rgba(0, 213, 255, 0.14),
+        rgba(0, 195, 255, 0.14),
         transparent 30%
       ),
       linear-gradient(
@@ -169,7 +169,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       radial-gradient(
         circle at 35% 30%,
-        rgba(120, 251, 255, 0.41),
+        rgba(1, 211, 248, 0.41),
         transparent 45%
       ),
       linear-gradient(
@@ -178,10 +178,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         #000000
       )
     `,
-      border: '1px solid rgba(45, 255, 244, 0.21)',
+      border: '1px solid rgba(0, 224, 254, 0.21)',
       boxShadow: `
       inset 0 1px 0 rgb(9, 2, 2),
-      0 0 25px rgba(0, 238, 255, 0.1)
+      0 0 25px rgba(0, 204, 255, 0.1)
     `,
     },
 
@@ -189,11 +189,11 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       width: '12px',
       height: '12px',
       borderRadius: '50%',
-      background: '#65b7ff77',
+      background: '#359cf777',
       boxShadow: `
-      0 0 8px rgba(70, 169, 255, 0.55),
-      0 0 22px rgba(0, 221, 255, 0.46),
-      0 0 42px rgba(0, 208, 255, 0.16)
+      0 0 8px rgba(44, 154, 250, 0.55),
+      0 0 22px rgba(0, 221, 255, 0.5),
+      0 0 42px rgba(0, 195, 255, 0.27)
     `,
     },
 
@@ -293,14 +293,14 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       top: '-45px',
       borderRadius: '50%',
       background:
-        'radial-gradient(circle, rgba(0, 221, 255, 0.53), transparent 70%)',
+        'radial-gradient(circle, rgba(0, 221, 255, 0.67), transparent 70%)',
       pointerEvents: 'none',
     },
 
     metricLabel: {
       fontSize: '8px',
       fontWeight: '700',
-      color: '#5e767b',
+      color: '#909d9f',   // ALL THE GRAY TEXTS
       letterSpacing: '1.5px',
       textTransform: 'uppercase',
       marginBottom: '10px',
@@ -319,7 +319,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     metricMeta: {
       marginTop: '9px',
       fontSize: '9px',
-      color: '#125d70',
+      color: '#22768b',  // ALL THE NAVY BLUE TEXTS
     },
 
     metricAccent: {
@@ -366,7 +366,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         rgba(0, 0, 0, 0.99)
       )
     `,
-      border: '1px solid rgba(69, 128, 137, 0.23)',
+      border: '1px solid rgba(255, 255, 255, 0.45)',
       boxShadow: `
       inset 0 1px 0 rgba(133, 226, 234, 0.12),
       0 18px 55px rgb(0, 0, 0)
@@ -397,7 +397,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       alignItems: 'center',
       justifyContent: 'center',
       background: 'rgb(0, 0, 0)',
-      border: '1px solid rgba(62, 239, 255, 0.65)',
+      border: '1px solid rgba(0, 230, 251, 0.65)',
       color: '#68dcff',
       fontSize: '12px',
       boxShadow: '0 0 18px rgba(0, 217, 255, 0.5)',
@@ -414,7 +414,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     cardDescription: {
       margin: '3px 0 0',
       fontSize: '9px',
-      color: '#7d9294f0',
+      color: '#909d9f',
       lineHeight: 1.45,
     },
 
@@ -448,13 +448,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       marginBottom: '7px',
       fontSize: '8px',
       fontWeight: '700',
-      color: '#125d70',
+      color: '#22768b',
       letterSpacing: '1.15px',
       textTransform: 'uppercase',
     },
 
     labelHint: {
-      color: '#2a9ca4',
+      color: '#1c9ab3',
       fontSize: '8px',
       letterSpacing: '0',
       textTransform: 'none',
@@ -490,7 +490,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       outline: 'none',
       resize: 'vertical',
       border: '1px solid rgba(0, 195, 255, 0.28)',
-      background: 'rgba(4, 7, 11, 0.92)',
+      background: 'rgb(4, 10, 11)',
       color: '#eaf1f8',
       fontSize: '11px',
       lineHeight: 1.55,
@@ -506,7 +506,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       borderRadius: '9px',
       outline: 'none',
       border: '1px solid rgba(0, 195, 255, 0.28)',
-      background: '#070b10',
+      background: 'rgb(4, 10, 11)',
       color: '#eaf1f8',
       fontSize: '11px',
       fontFamily: 'monospace',
@@ -529,12 +529,12 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       position: 'relative',
       minHeight: '145px',
       borderRadius: '13px',
-      border: '1px dashed rgba(64, 245, 255, 0.72)',
+      border: '1px dashed rgba(0, 241, 254, 0.86)',
       background: `
       radial-gradient(
         circle at 50% 0%,
-        rgba(0, 234, 255, 0.55),
-        transparent 58%
+        rgba(0, 234, 255, 0.76),
+        transparent 38%
       ),
       rgb(0, 1, 1)
     `,
@@ -562,9 +562,9 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      color: '#65f0ffa9',
-      background: 'rgba(0, 114, 155, 0.44)',
-      border: '1px solid rgba(68, 211, 255, 0.66)',
+      color: '#65f0ffc3',
+      background: 'rgba(0, 0, 0, 0.87)',
+      border: '1px solid rgba(68, 211, 255, 0.86)',
       fontSize: '17px',
     },
 
@@ -575,7 +575,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     },
 
     uploadHint: {
-      color: '#000e3a',
+      color: '#00cff4',
       fontSize: '8px',
     },
 
@@ -620,12 +620,12 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       position: 'relative',
       padding: '14px',
       borderRadius: '11px',
-      border: '1px solid rgba(0, 221, 255, 0.53)',
+      border: '1px solid rgba(0, 221, 255, 0.76)',
       background: `
       linear-gradient(
         135deg,
-        rgba(0, 105, 134, 0.72),
-        rgb(0, 83, 114)
+        rgba(9, 9, 9, 0.72),
+        rgb(4, 4, 4)
       )
     `,
       overflow: 'hidden',
@@ -635,7 +635,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       fontSize: '7px',
       fontWeight: '700',
       letterSpacing: '1.4px',
-      color: '#4e759b',
+      color: '#00c6f8',
       textTransform: 'uppercase',
       marginBottom: '8px',
     },
@@ -646,7 +646,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-      color: '#75bcff',
+      color: '#00c8ff',
       fontFamily: 'monospace',
       fontSize: '10px',
       lineHeight: 1.5,
@@ -669,7 +669,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       padding: '12px 14px',
       marginBottom: '18px',
       borderRadius: '10px',
-      border: '1px solid rgba(0, 221, 255, 0.24)',
+      border: '1px solid rgba(0, 221, 255, 0.62)',
       background: `
       linear-gradient(
         90deg,
@@ -782,7 +782,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
     insightLabel: {
       fontSize: '7px',
-      color: '#00274f',
+      color: '#22768b',
       letterSpacing: '1px',
       fontWeight: '700',
       textTransform: 'uppercase',
@@ -811,7 +811,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         rgb(0, 0, 0)
       )
     `,
-      border: '1px solid rgba(81, 90, 100, 0.87)',
+      border: '1px solid rgba(148, 155, 163, 0.87)',
       boxShadow: `
       inset 0 1px 0 rgba(255,255,255,0.045),
       0 22px 65px rgba(0,0,0,0.32)
@@ -849,10 +849,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       radial-gradient(
         circle at 50% 15%,
-        rgba(45, 120, 210, 0.08),
+        rgb(0, 0, 0),
         transparent 38%
       ),
-      #030303
+      #000000
     `,
       border: '1px solid rgba(80, 77, 77, 0.58)',
       overflow: 'hidden',
