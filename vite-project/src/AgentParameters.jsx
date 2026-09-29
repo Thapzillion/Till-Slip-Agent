@@ -82,18 +82,18 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       radial-gradient(
         circle at 12% 8%,
-        rgba(0, 200, 255, 0.33),
+        rgba(0, 200, 255, 0.59),
         transparent 28%
       ),
       radial-gradient(
         circle at 88% 18%,
-        rgba(0, 195, 255, 0.14),
+        rgba(0, 195, 255, 0.66),
         transparent 30%
       ),
       linear-gradient(
         180deg,
-        #050a0a 0%,
-        #070f0f 48%,
+        #05080a 0%,
+        #070d0f 48%,
         #040809 100%
       )
     `,
@@ -169,7 +169,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       radial-gradient(
         circle at 35% 30%,
-        rgba(1, 211, 248, 0.41),
+        rgba(1, 211, 248, 0.58),
         transparent 45%
       ),
       linear-gradient(
@@ -178,10 +178,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         #000000
       )
     `,
-      border: '1px solid rgba(0, 224, 254, 0.21)',
+      border: '1px solid rgba(0, 224, 254, 0.52)',
       boxShadow: `
       inset 0 1px 0 rgb(9, 2, 2),
-      0 0 25px rgba(0, 204, 255, 0.1)
+      0 0 25px rgba(0, 204, 255, 0.4)
     `,
     },
 
@@ -669,12 +669,12 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       padding: '12px 14px',
       marginBottom: '18px',
       borderRadius: '10px',
-      border: '1px solid rgba(0, 221, 255, 0.62)',
+      border: '1px solid rgba(206, 244, 249, 0.47)',
       background: `
       linear-gradient(
         90deg,
-        rgba(93, 103, 104, 0.34),
-        rgba(78, 88, 90, 0.65)
+        rgba(93, 103, 104, 0.16),
+        rgba(78, 88, 90, 0.37)
       )
     `,
     },
@@ -947,12 +947,12 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       minHeight: '40px',
       padding: '0 14px',
       borderRadius: '9px',
-      border: '1px solid rgba(75, 139, 198, 0.28)',
+      border: '1px solid rgba(55, 56, 58, 0.28)',
       background: `
       linear-gradient(
         180deg,
-        rgba(24, 37, 51, 0.98),
-        rgba(11, 17, 24, 0.98)
+        rgba(5, 5, 5, 0.98),
+        rgba(0, 0, 0, 0.98)
       )
     `,
       color: '#dceaf6',
