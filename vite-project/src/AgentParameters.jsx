@@ -366,7 +366,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         rgba(0, 0, 0, 0.99)
       )
     `,
-      border: '1px solid rgba(255, 255, 255, 0.45)',
+      border: '1px solid rgba(255, 255, 255, 0.09)',
       boxShadow: `
       inset 0 1px 0 rgba(133, 226, 234, 0.12),
       0 18px 55px rgb(0, 0, 0)
@@ -469,7 +469,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       borderRadius: '9px',
       outline: 'none',
       border: '1px solid rgba(0, 195, 255, 0.28)',
-      background: 'rgb(4, 10, 11)',
+      background: 'rgb(0, 0, 0)',
       color: '#eaf1f8',
       fontSize: '11px',
       fontFamily:
@@ -490,7 +490,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       outline: 'none',
       resize: 'vertical',
       border: '1px solid rgba(0, 195, 255, 0.28)',
-      background: 'rgb(4, 10, 11)',
+      background: 'rgb(0, 0, 0)',
       color: '#eaf1f8',
       fontSize: '11px',
       lineHeight: 1.55,
@@ -506,7 +506,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       borderRadius: '9px',
       outline: 'none',
       border: '1px solid rgba(0, 195, 255, 0.28)',
-      background: 'rgb(4, 10, 11)',
+      background: 'rgb(0, 0, 0)',
       color: '#eaf1f8',
       fontSize: '11px',
       fontFamily: 'monospace',
@@ -620,12 +620,12 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       position: 'relative',
       padding: '14px',
       borderRadius: '11px',
-      border: '1px solid rgba(0, 221, 255, 0.76)',
+      border: '1px solid rgba(0, 218, 252, 0.77)',
       background: `
       linear-gradient(
         135deg,
-        rgba(9, 9, 9, 0.72),
-        rgb(4, 4, 4)
+        rgba(29, 29, 29, 0.72),
+        rgb(32, 31, 31)
       )
     `,
       overflow: 'hidden',
@@ -635,7 +635,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       fontSize: '7px',
       fontWeight: '700',
       letterSpacing: '1.4px',
-      color: '#00c6f8',
+      color: '#abbfc5',
       textTransform: 'uppercase',
       marginBottom: '8px',
     },
@@ -646,7 +646,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
-      color: '#00c8ff',
+      color: '#f6fdff',
       fontFamily: 'monospace',
       fontSize: '10px',
       lineHeight: 1.5,
@@ -673,8 +673,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       linear-gradient(
         90deg,
-        rgba(0, 160, 177, 0.34),
-        rgba(1, 104, 128, 0.65)
+        rgba(93, 103, 104, 0.34),
+        rgba(78, 88, 90, 0.65)
       )
     `,
     },
@@ -811,9 +811,9 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         rgb(0, 0, 0)
       )
     `,
-      border: '1px solid rgba(148, 155, 163, 0.87)',
+      border: '1px solid rgba(85, 86, 86, 0.87)',
       boxShadow: `
-      inset 0 1px 0 rgba(255,255,255,0.045),
+      inset 0 1px 0 rgba(6, 6, 6, 0.04),
       0 22px 65px rgba(0,0,0,0.32)
     `,
     },
@@ -854,7 +854,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       ),
       #000000
     `,
-      border: '1px solid rgba(80, 77, 77, 0.58)',
+      border: '1px solid rgba(33, 33, 33, 0.58)',
       overflow: 'hidden',
     },
 
