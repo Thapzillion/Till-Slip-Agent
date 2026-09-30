@@ -857,161 +857,178 @@ export default function TillSlipsCollection() {
                     `}</style>
 
                     {/* ===========================================================
-      RESPONSIVE CARD GRID
-  ============================================================ */}
+    GALLERY GRID LAYOUT + INDEPENDENT VISUAL ZOOM
+=========================================================== */}
 
                     <div
                         style={{
-                            display: "grid",
                             position: "relative",
-                            zIndex: 1,
-
-                            /*
-                             * GALLERY GRID ZOOM ONLY
-                             *
-                             * This does NOT affect the background video.
-                             */
-                            zoom: 0.80,
-
-                            /*
-                             * Compensate for the 80% zoom so the grid
-                             * still occupies the full gallery width.
-                             */
-                            width: "125%",
-
-                            gridTemplateColumns:
-                                "repeat(auto-fill, minmax(280px, 1fr))",
-
-                            gap: "18px",
-
-                            alignItems: "start",
-
-                            boxSizing: "border-box"
+                            width: "100%",
+                            minHeight: "100%",
+                            zIndex: 1
                         }}
                     >
-                        {filteredDesigns.map((design) => {
+                        <div
+                            style={{
+                                display: "grid",
+                                position: "relative",
 
-                            const isSelected = selectedDesign === design.id;
+                                /*
+                                 * ============================================
+                                 * YOUR INDEPENDENT GALLERY GRID ZOOM
+                                 * ============================================
+                                 *
+                                 * Change ONLY this value to zoom the gallery.
+                                 *
+                                 * 1.00 = normal
+                                 * 0.90 = slightly smaller
+                                 * 0.80 = smaller
+                                 * 0.70 = much smaller
+                                 * 1.10 = larger
+                                 *
+                                 * Background video is NOT affected.
+                                 */
+                                zoom: 0.80,
 
-                            return (
+                                /*
+                                 * This makes the zoomed grid occupy the
+                                 * available horizontal gallery space.
+                                 */
+                                width: "125%",
 
-                                <div
-                                    key={design.id}
-                                    className="ruach-slip-frame"
-                                    style={{
-                                        transition: "transform .25s ease, box-shadow .25s ease",
-                                        transform: "scale(0.82)",
-                                        transformOrigin: "top center",
-                                        marginBottom: "-95px",
-                                        boxShadow: isSelected
-                                            ? "0 0 0 1px rgba(8, 169, 227, 0.55), 0 0 30px rgba(8, 154, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
-                                            : undefined
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = "translateY(-6px) scale(0.82)";
-                                        e.currentTarget.style.boxShadow = "0 0 0 1px rgba(8, 194, 227, 0.72), 0 0 34px rgba(8, 194, 227, 0.3), 0 20px 44px rgba(0,0,0,.78)";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = "translateY(0px) scale(0.82)";
-                                        e.currentTarget.style.boxShadow = isSelected
-                                            ? "0 0 0 1px rgba(8, 205, 227, 0.55), 0 0 30px rgba(8, 179, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
-                                            : "";
-                                    }}
-                                >
+                                gridTemplateColumns:
+                                    "repeat(auto-fill, minmax(280px, 1fr))",
 
-                                    {/* =====================================================
+                                gap: "18px",
+
+                                alignItems: "start",
+
+                                boxSizing: "border-box"
+                            }}
+                        >
+                            {filteredDesigns.map((design) => {
+
+                                const isSelected = selectedDesign === design.id;
+
+                                return (
+
+                                    <div
+                                        key={design.id}
+                                        className="ruach-slip-frame"
+                                        style={{
+                                            transition: "transform .25s ease, box-shadow .25s ease",
+                                            transform: "scale(0.82)",
+                                            transformOrigin: "top center",
+                                            marginBottom: "-95px",
+                                            boxShadow: isSelected
+                                                ? "0 0 0 1px rgba(8, 169, 227, 0.55), 0 0 30px rgba(8, 154, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
+                                                : undefined
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = "translateY(-6px) scale(0.82)";
+                                            e.currentTarget.style.boxShadow = "0 0 0 1px rgba(8, 194, 227, 0.72), 0 0 34px rgba(8, 194, 227, 0.3), 0 20px 44px rgba(0,0,0,.78)";
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = "translateY(0px) scale(0.82)";
+                                            e.currentTarget.style.boxShadow = isSelected
+                                                ? "0 0 0 1px rgba(8, 205, 227, 0.55), 0 0 30px rgba(8, 179, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
+                                                : "";
+                                        }}
+                                    >
+
+                                        {/* =====================================================
             CARD HEADER
         ====================================================== */}
 
-                                    <div
-                                        className="ruach-slip-frame-content"
-                                        style={{
-                                            padding: "14px 16px 10px",
-
-                                            display: "flex",
-
-                                            justifyContent: "space-between",
-
-                                            alignItems: "center",
-
-                                            borderBottom:
-                                                "1px solid rgba(0,0,0,.45)"
-                                        }}
-                                    >
-
                                         <div
+                                            className="ruach-slip-frame-content"
                                             style={{
-                                                color: "#FFFFFF",
-                                                fontSize: "12px",
-                                                fontWeight: 800,
-                                                letterSpacing: ".3px"
+                                                padding: "14px 16px 10px",
+
+                                                display: "flex",
+
+                                                justifyContent: "space-between",
+
+                                                alignItems: "center",
+
+                                                borderBottom:
+                                                    "1px solid rgba(0,0,0,.45)"
                                             }}
                                         >
-                                            {design.name}
+
+                                            <div
+                                                style={{
+                                                    color: "#FFFFFF",
+                                                    fontSize: "12px",
+                                                    fontWeight: 800,
+                                                    letterSpacing: ".3px"
+                                                }}
+                                            >
+                                                {design.name}
+                                            </div>
+
+                                            <div
+                                                style={{
+                                                    padding: "4px 6px",
+
+                                                    borderRadius: "999px",
+
+                                                    background:
+                                                        "#000000",
+
+                                                    border:
+                                                        "1px solid #000000",
+
+                                                    color: "#FFFFFF",
+
+                                                    fontSize: "8px",
+
+                                                    fontWeight: 800,
+
+                                                    textTransform: "uppercase",
+
+                                                    letterSpacing: ".6px"
+                                                }}
+                                            >
+                                                {design.category}
+                                            </div>
+
                                         </div>
 
-                                        <div
-                                            style={{
-                                                padding: "4px 6px",
-
-                                                borderRadius: "999px",
-
-                                                background:
-                                                    "#000000",
-
-                                                border:
-                                                    "1px solid #000000",
-
-                                                color: "#FFFFFF",
-
-                                                fontSize: "8px",
-
-                                                fontWeight: 800,
-
-                                                textTransform: "uppercase",
-
-                                                letterSpacing: ".6px"
-                                            }}
-                                        >
-                                            {design.category}
-                                        </div>
-
-                                    </div>
-
-                                    {/* =====================================================
+                                        {/* =====================================================
             DESIGN PREVIEW AREA
         ====================================================== */}
 
-                                    <div
-                                        className="ruach-slip-frame-content"
-                                        style={{
-                                            padding: "10px 12px 12px"
-                                        }}
-                                    >
-                                        <div className="ruach-slip-preview">
+                                        <div
+                                            className="ruach-slip-frame-content"
+                                            style={{
+                                                padding: "10px 12px 12px"
+                                            }}
+                                        >
+                                            <div className="ruach-slip-preview">
 
-                                            {/* FUTURISTIC NEON GRID / FRAME LINES */}
-                                            <div
-                                                aria-hidden="true"
-                                                style={{
-                                                    position: "absolute",
-                                                    inset: 0,
-                                                    zIndex: 1,
-                                                    pointerEvents: "none",
-                                                    backgroundImage: `
+                                                {/* FUTURISTIC NEON GRID / FRAME LINES */}
+                                                <div
+                                                    aria-hidden="true"
+                                                    style={{
+                                                        position: "absolute",
+                                                        inset: 0,
+                                                        zIndex: 1,
+                                                        pointerEvents: "none",
+                                                        backgroundImage: `
                                                         linear-gradient(rgba(8, 150, 227, 0.1) 1px, transparent 1px),
                                                         linear-gradient(90deg, rgba(0, 145, 255, 0.08) 1px, transparent 1px)
                                                     `,
-                                                    backgroundSize: "28px 28px",
-                                                    maskImage: "linear-gradient(to bottom, rgba(0,0,0,.85), transparent 88%)"
-                                                }}
-                                            />
+                                                        backgroundSize: "28px 28px",
+                                                        maskImage: "linear-gradient(to bottom, rgba(0,0,0,.85), transparent 88%)"
+                                                    }}
+                                                />
 
-                                            {/* ===================================================
+                                                {/* ===================================================
                                             LIVE DESIGN SLOT
                                         ==================================================== */}
-                                            {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP ==*/}
-                                            <style>{`
+                                                {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP ==*/}
+                                                <style>{`
                                                 .till-slip-live-slot {
                                                     container-type: inline-size;
                                                     container-name: till-slip-slot;
@@ -1047,181 +1064,183 @@ export default function TillSlipsCollection() {
                                                 }
                                             `}</style>
 
-                                            <div
-                                                className="till-slip-live-slot"
-                                                style={{
-                                                    position: "relative",
-                                                    zIndex: 2,
-                                                    width: "100%",
-                                                    minHeight: "450px"
-                                                }}
-                                            >
-                                                {design.id === "matrix-grid" ? (
-                                                    <MatrixTillSlip
-                                                        receiptData={receiptData}
-                                                        settings={settings}
-                                                        user={user}
-                                                        activeCurrencySymbol={
-                                                            settings?.currency_symbol ||
-                                                            settings?.currencySymbol ||
-                                                            ""
-                                                        }
-                                                    />
-                                                ) : (
-                                                    <div
-                                                        style={{
-                                                            minHeight: "210px",
-                                                            display: "flex",
-                                                            alignItems: "center",
-                                                            justifyContent: "center",
-                                                            textAlign: "center",
-                                                            color: "#79868c"    //THIS MIGHT BE THE SOURCE
-                                                        }}
-                                                    >
-                                                        {/* Add the live {design.name} component here. */}
-                                                        <span>
-                                                            {/* Add your {design.name} till slip design here */}
-                                                        </span>
-                                                    </div>
-                                                )}
+                                                <div
+                                                    className="till-slip-live-slot"
+                                                    style={{
+                                                        position: "relative",
+                                                        zIndex: 2,
+                                                        width: "100%",
+                                                        minHeight: "450px"
+                                                    }}
+                                                >
+                                                    {design.id === "matrix-grid" ? (
+                                                        <MatrixTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            style={{
+                                                                minHeight: "210px",
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                textAlign: "center",
+                                                                color: "#79868c"    //THIS MIGHT BE THE SOURCE
+                                                            }}
+                                                        >
+                                                            {/* Add the live {design.name} component here. */}
+                                                            <span>
+                                                                {/* Add your {design.name} till slip design here */}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+
                                             </div>
 
                                         </div>
 
-                                    </div>
-
-                                    {/* ===========================================================
+                                        {/* ===========================================================
             CARD FOOTER
         ============================================================ */}
 
-                                    <div
-                                        className="ruach-slip-footer"
-                                        style={{
-                                            padding: "14px 16px",
-
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            alignItems: "center",
-                                            gap: "8px",
-                                            flexWrap: "wrap"
-                                        }}
-                                    >
-
-                                        {/* DESIGN DETAILS */}
-
-                                        <div>
-
-                                            <div
-                                                style={{
-                                                    color: "#FFFFFF",
-                                                    fontSize: "12px",
-                                                    fontWeight: 800,
-                                                    letterSpacing: ".3px"
-                                                }}
-                                            >
-                                                {design.name}
-                                            </div>
-
-                                            <div
-                                                style={{
-                                                    marginTop: "3px",
-                                                    color: "#8FA8BA",
-                                                    fontSize: "9px",
-                                                    fontWeight: 600
-                                                }}
-                                            >
-                                                Professional Till Slip Design
-                                            </div>
-
-                                        </div>
-
-                                        {/* CHOOSE BUTTON */}
-
-                                        <button
-                                            type="button"
-                                            className="ruach-slip-choose"
-                                            onClick={() => handleChooseDesign(design.id)}
-
-                                            /*
-                                            ====================================================
-                              
-                                                SELECT THIS DESIGN
-                              
-                                                Example:
-                              
-                                                setSelectedDesign(design.id);
-                              
-                                                handleChooseDesign(design);
-                              
-                                                saveSelectedDesign(design.id);
-                              
-                                            ====================================================
-                                            */
-
-
+                                        <div
+                                            className="ruach-slip-footer"
                                             style={{
-                                                border: "none",
-                                                outline: "none",
-                                                cursor: "pointer",
+                                                padding: "14px 16px",
 
-                                                padding: "10px 16px",
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                gap: "8px",
+                                                flexWrap: "wrap"
+                                            }}
+                                        >
 
-                                                borderRadius: "9px",
+                                            {/* DESIGN DETAILS */}
 
-                                                background:
-                                                    "linear-gradient(135deg,#08E3D8,#00A8FF)",
+                                            <div>
 
-                                                color: "#000000",
+                                                <div
+                                                    style={{
+                                                        color: "#FFFFFF",
+                                                        fontSize: "12px",
+                                                        fontWeight: 800,
+                                                        letterSpacing: ".3px"
+                                                    }}
+                                                >
+                                                    {design.name}
+                                                </div>
 
-                                                fontWeight: 900,
+                                                <div
+                                                    style={{
+                                                        marginTop: "3px",
+                                                        color: "#8FA8BA",
+                                                        fontSize: "9px",
+                                                        fontWeight: 600
+                                                    }}
+                                                >
+                                                    Professional Till Slip Design
+                                                </div>
 
-                                                fontSize: "10px",
+                                            </div>
 
-                                                letterSpacing: ".8px",
+                                            {/* CHOOSE BUTTON */}
 
-                                                textTransform: "uppercase",
+                                            <button
+                                                type="button"
+                                                className="ruach-slip-choose"
+                                                onClick={() => handleChooseDesign(design.id)}
 
-                                                transition: "all .25s ease",
+                                                /*
+                                                ====================================================
+                                  
+                                                    SELECT THIS DESIGN
+                                  
+                                                    Example:
+                                  
+                                                    setSelectedDesign(design.id);
+                                  
+                                                    handleChooseDesign(design);
+                                  
+                                                    saveSelectedDesign(design.id);
+                                  
+                                                ====================================================
+                                                */
 
-                                                boxShadow: `
+
+                                                style={{
+                                                    border: "none",
+                                                    outline: "none",
+                                                    cursor: "pointer",
+
+                                                    padding: "10px 16px",
+
+                                                    borderRadius: "9px",
+
+                                                    background:
+                                                        "linear-gradient(135deg,#08E3D8,#00A8FF)",
+
+                                                    color: "#000000",
+
+                                                    fontWeight: 900,
+
+                                                    fontSize: "10px",
+
+                                                    letterSpacing: ".8px",
+
+                                                    textTransform: "uppercase",
+
+                                                    transition: "all .25s ease",
+
+                                                    boxShadow: `
                 0 0 16px rgba(8, 205, 227, 0.25),
                 0 10px 28px rgba(0,0,0,.25)
               `
-                                            }}
-                                            onMouseEnter={(e) => {
+                                                }}
+                                                onMouseEnter={(e) => {
 
-                                                e.currentTarget.style.transform =
-                                                    "translateY(-2px) scale(1.02)";
+                                                    e.currentTarget.style.transform =
+                                                        "translateY(-2px) scale(1.02)";
 
-                                                e.currentTarget.style.boxShadow = `
+                                                    e.currentTarget.style.boxShadow = `
                 0 0 28px rgba(8, 216, 227, 0.45),
                 0 14px 36px rgba(0,0,0,.30)
               `;
 
-                                            }}
-                                            onMouseLeave={(e) => {
+                                                }}
+                                                onMouseLeave={(e) => {
 
-                                                e.currentTarget.style.transform =
-                                                    "translateY(0px) scale(1)";
+                                                    e.currentTarget.style.transform =
+                                                        "translateY(0px) scale(1)";
 
-                                                e.currentTarget.style.boxShadow = `
+                                                    e.currentTarget.style.boxShadow = `
                 0 0 16px rgba(8, 209, 227, 0.41),
                 0 10px 28px rgba(0,0,0,.25)
               `;
 
-                                            }}
-                                        >
-                                            CHOOSE
-                                        </button>
+                                                }}
+                                            >
+                                                CHOOSE
+                                            </button>
+
+                                        </div>
 
                                     </div>
 
-                                </div>
+                                );
 
-                            );
 
-                        })}
+                            })}
 
+                        </div>
                     </div>
 
                     {/* ===========================================================
