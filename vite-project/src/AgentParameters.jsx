@@ -525,11 +525,11 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       position: 'relative',
       minHeight: '145px',
       borderRadius: '13px',
-      border: '1px dashed rgb(0, 241, 254)',
+      border: '1px dashed rgb(170, 205, 213)',
       background: `
       radial-gradient(
         circle at 50% 0%,
-        rgba(0, 234, 255, 0.93),
+        rgb(170, 205, 213),
         transparent 38%
       ),
       rgb(0, 1, 1)
@@ -558,20 +558,20 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      color: '#65f0ffc3',
+      color: 'rgb(253, 255, 255)',
       background: 'rgba(0, 0, 0, 0.87)',
-      border: '1px solid rgba(68, 211, 255, 0.86)',
+      border: '1px solid rgba(255, 255, 255, 0.86)',
       fontSize: '17px',
     },
 
     uploadTitle: {
-      color: '#dbe7f3',
+      color: '#979898',
       fontSize: '11px',
       fontWeight: '600',
     },
 
     uploadHint: {
-      color: '#00cff4',
+      color: '#000000',
       fontSize: '8px',
     },
 
@@ -616,7 +616,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       position: 'relative',
       padding: '14px',
       borderRadius: '11px',
-      border: '1px solid rgba(0, 218, 252, 0.77)',
+      border: '1px solid rgba(206, 244, 249, 0.47)',
       background: `
       linear-gradient(
         135deg,
