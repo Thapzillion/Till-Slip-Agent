@@ -236,7 +236,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       gap: '8px',
       padding: '8px 12px',
       borderRadius: '999px',
-      border: '1px solid rgba(0, 229, 255, 0.89)',
+      border: '1px solid rgba(178, 190, 192, 0.89)',
       background: 'rgba(0, 0, 0, 0.72)',
       color: '#9ebfc3',
       fontSize: '9px',
@@ -250,8 +250,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       width: '6px',
       height: '6px',
       borderRadius: '50%',
-      background: '#00e1ff',
-      boxShadow: '0 0 10px rgba(0, 213, 255, 0.9)',
+      background: '#b3b9ba',
+      boxShadow: '0 0 10px rgba(186, 212, 218, 0.9)',
     },
 
     /* ---------------------------------------------------------
@@ -669,8 +669,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       linear-gradient(
         90deg,
-        rgba(93, 103, 104, 0.16),
-        rgba(78, 88, 90, 0.37)
+        rgba(29, 29, 29, 0.72),
+        rgb(32, 31, 31)
       )
     `,
     },
@@ -680,10 +680,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       height: '8px',
       minWidth: '8px',
       borderRadius: '50%',
-      background: '#55b5ff',
+      background: '#eff8ff',
       boxShadow: `
-      0 0 8px rgba(85,181,255,0.9),
-      0 0 22px rgba(35, 185, 255, 0.55)
+      0 0 8px rgba(250, 253, 255, 0.9),
+      0 0 22px rgba(228, 234, 237, 0.55)
     `,
     },
 
@@ -702,7 +702,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     },
 
     rangeValue: {
-      color: '#65b8ff',
+      color: '#bebebe',
       fontFamily: 'monospace',
       fontWeight: '700',
     },
@@ -755,8 +755,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       minWidth: '5px',
       marginTop: '4px',
       borderRadius: '50%',
-      background: '#579fe0',
-      boxShadow: '0 0 8px rgba(87,159,224,0.7)',
+      background: '#f6f6f6',
+      boxShadow: '0 0 8px rgba(253, 253, 253, 0.7)',
     },
 
     /* ---------------------------------------------------------
@@ -778,7 +778,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
     insightLabel: {
       fontSize: '7px',
-      color: '#22768b',
+      color: '#a4b1b5',
       letterSpacing: '1px',
       fontWeight: '700',
       textTransform: 'uppercase',
@@ -827,7 +827,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     previewStatus: {
       fontSize: '7px',
       fontWeight: '700',
-      color: '#7bdfff',
+      color: '#d4dadd',
       letterSpacing: '1px',
       textTransform: 'uppercase',
     },
@@ -1456,7 +1456,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   <div
                     style={{
                       fontSize: '7px',
-                      color: '#4c83b5',
+                      color: '#8e959c',
                       letterSpacing: '1px',
                       fontWeight: '700',
                     }}
@@ -2431,7 +2431,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       style={{
                         fontSize: '7px',
                         fontWeight: '700',
-                        color: '#4d78a0',
+                        color: '#fbfdff',
                         letterSpacing: '1.2px',
                         textTransform: 'uppercase',
                         marginBottom: '6px',

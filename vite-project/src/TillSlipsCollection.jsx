@@ -653,7 +653,8 @@ export default function TillSlipsCollection() {
                     style={{
                         flex: "1 1 0",
                         minHeight: 0,
-                        overflowY: "scroll",
+                        height: 0,
+                        overflowY: "auto",
                         overflowX: "hidden",
                         position: "relative",
                         padding: "16px",
@@ -859,12 +860,19 @@ export default function TillSlipsCollection() {
     GALLERY GRID LAYOUT + INDEPENDENT VISUAL ZOOM
 =========================================================== */}
 
+                    {/* ===========================================================
+    GALLERY GRID LAYOUT + INDEPENDENT VISUAL ZOOM
+=========================================================== */}
+
                     <div
                         style={{
                             position: "relative",
                             width: "100%",
+                            maxWidth: "100%",
                             minHeight: "100%",
-                            zIndex: 1
+                            zIndex: 1,
+                            overflow: "visible",
+                            boxSizing: "border-box"
                         }}
                     >
                         <div
@@ -873,27 +881,33 @@ export default function TillSlipsCollection() {
                                 position: "relative",
 
                                 /*
-                                 * ============================================
-                                 * YOUR INDEPENDENT GALLERY GRID ZOOM
-                                 * ============================================
+                                 * =====================================================
+                                 * GALLERY GRID ZOOM ONLY
+                                 * =====================================================
                                  *
-                                 * Change ONLY this value to zoom the gallery.
+                                 * This zoom affects ONLY the gallery cards.
+                                 * The background video is outside this element,
+                                 * therefore the video is completely unaffected.
                                  *
                                  * 1.00 = normal
-                                 * 0.90 = slightly smaller
+                                 * 0.90 = smaller
                                  * 0.80 = smaller
                                  * 0.70 = much smaller
                                  * 1.10 = larger
-                                 *
-                                 * Background video is NOT affected.
                                  */
                                 zoom: 0.80,
 
                                 /*
-                                 * This makes the zoomed grid occupy the
-                                 * available horizontal gallery space.
+                                 * IMPORTANT:
+                                 *
+                                 * DO NOT use width: "125%" here.
+                                 *
+                                 * The 125% width was making the grid physically
+                                 * wider than the gallery viewport and was causing
+                                 * the horizontal displacement shown in your screenshot.
                                  */
-                                width: "125%",
+                                width: "100%",
+                                maxWidth: "100%",
 
                                 gridTemplateColumns:
                                     "repeat(auto-fill, minmax(280px, 1fr))",
@@ -918,7 +932,7 @@ export default function TillSlipsCollection() {
                                             transition: "transform .25s ease, box-shadow .25s ease",
                                             transform: "scale(0.82)",
                                             transformOrigin: "top center",
-                                            marginBottom: "-95px",
+                                            marginBottom: "0",
                                             boxShadow: isSelected
                                                 ? "0 0 0 1px rgba(8, 169, 227, 0.55), 0 0 30px rgba(8, 154, 227, 0.24), 0 18px 42px rgba(0,0,0,.72)"
                                                 : undefined
