@@ -403,16 +403,16 @@ export default function TillSlipsCollection() {
                                     borderRadius: 999,
 
                                     background:
-                                        "rgb(18, 23, 56)",
+                                        "rgb(0, 45, 80)",
 
                                     border:
-                                        "1px solid rgba(0, 127, 230, 0.72)"
+                                        "1px solid rgb(0, 191, 255)"
                                 }}
                             >
 
                                 <Sparkles
                                     size={14}
-                                    color="#0872e3"
+                                    color="#00b7ff"
                                 />
 
                                 <span
@@ -1051,7 +1051,7 @@ export default function TillSlipsCollection() {
                                                     overflow: visible;
                                                     width: 100%;
 
-                                                    zoom: 0.78;
+                                                    zoom: 1.10;
 
                                                     min-height: 450px;
                                                 }
