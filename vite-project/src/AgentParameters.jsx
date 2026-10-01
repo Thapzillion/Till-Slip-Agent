@@ -87,7 +87,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       ),
       radial-gradient(
         circle at 88% 18%,
-        rgba(0, 195, 255, 0.66),
+        rgba(0, 195, 255, 0.3),
         transparent 30%
       ),
       linear-gradient(
@@ -274,7 +274,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       linear-gradient(145deg, rgba(15,18,21,.98), rgba(3,5,7,.99) 48%, #000 100%)
     `,
-      border: '1px solid rgba(103, 219, 255, 0.72)',
+      border: '1px solid rgba(103, 220, 255, 0.59)',
       boxShadow: `
       inset 0 1px 0 rgba(0, 0, 0, 0.96),
       0 10px 28px rgba(0, 0, 0, 0.78),
@@ -316,11 +316,11 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     metricMeta: {
       marginTop: '9px',
       fontSize: '9px',
-      color: '#79dfff',
+      color: '#2485a2b9',
     },
 
     metricAccent: {
-      color: '#7bdfff',
+      color: '#2485a2b9',
     },
 
     /* ---------------------------------------------------------
@@ -698,7 +698,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     aiBannerText: {
       marginTop: '2px',
       fontSize: '8px',
-      color: '#61768a',
+      color: '#f8fafc',
     },
 
     rangeValue: {
@@ -2126,7 +2126,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       <div
                         style={{
                           fontSize: '7px',
-                          color: '#477aa7',
+                          color: '#afb7be',
                           fontFamily: 'monospace',
                         }}
                       >
