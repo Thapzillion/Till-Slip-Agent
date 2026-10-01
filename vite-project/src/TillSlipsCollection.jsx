@@ -1050,6 +1050,9 @@ export default function TillSlipsCollection() {
                                                     align-items: flex-start;
                                                     overflow: visible;
                                                     width: 100%;
+
+                                                    zoom: 0.78;
+
                                                     min-height: 450px;
                                                 }
 
