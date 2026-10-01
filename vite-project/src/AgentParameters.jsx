@@ -82,7 +82,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       background: `
       radial-gradient(
         circle at 12% 8%,
-        rgba(0, 200, 255, 0.59),
+        rgba(0, 195, 255, 0.3),
         transparent 28%
       ),
       radial-gradient(
@@ -290,7 +290,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       top: '-45px',
       borderRadius: '50%',
       background:
-        'radial-gradient(circle, rgb(0, 221, 255), transparent 70%)',
+        'radial-gradient(circle, rgba(0, 221, 255, 0.7), transparent 70%)',
       pointerEvents: 'none',
     },
 
@@ -961,13 +961,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       minHeight: '44px',
       padding: '0 18px',
       borderRadius: '10px',
-      border: '1px solid rgba(84, 177, 255, 0.72)',
+      border: '1px solid rgba(223, 241, 255, 0.72)',
       background: `
       linear-gradient(
         180deg,
-        #8fd1ff 0%,
-        #3e9de8 45%,
-        #2475b5 100%
+        #d8efff 0%,
+        #acc6da 45%,
+        #92a2ae 100%
       )
     `,
       color: '#03101a',
@@ -977,7 +977,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       textTransform: 'uppercase',
       cursor: 'pointer',
       boxShadow: `
-      0 0 18px rgba(43, 150, 255, 0.20),
+      0 0 18px rgba(155, 201, 248, 0.2),
       inset 0 1px 0 rgba(255,255,255,0.55)
     `,
     },
@@ -1028,7 +1028,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
     saveDescription: {
       marginTop: '4px',
-      color: '#7bdfff',
+      color: '#bfd0d6',
       opacity: 0.76,
       fontSize: '8px',
     },
@@ -1847,10 +1847,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                           marginTop: '4px',
                           borderRadius: '50%',
                           background: settings?.webhook_slug
-                            ? '#55b5ff'
+                            ? '#d3ecff'
                             : '#566473',
                           boxShadow: settings?.webhook_slug
-                            ? '0 0 10px rgba(85,181,255,0.8)'
+                            ? '0 0 10px rgba(202, 229, 250, 0.8)'
                             : 'none',
                         }}
                       />
@@ -2260,10 +2260,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                         borderRadius: '50%',
                         background: isSaveSyncing
                           ? '#66717d'
-                          : '#35cfff',
+                          : '#e6eff2',
                         boxShadow: isSaveSyncing
                           ? 'none'
-                          : '0 0 12px rgba(50,205,255,0.8)',
+                          : '0 0 12px rgba(201, 234, 245, 0.8)',
                       }}
                     />
 
