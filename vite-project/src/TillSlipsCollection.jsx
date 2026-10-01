@@ -653,8 +653,7 @@ export default function TillSlipsCollection() {
                     style={{
                         flex: "1 1 0",
                         minHeight: 0,
-                        height: 0,
-                        overflowY: "auto",
+                        overflowY: "scroll",
                         overflowX: "hidden",
                         position: "relative",
                         padding: "16px",

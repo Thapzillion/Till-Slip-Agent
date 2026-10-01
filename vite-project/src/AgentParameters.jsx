@@ -393,7 +393,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       justifyContent: 'center',
       background: 'linear-gradient(145deg, #101417, #000000)',
       border: '1px solid rgba(208, 244, 255, 0.72)',
-      color: '#beeeff',
+      color: '#a6a6a6',
       fontSize: '12px',
       boxShadow: '0 0 18px rgba(206, 245, 252, 0.92)',
     },
@@ -402,15 +402,15 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       margin: 0,
       fontSize: '12px',
       fontWeight: '650',
-      color: '#ffffff',
+      color: '#a6a6a6',
       letterSpacing: '0.15px',
     },
 
     cardDescription: {
       margin: '3px 0 0',
       fontSize: '9px',
-      color: '#ffffff',
-      opacity: 0.72,
+      color: '#8f8f8f',
+      opacity: 1,
       lineHeight: 1.45,
     },
 
