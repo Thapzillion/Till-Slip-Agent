@@ -1043,41 +1043,48 @@ export default function TillSlipsCollection() {
                                         ==================================================== */}
                                                 {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP ==*/}
                                                 <style>{`
-                                                .till-slip-live-slot {
-                                                    container-type: inline-size;
-                                                    container-name: till-slip-slot;
-                                                    display: flex;
-                                                    justify-content: center;
-                                                    align-items: flex-start;
-                                                    overflow: visible;
-                                                    width: 100%;
+    .till-slip-live-slot {
+        container-type: inline-size;
+        container-name: till-slip-slot;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        overflow: visible;
+        width: 100%;
+        min-height: 450px;
+    }
 
-                                                    min-height: 450px;
-                                                }
+    /*
+     * ==========================================================
+     * ACTUAL TILL SLIP WIDTH
+     * ==========================================================
+     *
+     * This changes ONLY the receipt/till slip INSIDE the card.
+     * It does NOT change the futuristic card/container.
+     */
+    .till-slip-live-slot > * {
+        width: 380px !important;
+        max-width: 380px !important;
+        transform-origin: center top;
+        zoom: 0.86;
+    }
 
-                                                .till-slip-live-slot > * {
-                                                    width: 330px !important;
-                                                    max-width: 330px !important;
-                                                    transform-origin: center top;
-                                                    zoom: 0.78;
-                                                }
+    @container till-slip-slot (max-width: 330px) {
+        .till-slip-live-slot > * {
+            width: 350px !important;
+            max-width: 350px !important;
+            zoom: 0.82;
+        }
+    }
 
-                                                @container till-slip-slot (max-width: 330px) {
-                                                    .till-slip-live-slot > * {
-                                                        width: 300px !important;
-                                                        max-width: 300px !important;
-                                                        zoom: 0.74;
-                                                    }
-                                                }
-
-                                                @container till-slip-slot (max-width: 270px) {
-                                                    .till-slip-live-slot > * {
-                                                        width: 270px !important;
-                                                        max-width: 270px !important;
-                                                        zoom: 0.70;
-                                                    }
-                                                }
-                                            `}</style>
+    @container till-slip-slot (max-width: 270px) {
+        .till-slip-live-slot > * {
+            width: 320px !important;
+            max-width: 320px !important;
+            zoom: 0.78;
+        }
+    }
+`}</style>
 
                                                 <div
                                                     className="till-slip-live-slot"
@@ -1085,7 +1092,6 @@ export default function TillSlipsCollection() {
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
-                                                        zoom: "1.50",
                                                         minHeight: "450px"
                                                     }}
                                                 >
