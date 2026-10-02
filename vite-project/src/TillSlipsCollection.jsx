@@ -403,7 +403,7 @@ export default function TillSlipsCollection() {
                                     borderRadius: 999,
 
                                     background:
-                                        "rgb(0, 45, 80)",
+                                        "rgb(4, 16, 26)",
 
                                     border:
                                         "1px solid rgb(0, 191, 255)"
@@ -1070,15 +1070,15 @@ export default function TillSlipsCollection() {
      * card. It does NOT change .ruach-slip-frame.
      */
     .till-slip-live-slot > * {
-        width: 420px !important;
-        min-width: 420px !important;
-        max-width: 420px !important;
+        width: 410px !important;
+        min-width: 410px !important;
+        max-width: 410px !important;
 
-        zoom: 0.86;
+        zoom: 0.80;
 
         transform-origin: center top;
 
-        flex: 0 0 420px !important;
+        flex: 0 0 410px !important;
     }
 `}</style>
 

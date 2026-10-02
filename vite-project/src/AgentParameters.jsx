@@ -40,6 +40,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
   const {
     user,
     settings,
+    receiptData: liveReceiptData,
     setSettings,
     pendingLogoFile,
     setPendingLogoFile,
@@ -1074,6 +1075,21 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     SAFE_CURRENCY_OPTIONS.find(
       c => c.code === settings.currency
     )?.symbol || "R";
+
+  /* =========================================================
+     LIVE RECEIPT DATA FOR AGENT PARAMETERS
+     =========================================================
+     Use the same receipt object that MatrixTillSlip uses.
+     This means real transaction items from receipts.items are
+     shown in the Agent Parameters preview instead of falling
+     back to business settings and producing an empty item list.
+  ========================================================= */
+  const livePreviewReceipt =
+    receipt && typeof receipt === "object"
+      ? receipt
+      : liveReceiptData && typeof liveReceiptData === "object"
+        ? liveReceiptData
+        : {};
 
   // ===========================
   // Initial Load
@@ -2467,21 +2483,21 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
                     {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
                       <MatrixTillSlip
-                        receiptData={receipt || settings}
+                        receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}
                         activeCurrencySymbol={activeCurrencySymbol}
                       />
                     ) : currentTemplate === "minimalist-mono" ? (
                       <MinimalistMonoTillSlip
-                        receiptData={receipt || settings}
+                        receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}
                         activeCurrencySymbol={activeCurrencySymbol}
                       />
                     ) : currentTemplate === "neon-cyber" ? (
                       <NeonCyberTillSlip
-                        receiptData={receipt || settings}
+                        receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}
                         activeCurrencySymbol={activeCurrencySymbol}

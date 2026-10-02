@@ -142,6 +142,71 @@ export default function MatrixTillSlip({
     const receiptWidth = "100%";
 
     /* ================================================================
+       BRAND ASSET LOGIC
+       ================================================================
+       Logo and watermark are intentionally handled separately.
+       The logo is the small merchant mark above the business name.
+       The watermark is the faint centered mark inside the receipt.
+
+       A future watermark_url can therefore be supplied independently
+       without changing the merchant logo. Until then, the existing
+       merchant logo remains the watermark fallback so current receipts
+       keep their appearance.
+       ================================================================ */
+
+    const logoUrl = settings?.logo_url || "";
+
+    const watermarkUrl =
+        receiptData?.watermark_url ||
+        settings?.watermark_url ||
+        logoUrl ||
+        "";
+
+    const showLogo = true;
+    const showWatermark = true;
+
+    /* ================================================================
+       CURRENCY DISPLAY
+       ================================================================ */
+
+    const CURRENCY_SYMBOLS = {
+        ZAR: "R",
+        USD: "$",
+        GBP: "£",
+        EUR: "€",
+        NGN: "₦",
+    };
+
+    const resolvedCurrencySymbol =
+        activeCurrencySymbol ||
+        CURRENCY_SYMBOLS[
+        settings?.currency ||
+        receiptData?.currency ||
+        "ZAR"
+        ] ||
+        "";
+
+    const formatCurrency = (value) => {
+        if (value === null || value === undefined || value === "") {
+            return "";
+        }
+
+        const raw = String(value).trim();
+
+        if (resolvedCurrencySymbol && raw.startsWith(resolvedCurrencySymbol)) {
+            return raw;
+        }
+
+        const numeric = Number(raw.replace(/,/g, ""));
+
+        if (Number.isFinite(numeric)) {
+            return `${resolvedCurrencySymbol}${resolvedCurrencySymbol ? " " : ""}${numeric.toFixed(2)}`;
+        }
+
+        return `${resolvedCurrencySymbol}${resolvedCurrencySymbol ? " " : ""}${raw}`;
+    };
+
+    /* ================================================================
        DOWNLOAD
        ================================================================ */
 
@@ -162,8 +227,6 @@ export default function MatrixTillSlip({
     /* ================================================================
        RECEIPT VISIBILITY
        ================================================================ */
-
-    const showWatermark = true;
 
     const showVoucher = true;
 
@@ -394,7 +457,7 @@ export default function MatrixTillSlip({
                     WATERMARK
                    ==================================================== */}
 
-                {settings?.logo_url &&
+                {watermarkUrl &&
                     showWatermark && (
 
                         <div
@@ -421,7 +484,7 @@ export default function MatrixTillSlip({
 
                             <img
                                 src={
-                                    settings.logo_url
+                                    watermarkUrl
                                 }
                                 alt=""
                                 style={{
@@ -562,24 +625,24 @@ export default function MatrixTillSlip({
                         }}
                     >
 
-                        {settings?.logo_url ? (
+                        {showLogo && logoUrl ? (
 
                             <div
                                 className="matrix-receipt-logo-stage"
                                 style={{
                                     width:
-                                        150,
+                                        92,
                                     height:
-                                        150,
+                                        92,
 
                                     borderRadius:
-                                        18,
+                                        14,
                                 }}
                             >
 
                                 <img
                                     src={
-                                        settings.logo_url
+                                        logoUrl
                                     }
                                     alt="Merchant Logo"
                                     style={{
@@ -784,8 +847,7 @@ export default function MatrixTillSlip({
                                                     900,
                                             }}
                                         >
-                                            {item?.price ??
-                                                ""}
+                                            {formatCurrency(item?.price)}
                                         </span>
 
                                     </div>
@@ -842,7 +904,7 @@ export default function MatrixTillSlip({
                                     </span>
 
                                     <span>
-                                        {vat}
+                                        {formatCurrency(vat)}
                                     </span>
 
                                 </div>
@@ -871,7 +933,7 @@ export default function MatrixTillSlip({
                                     900,
                             }}
                         >
-                            {total}
+                            {formatCurrency(total)}
                         </span>
 
                     </div>
