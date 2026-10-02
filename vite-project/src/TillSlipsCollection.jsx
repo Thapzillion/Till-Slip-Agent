@@ -712,6 +712,7 @@ export default function TillSlipsCollection() {
                             width: "calc(100% + 32px)",
                             zIndex: 0,
                             pointerEvents: "none",
+                            zoom: "1.10",
                             overflow: "hidden"
                         }}
                     >
@@ -1049,7 +1050,7 @@ export default function TillSlipsCollection() {
                                                     justify-content: center;
                                                     align-items: flex-start;
                                                     overflow: visible;
-                                                    width: 100%;
+                                                    width: 150%;
 
                                                     zoom: 1.10;
 
