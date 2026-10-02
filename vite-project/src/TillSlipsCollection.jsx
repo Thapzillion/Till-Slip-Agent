@@ -1050,9 +1050,7 @@ export default function TillSlipsCollection() {
                                                     justify-content: center;
                                                     align-items: flex-start;
                                                     overflow: visible;
-                                                    width: 150%;
-
-                                                    zoom: 1.10;
+                                                    width: 100%;
 
                                                     min-height: 450px;
                                                 }
@@ -1087,6 +1085,7 @@ export default function TillSlipsCollection() {
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
+                                                        zoom: "1.10",
                                                         minHeight: "450px"
                                                     }}
                                                 >
