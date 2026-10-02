@@ -1041,7 +1041,7 @@ export default function TillSlipsCollection() {
                                                 {/* ===================================================
                                             LIVE DESIGN SLOT
                                         ==================================================== */}
-                                                {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP ==*/}
+                                                {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP WHICH IS INTERIOR ==*/}
                                                 <style>{`
     .till-slip-live-slot {
         container-type: inline-size;
@@ -1054,6 +1054,8 @@ export default function TillSlipsCollection() {
         overflow: visible;
         width: 100%;
         min-height: 450px;
+
+        zoom: 0.78;
 
         position: relative;
     }
