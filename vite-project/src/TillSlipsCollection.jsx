@@ -1046,43 +1046,37 @@ export default function TillSlipsCollection() {
     .till-slip-live-slot {
         container-type: inline-size;
         container-name: till-slip-slot;
+
         display: flex;
         justify-content: center;
         align-items: flex-start;
+
         overflow: visible;
         width: 100%;
         min-height: 450px;
+
+        position: relative;
     }
 
     /*
      * ==========================================================
-     * ACTUAL TILL SLIP WIDTH
+     * ACTUAL RECEIPT / TILL SLIP
      * ==========================================================
      *
-     * This changes ONLY the receipt/till slip INSIDE the card.
-     * It does NOT change the futuristic card/container.
+     * IMPORTANT:
+     * This changes the MatrixTillSlip INSIDE the futuristic
+     * card. It does NOT change .ruach-slip-frame.
      */
     .till-slip-live-slot > * {
-        width: 400px !important;
-        max-width: 400px !important;
+        width: 440px !important;
+        min-width: 440px !important;
+        max-width: 440px !important;
+
+        zoom: 0.96;
+
         transform-origin: center top;
-        zoom: 0.96;   
-    }
 
-    @container till-slip-slot (max-width: 330px) {
-        .till-slip-live-slot > * {
-            width: 350px !important;
-            max-width: 350px !important;
-            zoom: 0.82;
-        }
-    }
-
-    @container till-slip-slot (max-width: 270px) {
-        .till-slip-live-slot > * {
-            width: 320px !important;
-            max-width: 320px !important;
-            zoom: 0.78;
-        }
+        flex: 0 0 440px !important;
     }
 `}</style>
 
