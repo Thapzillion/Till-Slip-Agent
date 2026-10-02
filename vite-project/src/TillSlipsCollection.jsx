@@ -1063,10 +1063,10 @@ export default function TillSlipsCollection() {
      * It does NOT change the futuristic card/container.
      */
     .till-slip-live-slot > * {
-        width: 380px !important;
-        max-width: 380px !important;
+        width: 400px !important;
+        max-width: 400px !important;
         transform-origin: center top;
-        zoom: 0.86;
+        zoom: 0.96;   
     }
 
     @container till-slip-slot (max-width: 330px) {
