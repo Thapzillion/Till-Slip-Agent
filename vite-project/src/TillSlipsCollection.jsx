@@ -1085,7 +1085,7 @@ export default function TillSlipsCollection() {
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
-                                                        zoom: "1.10",
+                                                        zoom: "1.50",
                                                         minHeight: "450px"
                                                     }}
                                                 >
