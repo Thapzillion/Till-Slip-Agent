@@ -1055,7 +1055,7 @@ export default function TillSlipsCollection() {
         width: 100%;
         min-height: 450px;
 
-        zoom: 0.58;
+        zoom: 0.68;
 
         position: relative;
     }
@@ -1070,15 +1070,15 @@ export default function TillSlipsCollection() {
      * card. It does NOT change .ruach-slip-frame.
      */
     .till-slip-live-slot > * {
-        width: 440px !important;
-        min-width: 440px !important;
-        max-width: 440px !important;
+        width: 420px !important;
+        min-width: 420px !important;
+        max-width: 420px !important;
 
-        zoom: 0.96;
+        zoom: 0.86;
 
         transform-origin: center top;
 
-        flex: 0 0 440px !important;
+        flex: 0 0 420px !important;
     }
 `}</style>
 
