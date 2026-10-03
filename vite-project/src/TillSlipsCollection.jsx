@@ -1055,7 +1055,7 @@ export default function TillSlipsCollection() {
         width: 100%;
         min-height: 700px;
 
-        zoom: 0.70;
+        zoom: 0.80;
 
         position: relative;
     }
@@ -1074,7 +1074,7 @@ export default function TillSlipsCollection() {
         min-width: 410px !important;
         max-width: 410px !important;
 
-        zoom: 0.70;
+        zoom: 0.80;
 
         transform-origin: center top;
 
