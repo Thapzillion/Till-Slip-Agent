@@ -1955,9 +1955,9 @@ export default function AdminPanel() {
                     {/* Avatar */}
                     <div
                       style={{
-                        width: "22px",
-                        height: "22px",
-                        minWidth: "22px",
+                        width: "32px",
+                        height: "32px",
+                        minWidth: "32px",
                         borderRadius: "50%",
                         background:
                           "linear-gradient(135deg,#00C6FF,#0084FF)",
@@ -1966,7 +1966,7 @@ export default function AdminPanel() {
                         justifyContent: "center",
                         color: "#fff",
                         fontWeight: 700,
-                        fontSize: "8px",
+                        fontSize: "10px",
                         boxShadow: "0 0 18px rgba(0,198,255,.22)"
                       }}
                     >
@@ -1986,7 +1986,7 @@ export default function AdminPanel() {
                         style={{
                           color: "#fff",
                           fontWeight: 600,
-                          fontSize: "7px",
+                          fontSize: "9px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
                           textOverflow: "ellipsis"
@@ -1998,7 +1998,7 @@ export default function AdminPanel() {
                       <div
                         style={{
                           color: "#7d8a99",
-                          fontSize: "6px",
+                          fontSize: "8px",
                           marginTop: "3px",
                           whiteSpace: "nowrap",
                           overflow: "hidden",
@@ -2013,7 +2013,7 @@ export default function AdminPanel() {
                     <div
                       style={{
                         color: "#00C6FF",
-                        fontSize: "8px",
+                        fontSize: "10px",
                         transform: showAccountMenu
                           ? "rotate(180deg)"
                           : "rotate(0deg)",
@@ -2059,7 +2059,7 @@ export default function AdminPanel() {
                           style={{
                             color: "#fff",
                             fontWeight: 600,
-                            fontSize: "7px"
+                            fontSize: "9px"
                           }}
                         >
                           {settings?.business_name || "RuachAgent AI"}
@@ -2068,7 +2068,7 @@ export default function AdminPanel() {
                         <div
                           style={{
                             color: "#6f7d8d",
-                            fontSize: "6px",
+                            fontSize: "8px",
                             marginTop: "3px"
                           }}
                         >

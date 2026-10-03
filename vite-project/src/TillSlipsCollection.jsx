@@ -403,21 +403,21 @@ export default function TillSlipsCollection() {
                                     borderRadius: 999,
 
                                     background:
-                                        "rgb(4, 16, 26)",
+                                        "rgba(59,130,246,.10)",
 
                                     border:
-                                        "1px solid rgb(0, 191, 255)"
+                                        "1px solid rgba(59, 118, 246, 0.2)"
                                 }}
                             >
 
                                 <Sparkles
                                     size={14}
-                                    color="#00b7ff"
+                                    color="#7DD3FC"
                                 />
 
                                 <span
                                     style={{
-                                        color: "#71abdf",
+                                        color: "#7DD3FC",
                                         fontWeight: 800,
                                         fontSize: 12,
                                         letterSpacing: ".8px",
@@ -1053,7 +1053,7 @@ export default function TillSlipsCollection() {
 
         overflow: visible;
         width: 100%;
-        min-height: 450px;
+        min-height: 550px;
 
         zoom: 0.68;
 
@@ -1088,7 +1088,7 @@ export default function TillSlipsCollection() {
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
-                                                        minHeight: "450px"
+                                                        minHeight: "550px"
                                                     }}
                                                 >
                                                     {design.id === "matrix-grid" ? (
