@@ -116,12 +116,12 @@ export function useBusiness() {
         merchantName: "RUACH STORE",
         location: "Johannesburg, South Africa",
         items: [
-            { name: "Milk", price: "R32.00" },
-            { name: "Bread", price: "R18.50" },
-            { name: "Eggs", price: "R41.00" }
+            { name: "T-shirt", price: "32.00" },
+            { name: "Pants", price: "18.50" },
+            { name: "Earrings", price: "41.00" }
         ],
-        vat: "R13.80",
-        total: "R105.30",
+        vat: "13.80",
+        total: "105.30",
         themeColor: "#00f0ff"
     });
 
