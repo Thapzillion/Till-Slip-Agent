@@ -273,9 +273,9 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
       padding: '17px',
       borderRadius: '14px',
       background: `
-      linear-gradient(145deg, rgba(15,18,21,.98), rgba(3,5,7,.99) 48%, #000 100%)
+      linear-gradient(145deg, rgba(0, 0, 0, 0.98), rgba(0, 0, 0, 0.99) 48%, #000 100%)
     `,
-      border: '1px solid rgba(103, 220, 255, 0.59)',
+      border: '1px solid rgba(103, 220, 255, 0.6)',
       boxShadow: `
       inset 0 1px 0 rgba(0, 0, 0, 0.96),
       0 10px 28px rgba(0, 0, 0, 0.78),

@@ -1053,7 +1053,7 @@ export default function TillSlipsCollection() {
 
         overflow: visible;
         width: 100%;
-        min-height: 550px;
+        min-height: 700px;
 
         zoom: 0.68;
 
@@ -1088,7 +1088,7 @@ export default function TillSlipsCollection() {
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
-                                                        minHeight: "550px"
+                                                        minHeight: "700px"
                                                     }}
                                                 >
                                                     {design.id === "matrix-grid" ? (

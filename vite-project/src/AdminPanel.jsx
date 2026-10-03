@@ -871,7 +871,7 @@ export default function AdminPanel() {
     borderRadius: "10px",
     background: "transparent",
     color: "#dce7f2",
-    fontSize: "7px",
+    fontSize: "9px",
     fontWeight: 500,
     cursor: "pointer",
     textAlign: "left",
