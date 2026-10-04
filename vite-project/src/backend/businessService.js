@@ -34,6 +34,7 @@ export function useBusiness() {
     const [graphData, setGraphData] = useState(Array.from({ length: 28 }).map(() => 0));
 
     const [isSaveSyncing, setIsSaveSyncing] = useState(false);
+    const [isLoadingSettings, setIsLoadingSettings] = useState(false);
 
     const [isAuthSyncing, setIsAuthSyncing] = useState(false);
 
@@ -367,6 +368,8 @@ export function useBusiness() {
     async function fetchMerchantSettings(userId) {
         if (!userId) return;
 
+        setIsLoadingSettings(true);
+
         // ─── ABORT CONTROLLER SETUP ───
         // Instantiates native signal with a 10-second timeout threshold
         const controller = new AbortController();
@@ -435,6 +438,7 @@ export function useBusiness() {
             });
         } finally {
             clearTimeout(timeoutId); // Guarantees timer handle is cleared when complete
+            setIsLoadingSettings(false);
         }
     }
 
@@ -1066,6 +1070,7 @@ export function useBusiness() {
         pendingLogoFile,
         setPendingLogoFile,
 
+        isLoadingSettings,
         isSaveSyncing,
         isCheckingSession,
         // backward-compatible aliases

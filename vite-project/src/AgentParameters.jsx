@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient";
 
 import { useBusiness } from "./backend/businessService";
 
@@ -42,12 +41,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     settings,
     receiptData: liveReceiptData,
     setSettings,
-    pendingLogoFile,
     setPendingLogoFile,
     isLoadingSettings,
     isSaveSyncing,
     saveSettings,
-    uploadBusinessLogo
   } = useBusiness();
 
 
@@ -1092,150 +1089,11 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         : {};
 
   // ===========================
-  // Initial Load
-  // ===========================
-
-  useEffect(() => {
-
-    async function initializePage() {
-
-      setIsLoadingSettings(true);
-
-      try {
-
-        // Connectivity check
-        await checkSupabaseReachability();
-
-        // Current authenticated user
-        const activeUser = await getActiveUser();
-
-        if (!activeUser) {
-          setUser(null);
-          return;
-        }
-
-        setUser(activeUser);
-
-        // Merchant settings
-        const merchantSettings =
-          await fetchMerchantSettings(activeUser.id);
-
-        if (merchantSettings) {
-          setSettings(merchantSettings);
-        }
-
-      } catch (error) {
-
-        console.error(
-          "Agent Parameters initialization failed:",
-          error
-        );
-
-      } finally {
-
-        setIsLoadingSettings(false);
-
-      }
-
-    }
-
-    initializePage();
-
-  }, []);
-
-  // ===========================
   // Save Settings
   // ===========================
 
   async function handleSave(e) {
-
-    if (e) e.preventDefault();
-
-    if (isSaveSyncing) return;
-
-    setIsSaveSyncing(true);
-
-    try {
-
-      const activeUser = user || await getActiveUser();
-
-      if (!activeUser?.id) {
-        alert("Active session required.");
-        return;
-      }
-
-      let logoUrl = settings.logo_url;
-
-      if (
-        logoUrl.startsWith("blob:") &&
-        pendingLogoFile
-      ) {
-
-        const uploadedUrl =
-          await uploadBusinessLogo(
-            pendingLogoFile,
-            settings.webhook_slug
-          );
-
-        if (uploadedUrl) {
-          logoUrl = uploadedUrl;
-          setPendingLogoFile(null);
-        }
-      }
-
-      const payload = {
-
-        owner_id: activeUser.id,
-
-        business_name: settings.business_name,
-
-        store_address: settings.store_address,
-
-        discount_percentage:
-          Number(settings.discount_percentage),
-
-        webhook_slug: settings.webhook_slug,
-
-        currency: settings.currency,
-
-        logo_url: logoUrl,
-
-        voucher_expiration_days:
-          Number(settings.voucher_expiration_days)
-
-      };
-
-      if (settings.id) {
-        payload.id = settings.id;
-      }
-
-      const { data, error } =
-        await supabase
-          .from("business_settings")
-          .upsert(payload, {
-            onConflict: "owner_id"
-          })
-          .select()
-          .single();
-
-      if (error) throw error;
-
-      setSettings(data);
-
-      alert("Settings saved successfully.");
-
-    } catch (error) {
-
-      console.error(error);
-
-      alert(error.message);
-
-    } finally {
-
-      setIsSaveSyncing(false);
-
-    }
-
+    await saveSettings(e);
   }
 
 
