@@ -14,27 +14,10 @@ import TillSlipsCollection from "./TillSlipsCollection";
 
 import {
   LayoutDashboard,
-  Receipt,
   Store,
   SlidersHorizontal,
   FileText,
-  Plug,
-  HelpCircle,
-  Bell,
-  UserCircle2,
-  Sparkles,
-  Palette,
-  Cpu,
-  Send,
-  ArrowUpRight,
-  ChevronDown,
-  QrCode,
-  Type,
-  Layers,
-  Move,
-  Wand2,
-  Eye,
-  Zap
+  Eye, EyeOff, ShieldCheck, ArrowLeft, CheckCircle2, Sparkles
 } from "lucide-react";
 
 export default function AdminPanel() {
@@ -134,6 +117,11 @@ export default function AdminPanel() {
   const navigate = useNavigate();
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
 
   // ------------------------------------------------------------
   // PAGE / DATABASE SYNCHRONIZATION
@@ -333,533 +321,224 @@ export default function AdminPanel() {
       color: '#ffffff',
       boxSizing: 'border-box'
     },
-
-    /* ============================================================
-       RUACHAGENT RECEIPT EDITING STUDIO
-       Tesla Black / Graphite / Blue Neon
-       All studio styling lives in this const styles object.
-    ============================================================ */
-
-    editingStudioPanel: {
-      minWidth: 0,
-      height: '100%',
-      background: 'transparent',
-      border: 'none',
-      boxSizing: 'border-box'
-    },
-
-    editingStudio: {
-      width: '100%',
-      minHeight: 'calc(100vh - 128px)',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '12px',
-      padding: '14px',
-      background: 'radial-gradient(circle at 50% 0%, rgba(0,168,255,0.10), transparent 34%), linear-gradient(180deg, #090d12 0%, #05070a 55%, #030405 100%)',
-      border: '1px solid rgba(71,151,197,0.22)',
-      borderRadius: '18px',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04), 0 18px 50px rgba(0,0,0,0.45), 0 0 35px rgba(0,136,255,0.06)',
-      boxSizing: 'border-box',
-      overflow: 'hidden'
-    },
-
-    studioTopbar: {
-      minHeight: '70px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '16px',
-      padding: '14px 16px',
-      background: 'linear-gradient(180deg, rgba(18,25,33,0.98), rgba(9,13,18,0.98))',
-      border: '1px solid rgba(89,154,190,0.20)',
-      borderRadius: '13px',
-      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.035)'
-    },
-
-    studioTitleBlock: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '12px',
-      minWidth: 0
-    },
-
-    studioBrandMark: {
-      width: '38px',
-      height: '38px',
-      flex: '0 0 38px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#63d8ff',
-      background: 'linear-gradient(145deg, rgba(0,184,255,0.22), rgba(0,67,111,0.35))',
-      border: '1px solid rgba(35,191,255,0.55)',
-      borderRadius: '10px',
-      boxShadow: '0 0 22px rgba(0,174,255,0.18), inset 0 0 14px rgba(0,174,255,0.08)'
-    },
-
-    studioKicker: {
-      marginBottom: '3px',
-      color: '#4cc9ff',
-      fontSize: '9px',
-      fontWeight: 800,
-      letterSpacing: '1.3px',
-      textTransform: 'uppercase'
-    },
-
-    studioTitle: {
-      margin: 0,
-      color: '#f4f8fb',
-      fontSize: '17px',
-      lineHeight: 1.15,
-      fontWeight: 800,
-      letterSpacing: '-0.2px'
-    },
-
-    studioSubtitle: {
-      margin: '4px 0 0',
-      color: '#708292',
-      fontSize: '10px',
-      lineHeight: 1.35
-    },
-
-    studioLiveIndicator: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: '7px',
-      flex: '0 0 auto',
-      padding: '7px 10px',
-      color: '#9fe7ff',
-      background: 'rgba(0,151,255,0.07)',
-      border: '1px solid rgba(0,174,255,0.28)',
-      borderRadius: '999px',
-      fontSize: '9px',
-      fontWeight: 800,
-      letterSpacing: '1px'
-    },
-
-    studioLiveDot: {
-      width: '6px',
-      height: '6px',
-      borderRadius: '50%',
-      background: '#26c8ff',
-      boxShadow: '0 0 10px rgba(38,200,255,0.95)'
-    },
-
-    studioCommandBar: {
-      minHeight: '46px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '9px',
-      padding: '5px',
-      background: '#070a0e',
-      border: '1px solid rgba(0,172,255,0.28)',
-      borderRadius: '12px',
-      boxShadow: '0 0 24px rgba(0,144,255,0.07), inset 0 0 16px rgba(0,0,0,0.4)'
-    },
-
-    studioCommandIcon: {
-      width: '34px',
-      height: '34px',
-      flex: '0 0 34px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#48cfff',
-      background: 'rgba(0,154,255,0.09)',
-      borderRadius: '8px'
-    },
-
-    studioCommandInput: {
-      flex: 1,
-      minWidth: 0,
-      height: '34px',
-      border: 'none',
-      outline: 'none',
-      background: 'transparent',
-      color: '#e9f7ff',
-      fontSize: '12px',
-      padding: '0 4px',
-      boxSizing: 'border-box'
-    },
-
-    studioCommandButton: {
-      width: '36px',
-      height: '36px',
-      flex: '0 0 36px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      border: '1px solid rgba(45,193,255,0.35)',
-      borderRadius: '9px',
-      background: 'linear-gradient(145deg, #0aa9ec, #0871a5)',
-      color: '#ffffff',
-      cursor: 'pointer',
-      boxShadow: '0 0 16px rgba(0,169,255,0.18)'
-    },
-
-    studioStatusStrip: {
-      minHeight: '32px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '10px',
-      padding: '0 3px',
-      color: '#6e8495',
-      fontSize: '9px'
-    },
-
-    studioStatusLeft: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '7px',
-      minWidth: 0
-    },
-
-    studioConfigState: {
-      flex: '0 0 auto',
-      color: '#62d8ff',
-      fontSize: '8px',
-      fontWeight: 900,
-      letterSpacing: '1px',
-      padding: '5px 8px',
-      border: '1px solid rgba(0,174,255,0.22)',
-      borderRadius: '999px',
-      background: 'rgba(0,128,255,0.06)'
-    },
-
-    studioWorkspace: {
-      flex: '1 1 auto',
-      minHeight: '390px',
-      display: 'grid',
-      gridTemplateColumns: '116px minmax(0, 1fr)',
-      gap: '10px',
-      overflow: 'hidden'
-    },
-
-    studioObjectRail: {
-      minWidth: 0,
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '6px',
-      padding: '10px 8px',
-      background: 'linear-gradient(180deg, #0c1117, #070a0e)',
-      border: '1px solid rgba(91,135,161,0.18)',
-      borderRadius: '12px',
-      boxSizing: 'border-box'
-    },
-
-    studioRailLabel: {
-      padding: '2px 6px 7px',
-      color: '#506878',
-      fontSize: '8px',
-      fontWeight: 900,
-      letterSpacing: '1.2px'
-    },
-
-    studioObjectButton: {
-      width: '100%',
-      minHeight: '48px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: '7px',
-      border: '1px solid transparent',
-      borderRadius: '9px',
-      background: 'transparent',
-      color: '#718697',
-      cursor: 'pointer',
-      textAlign: 'left',
-      transition: 'all 160ms ease',
-      boxSizing: 'border-box'
-    },
-
-    studioObjectButtonActive: {
-      width: '100%',
-      minHeight: '48px',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '8px',
-      padding: '7px',
-      border: '1px solid rgba(0,181,255,0.42)',
-      borderRadius: '9px',
-      background: 'linear-gradient(135deg, rgba(0,165,255,0.15), rgba(0,65,105,0.18))',
-      color: '#eaf9ff',
-      cursor: 'pointer',
-      textAlign: 'left',
-      boxShadow: '0 0 18px rgba(0,155,255,0.10), inset 0 0 12px rgba(0,155,255,0.04)',
-      boxSizing: 'border-box'
-    },
-
-    studioObjectIcon: {
-      width: '29px',
-      height: '29px',
-      flex: '0 0 29px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#52cfff',
-      background: 'rgba(0,157,255,0.07)',
-      borderRadius: '7px'
-    },
-
-    studioObjectLabel: {
-      minWidth: 0,
-      fontSize: '9px',
-      fontWeight: 700,
-      lineHeight: 1.15
-    },
-
-    studioRailDivider: {
-      height: '1px',
-      margin: '7px 2px',
-      background: 'linear-gradient(90deg, transparent, rgba(102,142,166,0.20), transparent)'
-    },
-
-    studioRailMini: {
-      display: 'flex',
-      alignItems: 'center',
-      gap: '6px',
-      padding: '6px',
-      color: '#4c6575',
-      fontSize: '8px'
-    },
-
-    studioControls: {
-      minWidth: 0,
-      overflowY: 'auto',
-      overflowX: 'hidden',
-      padding: '4px 4px 18px 2px',
-      scrollbarWidth: 'thin',
-      scrollbarColor: '#174766 transparent'
-    },
-
-    studioObjectHeading: {
-      minHeight: '50px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '12px',
-      marginBottom: '9px',
-      padding: '4px 3px 9px',
-      borderBottom: '1px solid rgba(83,126,149,0.14)',
-      color: '#51d1ff'
-    },
-
-    studioSection: {
-      marginBottom: '8px',
-      border: '1px solid rgba(82,122,145,0.16)',
-      borderRadius: '10px',
-      background: 'linear-gradient(180deg, rgba(13,18,24,0.88), rgba(8,11,15,0.92))',
-      overflow: 'hidden'
-    },
-
-    studioSectionHeader: {
-      width: '100%',
-      minHeight: '40px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '10px',
-      padding: '0 11px',
-      border: 'none',
-      background: 'transparent',
-      color: '#b6c9d6',
-      cursor: 'pointer',
-      fontSize: '10px',
-      fontWeight: 800,
-      textAlign: 'left',
-      boxSizing: 'border-box'
-    },
-
-    studioSectionBody: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '9px',
-      padding: '10px',
-      borderTop: '1px solid rgba(75,115,138,0.12)',
-      background: 'rgba(2,5,8,0.35)'
-    },
-
-    studioField: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '6px',
-      minWidth: 0,
-      color: '#78909f',
-      fontSize: '9px',
-      fontWeight: 700
-    },
-
-    studioFieldRow: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      gap: '9px',
-      minWidth: 0
-    },
-
-    studioControl: {
-      width: '100%',
-      minHeight: '34px',
-      padding: '7px 9px',
-      border: '1px solid rgba(76,121,147,0.24)',
-      borderRadius: '7px',
-      outline: 'none',
-      background: '#070b10',
-      color: '#dff5ff',
-      fontSize: '10px',
-      boxSizing: 'border-box'
-    },
-
-    studioSelect: {
-      width: '100%',
-      minHeight: '34px',
-      padding: '6px 28px 6px 9px',
-      border: '1px solid rgba(76,121,147,0.24)',
-      borderRadius: '7px',
-      outline: 'none',
-      background: '#070b10',
-      color: '#dff5ff',
-      fontSize: '10px',
-      boxSizing: 'border-box',
-      cursor: 'pointer'
-    },
-
-    studioRange: {
-      width: '100%',
-      height: '4px',
-      accentColor: '#11aef4',
-      cursor: 'pointer'
-    },
-
-    studioColorField: {
-      minHeight: '38px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '10px',
-      padding: '7px 8px',
-      border: '1px solid rgba(76,121,147,0.18)',
-      borderRadius: '7px',
-      background: 'rgba(5,9,13,0.75)',
-      color: '#8da2b0',
-      fontSize: '9px',
-      fontWeight: 700,
-      boxSizing: 'border-box'
-    },
-
-    studioColorInput: {
-      width: '42px',
-      height: '25px',
-      padding: '2px',
-      border: '1px solid rgba(66,190,242,0.35)',
-      borderRadius: '5px',
-      background: '#05070a',
-      cursor: 'pointer',
-      boxSizing: 'border-box'
-    },
-
-    studioSwitchRow: {
-      minHeight: '43px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '12px',
-      padding: '7px 8px',
-      border: '1px solid rgba(76,121,147,0.16)',
-      borderRadius: '8px',
-      background: 'rgba(5,9,13,0.66)',
-      color: '#d8e7ef',
-      boxSizing: 'border-box'
-    },
-
-    studioSwitchText: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '3px',
-      minWidth: 0
-    },
-
-    studioSwitchLabel: {
-      color: '#c8dce7',
-      fontSize: '9px',
-      fontWeight: 800
-    },
-
-    studioSwitchDescription: {
-      color: '#536b7a',
-      fontSize: '8px',
-      fontWeight: 500
-    },
-
-    studioCheckbox: {
-      width: '16px',
-      height: '16px',
-      flex: '0 0 auto',
-      accentColor: '#0daaf1',
-      cursor: 'pointer'
-    },
-
-    studioActivity: {
-      flex: '0 0 auto',
-      padding: '11px 13px',
-      border: '1px solid rgba(69,114,140,0.16)',
-      borderRadius: '11px',
-      background: 'linear-gradient(180deg, rgba(10,15,21,0.9), rgba(5,8,11,0.95))',
-      boxSizing: 'border-box'
-    },
-
-    studioActivityHeader: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '10px',
-      paddingBottom: '8px',
-      marginBottom: '8px',
-      borderBottom: '1px solid rgba(76,121,147,0.12)'
-    },
-
-    studioActivityList: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '7px',
-      maxHeight: '110px',
-      overflowY: 'auto'
-    },
-
-    studioActivityItem: {
-      display: 'grid',
-      gridTemplateColumns: '28px minmax(0, 1fr)',
-      gap: '8px',
-      alignItems: 'start',
-      padding: '6px 0',
-      color: '#8aa1af',
-      fontSize: '9px',
-      lineHeight: 1.4
-    },
-
-    studioActivityItemUser: {
-      color: '#bfeaff'
-    },
-
-    studioActivityItemAgent: {
-      color: '#8aa1af'
-    },
-
-    studioFooter: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '12px',
-      padding: '3px 2px 0',
-      color: '#405463',
-      fontSize: '8px',
-      lineHeight: 1.35
-    },
-
-    studioResponsiveNarrow: {
-      gridTemplateColumns: '92px minmax(0, 1fr)'
-    }
   };
+
+  const authAnimations = `
+  @keyframes ruachGlassFloat {
+    0%, 100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(0, -18px, 0) scale(1.04);
+    }
+  }
+
+  @keyframes ruachGlassFloatReverse {
+    0%, 100% {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+      transform: translate3d(16px, 14px, 0) scale(1.06);
+    }
+  }
+
+  @keyframes ruachGlassPulse {
+    0%, 100% {
+      opacity: .35;
+      transform: scale(.96);
+    }
+    50% {
+      opacity: .75;
+      transform: scale(1.04);
+    }
+  }
+
+  @keyframes ruachGlassShimmer {
+    0% {
+      transform: translateX(-130%);
+    }
+    100% {
+      transform: translateX(130%);
+    }
+  }
+
+  @keyframes ruachAuthAppear {
+    from {
+      opacity: 0;
+      transform: translateY(22px) scale(.97);
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes ruachModeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes ruachBorderGlow {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.14) inset,
+        0 0 35px rgba(80,190,255,.08);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.22) inset,
+        0 0 55px rgba(80,190,255,.17);
+    }
+  }
+
+  @keyframes ruachIconFloat {
+    0%, 100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-4px) rotate(2deg);
+    }
+  }
+
+  .ruach-auth-card {
+    animation:
+      ruachAuthAppear .65s cubic-bezier(.16,1,.3,1),
+      ruachBorderGlow 4s ease-in-out infinite;
+  }
+
+  .ruach-auth-mode {
+    animation: ruachModeIn .35s cubic-bezier(.16,1,.3,1);
+  }
+
+  .ruach-glass-orb-one {
+    animation: ruachGlassFloat 8s ease-in-out infinite;
+  }
+
+  .ruach-glass-orb-two {
+    animation: ruachGlassFloatReverse 10s ease-in-out infinite;
+  }
+
+  .ruach-glass-orb-three {
+    animation: ruachGlassPulse 6s ease-in-out infinite;
+  }
+
+  .ruach-auth-icon {
+    animation: ruachIconFloat 4s ease-in-out infinite;
+  }
+
+  .ruach-glass-button {
+    position: relative;
+    overflow: hidden;
+    transition:
+      transform .2s ease,
+      box-shadow .2s ease,
+      background .2s ease;
+  }
+
+  .ruach-glass-button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 12px 30px rgba(0,160,255,.20),
+      0 0 25px rgba(0,190,255,.16);
+  }
+
+  .ruach-glass-button:active {
+    transform: translateY(0) scale(.985);
+  }
+
+  .ruach-glass-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 55%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.38),
+      transparent
+    );
+    transform: skewX(-18deg);
+    transition: none;
+  }
+
+  .ruach-glass-button:hover::after {
+    animation: ruachGlassShimmer .75s ease;
+  }
+
+  .ruach-glass-input {
+    transition:
+      border-color .2s ease,
+      box-shadow .2s ease,
+      background .2s ease,
+      transform .2s ease;
+  }
+
+  .ruach-glass-input:focus {
+    outline: none;
+    border-color: rgba(80,190,255,.78) !important;
+    background: rgba(255,255,255,.18) !important;
+    box-shadow:
+      0 0 0 3px rgba(80,190,255,.10),
+      0 0 24px rgba(80,190,255,.12);
+    transform: translateY(-1px);
+  }
+
+  .ruach-glass-input::placeholder {
+    color: rgba(0,0,0,.43);
+  }
+
+  .ruach-password-wrap {
+    position: relative;
+  }
+
+  .ruach-password-wrap input {
+    padding-right: 52px !important;
+  }
+
+  .ruach-eye-button {
+    position: absolute;
+    right: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.42);
+    color: #111;
+    cursor: pointer;
+    transition:
+      background .2s ease,
+      color .2s ease,
+      transform .2s ease;
+  }
+
+  .ruach-eye-button:hover {
+    background: rgba(100,200,255,.20);
+    color: #008ed6;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  @media (max-width: 560px) {
+    .ruach-auth-card {
+      padding: 26px !important;
+      border-radius: 28px !important;
+    }
+  }
+`;
 
   const accountMenuButtonStyle = {
     width: "100%",
@@ -1305,9 +984,14 @@ export default function AdminPanel() {
         </div>
       )}
 
-      {/* ======================= TESLA AUTHENTICATION MODAL ======================= */}
+      {/* ======================= APPLE GLASS UI AUTHENTICATION MODAL ======================= */}
+      <style>{authAnimations}</style>
 
-      <input style={{ display: 'none' }} type="password" autoComplete="on" />
+      <input
+        style={{ display: 'none' }}
+        type="password"
+        autoComplete="on"
+      />
 
       <main
         style={{
@@ -1323,100 +1007,249 @@ export default function AdminPanel() {
         }}
       >
         {!user ? (
-          <section style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '85vh' }}>
-            <div style={{
-              width: '100%',
-              maxWidth: '470px',
-              background: 'linear-gradient(180deg,#111,#080808)',
-              border: '1px solid rgba(0,180,255,.35)',
-              borderRadius: '24px',
-              padding: '34px',
-              boxShadow: '0 0 40px rgba(0,180,255,.12),0 0 120px rgba(0,0,0,.7)',
+          <section
+            style={{
               position: 'relative',
-              overflow: 'hidden'
-            }}>
+              minHeight: '85vh',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden',
+              padding: '30px 12px',
+              boxSizing: 'border-box'
+            }}
+          >
 
-              <div style={{
-                position: 'absolute',
-                top: -120,
-                right: -120,
-                width: 250,
-                height: 250,
-                background: 'rgba(0,170,255,.08)',
-                filter: 'blur(80px)',
-                borderRadius: '50%'
-              }} />
+            {/* =========================================================
+          AMBIENT GLASS LIGHT
+      ========================================================= */}
 
-              <div style={{
+            <div
+              className="ruach-glass-orb-one"
+              style={{
                 position: 'absolute',
-                bottom: -120,
-                left: -120,
-                width: 250,
-                height: 250,
-                background: 'rgba(0,120,255,.08)',
+                top: '7%',
+                left: '12%',
+                width: 280,
+                height: 280,
+                borderRadius: '50%',
+                background: 'rgba(75,190,255,.13)',
+                filter: 'blur(75px)',
+                pointerEvents: 'none'
+              }}
+            />
+
+            <div
+              className="ruach-glass-orb-two"
+              style={{
+                position: 'absolute',
+                bottom: '5%',
+                right: '10%',
+                width: 330,
+                height: 330,
+                borderRadius: '50%',
+                background: 'rgba(90,200,255,.11)',
                 filter: 'blur(90px)',
-                borderRadius: '50%'
-              }} />
+                pointerEvents: 'none'
+              }}
+            />
 
-              <div style={{ position: 'relative', zIndex: 2 }}>
+            <div
+              className="ruach-glass-orb-three"
+              style={{
+                position: 'absolute',
+                top: '42%',
+                right: '22%',
+                width: 120,
+                height: 120,
+                borderRadius: '50%',
+                background: 'rgba(255,255,255,.28)',
+                filter: 'blur(50px)',
+                pointerEvents: 'none'
+              }}
+            />
 
-                <div style={{ textAlign: 'center', marginBottom: 30 }}>
-                  <div style={{
-                    width: 68,
-                    height: 68,
-                    margin: '0 auto 18px',
-                    borderRadius: '18px',
-                    background: 'linear-gradient(135deg,#0b0b0b,#171717)',
-                    border: '1px solid #00BFFF',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 28,
-                    boxShadow: '0 0 25px rgba(0,180,255,.35)'
-                  }}>
-                    ⚡
+            {/* =========================================================
+          MAIN APPLE GLASS CARD
+      ========================================================= */}
+
+            <div
+              className="ruach-auth-card"
+              style={{
+                position: 'relative',
+                zIndex: 5,
+                width: '100%',
+                maxWidth: '470px',
+                boxSizing: 'border-box',
+                padding: '38px',
+                borderRadius: '32px',
+
+                background:
+                  'linear-gradient(145deg, rgba(255,255,255,.78), rgba(255,255,255,.48))',
+
+                border:
+                  '1px solid rgba(255,255,255,.78)',
+
+                boxShadow:
+                  '0 35px 100px rgba(0,0,0,.30), 0 0 70px rgba(80,190,255,.12)',
+
+                backdropFilter: 'blur(35px) saturate(145%)',
+                WebkitBackdropFilter: 'blur(35px) saturate(145%)',
+
+                overflow: 'hidden'
+              }}
+            >
+
+              {/* Inner glass highlight */}
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  borderRadius: 'inherit',
+                  pointerEvents: 'none',
+                  background:
+                    'linear-gradient(135deg, rgba(255,255,255,.42), transparent 38%, rgba(100,200,255,.06))'
+                }}
+              />
+
+              {/* Top glass shine */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '12%',
+                  right: '12%',
+                  height: 1,
+                  background: 'rgba(255,255,255,.95)',
+                  opacity: .75
+                }}
+              />
+
+              <div
+                style={{
+                  position: 'relative',
+                  zIndex: 2
+                }}
+              >
+
+                {/* =====================================================
+              BRAND
+          ===================================================== */}
+
+                <div
+                  style={{
+                    textAlign: 'center',
+                    marginBottom: 30
+                  }}
+                >
+
+                  <div
+                    className="ruach-auth-icon"
+                    style={{
+                      width: 70,
+                      height: 70,
+                      margin: '0 auto 18px',
+                      borderRadius: 22,
+
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+
+                      background:
+                        'rgba(255,255,255,.58)',
+
+                      border:
+                        '1px solid rgba(255,255,255,.9)',
+
+                      boxShadow:
+                        '0 15px 35px rgba(0,0,0,.13), 0 0 35px rgba(70,190,255,.15)',
+
+                      backdropFilter: 'blur(18px)',
+                      WebkitBackdropFilter: 'blur(18px)',
+
+                      color: '#0b0b0b'
+                    }}
+                  >
+                    <Sparkles
+                      size={29}
+                      strokeWidth={1.8}
+                    />
                   </div>
 
-                  <h2 style={{
-                    margin: 0,
-                    color: '#fff',
-                    fontWeight: 700,
-                    fontSize: '28px',
-                    letterSpacing: '1px'
-                  }}>
+                  <h2
+                    style={{
+                      margin: 0,
+                      color: '#050505',
+                      fontWeight: 800,
+                      fontSize: 27,
+                      letterSpacing: '-.8px'
+                    }}
+                  >
                     RUACH AGENT
                   </h2>
 
-                  <p style={{
-                    marginTop: 8,
-                    fontSize: 13,
-                    color: '#8d99a6'
-                  }}>
-                    Secure Business Authentication
+                  <p
+                    style={{
+                      margin: '8px 0 0',
+                      fontSize: 13,
+                      color: 'rgba(0,0,0,.52)',
+                      letterSpacing: '.15px'
+                    }}
+                  >
+                    Intelligent business authentication
                   </p>
+
                 </div>
 
-                <div style={{
-                  display: 'flex',
-                  background: '#0d0d0d',
-                  border: '1px solid #1d3d52',
-                  borderRadius: 14,
-                  padding: 4,
-                  marginBottom: 24
-                }}>
+                {/* =====================================================
+              AUTH MODE SWITCHER
+          ===================================================== */}
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 4,
+                    padding: 5,
+                    marginBottom: 24,
+
+                    background: 'rgba(0,0,0,.075)',
+                    border: '1px solid rgba(0,0,0,.07)',
+                    borderRadius: 16,
+
+                    boxShadow:
+                      'inset 0 1px 2px rgba(0,0,0,.08)'
+                  }}
+                >
 
                   <button
                     onClick={() => setAuthMode('signin')}
                     style={{
                       flex: 1,
-                      padding: '12px',
+                      padding: '11px 10px',
                       border: 'none',
+                      borderRadius: 12,
                       cursor: 'pointer',
-                      borderRadius: 10,
-                      background: authMode === 'signin' ? 'linear-gradient(90deg,#008CFF,#00D4FF)' : 'transparent',
-                      color: '#fff',
-                      fontWeight: 600
-                    }}>
+
+                      background:
+                        authMode === 'signin'
+                          ? 'rgba(255,255,255,.90)'
+                          : 'transparent',
+
+                      color:
+                        authMode === 'signin'
+                          ? '#050505'
+                          : 'rgba(0,0,0,.48)',
+
+                      fontWeight: 700,
+
+                      boxShadow:
+                        authMode === 'signin'
+                          ? '0 5px 15px rgba(0,0,0,.10)'
+                          : 'none',
+
+                      transition: 'all .25s ease'
+                    }}
+                  >
                     Sign In
                   </button>
 
@@ -1424,399 +1257,820 @@ export default function AdminPanel() {
                     onClick={() => setAuthMode('signup')}
                     style={{
                       flex: 1,
-                      padding: '12px',
+                      padding: '11px 10px',
                       border: 'none',
+                      borderRadius: 12,
                       cursor: 'pointer',
-                      borderRadius: 10,
-                      background: authMode === 'signup' ? 'linear-gradient(90deg,#008CFF,#00D4FF)' : 'transparent',
-                      color: '#fff',
-                      fontWeight: 600
-                    }}>
+
+                      background:
+                        authMode === 'signup'
+                          ? 'rgba(255,255,255,.90)'
+                          : 'transparent',
+
+                      color:
+                        authMode === 'signup'
+                          ? '#050505'
+                          : 'rgba(0,0,0,.48)',
+
+                      fontWeight: 700,
+
+                      boxShadow:
+                        authMode === 'signup'
+                          ? '0 5px 15px rgba(0,0,0,.10)'
+                          : 'none',
+
+                      transition: 'all .25s ease'
+                    }}
+                  >
                     Sign Up
                   </button>
 
                 </div>
 
+                {/* =====================================================
+              SUCCESS MESSAGE
+          ===================================================== */}
+
                 {signupSuccessMessage && (
-                  <div style={{
-                    background: 'rgba(0,255,180,.08)',
-                    border: '1px solid rgba(0,255,180,.25)',
-                    color: '#7CFFE7',
-                    padding: 14,
-                    borderRadius: 12,
-                    marginBottom: 18,
-                    fontSize: 13,
-                    textAlign: 'center'
-                  }}>
-                    ✅ {signupSuccessMessage}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 10,
+                      background: 'rgba(255,255,255,.62)',
+                      border: '1px solid rgba(80,190,255,.32)',
+                      color: '#111',
+                      padding: 14,
+                      borderRadius: 15,
+                      marginBottom: 18,
+                      fontSize: 13,
+                      boxShadow: '0 8px 25px rgba(0,0,0,.07)'
+                    }}
+                  >
+                    <CheckCircle2
+                      size={18}
+                      color="#009FE3"
+                    />
+
+                    <span>{signupSuccessMessage}</span>
                   </div>
                 )}
 
-                {/* ---------------- SIGN IN ---------------- */}
+                {/* =====================================================
+              SIGN IN
+          ===================================================== */}
 
                 {authMode === 'signin' && (
-                  <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div
+                    key="signin"
+                    className="ruach-auth-mode"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 15
+                    }}
+                  >
+
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="ruach-glass-input"
+                      style={{
+                        ...styles.input,
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        background: 'rgba(255,255,255,.54)',
+                        border: '1px solid rgba(0,0,0,.10)',
+                        color: '#080808',
+                        borderRadius: 15,
+                        padding: '14px 15px',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,.04)'
+                      }}
+                    />
+
+                    {/* Password */}
+                    <div className="ruach-password-wrap">
 
                       <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        style={{
-                          ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
-                        }}
-                      />
-
-                      <input
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Password"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
+                        className="ruach-glass-input"
                         style={{
                           ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          width: '100%',
+                          boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,.54)',
+                          border: '1px solid rgba(0,0,0,.10)',
+                          color: '#080808',
+                          borderRadius: 15,
+                          padding: '14px 15px',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,.04)'
                         }}
                       />
 
-                      <label style={{
+                      <button
+                        type="button"
+                        className="ruach-eye-button"
+                        onClick={() => setShowPassword(prev => !prev)}
+                        aria-label={
+                          showPassword
+                            ? 'Hide password'
+                            : 'Show password'
+                        }
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+
+                    </div>
+
+                    <label
+                      style={{
                         display: 'flex',
                         alignItems: 'center',
                         gap: 10,
-                        color: '#9da9b6',
-                        fontSize: 14
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={rememberMe}
-                          onChange={e => setRememberMe(e.target.checked)}
-                        />
-                        Remember Me
-                      </label>
-
-                      <button
-                        onClick={() => handleAuth('login')}
-                        disabled={isAuthSyncing}
+                        color: 'rgba(0,0,0,.57)',
+                        fontSize: 13,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={e => setRememberMe(e.target.checked)}
                         style={{
-                          padding: '14px',
-                          border: 'none',
-                          borderRadius: 12,
-                          fontWeight: 700,
-                          fontSize: 15,
-                          cursor: 'pointer',
-                          color: '#fff',
-                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
-                          boxShadow: '0 0 18px rgba(0,180,255,.4)'
-                        }}>
-                        {isAuthSyncing ? 'Signing In...' : 'Sign In'}
-                      </button>
+                          accentColor: '#009FE3'
+                        }}
+                      />
 
-                      <button
-                        onClick={() => setAuthMode('forgot')}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#59C8FF'
-                        }}>
-                        Forgot Password?
-                      </button>
+                      Remember Me
+                    </label>
 
-                      <button
-                        onClick={handleResendVerification}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#59C8FF'
-                        }}>
-                        Resend Verification Email
-                      </button>
+                    <button
+                      onClick={() => handleAuth('login')}
+                      disabled={isAuthSyncing}
+                      className="ruach-glass-button"
+                      style={{
+                        marginTop: 3,
+                        padding: '14px',
+                        border: '1px solid rgba(255,255,255,.65)',
+                        borderRadius: 15,
+                        fontWeight: 750,
+                        fontSize: 14,
+                        cursor: isAuthSyncing ? 'wait' : 'pointer',
+                        color: '#fff',
+                        background:
+                          'linear-gradient(135deg, #050505, #171717)',
+                        boxShadow:
+                          '0 12px 28px rgba(0,0,0,.20), 0 0 25px rgba(60,190,255,.10)'
+                      }}
+                    >
+                      {isAuthSyncing
+                        ? 'Signing In...'
+                        : 'Sign In'}
+                    </button>
 
-                      <div style={{
+                    <button
+                      onClick={() => setAuthMode('forgot')}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#008ED0',
+                        fontWeight: 600,
+                        fontSize: 13
+                      }}
+                    >
+                      Forgot Password?
+                    </button>
+
+                    <button
+                      onClick={handleResendVerification}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#008ED0',
+                        fontWeight: 600,
+                        fontSize: 13
+                      }}
+                    >
+                      Resend Verification Email
+                    </button>
+
+                    <div
+                      style={{
                         textAlign: 'center',
-                        color: '#888',
-                        fontSize: 14
-                      }}>
-                        Don't have an account?{' '}
-                        <span
-                          onClick={() => setAuthMode('signup')}
-                          style={{
-                            color: '#00C8FF',
-                            cursor: 'pointer',
-                            fontWeight: 600
-                          }}>
-                          Sign Up
-                        </span>
-                      </div>
+                        color: 'rgba(0,0,0,.48)',
+                        fontSize: 13,
+                        marginTop: 3
+                      }}
+                    >
+                      Don't have an account?{' '}
 
+                      <span
+                        onClick={() => setAuthMode('signup')}
+                        style={{
+                          color: '#008ED0',
+                          cursor: 'pointer',
+                          fontWeight: 700
+                        }}
+                      >
+                        Sign Up
+                      </span>
                     </div>
-                  </>
+
+                  </div>
                 )}
 
-                {/* ---------------- SIGN UP ---------------- */}
+                {/* =====================================================
+              SIGN UP
+          ===================================================== */}
 
                 {authMode === 'signup' && (
-                  <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div
+                    key="signup"
+                    className="ruach-auth-mode"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 15
+                    }}
+                  >
 
-                      <input
-                        placeholder="Business Name"
-                        value={businessName}
-                        onChange={e => setBusinessName(e.target.value)}
+                    <div
+                      style={{
+                        marginBottom: 2
+                      }}
+                    >
+                      <h3
                         style={{
-                          ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          margin: 0,
+                          color: '#050505',
+                          fontSize: 21,
+                          fontWeight: 750,
+                          letterSpacing: '-.4px'
                         }}
-                      />
+                      >
+                        Create your account
+                      </h3>
 
-                      <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
+                      <p
                         style={{
-                          ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          margin: '5px 0 0',
+                          color: 'rgba(0,0,0,.46)',
+                          fontSize: 12.5
                         }}
-                      />
+                      >
+                        Start building your intelligent business workspace.
+                      </p>
+                    </div>
+
+                    <input
+                      placeholder="Business Name"
+                      value={businessName}
+                      onChange={e => setBusinessName(e.target.value)}
+                      className="ruach-glass-input"
+                      style={{
+                        ...styles.input,
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        background: 'rgba(255,255,255,.54)',
+                        border: '1px solid rgba(0,0,0,.10)',
+                        color: '#080808',
+                        borderRadius: 15,
+                        padding: '14px 15px',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,.04)'
+                      }}
+                    />
+
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="ruach-glass-input"
+                      style={{
+                        ...styles.input,
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        background: 'rgba(255,255,255,.54)',
+                        border: '1px solid rgba(0,0,0,.10)',
+                        color: '#080808',
+                        borderRadius: 15,
+                        padding: '14px 15px',
+                        boxShadow: 'inset 0 1px 2px rgba(0,0,0,.04)'
+                      }}
+                    />
+
+                    {/* Password */}
+                    <div className="ruach-password-wrap">
 
                       <input
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Password"
                         value={password}
                         onChange={e => setPassword(e.target.value)}
+                        className="ruach-glass-input"
                         style={{
                           ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          width: '100%',
+                          boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,.54)',
+                          border: '1px solid rgba(0,0,0,.10)',
+                          color: '#080808',
+                          borderRadius: 15,
+                          padding: '14px 15px',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,.04)'
                         }}
                       />
 
+                      <button
+                        type="button"
+                        className="ruach-eye-button"
+                        onClick={() => setShowPassword(prev => !prev)}
+                        aria-label={
+                          showPassword
+                            ? 'Hide password'
+                            : 'Show password'
+                        }
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div className="ruach-password-wrap">
+
                       <input
-                        type="password"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         placeholder="Confirm Password"
                         value={confirmPassword}
                         onChange={e => setConfirmPassword(e.target.value)}
+                        className="ruach-glass-input"
                         style={{
                           ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          width: '100%',
+                          boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,.54)',
+                          border: '1px solid rgba(0,0,0,.10)',
+                          color: '#080808',
+                          borderRadius: 15,
+                          padding: '14px 15px',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,.04)'
                         }}
                       />
 
-                      <label style={{
+                      <button
+                        type="button"
+                        className="ruach-eye-button"
+                        onClick={() =>
+                          setShowConfirmPassword(prev => !prev)
+                        }
+                        aria-label={
+                          showConfirmPassword
+                            ? 'Hide confirm password'
+                            : 'Show confirm password'
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+
+                    </div>
+
+                    <label
+                      style={{
                         display: 'flex',
                         gap: 10,
-                        alignItems: 'center',
-                        color: '#9da9b6',
-                        fontSize: 14
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={agreeTerms}
-                          onChange={e => setAgreeTerms(e.target.checked)}
-                        />
-                        I agree to the Terms & Conditions
-                      </label>
-
-                      <button
-                        onClick={() => handleAuth('register')}
-                        disabled={isAuthSyncing}
-                        style={{
-                          padding: '14px',
-                          border: 'none',
-                          borderRadius: 12,
-                          cursor: 'pointer',
-                          fontWeight: 700,
-                          color: '#fff',
-                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)'
-                        }}>
-                        {isAuthSyncing ? 'Creating Account...' : 'Create Account'}
-                      </button>
-
-                      <div style={{
-                        textAlign: 'center',
-                        color: '#888',
-                        fontSize: 14
-                      }}>
-                        Already have an account?{' '}
-                        <span
-                          onClick={() => setAuthMode('signin')}
-                          style={{
-                            cursor: 'pointer',
-                            fontWeight: 600,
-                            color: '#00C8FF'
-                          }}>
-                          Sign In
-                        </span>
-                      </div>
-
-                    </div>
-                  </>
-                )}
-
-                {/* ---------------- FORGOT PASSWORD ---------------- */}
-
-                {authMode === 'forgot' && (
-                  <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-
-                      <h3 style={{ color: '#fff', margin: 0 }}>Forgot Password</h3>
-
+                        alignItems: 'flex-start',
+                        color: 'rgba(0,0,0,.55)',
+                        fontSize: 13,
+                        lineHeight: 1.45,
+                        cursor: 'pointer'
+                      }}
+                    >
                       <input
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        type="checkbox"
+                        checked={agreeTerms}
+                        onChange={e => setAgreeTerms(e.target.checked)}
                         style={{
-                          ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          marginTop: 2,
+                          accentColor: '#009FE3'
                         }}
                       />
 
-                      <button
-                        onClick={handleForgotPassword}
-                        style={{
-                          padding: '14px',
-                          border: 'none',
-                          borderRadius: 12,
-                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
-                          color: '#fff',
-                          fontWeight: 700
-                        }}>
-                        Send Reset Email
-                      </button>
+                      <span>
+                        I agree to the Terms & Conditions
+                      </span>
+                    </label>
 
-                      <button
+                    <button
+                      onClick={() => handleAuth('register')}
+                      disabled={isAuthSyncing}
+                      className="ruach-glass-button"
+                      style={{
+                        padding: '15px',
+                        border: '1px solid rgba(255,255,255,.75)',
+                        borderRadius: 15,
+                        cursor: isAuthSyncing ? 'wait' : 'pointer',
+                        fontWeight: 750,
+                        color: '#fff',
+                        background:
+                          'linear-gradient(135deg, #050505, #171717)',
+                        boxShadow:
+                          '0 12px 28px rgba(0,0,0,.20), 0 0 25px rgba(60,190,255,.12)'
+                      }}
+                    >
+                      {isAuthSyncing
+                        ? 'Creating Account...'
+                        : 'Create Account'}
+                    </button>
+
+                    <div
+                      style={{
+                        textAlign: 'center',
+                        color: 'rgba(0,0,0,.48)',
+                        fontSize: 13,
+                        marginTop: 2
+                      }}
+                    >
+                      Already have an account?{' '}
+
+                      <span
                         onClick={() => setAuthMode('signin')}
                         style={{
-                          background: 'none',
-                          border: 'none',
-                          color: '#59C8FF',
-                          cursor: 'pointer'
-                        }}>
-                        ← Back to Sign In
-                      </button>
-
+                          cursor: 'pointer',
+                          fontWeight: 700,
+                          color: '#008ED0'
+                        }}
+                      >
+                        Sign In
+                      </span>
                     </div>
-                  </>
+
+                  </div>
                 )}
 
-                {/* ---------------- VERIFY EMAIL ---------------- */}
+                {/* =====================================================
+              FORGOT PASSWORD
+          ===================================================== */}
+
+                {authMode === 'forgot' && (
+                  <div
+                    key="forgot"
+                    className="ruach-auth-mode"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 15
+                    }}
+                  >
+
+                    <div>
+                      <h3
+                        style={{
+                          color: '#050505',
+                          margin: 0,
+                          fontSize: 22,
+                          fontWeight: 750
+                        }}
+                      >
+                        Forgot Password
+                      </h3>
+
+                      <p
+                        style={{
+                          color: 'rgba(0,0,0,.48)',
+                          fontSize: 13,
+                          lineHeight: 1.5,
+                          margin: '6px 0 0'
+                        }}
+                      >
+                        Enter your email and we'll send you a secure
+                        password reset link.
+                      </p>
+                    </div>
+
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      className="ruach-glass-input"
+                      style={{
+                        ...styles.input,
+                        width: '100%',
+                        boxSizing: 'border-box',
+                        background: 'rgba(255,255,255,.54)',
+                        border: '1px solid rgba(0,0,0,.10)',
+                        color: '#080808',
+                        borderRadius: 15,
+                        padding: '14px 15px'
+                      }}
+                    />
+
+                    <button
+                      onClick={handleForgotPassword}
+                      className="ruach-glass-button"
+                      style={{
+                        padding: '14px',
+                        border: '1px solid rgba(255,255,255,.75)',
+                        borderRadius: 15,
+                        background:
+                          'linear-gradient(135deg, #050505, #171717)',
+                        color: '#fff',
+                        fontWeight: 750,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Send Reset Email
+                    </button>
+
+                    <button
+                      onClick={() => setAuthMode('signin')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 7,
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#008ED0',
+                        cursor: 'pointer',
+                        fontWeight: 650,
+                        fontSize: 13
+                      }}
+                    >
+                      <ArrowLeft size={15} />
+                      Back to Sign In
+                    </button>
+
+                  </div>
+                )}
+
+                {/* =====================================================
+              VERIFY EMAIL
+          ===================================================== */}
 
                 {authMode === 'verify' && (
-                  <>
-                    <div style={{ textAlign: 'center' }}>
+                  <div
+                    key="verify"
+                    className="ruach-auth-mode"
+                    style={{
+                      textAlign: 'center'
+                    }}
+                  >
 
-                      <h3 style={{ color: '#fff' }}>Verify Your Email</h3>
-
-                      <p style={{ color: '#98a7b7', lineHeight: 1.6 }}>
-                        We've sent you a verification email.
-                        <br />
-                        Please verify your account before signing in.
-                      </p>
-
-                      <button
-                        onClick={handleResendVerification}
-                        style={{
-                          width: '100%',
-                          padding: '14px',
-                          marginTop: 20,
-                          border: 'none',
-                          borderRadius: 12,
-                          fontWeight: 700,
-                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
-                          color: '#fff'
-                        }}>
-                        Resend Verification Email
-                      </button>
-
-                      <button
-                        onClick={() => setAuthMode('signin')}
-                        style={{
-                          marginTop: 12,
-                          background: 'none',
-                          border: 'none',
-                          cursor: 'pointer',
-                          color: '#59C8FF'
-                        }}>
-                        Back to Sign In
-                      </button>
-
+                    <div
+                      style={{
+                        width: 62,
+                        height: 62,
+                        margin: '0 auto 18px',
+                        borderRadius: 20,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: 'rgba(255,255,255,.60)',
+                        border: '1px solid rgba(255,255,255,.85)',
+                        boxShadow: '0 12px 30px rgba(0,0,0,.10)'
+                      }}
+                    >
+                      <ShieldCheck
+                        size={29}
+                        color="#008ED0"
+                        strokeWidth={1.8}
+                      />
                     </div>
-                  </>
+
+                    <h3
+                      style={{
+                        color: '#050505',
+                        margin: 0,
+                        fontSize: 22,
+                        fontWeight: 750
+                      }}
+                    >
+                      Verify Your Email
+                    </h3>
+
+                    <p
+                      style={{
+                        color: 'rgba(0,0,0,.50)',
+                        lineHeight: 1.65,
+                        fontSize: 13,
+                        marginTop: 10
+                      }}
+                    >
+                      We've sent you a verification email.
+                      <br />
+                      Please verify your account before signing in.
+                    </p>
+
+                    <button
+                      onClick={handleResendVerification}
+                      className="ruach-glass-button"
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        marginTop: 18,
+                        border: '1px solid rgba(255,255,255,.75)',
+                        borderRadius: 15,
+                        fontWeight: 750,
+                        background:
+                          'linear-gradient(135deg, #050505, #171717)',
+                        color: '#fff',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Resend Verification Email
+                    </button>
+
+                    <button
+                      onClick={() => setAuthMode('signin')}
+                      style={{
+                        marginTop: 12,
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: '#008ED0',
+                        fontWeight: 650,
+                        fontSize: 13
+                      }}
+                    >
+                      Back to Sign In
+                    </button>
+
+                  </div>
                 )}
 
-                {/* ---------------- RESET PASSWORD ---------------- */}
+                {/* =====================================================
+              RESET PASSWORD
+          ===================================================== */}
 
                 {authMode === 'reset' && (
-                  <>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div
+                    key="reset"
+                    className="ruach-auth-mode"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 15
+                    }}
+                  >
 
-                      <h3 style={{ color: '#fff', margin: 0 }}>
+                    <div>
+                      <h3
+                        style={{
+                          color: '#050505',
+                          margin: 0,
+                          fontSize: 22,
+                          fontWeight: 750
+                        }}
+                      >
                         Reset Password
                       </h3>
 
+                      <p
+                        style={{
+                          color: 'rgba(0,0,0,.48)',
+                          fontSize: 13,
+                          marginTop: 6
+                        }}
+                      >
+                        Create a new secure password for your account.
+                      </p>
+                    </div>
+
+                    {/* New Password */}
+                    <div className="ruach-password-wrap">
+
                       <input
-                        type="password"
+                        type={showNewPassword ? 'text' : 'password'}
                         placeholder="New Password"
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
+                        className="ruach-glass-input"
                         style={{
                           ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
-                        }}
-                      />
-
-                      <input
-                        type="password"
-                        placeholder="Confirm Password"
-                        value={confirmNewPassword}
-                        onChange={e => setConfirmNewPassword(e.target.value)}
-                        style={{
-                          ...styles.input,
-                          background: '#090909',
-                          border: '1px solid #1d3d52',
-                          color: '#fff'
+                          width: '100%',
+                          boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,.54)',
+                          border: '1px solid rgba(0,0,0,.10)',
+                          color: '#080808',
+                          borderRadius: 15,
+                          padding: '14px 15px'
                         }}
                       />
 
                       <button
-                        onClick={handleResetPassword}
-                        style={{
-                          padding: '14px',
-                          border: 'none',
-                          borderRadius: 12,
-                          background: 'linear-gradient(90deg,#008CFF,#00D4FF)',
-                          fontWeight: 700,
-                          color: '#fff'
-                        }}>
-                        Save Password
+                        type="button"
+                        className="ruach-eye-button"
+                        onClick={() =>
+                          setShowNewPassword(prev => !prev)
+                        }
+                        aria-label={
+                          showNewPassword
+                            ? 'Hide new password'
+                            : 'Show new password'
+                        }
+                      >
+                        {showNewPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
                       </button>
 
                     </div>
-                  </>
+
+                    {/* Confirm New Password */}
+                    <div className="ruach-password-wrap">
+
+                      <input
+                        type={
+                          showConfirmNewPassword
+                            ? 'text'
+                            : 'password'
+                        }
+                        placeholder="Confirm Password"
+                        value={confirmNewPassword}
+                        onChange={e =>
+                          setConfirmNewPassword(e.target.value)
+                        }
+                        className="ruach-glass-input"
+                        style={{
+                          ...styles.input,
+                          width: '100%',
+                          boxSizing: 'border-box',
+                          background: 'rgba(255,255,255,.54)',
+                          border: '1px solid rgba(0,0,0,.10)',
+                          color: '#080808',
+                          borderRadius: 15,
+                          padding: '14px 15px'
+                        }}
+                      />
+
+                      <button
+                        type="button"
+                        className="ruach-eye-button"
+                        onClick={() =>
+                          setShowConfirmNewPassword(prev => !prev)
+                        }
+                        aria-label={
+                          showConfirmNewPassword
+                            ? 'Hide confirm password'
+                            : 'Show confirm password'
+                        }
+                      >
+                        {showConfirmNewPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+
+                    </div>
+
+                    <button
+                      onClick={handleResetPassword}
+                      className="ruach-glass-button"
+                      style={{
+                        padding: '14px',
+                        border: '1px solid rgba(255,255,255,.75)',
+                        borderRadius: 15,
+                        background:
+                          'linear-gradient(135deg, #050505, #171717)',
+                        fontWeight: 750,
+                        color: '#fff',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Save Password
+                    </button>
+
+                  </div>
                 )}
 
               </div>
             </div>
           </section>
+
         ) : (
           <div className="admin-page">
             {/* ==============================
