@@ -3,6 +3,286 @@ import { useState, useEffect } from "react";
 import { supabase } from '../supabaseClient';
 
 
+/* ============================================================
+   RUACHAGENT SESSION / DATABASE RECOVERY ENGINE
+   ------------------------------------------------------------
+   Responsibilities:
+   - Prevent duplicate business_settings requests.
+   - Preserve the last known-good settings during transient errors.
+   - Recover when browser tabs resume.
+   - Recover when Supabase refreshes the auth session.
+   - Prevent overlapping refresh operations.
+   - Keep existing Supabase tables/RPCs untouched.
+   ============================================================ */
+
+const RUACH_DEFAULT_SETTINGS = {
+    business_name: "",
+    store_address: "",
+    discount_percentage: 10,
+    webhook_slug: "",
+    currency: "ZAR",
+    logo_url: "",
+    voucher_expiration_days: 30
+};
+
+/*
+ * Module-level cache.
+ *
+ * This is deliberately outside useBusiness().
+ *
+ * Every component calling useBusiness() therefore sees the same
+ * cached merchant settings instead of maintaining independent
+ * copies of the last database row.
+ */
+let ruachBusinessSettingsCache = null;
+let ruachBusinessSettingsUserId = null;
+
+/*
+ * Single-flight promise.
+ *
+ * If AdminPanel, AgentParameters, Analysis, etc. all request
+ * business_settings at approximately the same time, only ONE
+ * Supabase request is sent.
+ */
+let ruachBusinessSettingsRequest = null;
+
+/*
+ * Prevent several tab-resume/auth events from launching the same
+ * complete synchronization simultaneously.
+ */
+let ruachSessionRecoveryRequest = null;
+
+/*
+ * Subscribers allow every mounted useBusiness() instance to receive
+ * the same recovered settings.
+ */
+const ruachBusinessSubscribers = new Set();
+
+function notifyRuachBusinessSubscribers(settings) {
+    ruachBusinessSubscribers.forEach((listener) => {
+        try {
+            listener(settings);
+        } catch (error) {
+            console.error(
+                "RuachAgent business subscriber notification failed:",
+                error
+            );
+        }
+    });
+}
+
+function hasUsableBusinessSettings(settings) {
+    return !!(
+        settings &&
+        typeof settings === "object" &&
+        (
+            settings.id ||
+            settings.owner_id ||
+            settings.business_name ||
+            settings.webhook_slug ||
+            settings.currency
+        )
+    );
+}
+
+/*
+ * The important rule:
+ *
+ * A failed refresh NEVER replaces a previously valid database row
+ * with RUACH_DEFAULT_SETTINGS.
+ */
+function preserveLastKnownBusinessSettings() {
+    if (hasUsableBusinessSettings(ruachBusinessSettingsCache)) {
+        return ruachBusinessSettingsCache;
+    }
+
+    return {
+        ...RUACH_DEFAULT_SETTINGS
+    };
+}
+
+/* ============================================================
+   SINGLE-FLIGHT BUSINESS SETTINGS FETCH
+   ============================================================ */
+
+async function fetchSharedBusinessSettings(userId, options = {}) {
+    if (!userId) {
+        return preserveLastKnownBusinessSettings();
+    }
+
+    const force = options.force === true;
+
+    /*
+     * If another component is already loading the exact same
+     * business record, reuse that promise.
+     */
+    if (ruachBusinessSettingsRequest) {
+        return ruachBusinessSettingsRequest;
+    }
+
+    /*
+     * Normal calls can immediately reuse the last known-good row.
+     *
+     * force=true is used by tab/session recovery.
+     */
+    if (
+        !force &&
+        ruachBusinessSettingsUserId === userId &&
+        hasUsableBusinessSettings(ruachBusinessSettingsCache)
+    ) {
+        return ruachBusinessSettingsCache;
+    }
+
+    ruachBusinessSettingsRequest = (async () => {
+        try {
+            const {
+                data,
+                error
+            } = await supabase
+                .from("business_settings")
+                .select("*")
+                .eq("owner_id", userId)
+                .maybeSingle();
+
+            if (error) {
+                throw error;
+            }
+
+            /*
+             * A successful database response containing a row becomes
+             * the new authoritative cache.
+             */
+            if (data) {
+                ruachBusinessSettingsCache = {
+                    ...data
+                };
+
+                ruachBusinessSettingsUserId = userId;
+
+                notifyRuachBusinessSubscribers(
+                    ruachBusinessSettingsCache
+                );
+
+                return ruachBusinessSettingsCache;
+            }
+
+            /*
+             * No row returned.
+             *
+             * Do NOT destroy an existing valid row because a transient
+             * query returned null.
+             */
+            if (
+                ruachBusinessSettingsUserId === userId &&
+                hasUsableBusinessSettings(ruachBusinessSettingsCache)
+            ) {
+                return ruachBusinessSettingsCache;
+            }
+
+            /*
+             * Only use defaults when there has never been a valid
+             * business row for this session.
+             */
+            const safeDefaults = {
+                ...RUACH_DEFAULT_SETTINGS
+            };
+
+            ruachBusinessSettingsCache = safeDefaults;
+            ruachBusinessSettingsUserId = userId;
+
+            notifyRuachBusinessSubscribers(safeDefaults);
+
+            return safeDefaults;
+        } catch (error) {
+            console.error(
+                "RuachAgent business settings synchronization failed:",
+                error
+            );
+
+            /*
+             * CRITICAL:
+             *
+             * Do not set settings to defaults here.
+             *
+             * The last valid merchant configuration remains visible.
+             */
+            return preserveLastKnownBusinessSettings();
+        } finally {
+            ruachBusinessSettingsRequest = null;
+        }
+    })();
+
+    return ruachBusinessSettingsRequest;
+}
+
+/* ============================================================
+   SESSION RECOVERY
+   ============================================================ */
+
+async function recoverRuachSession(userId, options = {}) {
+    if (!userId) {
+        return null;
+    }
+
+    /*
+     * Single-flight recovery.
+     *
+     * Multiple auth/tab-resume events can arrive together. They all
+     * share the same recovery operation.
+     */
+    if (ruachSessionRecoveryRequest) {
+        return ruachSessionRecoveryRequest;
+    }
+
+    ruachSessionRecoveryRequest = (async () => {
+        try {
+            /*
+             * Refresh the persisted merchant settings first.
+             *
+             * This is the ONE business_settings request used by the
+             * recovery engine.
+             */
+            const recoveredSettings =
+                await fetchSharedBusinessSettings(userId, {
+                    force: options.force !== false
+                });
+
+            return recoveredSettings;
+        } catch (error) {
+            console.error(
+                "RuachAgent session recovery failed:",
+                error
+            );
+
+            /*
+             * Preserve the last known-good state.
+             */
+            return preserveLastKnownBusinessSettings();
+        } finally {
+            ruachSessionRecoveryRequest = null;
+        }
+    })();
+
+    return ruachSessionRecoveryRequest;
+}
+
+/* ============================================================
+   CACHE RESET
+   ============================================================ */
+
+function clearRuachBusinessSessionCache() {
+    ruachBusinessSettingsCache = null;
+    ruachBusinessSettingsUserId = null;
+    ruachBusinessSettingsRequest = null;
+    ruachSessionRecoveryRequest = null;
+
+    notifyRuachBusinessSubscribers({
+        ...RUACH_DEFAULT_SETTINGS
+    });
+}
+
+
+
 // Static reference data available instantly globally
 
 const CURRENCY_OPTIONS = [
@@ -137,8 +417,6 @@ export function useBusiness() {
         voucher_expiration_days: 30
     });
 
-
-
     // Action Handler to call the backend API handler
     const handleSendPrompt = async () => {
         if (!inputPrompt.trim() || isLoading) return;
@@ -180,7 +458,7 @@ export function useBusiness() {
                             settings?.logo_url || null,
 
                         userId:
-                            user?.id || null
+                            userRef.current?.id || null
                     }
                 }
             );
@@ -268,6 +546,304 @@ export function useBusiness() {
     };
 
 
+    useEffect(() => {
+        const handleSharedBusinessSettingsUpdate = (nextSettings) => {
+            if (!nextSettings) return;
+
+            setSettings((previous) => ({
+                ...(previous || {}),
+                ...nextSettings
+            }));
+        };
+
+        ruachBusinessSubscribers.add(
+            handleSharedBusinessSettingsUpdate
+        );
+
+        return () => {
+            ruachBusinessSubscribers.delete(
+                handleSharedBusinessSettingsUpdate
+            );
+        };
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+
+        let loadingFailsafe = null;
+
+        const recover = async (
+            reason = "unknown",
+            userIdOverride = null
+        ) => {
+            if (!isMounted) return;
+
+            try {
+                console.log(
+                    `[RuachAgent] Session recovery started: ${reason}`
+                );
+
+                const {
+                    data: {
+                        session
+                    }
+                } = await supabase.auth.getSession();
+
+                const activeUser =
+                    session?.user ||
+                    (
+                        userIdOverride
+                            ? { id: userIdOverride }
+                            : null
+                    );
+
+                if (!activeUser?.id) {
+                    return;
+                }
+
+                setUser(activeUser);
+
+                /*
+                 * Settings recovery.
+                 *
+                 * This is single-flight and therefore safe even if several
+                 * components receive the same resume/auth event.
+                 */
+                await recoverRuachSession(activeUser.id, {
+                    force: true
+                });
+
+                /*
+                 * Keep your existing subscription backend call.
+                 */
+                await checkSubscription(activeUser.id);
+
+                if (isMounted) {
+                    setIsCheckingSession(false);
+                }
+
+                /*
+                 * Analytics remains an existing backend operation.
+                 *
+                 * It is deliberately kept separate from business_settings
+                 * so the existing analytics RPC is untouched.
+                 */
+                fetchLiveAnalytics(activeUser.id).catch((error) => {
+                    console.error(
+                        "RuachAgent analytics recovery failed:",
+                        error
+                    );
+                });
+            } catch (error) {
+                console.error(
+                    `[RuachAgent] Session recovery failed (${reason}):`,
+                    error
+                );
+
+                /*
+                 * Most important recovery rule:
+                 *
+                 * A temporary failure must NOT log the user out or destroy
+                 * valid merchant settings.
+                 */
+                if (isMounted) {
+                    setIsCheckingSession(false);
+                }
+            }
+        };
+
+        /* ------------------------------------------------------------
+           INITIAL SESSION
+           ------------------------------------------------------------ */
+
+        const bootstrapSession = async () => {
+            try {
+                setIsCheckingSession(true);
+
+                const {
+                    data: {
+                        session
+                    }
+                } = await supabase.auth.getSession();
+
+                if (session?.user && isMounted) {
+                    setUser(session.user);
+
+                    /*
+                     * Initial settings recovery is centralized.
+                     */
+                    await recoverRuachSession(
+                        session.user.id,
+                        {
+                            force: false
+                        }
+                    );
+                }
+            } catch (error) {
+                console.error(
+                    "RuachAgent initial session bootstrap failed:",
+                    error
+                );
+            } finally {
+                if (isMounted) {
+                    setIsCheckingSession(false);
+                }
+
+                if (loadingFailsafe) {
+                    clearTimeout(loadingFailsafe);
+                }
+            }
+        };
+
+        /*
+         * Failsafe remains, but is slightly more conservative.
+         */
+        loadingFailsafe = setTimeout(() => {
+            if (isMounted) {
+                console.warn(
+                    "RuachAgent session bootstrap exceeded safety threshold."
+                );
+
+                setIsCheckingSession(false);
+            }
+        }, 4000);
+
+        bootstrapSession();
+
+        /* ------------------------------------------------------------
+           AUTH STATE / TOKEN REFRESH ENGINE
+           ------------------------------------------------------------ */
+
+        const {
+            data: {
+                subscription
+            }
+        } = supabase.auth.onAuthStateChange(
+            (event, session) => {
+                if (!isMounted) return;
+
+                console.log(
+                    `[RuachAgent] Supabase auth event: ${event}`
+                );
+
+                /*
+                 * Important:
+                 *
+                 * Do not perform a large amount of awaited work directly
+                 * inside Supabase's auth callback.
+                 *
+                 * Schedule the recovery on the next microtask.
+                 */
+                Promise.resolve().then(async () => {
+                    if (!isMounted) return;
+
+                    if (session?.user) {
+                        /*
+                         * TOKEN_REFRESHED, SIGNED_IN, INITIAL_SESSION, etc.
+                         * all converge on the same recovery engine.
+                         */
+                        await recover(
+                            `auth:${event}`,
+                            session.user.id
+                        );
+                    } else {
+                        clearRuachBusinessSessionCache();
+
+                        setUser(null);
+
+                        setSettings({
+                            ...RUACH_DEFAULT_SETTINGS
+                        });
+
+                        setTxCount(0);
+                        setTxVolume(0);
+                        setGraphData(
+                            Array.from({
+                                length: 28
+                            }).map(() => 0)
+                        );
+
+                        setIsCheckingSession(false);
+                    }
+                });
+            }
+        );
+
+        /* ------------------------------------------------------------
+           BROWSER TAB RESUME
+           ------------------------------------------------------------ */
+
+        const handleVisibilityChange = () => {
+            if (
+                document.visibilityState === "visible" &&
+                isMounted
+            ) {
+                recover(
+                    "visibility-resume",
+                    userRef.current?.id || null
+                );
+            }
+        };
+
+        const handlePageShow = () => {
+            if (isMounted) {
+                recover(
+                    "pageshow-resume",
+                    userRef.current?.id || null
+                );
+            }
+        };
+
+        const handleWindowFocus = () => {
+            if (isMounted) {
+                recover(
+                    "window-focus",
+                    userRef.current?.id || null
+                );
+            }
+        };
+
+        document.addEventListener(
+            "visibilitychange",
+            handleVisibilityChange
+        );
+
+        window.addEventListener(
+            "pageshow",
+            handlePageShow
+        );
+
+        window.addEventListener(
+            "focus",
+            handleWindowFocus
+        );
+
+        return () => {
+            isMounted = false;
+
+            if (loadingFailsafe) {
+                clearTimeout(loadingFailsafe);
+            }
+
+            subscription?.unsubscribe();
+
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange
+            );
+
+            window.removeEventListener(
+                "pageshow",
+                handlePageShow
+            );
+
+            window.removeEventListener(
+                "focus",
+                handleWindowFocus
+            );
+        };
+    }, []);
+
     // ASYNC FUNCTIONS
     async function getActiveUser() {
         try {
@@ -288,156 +864,140 @@ export function useBusiness() {
         }
     }
 
-    async function fetchLiveAnalytics(userId) {
-        try {
-            setLoadingAnalytics(true);
-            if (!userId) {
-                console.warn("Analytics blocked: No authenticated user.");
-                setAnalytics(null);
-                setLoadingAnalytics(false);
-                return;
-            }
 
-            // 1. Fetch the lightweight business ID link
-            const { data: biz, error: bizError } = await supabase
-                .from('business_settings')
-                .select('id')
-                .eq('owner_id', userId)
-                .maybeSingle();
-
-            if (bizError) throw bizError;
-
-            if (!biz?.id) {
-                console.warn("No business profile found — resetting analytics to zero.");
-                setTxCount(0);
-                setTxVolume(0);
-                setGraphData(Array.from({ length: 28 }).map(() => 0));
-                return;
-            }
-
-            // 2. Execute server-side aggregation matrix via RPC
-            const { data: analytics, error: rpcError } = await supabase
-                .rpc('get_merchant_analytics', { target_business_id: biz.id });
-
-            if (rpcError) throw rpcError;
-
-            if (analytics && analytics.length > 0) {
-                const stats = analytics[0];
-                setAnalytics(stats);
-                const count = Number(stats.total_count) || 0;
-                const volume = Number(stats.total_volume) || 0;
-                const rawPoints = stats.graph_points || [];
-
-                setTxCount(count);
-                setTxVolume(volume);
-
-                // 3. Scale and clean the graph points array securely for your layout viewport
-                if (rawPoints.length > 0) {
-                    // Reverse because SQL gathered them via DESC order for the LIMIT constraint
-                    const chronologicalPoints = [...rawPoints].reverse();
-                    const maxTx = Math.max(...chronologicalPoints.map(v => Number(v) || 1), 1);
-
-                    const historicalPrices = chronologicalPoints.map(val => {
-                        const rawAmount = Number(val) || 0;
-                        return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
-                    });
-
-                    // Maintain strict 28-point layout bounds padding
-                    const paddedData = Array(28)
-                        .fill(0)
-                        .concat(historicalPrices)
-                        .slice(-28);
-
-                    setGraphData(paddedData);
-                } else {
-                    setGraphData(Array.from({ length: 28 }).map(() => 0));
+    const fetchLiveAnalytics = useCallback(async (userId) => {
+        if (userId) {
+            try {
+                setLoadingAnalytics(true);
+                if (!userId) {
+                    console.warn("Analytics blocked: No authenticated user.");
+                    setAnalytics(null);
+                    setLoadingAnalytics(false);
+                    return;
                 }
-            } else {
-                setTxCount(0);
-                setTxVolume(0);
-                setGraphData(Array.from({ length: 28 }).map(() => 0));
-                setAnalytics(null);
-            }
-        } catch (err) {
-            console.error("Analytics stream catch handled:", err.message);
-        } finally {
-            setLoadingAnalytics(false);
-        }
-    }
 
-    async function fetchMerchantSettings(userId) {
-        if (!userId) return;
+                // 1. Fetch the lightweight business ID link
+                const { data: biz, error: bizError } = await supabase
+                    .from('business_settings')
+                    .select('id')
+                    .eq('owner_id', userId)
+                    .maybeSingle();
+
+                if (bizError) throw bizError;
+
+                if (!biz?.id) {
+                    console.warn("No business profile found — resetting analytics to zero.");
+                    setTxCount(0);
+                    setTxVolume(0);
+                    setGraphData(Array.from({ length: 28 }).map(() => 0));
+                    return;
+                }
+
+                // 2. Execute server-side aggregation matrix via RPC
+                const { data: analytics, error: rpcError } = await supabase
+                    .rpc('get_merchant_analytics', { target_business_id: biz.id });
+
+                if (rpcError) throw rpcError;
+
+                if (analytics && analytics.length > 0) {
+                    const stats = analytics[0];
+                    setAnalytics(stats);
+                    const count = Number(stats.total_count) || 0;
+                    const volume = Number(stats.total_volume) || 0;
+                    const rawPoints = stats.graph_points || [];
+
+                    setTxCount(count);
+                    setTxVolume(volume);
+
+                    // 3. Scale and clean the graph points array securely for your layout viewport
+                    if (rawPoints.length > 0) {
+                        // Reverse because SQL gathered them via DESC order for the LIMIT constraint
+                        const chronologicalPoints = [...rawPoints].reverse();
+                        const maxTx = Math.max(...chronologicalPoints.map(v => Number(v) || 1), 1);
+
+                        const historicalPrices = chronologicalPoints.map(val => {
+                            const rawAmount = Number(val) || 0;
+                            return Math.max(15, Math.min(90, (rawAmount / maxTx) * 90));
+                        });
+
+                        // Maintain strict 28-point layout bounds padding
+                        const paddedData = Array(28)
+                            .fill(0)
+                            .concat(historicalPrices)
+                            .slice(-28);
+
+                        setGraphData(paddedData);
+                    } else {
+                        setGraphData(Array.from({ length: 28 }).map(() => 0));
+                    }
+                } else {
+                    setTxCount(0);
+                    setTxVolume(0);
+                    setGraphData(Array.from({ length: 28 }).map(() => 0));
+                    setAnalytics(null);
+                }
+            } catch (err) {
+                console.error("Analytics stream catch handled:", err.message);
+            } finally {
+                setLoadingAnalytics(false);
+            }
+        }
+
+    }, []);
+
+    async function fetchMerchantSettings(userId, options = {}) {
+        if (!userId) {
+            return preserveLastKnownBusinessSettings();
+        }
 
         setIsLoadingSettings(true);
 
-        // ─── ABORT CONTROLLER SETUP ───
-        // Instantiates native signal with a 10-second timeout threshold
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
         try {
-            // ─── DIAGNOSTIC DRILLDOWN LOGS ───
-            console.log("FETCH SETTINGS START");
-            console.log("userId:", userId);
-            console.log("QUERY START");
+            const data = await fetchSharedBusinessSettings(
+                userId,
+                options
+            );
 
-            const query = supabase
-                .from('business_settings')
-                .select('*')
-                .eq('owner_id', userId)
-                .maybeSingle()
-                .abortSignal(controller.signal); // Attaches signal to physically cancel hanging HTTP network request
+            /*
+             * Always prefer the valid cached/database result.
+             *
+             * A failed network request does not wipe existing state.
+             */
+            if (data && typeof data === "object") {
+                setSettings((previous) => {
+                    /*
+                     * If the recovery engine produced defaults because there
+                     * has never been a business row, use them.
+                     *
+                     * Otherwise merge the recovered row over the existing
+                     * state so transiently missing fields cannot erase UI data.
+                     */
+                    const base =
+                        hasUsableBusinessSettings(data)
+                            ? data
+                            : previous || RUACH_DEFAULT_SETTINGS;
 
-            const { data, error } = await query;
-
-            console.log("QUERY END");
-            console.log("SETTINGS DATA:", data);
-            console.log("SETTINGS ERROR:", error);
-
-            if (error) throw error;
-
-            if (data) {
-                setSettings({
-                    id: data.id,
-                    owner_id: data.owner_id,
-                    business_name: data.business_name || '',
-                    store_address: data.store_address || '',
-                    discount_percentage: data.discount_percentage ?? 10,
-                    webhook_slug: data.webhook_slug || '',
-                    currency: data.currency || 'ZAR',
-                    logo_url: data.logo_url || '',
-                    voucher_expiration_days: data.voucher_expiration_days ?? 30 // Synced database value downstream
-                });
-            } else {
-                setSettings({
-                    business_name: '',
-                    store_address: '',
-                    discount_percentage: 10,
-                    webhook_slug: '',
-                    currency: 'ZAR',
-                    logo_url: '',
-                    voucher_expiration_days: 30 // Default standard fallback configuration slot
+                    return {
+                        ...(previous || {}),
+                        ...base
+                    };
                 });
             }
+
+            return data;
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.warn("fetchMerchantSettings query aborted due to 10s timeout threshold.");
-            } else {
-                console.error("Profile load failure:", error.message);
-            }
+            /*
+             * DO NOT setSettings(DEFAULTS) here.
+             *
+             * Keep the last valid React state intact.
+             */
+            console.error(
+                "Merchant settings refresh failed; preserving last valid state:",
+                error
+            );
 
-            // If a timeout or error happens, clear settings to standard defaults so the form still works
-            setSettings({
-                business_name: '',
-                store_address: '',
-                discount_percentage: 10,
-                webhook_slug: '',
-                currency: 'ZAR',
-                logo_url: '',
-                voucher_expiration_days: 30 // Clear condition alignment sync
-            });
+            return preserveLastKnownBusinessSettings();
         } finally {
-            clearTimeout(timeoutId); // Guarantees timer handle is cleared when complete
             setIsLoadingSettings(false);
         }
     }
@@ -678,6 +1238,7 @@ export function useBusiness() {
                     alert(authResponse.error.message);
                     return;
                 }
+
 
                 // ---------------------------------------
                 // GET AUTHENTICATED USER

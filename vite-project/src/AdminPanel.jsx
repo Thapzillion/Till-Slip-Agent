@@ -62,8 +62,7 @@ export default function AdminPanel() {
     // Business
     settings,
     setSettings,
-    saveSettings,
-    uploadLogo,
+    fetchMerchantSettings,
 
     // Subscription
     showTrialWelcomeModal,
@@ -152,120 +151,282 @@ export default function AdminPanel() {
     }
 
     setShowAccountMenu(false);
+
     setIsPageLoading(true);
     setPageLoadingProgress(8);
-    setPageLoadingMessage(`Connecting to Supabase...`);
+    setPageLoadingMessage(
+      "Reconnecting to RuachAgent..."
+    );
 
     try {
-      // STEP 1 — business_settings is the central merchant record.
-      setPageLoadingProgress(24);
-      setPageLoadingMessage("Reading business settings...");
+      /*
+       * ---------------------------------------------------------
+       * STEP 1
+       * ---------------------------------------------------------
+       *
+       * Refresh through businessService's single-flight engine.
+       *
+       * AdminPanel no longer performs its own business_settings
+       * query.
+       */
+      setPageLoadingProgress(20);
+      setPageLoadingMessage(
+        "Synchronizing merchant workspace..."
+      );
 
-      const { data: businessSettings, error: settingsError } = await supabase
-        .from("business_settings")
-        .select("*")
-        .eq("owner_id", user.id)
-        .maybeSingle();
+      const synchronizedSettings =
+        await fetchMerchantSettings(
+          user.id,
+          {
+            force: true
+          }
+        );
 
-      if (settingsError) {
-        throw settingsError;
-      }
+      /*
+       * Use the returned synchronized row immediately.
+       *
+       * Fall back to the already-valid React settings state.
+       */
+      const activeSettings =
+        synchronizedSettings ||
+        settings ||
+        {};
 
-      // Push the freshly-read database row into the existing AdminPanel
-      // state so Agent Parameters and any consumers of settings receive
-      // the actual persisted Supabase values.
-      if (businessSettings && typeof setSettings === "function") {
-        setSettings(businessSettings);
-      }
+      const businessId =
+        activeSettings?.id ||
+        settings?.id ||
+        null;
 
-      setPageLoadingProgress(46);
+      /*
+       * ---------------------------------------------------------
+       * STEP 2
+       * ---------------------------------------------------------
+       *
+       * Only destination-specific tables are read here.
+       *
+       * business_settings is NOT read again.
+       */
+      setPageLoadingProgress(45);
 
-      const businessId = businessSettings?.id || settings?.id || null;
-
-      // STEP 2 — read the tables relevant to the destination page.
-      // The loader does not complete until these Supabase reads resolve.
       if (nextTab === "connected-stores") {
-        setPageLoadingMessage("Synchronizing connected stores...");
+        setPageLoadingMessage(
+          "Synchronizing connected stores..."
+        );
 
         if (!businessId) {
-          throw new Error("No business profile was returned from business_settings.");
+          throw new Error(
+            "No business profile is available."
+          );
         }
 
-        const { error: storesError } = await supabase
+        const {
+          error: storesError
+        } = await supabase
           .from("connected_stores")
           .select("*")
           .eq("business_id", businessId);
 
-        if (storesError) throw storesError;
+        if (storesError) {
+          throw storesError;
+        }
       }
 
       if (nextTab === "analysis") {
-        setPageLoadingMessage("Synchronizing merchant activity...");
+        setPageLoadingMessage(
+          "Synchronizing merchant activity..."
+        );
 
         if (!businessId) {
-          throw new Error("No business profile was returned from business_settings.");
+          throw new Error(
+            "No business profile is available."
+          );
         }
 
-        const [receiptsResult, vouchersResult] = await Promise.all([
+        const [
+          receiptsResult,
+          vouchersResult
+        ] = await Promise.all([
           supabase
             .from("receipts")
             .select("*")
             .eq("business_id", businessId),
+
           supabase
             .from("loyalty_vouchers")
             .select("*")
             .eq("business_id", businessId)
         ]);
 
-        if (receiptsResult.error) throw receiptsResult.error;
-        if (vouchersResult.error) throw vouchersResult.error;
+        if (receiptsResult.error) {
+          throw receiptsResult.error;
+        }
+
+        if (vouchersResult.error) {
+          throw vouchersResult.error;
+        }
       }
 
       if (nextTab === "till-slips-collection") {
-        setPageLoadingMessage("Synchronizing saved receipt designs...");
+        setPageLoadingMessage(
+          "Synchronizing saved receipt designs..."
+        );
 
-        // receipt_design_config is stored on business_settings, so the
-        // business_settings read above is the authoritative database
-        // synchronization for this page.
-        if (!businessSettings?.id) {
-          throw new Error("No business settings record is available.");
+        /*
+         * receipt_design_config lives inside business_settings.
+         *
+         * No additional database call is necessary because
+         * activeSettings is already the synchronized row.
+         */
+        if (!activeSettings?.id) {
+          throw new Error(
+            "No business settings record is available."
+          );
         }
 
         await sleep(180);
       }
 
       if (nextTab === "agent-parameters") {
-        setPageLoadingMessage("Loading saved agent parameters...");
+        setPageLoadingMessage(
+          "Loading saved agent parameters..."
+        );
+
         await sleep(180);
       }
 
-      // STEP 3 — the database synchronization has completed.
-      setPageLoadingProgress(78);
-      setPageLoadingMessage(`Applying ${pageLabels[nextTab]} data...`);
+      /*
+       * ---------------------------------------------------------
+       * STEP 3
+       * ---------------------------------------------------------
+       */
 
-      // Give React one render cycle to apply the newly retrieved state.
+      setPageLoadingProgress(78);
+
+      setPageLoadingMessage(
+        `Applying ${pageLabels[nextTab]} data...`
+      );
+
       await sleep(220);
 
-      setDatabaseRefreshKey((value) => value + 1);
-      setPageLoadingProgress(100);
-      setPageLoadingMessage(`${pageLabels[nextTab]} ready.`);
+      /*
+       * Force the destination component to consume the latest
+       * synchronized state without changing its UI.
+       */
+      setDatabaseRefreshKey(
+        (value) => value + 1
+      );
 
-      // Keep the finished logo state visible very briefly so the transition
-      // feels intentional rather than flashing between two screens.
+      setPageLoadingProgress(100);
+
+      setPageLoadingMessage(
+        `${pageLabels[nextTab]} ready.`
+      );
+
       await sleep(360);
 
       setActiveTab(nextTab);
     } catch (syncError) {
-      console.error("RuachAgent page synchronization failed:", syncError);
-      setPageLoadingProgress(100);
-      setPageLoadingMessage(
-        "Database synchronization failed. Please try again."
+      console.error(
+        "RuachAgent page synchronization failed:",
+        syncError
       );
+
+      /*
+       * IMPORTANT:
+       *
+       * We do not wipe the current page or settings.
+       *
+       * The last valid state remains visible.
+       */
+      setPageLoadingProgress(100);
+
+      setPageLoadingMessage(
+        "Connection interrupted. Your last valid data has been preserved."
+      );
+
       await sleep(900);
     } finally {
       setIsPageLoading(false);
     }
   };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const recoverAdminWorkspace = async (reason) => {
+      if (!mounted || !user?.id) return;
+
+      try {
+        console.log(
+          `[RuachAgent] Admin workspace resume: ${reason}`
+        );
+
+        /*
+         * businessService owns the actual single-flight
+         * business_settings synchronization.
+         */
+        await fetchMerchantSettings(
+          user.id,
+          { force: true }
+        );
+
+        if (mounted) {
+          setDatabaseRefreshKey(
+            (value) => value + 1
+          );
+        }
+      } catch (error) {
+        /*
+         * Do nothing destructive.
+         *
+         * businessService deliberately preserves the last
+         * known-good settings.
+         */
+        console.warn(
+          "Admin workspace resume could not fully synchronize:",
+          error
+        );
+      }
+    };
+
+    const handleVisibility = () => {
+      if (
+        document.visibilityState === "visible"
+      ) {
+        recoverAdminWorkspace(
+          "visibilitychange"
+        );
+      }
+    };
+
+    const handlePageShow = () => {
+      recoverAdminWorkspace("pageshow");
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility
+    );
+
+    window.addEventListener(
+      "pageshow",
+      handlePageShow
+    );
+
+    return () => {
+      mounted = false;
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+
+      window.removeEventListener(
+        "pageshow",
+        handlePageShow
+      );
+    };
+  }, [user?.id, fetchMerchantSettings]);
 
   const styles = {
     container: {
