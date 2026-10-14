@@ -2346,6 +2346,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                         user={user}
                         activeCurrencySymbol={activeCurrencySymbol}
                       />
+                    ) : currentTemplate === "luxury" ? (
+                      <LuxuryTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
                     ) : currentTemplate === "minimalist-mono" ? (
                       <MinimalistMonoTillSlip
                         receiptData={livePreviewReceipt}

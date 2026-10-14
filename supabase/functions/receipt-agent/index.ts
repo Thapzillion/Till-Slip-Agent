@@ -144,6 +144,7 @@ serve(async (req: Request) => {
     // Expand this section as your designs increase.
     const ALLOWED_TEMPLATES = [
       "matrix-grid",
+      "luxury"
       "titanium",
       "black-gold"
     ];

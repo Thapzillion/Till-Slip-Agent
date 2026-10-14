@@ -63,6 +63,7 @@ RuachAgent contains existing JSX receipt templates.
 Examples may include:
 
 - matrix-grid
+- luxury
 - titanium
 - black-gold
 - minimalist-thermal

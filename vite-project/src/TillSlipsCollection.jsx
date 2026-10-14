@@ -7,6 +7,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useBusiness } from "./backend/businessService";
 import MatrixTillSlip from "./models/MatrixTillSlip";
+import LuxuryTillSlip from "./models/LuxuryTillSlip";
 import {
     Search,
     LayoutGrid,
@@ -71,8 +72,8 @@ const DESIGNS = [
     },
 
     {
-        id: "luxury-minimal",
-        name: "Luxury Minimal",
+        id: "luxury",
+        name: "Luxury",
         category: "Luxury"
     },
 
@@ -1102,6 +1103,17 @@ export default function TillSlipsCollection() {
                                                                 ""
                                                             }
                                                         />
+                                                    ) : design.id === "luxury-minimal" ? (
+                                                        <LuxuryTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
                                                     ) : (
                                                         <div
                                                             style={{
@@ -1113,6 +1125,8 @@ export default function TillSlipsCollection() {
                                                                 color: "#79868c"    //THIS MIGHT BE THE SOURCE
                                                             }}
                                                         >
+
+
                                                             {/* Add the live {design.name} component here. */}
                                                             <span>
                                                                 {/* Add your {design.name} till slip design here */}
