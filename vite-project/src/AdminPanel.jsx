@@ -686,242 +686,550 @@ export default function AdminPanel() {
   return (
     <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
 
-      {/* GLOBAL MODAL 3: Premium Payment Negotiation */}
+
+      {/* GLOBAL MODAL 3: PREMIUM PAYMENT NEGOTIATION */}
       {showSubscriptionModal && (
         <div
           style={{
             ...styles.modalOverlay,
             background:
-              "radial-gradient(circle at top, rgba(0,255,170,0.08), rgba(0,0,0,0.94) 45%, #000000 100%)",
-            backdropFilter: "blur(12px)",
+              "radial-gradient(ellipse at 50% 0%, rgba(40,150,255,0.12) 0%, rgba(9,10,13,0.97) 48%, #020203 100%)",
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
+            animation: "ruachTeslaModalIn 0.45s ease-out"
           }}
         >
+          <style>
+            {`
+        @keyframes ruachTeslaModalIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes ruachTeslaCardIn {
+          from {
+            opacity: 0;
+            transform: translateY(18px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes ruachTeslaBluePulse {
+          0%, 100% {
+            opacity: 0.55;
+            transform: scale(0.97);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.04);
+          }
+        }
+
+        @keyframes ruachTeslaLightSweep {
+          0% { transform: translateX(-180%) skewX(-22deg); }
+          100% { transform: translateX(600%) skewX(-22deg); }
+        }
+
+        .ruach-subscription-card {
+          position: relative;
+          overflow: hidden;
+          transition: border-color 0.3s ease,
+                      box-shadow 0.3s ease,
+                      transform 0.3s ease;
+        }
+
+        .ruach-subscription-card:hover {
+          border-color: rgba(90,180,255,0.35) !important;
+          box-shadow: 0 0 28px rgba(55,155,255,0.09);
+          transform: translateY(-2px);
+        }
+
+        .ruach-paystack-button {
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.25s ease,
+                      box-shadow 0.25s ease,
+                      filter 0.25s ease;
+        }
+
+        .ruach-paystack-button:hover {
+          transform: translateY(-2px);
+          filter: brightness(1.1);
+          box-shadow:
+            0 0 30px rgba(65,165,255,0.3),
+            0 10px 35px rgba(0,0,0,0.4) !important;
+        }
+
+        .ruach-paystack-button:active {
+          transform: scale(0.99);
+        }
+
+        .ruach-paystack-button::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -35%;
+          width: 22%;
+          pointer-events: none;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.17),
+            transparent
+          );
+          transform: skewX(-22deg);
+          animation: ruachTeslaLightSweep 4.5s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ruach-paystack-button::after {
+            animation: none;
+          }
+
+          .ruach-paystack-button,
+          .ruach-subscription-card {
+            transition: none;
+          }
+        }
+      `}
+          </style>
+
           <div
             style={{
               ...styles.flatCard,
-              maxWidth: "460px",
+              maxWidth: "475px",
               width: "90%",
+              boxSizing: "border-box",
+              padding: "34px 27px 28px",
               textAlign: "center",
               position: "relative",
+              isolation: "isolate",
               overflow: "hidden",
-              border: "1px solid rgba(0,255,170,0.25)",
-              borderRadius: "24px",
+              border: "1px solid rgba(180,205,230,0.17)",
+              borderRadius: "23px",
               background:
-                "linear-gradient(145deg, #050505 0%, #071822 55%, #02110d 100%)",
+                "linear-gradient(150deg, #202126 0%, #121317 40%, #07080a 100%)",
               boxShadow:
-                "0 0 20px rgba(0,255,170,0.18), 0 0 45px rgba(0,198,255,0.12)",
+                "0 30px 100px rgba(0,0,0,0.8), 0 0 45px rgba(45,145,255,0.08), inset 0 1px 0 rgba(255,255,255,0.09)",
+              animation:
+                "ruachTeslaCardIn 0.55s cubic-bezier(0.2,0.8,0.2,1)"
             }}
           >
-            {/* Neon Background Glow */}
+            {/* Metallic top edge */}
             <div
               style={{
                 position: "absolute",
-                top: "-90px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "260px",
-                height: "260px",
-                borderRadius: "50%",
+                top: 0,
+                left: "10%",
+                width: "80%",
+                height: "1px",
                 background:
-                  "radial-gradient(circle, rgba(0,255,170,0.28) 0%, rgba(0,198,255,0.12) 45%, transparent 75%)",
-                filter: "blur(30px)",
-                pointerEvents: "none",
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(95,185,255,0.8), transparent)",
+                pointerEvents: "none"
               }}
             />
 
-            {/* Lock Icon */}
+            {/* Ambient sky-blue illumination */}
             <div
               style={{
-                width: "82px",
-                height: "82px",
-                margin: "0 auto 22px",
+                position: "absolute",
+                top: "-150px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "330px",
+                height: "300px",
                 borderRadius: "50%",
+                background:
+                  "radial-gradient(circle, rgba(50,150,255,0.19) 0%, rgba(35,115,220,0.07) 45%, transparent 72%)",
+                filter: "blur(30px)",
+                pointerEvents: "none",
+                zIndex: -1
+              }}
+            />
+
+            {/* Futuristic lock emblem */}
+            <div
+              style={{
+                position: "relative",
+                width: "78px",
+                height: "78px",
+                margin: "0 auto 24px",
+                borderRadius: "23px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "40px",
                 background:
-                  "linear-gradient(135deg, #00F5A0, #00C6FF)",
+                  "linear-gradient(145deg, #30343b 0%, #15171c 75%)",
+                border: "1px solid rgba(140,195,255,0.22)",
                 boxShadow:
-                  "0 0 20px rgba(0,255,170,0.45), 0 0 45px rgba(0,198,255,0.35)",
-              }}
-            >
-              🔒
-            </div>
-
-            <div
-              style={{
-                color: "#00F5A0",
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "3px",
-                marginBottom: "12px",
-              }}
-            >
-              PREMIUM MEMBERSHIP REQUIRED
-            </div>
-
-            <h2
-              style={{
-                color: "#ffffff",
-                marginBottom: "14px",
-                fontSize: "28px",
-                fontWeight: 700,
-                textShadow: "0 0 12px rgba(0,198,255,0.35)",
-              }}
-            >
-              Your Free Trial Has Expired
-            </h2>
-
-            <p
-              style={{
-                color: "#b9c7cf",
-                fontSize: "15px",
-                lineHeight: "1.8",
-                marginBottom: "28px",
-              }}
-            >
-              To continue using <strong style={{ color: "#00F5A0" }}>RuachAgent</strong>
-              {" "}Premium features and maintain uninterrupted access to your merchant
-              dashboard, please upgrade your subscription.
-            </p>
-
-            {/* Plan Details Card */}
-            <div
-              style={{
-                background:
-                  "linear-gradient(145deg, rgba(0,198,255,0.08), rgba(0,255,170,0.06))",
-                borderRadius: "18px",
-                padding: "22px",
-                marginBottom: "28px",
-                border: "1px solid rgba(0,255,170,0.25)",
-                boxShadow:
-                  "0 0 20px rgba(0,198,255,0.08)",
+                  "0 12px 35px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1)"
               }}
             >
               <div
                 style={{
+                  position: "absolute",
+                  inset: "-5px",
+                  borderRadius: "27px",
+                  border: "1px solid rgba(85,175,255,0.3)",
+                  animation:
+                    "ruachTeslaBluePulse 3s ease-in-out infinite",
+                  pointerEvents: "none"
+                }}
+              />
+
+              <span
+                style={{
+                  fontSize: "34px",
+                  filter:
+                    "drop-shadow(0 0 12px rgba(65,165,255,0.55))"
+                }}
+              >
+                🔒
+              </span>
+            </div>
+
+            {/* Membership status */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "9px",
+                color: "#82c8ff",
+                fontSize: "10px",
+                fontWeight: 800,
+                letterSpacing: "2.4px",
+                lineHeight: 1.7,
+                marginBottom: "16px"
+              }}
+            >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  flexShrink: 0,
+                  borderRadius: "50%",
+                  background: "#69baff",
+                  boxShadow: "0 0 12px rgba(85,175,255,0.8)"
+                }}
+              />
+              PREMIUM MEMBERSHIP REQUIRED
+            </div>
+
+            {/* Heading */}
+            <h2
+              style={{
+                color: "#ffffff",
+                margin: "0 0 17px",
+                fontSize: "clamp(25px, 5vw, 30px)",
+                lineHeight: 1.25,
+                letterSpacing: "-1px",
+                fontWeight: 750
+              }}
+            >
+              Your Free Trial
+              <br />
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, #ffffff 0%, #a9d9ff 75%, #78c2ff 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent"
+                }}
+              >
+                Has Expired.
+              </span>
+            </h2>
+
+            {/* Subscription explanation */}
+            <p
+              style={{
+                color: "#a9abb4",
+                fontSize: "14px",
+                lineHeight: 1.9,
+                margin: "0 0 25px"
+              }}
+            >
+              To continue using{" "}
+              <strong
+                style={{
+                  color: "#a5d9ff",
+                  fontWeight: 750,
+                  textShadow: "0 0 14px rgba(70,160,255,0.15)"
+                }}
+              >
+                RuachAgent
+              </strong>{" "}
+              Premium features and maintain uninterrupted access to your
+              merchant dashboard, please upgrade your subscription.
+            </p>
+
+            {/* Merchant Pro plan details */}
+            <div
+              className="ruach-subscription-card"
+              style={{
+                padding: "23px 17px 21px",
+                marginBottom: "24px",
+                borderRadius: "17px",
+                border: "1px solid rgba(100,180,255,0.2)",
+                background:
+                  "linear-gradient(145deg, rgba(55,145,235,0.095), rgba(255,255,255,0.025) 55%, rgba(15,20,28,0.5))",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.045), 0 12px 30px rgba(0,0,0,0.12)"
+              }}
+            >
+              {/* Plan badge */}
+              <div
+                style={{
+                  display: "inline-block",
+                  padding: "6px 11px",
+                  marginBottom: "13px",
+                  borderRadius: "20px",
+                  border: "1px solid rgba(105,190,255,0.22)",
+                  background: "rgba(75,160,245,0.08)",
+                  color: "#8acbff",
+                  fontSize: "9px",
+                  fontWeight: 800,
+                  letterSpacing: "2px"
+                }}
+              >
+                YOUR MEMBERSHIP
+              </div>
+
+              <div
+                style={{
                   color: "#ffffff",
-                  fontWeight: "700",
-                  fontSize: "18px",
-                  marginBottom: "8px",
+                  fontWeight: 750,
+                  fontSize: "19px",
+                  letterSpacing: "-0.3px",
+                  marginBottom: "11px"
                 }}
               >
                 Merchant Pro Plan
               </div>
 
+              {/* Price */}
               <div
                 style={{
-                  color: "#00F5A0",
-                  fontSize: "34px",
-                  fontWeight: "800",
-                  textShadow: "0 0 15px rgba(0,255,170,.45)",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  alignItems: "baseline",
+                  justifyContent: "center",
+                  columnGap: "7px",
+                  rowGap: "2px"
                 }}
               >
-                $6.99 [R129.00]
                 <span
                   style={{
-                    fontSize: "14px",
-                    color: "#9ca3af",
-                    fontWeight: "500",
+                    color: "#91d0ff",
+                    fontSize: "clamp(27px, 6vw, 34px)",
+                    fontWeight: 800,
+                    letterSpacing: "-1px",
+                    textShadow: "0 0 20px rgba(75,165,255,0.22)"
                   }}
                 >
-                  {" "}
+                  $6.99
+                </span>
+
+                <span
+                  style={{
+                    color: "#777f8b",
+                    fontSize: "13px",
+                    fontWeight: 600
+                  }}
+                >
+                  [R129.00]
+                </span>
+
+                <span
+                  style={{
+                    color: "#9299a5",
+                    fontSize: "13px",
+                    fontWeight: 500
+                  }}
+                >
                   / month
                 </span>
               </div>
 
+              {/* Subtle divider */}
               <div
                 style={{
-                  marginTop: "14px",
-                  color: "#8fdcff",
+                  height: "1px",
+                  margin: "20px 0 17px",
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(125,190,255,0.25), transparent)"
+                }}
+              />
+
+              {/* Existing plan benefits */}
+              <div
+                style={{
+                  display: "grid",
+                  gap: "13px",
+                  textAlign: "left",
+                  color: "#c2cbd5",
                   fontSize: "13px",
+                  lineHeight: 1.5
                 }}
               >
-                ✓ Unlimited premium access
-                <br />
-                ✓ Merchant dashboard
-                <br />
-                ✓ Future premium updates included
+                {[
+                  "Unlimited premium access",
+                  "Merchant dashboard",
+                  "Future premium updates included"
+                ].map((feature) => (
+                  <div
+                    key={feature}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "11px"
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "19px",
+                        height: "19px",
+                        flexShrink: 0,
+                        borderRadius: "50%",
+                        background: "rgba(85,175,255,0.11)",
+                        border: "1px solid rgba(100,185,255,0.23)",
+                        color: "#80c8ff",
+                        fontSize: "11px",
+                        fontWeight: 800
+                      }}
+                    >
+                      ✓
+                    </span>
+
+                    {feature}
+                  </div>
+                ))}
               </div>
             </div>
 
+            {/* Paystack upgrade button — original payment logic preserved */}
             <button
+              className="ruach-paystack-button"
               onClick={() => {
                 if (!window.PaystackPop) {
-                  alert("Paystack SDK failed to load. Please check your network connection.");
+                  alert(
+                    "Paystack SDK failed to load. Please check your network connection."
+                  );
                   return;
                 }
 
                 const handler = window.PaystackPop.setup({
-                  key: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || "pk_live_870272ce5b082f6522a2f9d130c368284664c7f4",
+                  key:
+                    import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ||
+                    "pk_live_870272ce5b082f6522a2f9d130c368284664c7f4",
                   email: user?.email,
                   amount: 12900,
                   currency: "ZAR",
-                  ref: "RUACH_" + Math.floor(Math.random() * 1000000000 + 1),
+                  ref:
+                    "RUACH_" +
+                    Math.floor(Math.random() * 1000000000 + 1),
                   metadata: {
                     custom_fields: [
                       {
                         display_name: "User ID",
                         variable_name: "user_id",
-                        value: user?.id,
+                        value: user?.id
                       },
                       {
                         display_name: "Plan",
                         variable_name: "plan_type",
-                        value: "pro_monthly",
-                      },
+                        value: "pro_monthly"
+                      }
                     ],
                     user_id: user?.id,
-                    plan_type: "pro_monthly",
+                    plan_type: "pro_monthly"
                   },
                   onClose: () => {
                     console.log("Paystack modal closed by user.");
                   },
                   callback: function (response) {
-                    console.log("Paystack Payment Successful:", response.reference);
+                    console.log(
+                      "Paystack Payment Successful:",
+                      response.reference
+                    );
 
-                    alert("Payment successful! Updating your workspace access...");
+                    alert(
+                      "Payment successful! Updating your workspace access..."
+                    );
 
                     checkSubscription(user.id)
                       .then(() => {
                         setShowSubscriptionModal(false);
                       })
                       .catch(console.error);
-                  },
+                  }
                 });
 
                 handler.openIframe();
               }}
               style={{
                 ...styles.button,
+                position: "relative",
                 width: "100%",
-                padding: "16px",
-                fontSize: "16px",
-                fontWeight: "700",
-                border: "none",
-                borderRadius: "14px",
+                boxSizing: "border-box",
+                padding: "16px 13px",
+                fontSize: "14px",
+                fontWeight: 800,
+                letterSpacing: "0.3px",
+                border: "1px solid rgba(160,215,255,0.25)",
+                borderRadius: "13px",
                 cursor: "pointer",
                 color: "#ffffff",
                 background:
-                  "linear-gradient(90deg, #00F5A0 0%, #00C6FF 100%)",
+                  "linear-gradient(110deg, #1687dc 0%, #42b3ff 55%, #1675c9 100%)",
                 boxShadow:
-                  "0 0 18px rgba(0,255,170,0.35), 0 0 30px rgba(0,198,255,0.25)",
-                transition: "all .25s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow =
-                  "0 0 28px rgba(0,255,170,.55),0 0 45px rgba(0,198,255,.4)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow =
-                  "0 0 18px rgba(0,255,170,.35),0 0 30px rgba(0,198,255,.25)";
+                  "0 0 20px rgba(50,150,255,0.18), 0 8px 25px rgba(0,0,0,0.25)"
               }}
             >
-              Upgrade Now with Paystack →
+              <span style={{ position: "relative", zIndex: 1 }}>
+                Upgrade Now with Paystack
+                <span style={{ marginLeft: "9px" }}>→</span>
+              </span>
             </button>
+
+            {/* Footer */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "8px",
+                marginTop: "21px",
+                color: "#666d77",
+                fontSize: "9px",
+                fontWeight: 700,
+                letterSpacing: "1.6px"
+              }}
+            >
+              <span
+                style={{
+                  width: "18px",
+                  height: "1px",
+                  background: "rgba(130,195,255,0.3)"
+                }}
+              />
+              RUACHAGENT · MERCHANT PRO
+              <span
+                style={{
+                  width: "18px",
+                  height: "1px",
+                  background: "rgba(130,195,255,0.3)"
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
@@ -933,7 +1241,7 @@ export default function AdminPanel() {
           style={{
             ...styles.modalOverlay,
             background:
-              "radial-gradient(ellipse at 50% 0%, rgba(225,25,45,0.13) 0%, rgba(8,8,10,0.97) 48%, #000000 100%)",
+              "radial-gradient(ellipse at 50% 0%, rgba(25, 152, 225, 0.13) 0%, rgba(8,8,10,0.97) 48%, #000000 100%)",
             backdropFilter: "blur(22px)",
             WebkitBackdropFilter: "blur(22px)",
             animation: "ruachTeslaFadeIn 0.5s ease-out"
@@ -1019,7 +1327,7 @@ export default function AdminPanel() {
               background:
                 "linear-gradient(145deg, #202023 0%, #111113 38%, #060607 100%)",
               boxShadow:
-                "0 30px 100px rgba(0,0,0,0.78), 0 0 45px rgba(220,20,40,0.09), inset 0 1px 0 rgba(255,255,255,0.09)",
+                "0 30px 100px rgba(0,0,0,0.78), 0 0 45px rgba(20, 153, 220, 0.09), inset 0 1px 0 rgba(255,255,255,0.09)",
               animation:
                 "ruachTeslaRise 0.6s cubic-bezier(0.2,0.8,0.2,1)"
             }}
@@ -1033,7 +1341,7 @@ export default function AdminPanel() {
                 width: "76%",
                 height: "1px",
                 background:
-                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(255,45,60,0.65), transparent)",
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(45, 199, 255, 0.85), transparent)",
                 pointerEvents: "none"
               }}
             />
@@ -1049,7 +1357,7 @@ export default function AdminPanel() {
                 height: "300px",
                 borderRadius: "50%",
                 background:
-                  "radial-gradient(circle, rgba(225,25,45,0.18) 0%, rgba(150,15,30,0.06) 45%, transparent 72%)",
+                  "radial-gradient(circle, rgba(25, 125, 225, 0.18) 0%, rgba(15, 94, 150, 0.06) 45%, transparent 72%)",
                 filter: "blur(30px)",
                 pointerEvents: "none",
                 zIndex: -1
@@ -1079,7 +1387,7 @@ export default function AdminPanel() {
                   position: "absolute",
                   inset: "-5px",
                   borderRadius: "27px",
-                  border: "1px solid rgba(255,45,60,0.35)",
+                  border: "1px solid rgba(45, 188, 255, 0.35)",
                   animation: "ruachTeslaPulse 3s ease-in-out infinite",
                   pointerEvents: "none"
                 }}
@@ -1088,7 +1396,7 @@ export default function AdminPanel() {
               <span
                 style={{
                   fontSize: "35px",
-                  filter: "drop-shadow(0 0 12px rgba(255,45,60,0.45))"
+                  filter: "drop-shadow(0 0 12px rgba(45, 181, 255, 0.45))"
                 }}
               >
                 ⚡
@@ -1102,7 +1410,7 @@ export default function AdminPanel() {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "9px",
-                color: "#ff4657",
+                color: "#46a3ff",
                 fontSize: "10px",
                 letterSpacing: "2.8px",
                 fontWeight: 800,
@@ -1115,8 +1423,8 @@ export default function AdminPanel() {
                   height: "6px",
                   flexShrink: 0,
                   borderRadius: "50%",
-                  background: "#ff3549",
-                  boxShadow: "0 0 12px rgba(255,53,73,0.8)"
+                  background: "#35bcff",
+                  boxShadow: "0 0 12px rgba(53, 194, 255, 0.8)"
                 }}
               />
               PREMIUM ACCESS ACTIVATED
@@ -1174,9 +1482,9 @@ export default function AdminPanel() {
               . Enjoy the full power of{" "}
               <strong
                 style={{
-                  color: "#ff4657",
+                  color: "#46bbff",
                   fontWeight: 750,
-                  textShadow: "0 0 15px rgba(255,45,60,0.17)"
+                  textShadow: "0 0 15px rgba(45, 188, 255, 0.17)"
                 }}
               >
                 RuachAgent
@@ -1224,8 +1532,8 @@ export default function AdminPanel() {
                 The Premium version is only{" "}
                 <span
                   style={{
-                    color: "#ff4657",
-                    textShadow: "0 0 18px rgba(255,45,60,0.22)",
+                    color: "#46c8ff",
+                    textShadow: "0 0 18px rgba(45, 181, 255, 0.22)",
                     whiteSpace: "nowrap"
                   }}
                 >
@@ -1289,7 +1597,7 @@ export default function AdminPanel() {
           style={{
             ...styles.modalOverlay,
             background:
-              "radial-gradient(ellipse at 50% 0%, rgba(180, 15, 30, 0.12) 0%, rgba(10, 10, 12, 0.96) 48%, #000 100%)",
+              "radial-gradient(ellipse at 50% 0%, rgba(15, 95, 180, 0.12) 0%, rgba(10, 10, 12, 0.96) 48%, #000 100%)",
             backdropFilter: "blur(22px)",
             WebkitBackdropFilter: "blur(22px)",
             animation: "teslaOverlayIn 0.45s ease-out"
@@ -1339,9 +1647,9 @@ export default function AdminPanel() {
 
         .tesla-premium-button:hover {
           transform: translateY(-2px);
-          box-shadow: 0 0 28px rgba(235, 35, 50, 0.28),
+          box-shadow: 0 0 28px rgba(35, 168, 235, 0.28),
                       0 10px 35px rgba(0, 0, 0, 0.35);
-          background: linear-gradient(135deg, #ff3548, #d91028) !important;
+          background: linear-gradient(135deg, #35aeff, #1099d9) !important;
         }
 
         .tesla-premium-button:active {
@@ -1372,7 +1680,7 @@ export default function AdminPanel() {
               background:
                 "linear-gradient(155deg, rgba(29,29,32,0.98) 0%, rgba(13,13,15,0.99) 45%, rgba(5,5,6,1) 100%)",
               boxShadow:
-                "0 30px 100px rgba(0,0,0,0.75), 0 0 45px rgba(220,20,40,0.07), inset 0 1px 0 rgba(255,255,255,0.07)",
+                "0 30px 100px rgba(0, 0, 0, 0.75), 0 0 45px rgba(20, 130, 220, 0.07), inset 0 1px 0 rgba(255,255,255,0.07)",
               animation: "teslaCardIn 0.55s cubic-bezier(0.2,0.8,0.2,1)"
             }}
           >
@@ -1385,7 +1693,7 @@ export default function AdminPanel() {
                 width: "76%",
                 height: "1px",
                 background:
-                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(240,35,50,0.7), transparent)",
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(35, 189, 240, 0.7), transparent)",
                 pointerEvents: "none"
               }}
             />
@@ -1401,7 +1709,7 @@ export default function AdminPanel() {
                 height: "280px",
                 borderRadius: "50%",
                 background:
-                  "radial-gradient(circle, rgba(225,25,45,0.16) 0%, rgba(150,15,30,0.06) 42%, transparent 72%)",
+                  "radial-gradient(circle, rgba(25, 142, 225, 0.16) 0%, rgba(15, 94, 150, 0.06) 42%, transparent 72%)",
                 filter: "blur(28px)",
                 pointerEvents: "none",
                 zIndex: -1
@@ -1431,7 +1739,7 @@ export default function AdminPanel() {
                   position: "absolute",
                   inset: "-5px",
                   borderRadius: "26px",
-                  border: "1px solid rgba(235,35,50,0.3)",
+                  border: "1px solid rgba(35, 152, 235, 0.3)",
                   animation: "teslaPulse 3s ease-in-out infinite",
                   pointerEvents: "none"
                 }}
@@ -1440,7 +1748,7 @@ export default function AdminPanel() {
               <span
                 style={{
                   fontSize: "35px",
-                  filter: "drop-shadow(0 0 12px rgba(255,45,60,0.4))"
+                  filter: "drop-shadow(0 0 12px rgba(45, 188, 255, 0.4))"
                 }}
               >
                 ⚡
@@ -1453,7 +1761,7 @@ export default function AdminPanel() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "9px",
-                color: "#ff4555",
+                color: "#45a8ff",
                 fontSize: "10px",
                 letterSpacing: "3px",
                 fontWeight: 800,
@@ -1466,8 +1774,8 @@ export default function AdminPanel() {
                   width: "6px",
                   height: "6px",
                   borderRadius: "50%",
-                  background: "#ff3347",
-                  boxShadow: "0 0 10px rgba(255,51,71,0.8)"
+                  background: "#33c9ff",
+                  boxShadow: "0 0 10px rgba(51, 197, 255, 0.8)"
                 }}
               />
               PREMIUM ACCESS ACTIVATED
@@ -1605,8 +1913,8 @@ export default function AdminPanel() {
                 cursor: "pointer",
                 color: "#ffffff",
                 background:
-                  "linear-gradient(135deg, #ed263a 0%, #c8102e 100%)",
-                boxShadow: "0 5px 24px rgba(220,20,40,0.17)",
+                  "linear-gradient(135deg, #26a7ed 0%, #1088c8 100%)",
+                boxShadow: "0 5px 24px rgba(20, 133, 220, 0.17)",
                 transition: "all .25s ease"
               }}
             >
