@@ -1,216 +1,488 @@
-import React from 'react';
-
+import React from "react";
 import { Link } from "react-router-dom";
+import "./LandingPage.css";
 
 export default function LandingPage() {
-  // Handles the smooth anchor link navigation behavior natively in React
+  // Preserve smooth anchor navigation.
   const handleScroll = (e, targetId) => {
     e.preventDefault();
+
     const element = document.getElementById(targetId);
+
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <div style={{
-      margin: 0,
-      fontFamily: 'Arial, sans-serif',
-      background: 'radial-gradient(circle at top, #0b1820, #05070A 60%)',
-      color: '#eef',
-      minHeight: '100vh',
-      boxSizing: 'border-box'
-    }}>
-      {/* Scope original CSS rules explicitly within this component layout view */}
-      <style>{`
-        header { position: sticky; top: 0; background: rgba(5,7,10,.85); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 8px 6%; border-bottom: 1px solid rgba(0,255,213,.15); z-index: 100; gap: 16px; }
-.logo { font-size: 20px; font-weight: 700; color: #00ffd5; }
-nav { display: flex; gap: 16px; align-items: center; }
-nav a { color: #cfe; text-decoration: none; font-size: 14px; cursor: pointer; transition: color 0.2s; white-space: nowrap; }
-nav a:hover { color: #00ffd5; }
-.btn { padding: 7px 16px; border-radius: 20px; background: linear-gradient(90deg, #00ffd5, #00bfff); color: #001; font-size: 13px; font-weight: bold; text-decoration: none; display: inline-block; white-space: nowrap; }
-.btn-secondary { padding: 8px 18px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); color: #cfe; font-size: 13px; font-weight: bold; text-decoration: none; display: inline-block; cursor: not-allowed; }
-        .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; padding: 70px 8%; align-items: center; }
-        h1 { font-size: 58px; line-height: 1.05; margin: 0 0 20px; }
-        p { color: #c9d4dd; line-height: 1.7; }
-        .actions { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 25px; }
-        .panel { background: rgba(255,255,255,.03); border: 1px solid rgba(0,255,213,.15); border-radius: 24px; padding: 20px; box-shadow: 0 0 30px rgba(0,255,213,.08); }
-        .hero img { width: 100%; border-radius: 20px; display: block; }
-        section { padding: 70px 8%; }
-        .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
-        .card { transition: .3s; }
-        .card:hover { transform: translateY(-8px); }
-        .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-        footer { padding: 40px; text-align: center; border-top: 1px solid rgba(255,255,255,.08); color: #9fb; }
-      @media (max-width: 900px) {
-  header {
-    padding: 6px 4%;
-    gap: 8px;
-  }
-
-  nav {
-    gap: 10px;
-  }
-
-  nav a {
-    font-size: 12px;
-  }
-
-  .btn {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .hero {
-    grid-template-columns: 1fr;
-    text-align: center;
-    padding: 45px 6%;
-  }
-
-  h1 {
-    font-size: 32px;
-    line-height: 1.15;
-  }
-
-  p {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  nav a {
-    font-size: 11px;
-  }
-  .btn {
-    padding: 5px 10px;
-    font-size: 11px;
-  }
-}
-      `}</style>
-
-      <header>
-        <div
-          className="logo"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}
+    <div className="ra-landing">
+      {/* Futuristic navigation */}
+      <header className="ra-header">
+        <a
+          className="ra-brand"
+          href="#top"
+          aria-label="RuachAgent home"
+          onClick={(e) => handleScroll(e, "top")}
         >
           <img
             src="/RuachAgentLogo.png"
             alt="RuachAgent"
-            style={{
-              height: "38px",
-              width: "auto",
-              objectFit: "contain",
-              filter: `
-                drop-shadow(0 0 4px rgba(8,227,216,.8))
-                drop-shadow(0 0 10px rgba(8,227,216,.35))
-              `
-            }}
           />
-        </div>
-        <nav>
-          <a href="#features" onClick={(e) => handleScroll(e, 'features')}>Features</a>
-          <a href="#works" onClick={(e) => handleScroll(e, 'works')}>How It Works</a>
-          <a href="#faq" onClick={(e) => handleScroll(e, 'faq')}>FAQ</a>
+          <span className="ra-brand-label">RUACHAGENT</span>
+        </a>
+
+        <nav className="ra-nav" aria-label="Main navigation">
+          <a
+            href="#features"
+            onClick={(e) => handleScroll(e, "features")}
+          >
+            Features
+          </a>
+          <a
+            href="#works"
+            onClick={(e) => handleScroll(e, "works")}
+          >
+            How It Works
+          </a>
+          <a
+            href="#faq"
+            onClick={(e) => handleScroll(e, "faq")}
+          >
+            FAQ
+          </a>
         </nav>
-        {/* Points to the login path handled by your React app router */}
-        <a className="btn" href="/login">Launch Web App</a>
+
+        <a className="ra-button ra-button-primary ra-header-cta" href="/login">
+          Launch Web App
+          <span aria-hidden="true">↗</span>
+        </a>
       </header>
 
-      <section className="hero">
-        <div>
-          <h1>Ditch the Paper.<br />Automate Your Receipts in Real-Time.</h1>
-          <p>RuachAgent seamlessly integrates with your POS or webhook setup to instantly send beautiful, fully customized digital till slips the moment a transaction clears.</p>
-          <div className="actions">
-            <span className="btn-secondary">💻 Desktop App (Coming Soon)</span>
-            <span className="btn-secondary">📱 Mobile App (Coming Soon)</span>
-          </div>
-        </div>
-        <div className="panel">
-          <img src="/receipt-preview.png" alt="Receipt Preview" />
-        </div>
-      </section>
+      <main>
+        {/* Hero */}
+        <section className="ra-hero" id="top">
+          <div className="ra-hero-grid" aria-hidden="true" />
 
-      <section id="features">
-        <h2>Core Features</h2>
-        <div className="cards">
-          <div className="panel card">
-            <h3>Branded to Perfection</h3>
-            <p>Upload logos, currencies and create premium digital receipts with watermark branding.</p>
-          </div>
-          <div className="panel card">
-            <h3>Webhook & AI Automation</h3>
-            <p>Generate endpoint URLs and automate receipt routing, discounts and voucher policies.</p>
-          </div>
-          <div className="panel card">
-            <h3>QR Enabled Receipts</h3>
-            <p>Every receipt includes secure QR codes for vouchers, tracking and verification.</p>
-          </div>
-        </div>
-      </section>
+          <div className="ra-hero-glow" aria-hidden="true" />
 
-      <section id="works">
-        <h2>Inside the Merchant Dashboard</h2>
-        <div className="panel" style={{ marginBottom: '20px' }}>
-          <img src="/dashboard-preview.png" alt="Dashboard Preview" style={{ width: '100%', borderRadius: '20px', display: 'block' }} />
-        </div>
-        <div className="steps">
-          <div className="panel">
-            <h3>1. Configure</h3>
-            <p>Business information, branding and receipt preferences.</p>
+          <div className="ra-hero-copy">
+            <div className="ra-eyebrow">
+              <span className="ra-status-dot" />
+              SMARTER CHECKOUT. ZERO PAPER.
+            </div>
+
+            <h1>
+              Ditch the Paper.
+              <br />
+              <span className="ra-gradient-text">
+                Automate Your
+              </span>
+              <br />
+              Receipts in Real-Time.
+            </h1>
+
+            <p className="ra-hero-description">
+              RuachAgent seamlessly integrates with your POS or
+              webhook setup to instantly send beautiful, fully
+              customized digital till slips the moment a
+              transaction clears.
+            </p>
+
+            <div className="ra-actions">
+              <a className="ra-button ra-button-primary" href="/login">
+                Launch Web App
+                <span aria-hidden="true">→</span>
+              </a>
+              <a
+                className="ra-button ra-button-secondary"
+                href="#features"
+                onClick={(e) => handleScroll(e, "features")}
+              >
+                Explore Features
+              </a>
+            </div>
+
+            <div className="ra-coming-soon">
+              <span className="ra-coming-icon" aria-hidden="true">
+                ▣
+              </span>
+              Desktop App
+              <span className="ra-coming-divider" />
+              <span className="ra-coming-icon" aria-hidden="true">
+                ◈
+              </span>
+              Mobile App
+              <span className="ra-coming-badge">COMING SOON</span>
+            </div>
           </div>
-          <div className="panel">
-            <h3>2. Sync Endpoint</h3>
-            <p>Copy webhook URL and connect your POS.</p>
+
+          <div className="ra-hero-visual">
+            <div className="ra-visual-orbit ra-orbit-one" />
+            <div className="ra-visual-orbit ra-orbit-two" />
+
+            <div className="ra-visual-label">
+              <span className="ra-status-dot" />
+              DIGITAL RECEIPT SYSTEM
+              <span className="ra-visual-live">LIVE PREVIEW</span>
+            </div>
+
+            <div className="ra-receipt-frame ra-glass-panel">
+              <div className="ra-frame-top">
+                <span className="ra-window-dots">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <span>RECEIPT_PREVIEW</span>
+                <span className="ra-frame-indicator">01</span>
+              </div>
+
+              <img
+                src="/receipt-preview.png"
+                alt="RuachAgent digital receipt preview"
+                className="ra-receipt-image"
+              />
+
+              <div className="ra-frame-footer">
+                <span>SECURE DIGITAL DELIVERY</span>
+                <span className="ra-footer-check">✓ VERIFIED</span>
+              </div>
+            </div>
+
+            <div className="ra-floating-chip ra-chip-top">
+              <span className="ra-chip-icon">✳</span>
+              <span>
+                <strong>Automated</strong>
+                <small>Receipt delivery</small>
+              </span>
+            </div>
+
+            <div className="ra-floating-chip ra-chip-bottom">
+              <span className="ra-chip-icon ra-chip-blue">⌁</span>
+              <span>
+                <strong>Seamless sync</strong>
+                <small>POS &amp; webhooks</small>
+              </span>
+            </div>
+
+            <div className="ra-visual-caption">
+              <span>01 / DIGITAL-FIRST COMMERCE</span>
+              <span>POWERED BY RUACHAGENT</span>
+            </div>
           </div>
-          <div className="panel">
-            <h3>3. Monitor</h3>
-            <p>Watch live synchronized inboxes and parsed slips.</p>
+
+          <a
+            href="#features"
+            className="ra-scroll-cue"
+            onClick={(e) => handleScroll(e, "features")}
+          >
+            <span />
+            DISCOVER THE PLATFORM
+          </a>
+        </section>
+
+        {/* Feature introduction */}
+        <section className="ra-section ra-features" id="features">
+          <div className="ra-section-heading">
+            <div className="ra-eyebrow">
+              <span className="ra-status-dot" />
+              BUILT FOR MODERN MERCHANTS
+            </div>
+
+            <h2>
+              Less paper.
+              <br />
+              <span className="ra-gradient-text">
+                More possibilities.
+              </span>
+            </h2>
+
+            <p>
+              Intelligent receipt delivery, flexible integrations,
+              and a premium customer experience — all in one
+              streamlined platform.
+            </p>
           </div>
-          <div className="panel">
-            <h3>4. Live Mirror</h3>
-            <p>Preview exactly what customers receive.</p>
+
+          <div className="ra-feature-grid">
+            <article className="ra-panel ra-feature-card">
+              <div className="ra-feature-top">
+                <div className="ra-feature-icon">✳</div>
+                <span className="ra-card-index">01</span>
+              </div>
+
+              <div className="ra-card-kicker">YOUR BRAND. YOUR IDENTITY.</div>
+              <h3>Branded to Perfection</h3>
+              <p>
+                Upload logos, currencies and create premium
+                digital receipts with watermark branding.
+              </p>
+
+              <div className="ra-card-bottom">
+                <span>BRAND EXPERIENCE</span>
+                <span aria-hidden="true">↗</span>
+              </div>
+            </article>
+
+            <article className="ra-panel ra-feature-card">
+              <div className="ra-feature-top">
+                <div className="ra-feature-icon">⌁</div>
+                <span className="ra-card-index">02</span>
+              </div>
+
+              <div className="ra-card-kicker">INTELLIGENT AUTOMATION</div>
+              <h3>Webhook &amp; AI Automation</h3>
+              <p>
+                Generate endpoint URLs and automate receipt
+                routing, discounts and voucher policies.
+              </p>
+
+              <div className="ra-card-bottom">
+                <span>CONNECTED WORKFLOWS</span>
+                <span aria-hidden="true">↗</span>
+              </div>
+            </article>
+
+            <article className="ra-panel ra-feature-card">
+              <div className="ra-feature-top">
+                <div className="ra-feature-icon">⌗</div>
+                <span className="ra-card-index">03</span>
+              </div>
+
+              <div className="ra-card-kicker">SECURE BY DESIGN</div>
+              <h3>QR Enabled Receipts</h3>
+              <p>
+                Every receipt includes secure QR codes for
+                vouchers, tracking and verification.
+              </p>
+
+              <div className="ra-card-bottom">
+                <span>SMART VERIFICATION</span>
+                <span aria-hidden="true">↗</span>
+              </div>
+            </article>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section>
-        <div className="panel" style={{ textAlign: 'center' }}>
-          <h2>Ready to upgrade your checkout experience?</h2>
-          <p>Join modern merchants saving time and eliminating paper receipts.</p>
-          <div className="actions" style={{ justifyContent: 'center' }}>
-            <span className="btn-secondary">💻 Desktop App (Coming Soon)</span>
-            <span className="btn-secondary">📱 Mobile App (Coming Soon)</span>
+        {/* Dashboard and workflow */}
+        <section className="ra-section ra-workspace" id="works">
+          <div className="ra-section-heading">
+            <div className="ra-eyebrow">
+              <span className="ra-status-dot" />
+              THE MERCHANT CONTROL CENTER
+            </div>
+
+            <h2>
+              Everything connected.
+              <br />
+              <span className="ra-gradient-text">
+                Nothing complicated.
+              </span>
+            </h2>
+
+            <p>
+              Manage your receipt workflows through a unified
+              merchant dashboard designed to make every step
+              feel effortless.
+            </p>
           </div>
-        </div>
-      </section>
 
-      <section id="faq">
-        <h2>FAQ</h2>
-        <div className="panel">
-          <h3>Does it support custom branding?</h3>
-          <p>Yes.</p>
-          <h3>Can it integrate with webhooks?</h3>
-          <p>Yes, using generated endpoint URLs.</p>
-          <h3>How do customers access their receipts?</h3>
-          <p>Customers receive their receipts via email if the store's POS collects email addresses.</p>
-          <h3>How can customers scan their QR codes?</h3>
-          <p>Customers can scan the QR codes using their smartphone cameras.</p>
-        </div>
-      </section>
+          <div className="ra-dashboard-shell ra-glass-panel">
+            <div className="ra-dashboard-bar">
+              <div className="ra-window-dots">
+                <i />
+                <i />
+                <i />
+              </div>
 
-<footer>
-  © 2026 RuachAgent. All rights reserved. |
+              <span className="ra-dashboard-title">
+                RUACHAGENT / MERCHANT DASHBOARD
+              </span>
 
-  <Link to="/privacy">Privacy Policy</Link> |
+              <span className="ra-dashboard-status">
+                <span className="ra-status-dot" />
+                WORKSPACE PREVIEW
+              </span>
+            </div>
 
-  <Link to="/terms">Terms</Link> |
+            <div className="ra-dashboard-image-wrap">
+              <img
+                src="/dashboard-preview.png"
+                alt="RuachAgent merchant dashboard preview"
+                className="ra-dashboard-image"
+              />
 
-  <Link to="/support">Support</Link>
-</footer>
+              <div className="ra-image-corner ra-corner-tl" />
+              <div className="ra-image-corner ra-corner-tr" />
+              <div className="ra-image-corner ra-corner-bl" />
+              <div className="ra-image-corner ra-corner-br" />
+            </div>
+
+            <div className="ra-dashboard-footer">
+              <span>UNIFIED MERCHANT WORKSPACE</span>
+              <span>DESIGNED FOR CLARITY <b>✳</b></span>
+            </div>
+          </div>
+
+          <div className="ra-workflow-heading">
+            <span className="ra-card-kicker">YOUR WORKFLOW</span>
+            <h3>Four steps. One connected experience.</h3>
+          </div>
+
+          <div className="ra-workflow-grid">
+            <article className="ra-panel ra-step-card">
+              <span className="ra-step-number">01</span>
+              <div className="ra-step-line" />
+              <h3>Configure</h3>
+              <p>Business information, branding and receipt preferences.</p>
+            </article>
+
+            <article className="ra-panel ra-step-card">
+              <span className="ra-step-number">02</span>
+              <div className="ra-step-line" />
+              <h3>Sync Endpoint</h3>
+              <p>Copy webhook URL and connect your POS.</p>
+            </article>
+
+            <article className="ra-panel ra-step-card">
+              <span className="ra-step-number">03</span>
+              <div className="ra-step-line" />
+              <h3>Monitor</h3>
+              <p>Watch live synchronized inboxes and parsed slips.</p>
+            </article>
+
+            <article className="ra-panel ra-step-card">
+              <span className="ra-step-number">04</span>
+              <div className="ra-step-line" />
+              <h3>Live Mirror</h3>
+              <p>Preview exactly what customers receive.</p>
+            </article>
+          </div>
+        </section>
+
+        {/* Conversion section */}
+        <section className="ra-section ra-cta-section">
+          <div className="ra-cta-panel ra-panel">
+            <div className="ra-cta-grid" aria-hidden="true" />
+
+            <div className="ra-cta-glow" aria-hidden="true" />
+
+            <div className="ra-cta-content">
+              <div className="ra-eyebrow">
+                <span className="ra-status-dot" />
+                THE FUTURE IS DIGITAL
+              </div>
+
+              <h2>
+                Ready to upgrade
+                <br />
+                your <span className="ra-gradient-text">checkout experience?</span>
+              </h2>
+
+              <p>
+                Join modern merchants saving time and eliminating
+                paper receipts.
+              </p>
+
+              <div className="ra-actions ra-actions-centered">
+                <a
+                  className="ra-button ra-button-primary"
+                  href="/login"
+                >
+                  Launch Web App <span aria-hidden="true">→</span>
+                </a>
+              </div>
+
+              <div className="ra-cta-coming">
+                <span>DESKTOP APP — COMING SOON</span>
+                <span className="ra-cta-separator">/</span>
+                <span>MOBILE APP — COMING SOON</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="ra-section ra-faq" id="faq">
+          <div className="ra-faq-intro">
+            <div className="ra-eyebrow">
+              <span className="ra-status-dot" />
+              QUESTIONS, ANSWERED
+            </div>
+
+            <h2>
+              Good to
+              <br />
+              <span className="ra-gradient-text">know.</span>
+            </h2>
+
+            <p>
+              Everything you need to know before getting started
+              with RuachAgent.
+            </p>
+          </div>
+
+          <div className="ra-faq-list">
+            <details className="ra-faq-item" open>
+              <summary>
+                <span>Does it support custom branding?</span>
+                <span className="ra-faq-plus">+</span>
+              </summary>
+              <p>Yes.</p>
+            </details>
+
+            <details className="ra-faq-item">
+              <summary>
+                <span>Can it integrate with webhooks?</span>
+                <span className="ra-faq-plus">+</span>
+              </summary>
+              <p>Yes, using generated endpoint URLs.</p>
+            </details>
+
+            <details className="ra-faq-item">
+              <summary>
+                <span>How do customers access their receipts?</span>
+                <span className="ra-faq-plus">+</span>
+              </summary>
+              <p>
+                Customers receive their receipts via email if the
+                store's POS collects email addresses.
+              </p>
+            </details>
+
+            <details className="ra-faq-item">
+              <summary>
+                <span>How can customers scan their QR codes?</span>
+                <span className="ra-faq-plus">+</span>
+              </summary>
+              <p>
+                Customers can scan the QR codes using their
+                smartphone cameras.
+              </p>
+            </details>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="ra-footer">
+        <a
+          href="#top"
+          className="ra-footer-brand"
+          onClick={(e) => handleScroll(e, "top")}
+        >
+          <img src="/RuachAgentLogo.png" alt="" />
+          <span>RUACHAGENT</span>
+        </a>
+
+        <p>© 2026 RuachAgent. All rights reserved.</p>
+
+        <nav className="ra-footer-links" aria-label="Legal and support">
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/support">Support</Link>
+        </nav>
+      </footer>
     </div>
   );
 }
