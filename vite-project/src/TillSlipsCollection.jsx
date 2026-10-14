@@ -1103,7 +1103,7 @@ export default function TillSlipsCollection() {
                                                                 ""
                                                             }
                                                         />
-                                                    ) : design.id === "luxury-minimal" ? (
+                                                    ) : design.id === "luxury" ? (
                                                         <LuxuryTillSlip
                                                             receiptData={receiptData}
                                                             settings={settings}

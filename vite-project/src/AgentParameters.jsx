@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useBusiness } from "./backend/businessService";
 
 import MatrixTillSlip from "./models/MatrixTillSlip";
+import LuxuryTillSlip from "./models/LuxuryTillSlip";
 
 // --------------------
 // Static data
