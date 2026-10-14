@@ -926,121 +926,660 @@ export default function AdminPanel() {
         </div>
       )}
 
+
       {/* GLOBAL MODAL 2: 3-DAY PREMIUM TRIAL WELCOME */}
       {showTrialWelcomeModal && (
         <div
           style={{
             ...styles.modalOverlay,
             background:
-              "radial-gradient(circle at top, rgba(0,255,170,0.08), rgba(0,0,0,0.94) 45%, #000000 100%)",
-            backdropFilter: "blur(12px)"
+              "radial-gradient(ellipse at 50% 0%, rgba(225,25,45,0.13) 0%, rgba(8,8,10,0.97) 48%, #000000 100%)",
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
+            animation: "ruachTeslaFadeIn 0.5s ease-out"
           }}
         >
+          <style>
+            {`
+        @keyframes ruachTeslaFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes ruachTeslaRise {
+          from {
+            opacity: 0;
+            transform: translateY(18px) scale(0.98);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes ruachTeslaPulse {
+          0%, 100% {
+            opacity: 0.55;
+            transform: scale(0.96);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.04);
+          }
+        }
+
+        @keyframes ruachTeslaScan {
+          0% { transform: translateX(-160%) skewX(-20deg); }
+          100% { transform: translateX(600%) skewX(-20deg); }
+        }
+
+        .ruach-tesla-price {
+          position: relative;
+          overflow: hidden;
+        }
+
+        .ruach-tesla-price::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -35%;
+          width: 22%;
+          pointer-events: none;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,0.09),
+            transparent
+          );
+          animation: ruachTeslaScan 5s ease-in-out infinite;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .ruach-tesla-price::after {
+            animation: none;
+          }
+        }
+      `}
+          </style>
+
           <div
             style={{
               ...styles.flatCard,
-              maxWidth: "460px",
+              maxWidth: "470px",
               width: "90%",
+              boxSizing: "border-box",
+              padding: "38px 28px 32px",
               textAlign: "center",
               position: "relative",
+              isolation: "isolate",
               overflow: "hidden",
-              border: "1px solid rgba(0,255,170,0.25)",
+              border: "1px solid rgba(255,255,255,0.13)",
               borderRadius: "24px",
               background:
-                "linear-gradient(145deg, #050505 0%, #071822 55%, #02110d 100%)",
+                "linear-gradient(145deg, #202023 0%, #111113 38%, #060607 100%)",
               boxShadow:
-                "0 0 20px rgba(0,255,170,0.18), 0 0 45px rgba(0,180,255,0.12)"
+                "0 30px 100px rgba(0,0,0,0.78), 0 0 45px rgba(220,20,40,0.09), inset 0 1px 0 rgba(255,255,255,0.09)",
+              animation:
+                "ruachTeslaRise 0.6s cubic-bezier(0.2,0.8,0.2,1)"
             }}
           >
-            {/* Decorative Glow */}
+            {/* Metallic top highlight */}
             <div
               style={{
                 position: "absolute",
-                top: "-90px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                width: "260px",
-                height: "260px",
-                borderRadius: "50%",
+                top: 0,
+                left: "12%",
+                width: "76%",
+                height: "1px",
                 background:
-                  "radial-gradient(circle, rgba(0,255,170,0.28) 0%, rgba(0,180,255,0.12) 45%, transparent 75%)",
-                filter: "blur(30px)",
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(255,45,60,0.65), transparent)",
                 pointerEvents: "none"
               }}
             />
 
-            {/* Neon Badge */}
+            {/* Ambient red glow */}
             <div
               style={{
-                width: "82px",
-                height: "82px",
-                margin: "0 auto 22px",
+                position: "absolute",
+                top: "-155px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "330px",
+                height: "300px",
                 borderRadius: "50%",
+                background:
+                  "radial-gradient(circle, rgba(225,25,45,0.18) 0%, rgba(150,15,30,0.06) 45%, transparent 72%)",
+                filter: "blur(30px)",
+                pointerEvents: "none",
+                zIndex: -1
+              }}
+            />
+
+            {/* Futuristic premium emblem */}
+            <div
+              style={{
+                position: "relative",
+                width: "78px",
+                height: "78px",
+                margin: "0 auto 26px",
+                borderRadius: "23px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                fontSize: "42px",
                 background:
-                  "linear-gradient(135deg, #00F5A0, #00C6FF)",
+                  "linear-gradient(145deg, #303034, #111113 75%)",
+                border: "1px solid rgba(255,255,255,0.15)",
                 boxShadow:
-                  "0 0 20px rgba(0,255,170,0.45), 0 0 45px rgba(0,198,255,0.35)"
+                  "0 12px 35px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12)"
               }}
             >
-              🎉
+              <div
+                style={{
+                  position: "absolute",
+                  inset: "-5px",
+                  borderRadius: "27px",
+                  border: "1px solid rgba(255,45,60,0.35)",
+                  animation: "ruachTeslaPulse 3s ease-in-out infinite",
+                  pointerEvents: "none"
+                }}
+              />
+
+              <span
+                style={{
+                  fontSize: "35px",
+                  filter: "drop-shadow(0 0 12px rgba(255,45,60,0.45))"
+                }}
+              >
+                ⚡
+              </span>
             </div>
 
+            {/* Activation status */}
             <div
               style={{
-                color: "#00F5A0",
-                fontSize: "12px",
-                letterSpacing: "3px",
-                fontWeight: 700,
-                marginBottom: "12px"
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "9px",
+                color: "#ff4657",
+                fontSize: "10px",
+                letterSpacing: "2.8px",
+                fontWeight: 800,
+                marginBottom: "18px"
               }}
             >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  flexShrink: 0,
+                  borderRadius: "50%",
+                  background: "#ff3549",
+                  boxShadow: "0 0 12px rgba(255,53,73,0.8)"
+                }}
+              />
               PREMIUM ACCESS ACTIVATED
             </div>
 
+            {/* Main heading */}
             <h2
               style={{
                 color: "#ffffff",
-                marginBottom: "16px",
-                fontSize: "30px",
-                fontWeight: 700,
-                textShadow: "0 0 12px rgba(0,198,255,0.35)"
+                margin: "0 0 19px",
+                fontSize: "clamp(25px, 5vw, 31px)",
+                lineHeight: 1.2,
+                letterSpacing: "-1px",
+                fontWeight: 750
               }}
             >
-              Welcome to Your Premium Trial
+              Welcome to Your
+              <br />
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, #ffffff 0%, #d2d2d6 55%, #ffffff 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent"
+                }}
+              >
+                Premium Trial.
+              </span>
+            </h2>
+
+            {/* Welcome message */}
+            <p
+              style={{
+                color: "#a9a9b2",
+                lineHeight: 1.9,
+                margin: "0 0 25px",
+                fontSize: "14px"
+              }}
+            >
+              Your email has been successfully verified, and your
+              merchant workspace is now online.
+              <br />
+              <br />
+              You now have unrestricted access to every Premium feature
+              for the next{" "}
+              <strong
+                style={{
+                  color: "#ffffff",
+                  fontWeight: 750,
+                  whiteSpace: "nowrap"
+                }}
+              >
+                3 days
+              </strong>
+              . Enjoy the full power of{" "}
+              <strong
+                style={{
+                  color: "#ff4657",
+                  fontWeight: 750,
+                  textShadow: "0 0 15px rgba(255,45,60,0.17)"
+                }}
+              >
+                RuachAgent
+              </strong>
+              .
+            </p>
+
+            {/* Premium pricing panel */}
+            <div
+              className="ruach-tesla-price"
+              style={{
+                padding: "21px 14px",
+                marginBottom: "22px",
+                borderRadius: "15px",
+                border: "1px solid rgba(255,255,255,0.11)",
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.065), rgba(255,255,255,0.018))",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.04)"
+              }}
+            >
+              <div
+                style={{
+                  color: "#85858e",
+                  fontSize: "10px",
+                  letterSpacing: "2.5px",
+                  fontWeight: 800,
+                  marginBottom: "10px"
+                }}
+              >
+                THE PREMIUM EXPERIENCE
+              </div>
+
+              <div
+                style={{
+                  color: "#f5f5f7",
+                  fontSize: "clamp(17px, 4vw, 21px)",
+                  fontWeight: 750,
+                  lineHeight: 1.5,
+                  letterSpacing: "-0.45px",
+                  position: "relative",
+                  zIndex: 1
+                }}
+              >
+                The Premium version is only{" "}
+                <span
+                  style={{
+                    color: "#ff4657",
+                    textShadow: "0 0 18px rgba(255,45,60,0.22)",
+                    whiteSpace: "nowrap"
+                  }}
+                >
+                  $6.99
+                </span>
+              </div>
+
+              <div
+                style={{
+                  color: "#777780",
+                  fontSize: "11px",
+                  marginTop: "8px",
+                  letterSpacing: "0.35px"
+                }}
+              >
+                Premium power. Exceptional simplicity.
+              </div>
+            </div>
+
+            {/* Original modal had no action button; no backend behavior added */}
+
+            {/* Subtle footer */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
+                color: "#65656d",
+                fontSize: "9px",
+                fontWeight: 700,
+                letterSpacing: "1.8px"
+              }}
+            >
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "1px",
+                  background: "rgba(255,255,255,0.2)"
+                }}
+              />
+              RUACHAGENT · PREMIUM
+              <span
+                style={{
+                  display: "inline-block",
+                  width: "20px",
+                  height: "1px",
+                  background: "rgba(255,255,255,0.2)"
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {/* GLOBAL MODAL 2: 3-DAY PREMIUM TRIAL WELCOME */}
+      {showTrialWelcomeModal && (
+        <div
+          style={{
+            ...styles.modalOverlay,
+            background:
+              "radial-gradient(ellipse at 50% 0%, rgba(180, 15, 30, 0.12) 0%, rgba(10, 10, 12, 0.96) 48%, #000 100%)",
+            backdropFilter: "blur(22px)",
+            WebkitBackdropFilter: "blur(22px)",
+            animation: "teslaOverlayIn 0.45s ease-out"
+          }}
+        >
+          <style>
+            {`
+        @keyframes teslaOverlayIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @keyframes teslaCardIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.97);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes teslaPulse {
+          0%, 100% {
+            opacity: 0.55;
+            transform: scale(0.96);
+          }
+          50% {
+            opacity: 1;
+            transform: scale(1.04);
+          }
+        }
+
+        @keyframes teslaScan {
+          0% { left: -40%; }
+          100% { left: 120%; }
+        }
+
+        .tesla-premium-button {
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.25s ease,
+                      box-shadow 0.25s ease,
+                      background 0.25s ease;
+        }
+
+        .tesla-premium-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 0 28px rgba(235, 35, 50, 0.28),
+                      0 10px 35px rgba(0, 0, 0, 0.35);
+          background: linear-gradient(135deg, #ff3548, #d91028) !important;
+        }
+
+        .tesla-premium-button:active {
+          transform: scale(0.99);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .tesla-premium-button {
+            transition: none;
+          }
+        }
+      `}
+          </style>
+
+          <div
+            style={{
+              ...styles.flatCard,
+              maxWidth: "470px",
+              width: "90%",
+              boxSizing: "border-box",
+              padding: "38px 30px 30px",
+              textAlign: "center",
+              position: "relative",
+              overflow: "hidden",
+              isolation: "isolate",
+              border: "1px solid rgba(255,255,255,0.13)",
+              borderRadius: "22px",
+              background:
+                "linear-gradient(155deg, rgba(29,29,32,0.98) 0%, rgba(13,13,15,0.99) 45%, rgba(5,5,6,1) 100%)",
+              boxShadow:
+                "0 30px 100px rgba(0,0,0,0.75), 0 0 45px rgba(220,20,40,0.07), inset 0 1px 0 rgba(255,255,255,0.07)",
+              animation: "teslaCardIn 0.55s cubic-bezier(0.2,0.8,0.2,1)"
+            }}
+          >
+            {/* Subtle metallic top edge */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "12%",
+                width: "76%",
+                height: "1px",
+                background:
+                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.5), rgba(240,35,50,0.7), transparent)",
+                pointerEvents: "none"
+              }}
+            />
+
+            {/* Ambient red illumination */}
+            <div
+              style={{
+                position: "absolute",
+                top: "-145px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "330px",
+                height: "280px",
+                borderRadius: "50%",
+                background:
+                  "radial-gradient(circle, rgba(225,25,45,0.16) 0%, rgba(150,15,30,0.06) 42%, transparent 72%)",
+                filter: "blur(28px)",
+                pointerEvents: "none",
+                zIndex: -1
+              }}
+            />
+
+            {/* Premium emblem */}
+            <div
+              style={{
+                width: "76px",
+                height: "76px",
+                margin: "0 auto 25px",
+                borderRadius: "22px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                background:
+                  "linear-gradient(145deg, #29292d 0%, #111113 100%)",
+                border: "1px solid rgba(255,255,255,0.16)",
+                boxShadow:
+                  "0 8px 30px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)"
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  inset: "-5px",
+                  borderRadius: "26px",
+                  border: "1px solid rgba(235,35,50,0.3)",
+                  animation: "teslaPulse 3s ease-in-out infinite",
+                  pointerEvents: "none"
+                }}
+              />
+
+              <span
+                style={{
+                  fontSize: "35px",
+                  filter: "drop-shadow(0 0 12px rgba(255,45,60,0.4))"
+                }}
+              >
+                ⚡
+              </span>
+            </div>
+
+            {/* Status label */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "9px",
+                color: "#ff4555",
+                fontSize: "10px",
+                letterSpacing: "3px",
+                fontWeight: 800,
+                marginBottom: "17px",
+                textTransform: "uppercase"
+              }}
+            >
+              <span
+                style={{
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  background: "#ff3347",
+                  boxShadow: "0 0 10px rgba(255,51,71,0.8)"
+                }}
+              />
+              PREMIUM ACCESS ACTIVATED
+            </div>
+
+            {/* Main heading */}
+            <h2
+              style={{
+                color: "#ffffff",
+                margin: "0 0 17px",
+                fontSize: "clamp(25px, 5vw, 31px)",
+                lineHeight: 1.2,
+                letterSpacing: "-1.1px",
+                fontWeight: 750
+              }}
+            >
+              Welcome to
+              <br />
+              <span
+                style={{
+                  background:
+                    "linear-gradient(90deg, #ffffff 0%, #c9c9cd 55%, #ffffff 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent"
+                }}
+              >
+                Premium.
+              </span>
             </h2>
 
             <p
               style={{
-                color: "#b9c7cf",
-                lineHeight: "1.9",
-                marginBottom: "28px",
-                fontSize: "15px"
+                color: "#a5a5ad",
+                lineHeight: 1.9,
+                margin: "0 0 24px",
+                fontSize: "14px"
               }}
             >
-              Your email has been successfully verified and your merchant
-              workspace is now online.
+              Your email has been successfully verified, and your
+              merchant workspace is now online.
               <br />
               <br />
-              You now have unrestricted access to every Premium feature for the
-              next
+              You now have unrestricted access to every Premium feature
+              for the next{" "}
               <strong
                 style={{
-                  color: "#00F5A0",
-                  textShadow: "0 0 10px rgba(0,255,170,0.55)"
+                  color: "#ffffff",
+                  fontWeight: 700
                 }}
               >
-                {" "}
                 {trialDaysRemaining} day
                 {trialDaysRemaining !== 1 ? "s" : ""}
               </strong>
               .
             </p>
 
+            {/* Premium pricing panel */}
+            <div
+              style={{
+                position: "relative",
+                overflow: "hidden",
+                padding: "18px 15px",
+                marginBottom: "25px",
+                borderRadius: "13px",
+                border: "1px solid rgba(255,255,255,0.1)",
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018))",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.035)"
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  bottom: 0,
+                  width: "25%",
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.045), transparent)",
+                  transform: "skewX(-20deg)",
+                  animation: "teslaScan 5s ease-in-out infinite",
+                  pointerEvents: "none"
+                }}
+              />
+
+              <div
+                style={{
+                  color: "#898990",
+                  fontSize: "10px",
+                  fontWeight: 700,
+                  letterSpacing: "2.5px",
+                  marginBottom: "8px",
+                  textTransform: "uppercase"
+                }}
+              >
+                YOUR NEXT LEVEL
+              </div>
+
+              <div
+                style={{
+                  marginTop: "7px",
+                  color: "#777780",
+                  fontSize: "11px",
+                  letterSpacing: "0.3px"
+                }}
+              >
+                Premium power. Minimal cost.
+              </div>
+            </div>
+
+            {/* Enter workspace — original backend logic preserved */}
             <button
+              className="tesla-premium-button"
               onClick={async () => {
                 if (user?.id) {
                   await supabase
@@ -1057,34 +1596,42 @@ export default function AdminPanel() {
                 ...styles.button,
                 width: "100%",
                 padding: "16px",
-                fontSize: "16px",
-                fontWeight: 700,
-                border: "none",
-                borderRadius: "14px",
+                fontSize: "14px",
+                fontWeight: 800,
+                letterSpacing: "1.4px",
+                textTransform: "uppercase",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: "12px",
                 cursor: "pointer",
                 color: "#ffffff",
                 background:
-                  "linear-gradient(90deg, #00F5A0 0%, #00C6FF 100%)",
-                boxShadow:
-                  "0 0 18px rgba(0,255,170,0.35), 0 0 30px rgba(0,198,255,0.25)",
+                  "linear-gradient(135deg, #ed263a 0%, #c8102e 100%)",
+                boxShadow: "0 5px 24px rgba(220,20,40,0.17)",
                 transition: "all .25s ease"
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow =
-                  "0 0 28px rgba(0,255,170,.55),0 0 45px rgba(0,198,255,.4)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow =
-                  "0 0 18px rgba(0,255,170,.35),0 0 30px rgba(0,198,255,.25)";
+            >
+              Enter Workspace
+              <span style={{ marginLeft: "10px", fontSize: "17px" }}>
+                →
+              </span>
+            </button>
+
+            {/* Minimal footer */}
+            <div
+              style={{
+                marginTop: "20px",
+                color: "#65656d",
+                fontSize: "10px",
+                letterSpacing: "1.5px",
+                textTransform: "uppercase"
               }}
             >
-              Enter Workspace →
-            </button>
+              ENGINEERED FOR A PREMIUM EXPERIENCE
+            </div>
           </div>
         </div>
       )}
+
 
       {/* ======================= APPLE GLASS UI AUTHENTICATION MODAL ======================= */}
       <style>{authAnimations}</style>
