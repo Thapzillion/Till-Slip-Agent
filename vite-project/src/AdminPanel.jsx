@@ -63,6 +63,7 @@ export default function AdminPanel() {
     settings,
     setSettings,
     fetchMerchantSettings,
+    getActiveUser,
 
     // Subscription
     showTrialWelcomeModal,
@@ -145,7 +146,16 @@ export default function AdminPanel() {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const loadPageFromSupabase = async (nextTab) => {
-    if (!user?.id) {
+    /*
+     * A browser can resume before the local React user state has caught up
+     * with Supabase's persisted session. Never treat that short window as a
+     * signed-out state. Ask Supabase directly for the current session first.
+     */
+    const activeUser = user?.id
+      ? user
+      : await getActiveUser();
+
+    if (!activeUser?.id) {
       setActiveTab(nextTab);
       return;
     }
@@ -176,7 +186,7 @@ export default function AdminPanel() {
 
       const synchronizedSettings =
         await fetchMerchantSettings(
-          user.id,
+          activeUser.id,
           {
             force: true
           }
@@ -350,83 +360,14 @@ export default function AdminPanel() {
     }
   };
 
-  useEffect(() => {
-    let mounted = true;
-
-    const recoverAdminWorkspace = async (reason) => {
-      if (!mounted || !user?.id) return;
-
-      try {
-        console.log(
-          `[RuachAgent] Admin workspace resume: ${reason}`
-        );
-
-        /*
-         * businessService owns the actual single-flight
-         * business_settings synchronization.
-         */
-        await fetchMerchantSettings(
-          user.id,
-          { force: true }
-        );
-
-        if (mounted) {
-          setDatabaseRefreshKey(
-            (value) => value + 1
-          );
-        }
-      } catch (error) {
-        /*
-         * Do nothing destructive.
-         *
-         * businessService deliberately preserves the last
-         * known-good settings.
-         */
-        console.warn(
-          "Admin workspace resume could not fully synchronize:",
-          error
-        );
-      }
-    };
-
-    const handleVisibility = () => {
-      if (
-        document.visibilityState === "visible"
-      ) {
-        recoverAdminWorkspace(
-          "visibilitychange"
-        );
-      }
-    };
-
-    const handlePageShow = () => {
-      recoverAdminWorkspace("pageshow");
-    };
-
-    document.addEventListener(
-      "visibilitychange",
-      handleVisibility
-    );
-
-    window.addEventListener(
-      "pageshow",
-      handlePageShow
-    );
-
-    return () => {
-      mounted = false;
-
-      document.removeEventListener(
-        "visibilitychange",
-        handleVisibility
-      );
-
-      window.removeEventListener(
-        "pageshow",
-        handlePageShow
-      );
-    };
-  }, [user?.id, fetchMerchantSettings]);
+  /*
+   * Tab/session recovery is intentionally NOT registered here.
+   *
+   * businessService owns the single session/resume engine so AdminPanel
+   * cannot create another visibility/pageshow listener every time the
+   * useBusiness() function identity changes. Navigation still performs an
+   * explicit destination synchronization through loadPageFromSupabase().
+   */
 
   const styles = {
     container: {
