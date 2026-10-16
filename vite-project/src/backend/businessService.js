@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 import { supabase } from '../supabaseClient';
 
@@ -302,6 +302,11 @@ const CURRENCY_OPTIONS = [
 export function useBusiness() {
 
     const [user, setUser] = useState(null);
+    const userRef = useRef(null);
+
+    useEffect(() => {
+        userRef.current = user;
+    }, [user]);
 
     const [email, setEmail] = useState('');
 
@@ -571,86 +576,102 @@ export function useBusiness() {
         let isMounted = true;
 
         let loadingFailsafe = null;
+        let recoveryRequest = null;
 
-        const recover = async (
+        const recover = (
             reason = "unknown",
             userIdOverride = null
         ) => {
-            if (!isMounted) return;
+            if (!isMounted) return Promise.resolve();
+            if (recoveryRequest) return recoveryRequest;
 
-            try {
-                console.log(
-                    `[RuachAgent] Session recovery started: ${reason}`
-                );
-
-                const {
-                    data: {
-                        session
-                    }
-                } = await supabase.auth.getSession();
-
-                const activeUser =
-                    session?.user ||
-                    (
-                        userIdOverride
-                            ? { id: userIdOverride }
-                            : null
+            recoveryRequest = (async () => {
+                try {
+                    console.log(
+                        `[RuachAgent] Session recovery started: ${reason}`
                     );
 
-                if (!activeUser?.id) {
-                    return;
-                }
+                    const {
+                        data: {
+                            session
+                        }
+                    } = await supabase.auth.getSession();
 
-                setUser(activeUser);
+                    const activeUser =
+                        session?.user ||
+                        (
+                            userIdOverride
+                                ? { id: userIdOverride }
+                                : null
+                        );
 
-                /*
-                 * Settings recovery.
-                 *
-                 * This is single-flight and therefore safe even if several
-                 * components receive the same resume/auth event.
-                 */
-                await recoverRuachSession(activeUser.id, {
-                    force: true
-                });
+                    if (!activeUser?.id) {
+                        return;
+                    }
 
-                /*
-                 * Keep your existing subscription backend call.
-                 */
-                await checkSubscription(activeUser.id);
+                    userRef.current = activeUser;
+                    setUser(activeUser);
 
-                if (isMounted) {
-                    setIsCheckingSession(false);
-                }
+                    /*
+                     * Settings recovery.
+                     *
+                     * This is single-flight and therefore safe even if several
+                     * components receive the same resume/auth event.
+                     */
+                    await recoverRuachSession(activeUser.id, {
+                        force: true
+                    });
 
-                /*
-                 * Analytics remains an existing backend operation.
-                 *
-                 * It is deliberately kept separate from business_settings
-                 * so the existing analytics RPC is untouched.
-                 */
-                fetchLiveAnalytics(activeUser.id).catch((error) => {
+                    /*
+                     * Keep your existing subscription backend call.
+                     */
+                    await checkSubscription(activeUser.id);
+
+                    if (isMounted) {
+                        setIsCheckingSession(false);
+                    }
+
+                    /*
+                     * Analytics remains an existing backend operation.
+                     *
+                     * It is deliberately kept separate from business_settings
+                     * so the existing analytics RPC is untouched.
+                     */
+                    fetchLiveAnalytics(activeUser.id).catch((error) => {
+                        console.error(
+                            "RuachAgent analytics recovery failed:",
+                            error
+                        );
+                    });
+                } catch (error) {
                     console.error(
-                        "RuachAgent analytics recovery failed:",
+                        `[RuachAgent] Session recovery failed (${reason}):`,
                         error
                     );
-                });
-            } catch (error) {
-                console.error(
-                    `[RuachAgent] Session recovery failed (${reason}):`,
-                    error
-                );
 
-                /*
-                 * Most important recovery rule:
-                 *
-                 * A temporary failure must NOT log the user out or destroy
-                 * valid merchant settings.
-                 */
-                if (isMounted) {
-                    setIsCheckingSession(false);
+                    /*
+                     * Most important recovery rule:
+                     *
+                     * A temporary failure must NOT log the user out or destroy
+                     * valid merchant settings.
+                     */
+                    if (isMounted) {
+                        setIsCheckingSession(false);
+                    }
+                } finally {
+                    recoveryRequest = null;
                 }
-            }
+            })();
+
+            return recoveryRequest;
         };
+
+        const hash = window.location.hash;
+        if (hash && (hash.includes("access_token=") || hash.includes("type=signup"))) {
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+
+        checkSupabaseReachability();
 
         /* ------------------------------------------------------------
            INITIAL SESSION
@@ -667,17 +688,10 @@ export function useBusiness() {
                 } = await supabase.auth.getSession();
 
                 if (session?.user && isMounted) {
+                    userRef.current = session.user;
                     setUser(session.user);
 
-                    /*
-                     * Initial settings recovery is centralized.
-                     */
-                    await recoverRuachSession(
-                        session.user.id,
-                        {
-                            force: false
-                        }
-                    );
+                    await recover("initial-session", session.user.id);
                 }
             } catch (error) {
                 console.error(
@@ -749,6 +763,7 @@ export function useBusiness() {
                     } else {
                         clearRuachBusinessSessionCache();
 
+                        userRef.current = null;
                         setUser(null);
 
                         setSettings({
@@ -1109,109 +1124,6 @@ export function useBusiness() {
             console.error('Reachability network check failed:', e);
         }
     }
-    useEffect(() => {
-        let isMounted = true;
-
-        // ─── FAILSAFE SAFETY TIMEOUT ───
-        // Guarantees the loading gate MUST drop after 4 seconds maximum, no matter what happens.
-        const loadingFailsafe = setTimeout(() => {
-            if (isMounted) {
-                console.warn("Session check exceeded safety threshold — forcing workspace entry.");
-                setIsCheckingSession(false);
-            }
-        }, 4000);
-
-        // ─── 1. BOOTSTRAP INITIAL SESSION ───
-        async function bootstrapSession() {
-            try {
-                setIsCheckingSession(true);
-                const {
-                    data: { session }
-                } = await supabase.auth.getSession();
-
-                if (session?.user && isMounted) {
-                    setUser(session.user);
-                }
-            } catch (err) {
-                console.error("Critical bootstrap session failure:", err);
-            } finally {
-                if (isMounted) {
-                    setIsCheckingSession(false);
-                    clearTimeout(loadingFailsafe); // Clear timer if session resolves quickly
-                }
-            }
-        }
-
-        bootstrapSession();
-
-        // Clean up email confirmation redirection hash parameters from the URL
-        const hash = window.location.hash;
-        if (hash && (hash.includes('access_token=') || hash.includes('type=signup'))) {
-            window.history.replaceState(null, null, window.location.pathname);
-        }
-
-        // Temporary connectivity diagnostics check
-        checkSupabaseReachability();
-
-        // Unified Single-Source Auth Listener Engine
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (!isMounted) return;
-
-            console.log(`Supabase Auth Event Triggered: [${event}]`);
-
-            try {
-                if (session?.user) {
-                    setUser(session.user);
-
-                    // Check subscription status (Triggers Trial / Expiry Modals)
-                    await checkSubscription(session.user.id);
-
-                    // Show admin panel immediately & stream data in background
-                    setIsCheckingSession(false);
-                    clearTimeout(loadingFailsafe);
-
-                    fetchMerchantSettings(session.user.id).catch(err =>
-                        console.error("Asynchronous settings load background failure:", err)
-                    );
-
-                    fetchLiveAnalytics(session.user.id).catch(err =>
-                        console.error("Asynchronous analytics load background failure:", err)
-                    );
-
-                } else {
-                    // Teardown when signed out
-                    setUser(null);
-                    setSettings({
-                        business_name: '',
-                        store_address: '',
-                        discount_percentage: 10,
-                        webhook_slug: '',
-                        currency: 'ZAR',
-                        logo_url: '',
-                        voucher_expiration_days: 30
-                    });
-                    setTxCount(0);
-                    setTxVolume(0);
-                    setGraphData(Array.from({ length: 28 }).map(() => 0));
-                    setIsCheckingSession(false);
-                    clearTimeout(loadingFailsafe);
-                }
-            } catch (err) {
-                console.error("Auth state mutation engine caught failure:", err);
-                if (isMounted) {
-                    setIsCheckingSession(false);
-                    clearTimeout(loadingFailsafe);
-                }
-            }
-        });
-
-        return () => {
-            isMounted = false;
-            clearTimeout(loadingFailsafe);
-            subscription.unsubscribe();
-        };
-    }, []);
-
     async function handleAuth(type, event = null) {
 
         if (event && typeof event.preventDefault === 'function') {
