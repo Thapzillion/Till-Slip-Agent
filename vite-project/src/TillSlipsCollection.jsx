@@ -95,33 +95,40 @@ const DESIGNS = [
    COMPONENT
    ============================================================================ */
 
-export default function TillSlipsCollection() {
+export default function TillSlipsCollection({
+    selectedTemplateId,
+    setSelectedTemplateId
+}) {
 
     const {
         user,
         settings,
-        receiptData,
-        selectedTemplateId
+        receiptData
     } = useBusiness();
 
     const [selectedDesign, setSelectedDesign] = useState(() => {
         return (
+            selectedTemplateId ||
             localStorage.getItem("ruachagent:selectedTillSlipDesign") ||
             "matrix-grid"
         );
     });
 
-    const handleChooseDesign = (designId) => {
-        // UI state
-        setSelectedDesign(designId);
+    useEffect(() => {
+        if (selectedTemplateId) {
+            setSelectedDesign(selectedTemplateId);
+        }
+    }, [selectedTemplateId]);
 
-        // Persistent source of truth
+    const handleChooseDesign = (designId) => {
+        setSelectedDesign(designId);
+        setSelectedTemplateId?.(designId);
+
         localStorage.setItem(
             "ruachagent:selectedTillSlipDesign",
             designId
         );
 
-        // Tell AdminPanel / other components
         window.dispatchEvent(
             new CustomEvent("ruachagent:tillSlipDesignSelected", {
                 detail: designId
@@ -856,6 +863,13 @@ export default function TillSlipsCollection() {
                             background: linear-gradient(135deg, #08c2e3, #00A8FF) !important;
                             box-shadow: 0 0 10px rgba(8, 198, 227, 0.82), 0 0 28px rgba(0,168,255,.35) !important;
                         }
+                        .ruach-slip-choose.is-selected,
+                        .ruach-slip-choose.is-selected:hover {
+                            color: #d7fff2 !important;
+                            background: linear-gradient(135deg, #087e68, #07584d) !important;
+                            border-color: rgba(95, 244, 196, 0.85) !important;
+                            box-shadow: 0 0 10px rgba(55, 225, 171, 0.45), 0 0 24px rgba(20, 150, 116, 0.25) !important;
+                        }
                     `}</style>
 
                     {/* ===========================================================
@@ -1188,7 +1202,8 @@ export default function TillSlipsCollection() {
 
                                             <button
                                                 type="button"
-                                                className="ruach-slip-choose"
+                                                className={`ruach-slip-choose ${isSelected ? "is-selected" : ""}`}
+                                                aria-pressed={isSelected}
                                                 onClick={() => handleChooseDesign(design.id)}
 
                                                 /*
@@ -1260,7 +1275,7 @@ export default function TillSlipsCollection() {
 
                                                 }}
                                             >
-                                                CHOOSE
+                                                {isSelected ? "CHOSEN" : "CHOOSE"}
                                             </button>
 
                                         </div>
