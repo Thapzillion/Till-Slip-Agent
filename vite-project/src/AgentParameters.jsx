@@ -4,6 +4,7 @@ import { useBusiness } from "./backend/businessService";
 
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import TitaniumTillSlip from "./models/TitaniumTillSlip";
 
 // --------------------
 // Static data
@@ -2349,6 +2350,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       />
                     ) : currentTemplate === "luxury" ? (
                       <LuxuryTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "titanium" ? (
+                      <TitaniumTillSlip
                         receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}

@@ -17,15 +17,15 @@ export default function PrivacyPolicy() {
           maxWidth: "950px",
           margin: "0 auto",
           background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(0,255,213,.15)",
+          border: "1px solid rgba(0, 200, 255, 0.15)",
           borderRadius: "24px",
           padding: "40px",
-          boxShadow: "0 0 30px rgba(0,255,213,.08)",
+          boxShadow: "0 0 30px rgba(0, 191, 255, 0.08)",
         }}
       >
         <h2
           style={{
-            color: "#00ffd5",
+            color: "#00c3ff",
             marginBottom: "10px",
           }}
         >
@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
           }}
         />
 
-        <h2 style={{ color: "#00ffd5" }}>
+        <h2 style={{ color: "#00c3ff" }}>
           1. Our "Zero-Access" Financial Guarantee
         </h2>
 
@@ -84,11 +84,11 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           2. What Information We Process (And Why)
         </h2>
 
-        <h3 style={{ color: "#9ff" }}>A. Merchant Profile Data</h3>
+        <h3 style={{ color: "#00c3ff" }}>A. Merchant Profile Data</h3>
 
         <p style={{ lineHeight: 1.8 }}>
           To configure your dashboard and account, we collect:
@@ -115,7 +115,7 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           3. How We Process and Use Data
         </h2>
 
@@ -130,7 +130,7 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           4. Data Sharing and Third Parties
         </h2>
 
@@ -152,7 +152,7 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           5. Security Safeguards
         </h2>
 
@@ -173,7 +173,7 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           6. Your Rights Under POPIA
         </h2>
 
@@ -191,7 +191,7 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           7. Contact Us
         </h2>
 
@@ -215,7 +215,7 @@ export default function PrivacyPolicy() {
               padding: "14px 28px",
               borderRadius: "40px",
               background:
-                "linear-gradient(90deg, #00ffd5, #00bfff)",
+                "linear-gradient(90deg, #00c3ff, #00bfff)",
               color: "#001",
               textDecoration: "none",
               fontWeight: "bold",

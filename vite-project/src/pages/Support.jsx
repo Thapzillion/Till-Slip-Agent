@@ -25,7 +25,7 @@ export default function Support() {
       >
         <h2
           style={{
-            color: "#00ffd5",
+            color: "#00c3ff",
             marginBottom: "10px",
           }}
         >
@@ -61,7 +61,7 @@ export default function Support() {
           }}
         />
 
-        <h2 style={{ color: "#00ffd5" }}>
+        <h2 style={{ color: "#00c3ff" }}>
           1. Official Support Channels
         </h2>
 
@@ -74,7 +74,7 @@ export default function Support() {
         <div
           style={{
             background: "rgba(255,255,255,.03)",
-            border: "1px solid rgba(0,255,213,.15)",
+            border: "1px solid rgba(0, 217, 255, 0.15)",
             borderRadius: "18px",
             padding: "24px",
             marginTop: "20px",
@@ -86,7 +86,7 @@ export default function Support() {
             <a
               href="mailto:ruachagentts@gmail.com"
               style={{
-                color: "#00ffd5",
+                color: "#00c3ff",
                 textDecoration: "none",
               }}
             >
@@ -105,7 +105,7 @@ export default function Support() {
             <a
               href="tel:+279640375"
               style={{
-                color: "#00ffd5",
+                color: "#00c3ff",
                 textDecoration: "none",
               }}
             >
@@ -128,7 +128,7 @@ export default function Support() {
 
         <h2
           style={{
-            color: "#00ffd5",
+            color: "#00c3ff",
             marginTop: "45px",
           }}
         >
@@ -150,7 +150,7 @@ export default function Support() {
           <thead>
             <tr
               style={{
-                background: "rgba(0,255,213,.08)",
+                background: "rgba(0, 217, 255, 0.08)",
               }}
             >
               <th
@@ -232,7 +232,7 @@ export default function Support() {
 
         <h2
           style={{
-            color: "#00ffd5",
+            color: "#00c3ff",
             marginTop: "45px",
           }}
         >
@@ -262,7 +262,7 @@ export default function Support() {
 
         <h2
           style={{
-            color: "#00ffd5",
+            color: "#00c3ff",
             marginTop: "45px",
           }}
         >
@@ -296,7 +296,7 @@ export default function Support() {
               display: "inline-block",
               padding: "14px 28px",
               borderRadius: "40px",
-              background: "linear-gradient(90deg,#00ffd5,#00bfff)",
+              background: "linear-gradient(90deg,#00c3ff,#00bfff)",
               color: "#001",
               textDecoration: "none",
               fontWeight: "bold",

@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useBusiness } from "./backend/businessService";
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import {
     Search,
     LayoutGrid,
@@ -1119,6 +1120,17 @@ export default function TillSlipsCollection({
                                                         />
                                                     ) : design.id === "luxury" ? (
                                                         <LuxuryTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "titanium" ? (
+                                                        <TitaniumTillSlip
                                                             receiptData={receiptData}
                                                             settings={settings}
                                                             user={user}

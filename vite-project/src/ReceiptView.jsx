@@ -10,6 +10,7 @@ import html2pdf from "html2pdf.js";
 // Current production receipt design
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import TitaniumTillSlip from "./models/TitaniumTillSlip";
 
 // Add your other designs here as they are created.
 //
@@ -45,7 +46,7 @@ import LuxuryTillSlip from "./models/LuxuryTillSlip";
 const templates = {
   "matrix-grid": MatrixTillSlip,
   "luxury": LuxuryTillSlip,
-
+  "titanium": TitaniumTillSlip,
   // Add additional templates here when their files exist.
   //
   // "titanium": TitaniumTillSlip,

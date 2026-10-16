@@ -17,15 +17,15 @@ export default function Terms() {
           maxWidth: "950px",
           margin: "0 auto",
           background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(0,255,213,.15)",
+          border: "1px solid rgba(0, 217, 255, 0.15)",
           borderRadius: "24px",
           padding: "40px",
-          boxShadow: "0 0 30px rgba(0,255,213,.08)",
+          boxShadow: "0 0 30px rgba(0, 217, 255, 0.08)",
         }}
       >
         <h2
           style={{
-            color: "#00ffd5",
+            color: "#00c3ff",
             marginBottom: "10px",
           }}
         >
@@ -54,7 +54,7 @@ export default function Terms() {
           }}
         />
 
-        <h2 style={{ color: "#00ffd5" }}>1. Description of Service</h2>
+        <h2 style={{ color: "#00c3ff" }}>1. Description of Service</h2>
 
         <p style={{ lineHeight: 1.8 }}>
           RuachAgent provides cloud-based tools that parse transaction payloads
@@ -64,11 +64,11 @@ export default function Terms() {
           verification.
         </p>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           2. Platform Access and Registration
         </h2>
 
-        <h3 style={{ color: "#9ff" }}>Account Security</h3>
+        <h3 style={{ color: "rgb(153, 223, 255)" }}>Account Security</h3>
 
         <p style={{ lineHeight: 1.8 }}>
           Merchants are responsible for maintaining the confidentiality of their
@@ -84,7 +84,7 @@ export default function Terms() {
           you own them or have the legal right to use them.
         </p>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           3. Webhook and POS Data Transmission
         </h2>
 
@@ -106,7 +106,7 @@ export default function Terms() {
           numbers, CVVs or sensitive banking information.
         </p>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           4. Limitation of Liability and Support Disclaimer
         </h2>
 
@@ -142,7 +142,7 @@ export default function Terms() {
           goodwill or receipt delivery interruptions.
         </p>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           5. Billing, Subscriptions and Refunds
         </h2>
 
@@ -163,7 +163,7 @@ export default function Terms() {
           </li>
         </ul>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           6. Termination of Service
         </h2>
 
@@ -184,7 +184,7 @@ export default function Terms() {
           configurations, subject to applicable legal obligations.
         </p>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           7. Governing Law
         </h2>
 
@@ -195,7 +195,7 @@ export default function Terms() {
           African courts.
         </p>
 
-        <h2 style={{ color: "#00ffd5", marginTop: "40px" }}>
+        <h2 style={{ color: "#00c3ff", marginTop: "40px" }}>
           8. Modifications to Terms
         </h2>
 
@@ -217,7 +217,7 @@ export default function Terms() {
               display: "inline-block",
               padding: "14px 28px",
               borderRadius: "40px",
-              background: "linear-gradient(90deg, #00ffd5, #00bfff)",
+              background: "linear-gradient(90deg, #00c3ff, #00bfff)",
               color: "#001",
               textDecoration: "none",
               fontWeight: "bold",
