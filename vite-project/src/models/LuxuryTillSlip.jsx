@@ -1,13 +1,12 @@
 
 import React from "react";
 
-
 /* ================================================================
-   LUXURY TILL SLIP BACKEND
-   PRESERVED FROM YOUR ORIGINAL CODE
+   LUXURY TILL SLIP — BACKEND LOGIC
+   Preserved from the supplied implementation.
    ================================================================ */
 
-function getLuxuryTillSlipData({
+export function useLuxuryTillSlipBackend({
     receiptData = {},
     settings = {},
     user = null,
@@ -95,10 +94,7 @@ function getLuxuryTillSlipData({
 
         const raw = String(value).trim();
 
-        if (
-            resolvedCurrencySymbol &&
-            raw.startsWith(resolvedCurrencySymbol)
-        ) {
+        if (resolvedCurrencySymbol && raw.startsWith(resolvedCurrencySymbol)) {
             return raw;
         }
 
@@ -144,7 +140,8 @@ function getLuxuryTillSlipData({
 }
 
 /* ================================================================
-   LUXURY TILL SLIP COMPONENT
+   LUXURY MINIMALISM — VISUAL COMPONENT
+   No simulator fields or hardcoded merchant identity.
    ================================================================ */
 
 export default function LuxuryTillSlip({
@@ -169,7 +166,7 @@ export default function LuxuryTillSlip({
         watermarkUrl,
         formatCurrency,
         handleDownload,
-    } = getLuxuryTillSlipData({
+    } = useLuxuryTillSlipBackend({
         receiptData,
         settings,
         user,
@@ -183,679 +180,725 @@ export default function LuxuryTillSlip({
         onDownload,
     });
 
-    const slipNumber =
-        receiptId ??
-        receiptData?.receipt_number ??
-        receiptData?.receipt_id ??
+    /* ---------------------------------------------------------------
+       Merchant information comes from real application data.
+       No editable simulator inputs are created here.
+       --------------------------------------------------------------- */
+
+    const merchantName =
+        settings?.business_name ||
+        settings?.company_name ||
+        settings?.merchant_name ||
+        receiptData?.business_name ||
+        receiptData?.company_name ||
+        receiptData?.merchant_name ||
         "";
 
-    const subtotal =
-        receiptData?.subtotal ??
-        receiptData?.sub_total ??
+    const merchantAddress =
+        settings?.business_address ||
+        settings?.company_address ||
+        settings?.address ||
+        receiptData?.business_address ||
+        receiptData?.company_address ||
+        receiptData?.address ||
+        "";
+
+    const merchantEmail =
+        settings?.business_email ||
+        settings?.company_email ||
+        settings?.email ||
+        receiptData?.business_email ||
+        receiptData?.company_email ||
+        receiptData?.email ||
+        "";
+
+    const merchantPhone =
+        settings?.business_phone ||
+        settings?.company_phone ||
+        settings?.phone ||
+        receiptData?.business_phone ||
+        receiptData?.company_phone ||
+        receiptData?.phone ||
+        "";
+
+    const transactionReference =
+        receiptId ||
+        receiptData?.receipt_id ||
+        receiptData?.transaction_id ||
+        receiptData?.id ||
+        "";
+
+    const discountValue =
+        voucher?.discount_percentage ??
+        voucher?.discount_percent ??
+        voucher?.discount ??
+        voucher?.percentage ??
         null;
 
-    const discount =
-        receiptData?.discount_amount ??
-        receiptData?.discount ??
-        null;
-
-    const paymentMethod =
-        receiptData?.payment_method ??
-        receiptData?.paymentMethod ??
+    const voucherLabel =
+        voucher?.code ||
+        voucher?.voucher_code ||
+        voucher?.name ||
         "";
 
-    const paymentReference =
-        receiptData?.payment_reference ??
-        receiptData?.reference ??
-        "";
+    const hasVoucher = Boolean(voucher || qrCodeUrl || checkoutPayloadLink);
 
-    const customerName =
-        receiptData?.customer_name ??
-        receiptData?.customerName ??
-        "";
+    const discountText =
+        discountValue !== null && discountValue !== undefined
+            ? `${String(discountValue).replace(/%$/, "")}%`
+            : "";
 
-    const itemValue = (item, keys) => {
-        for (const key of keys) {
-            if (
-                item?.[key] !== undefined &&
-                item?.[key] !== null &&
-                item?.[key] !== ""
-            ) {
-                return item[key];
-            }
+    const getItemName = (item) =>
+        item?.name ||
+        item?.product_name ||
+        item?.description ||
+        item?.title ||
+        "Item";
+
+    const getItemQuantity = (item) =>
+        item?.quantity ??
+        item?.qty ??
+        1;
+
+    const getItemPrice = (item) => {
+        const explicitTotal =
+            item?.subtotal ??
+            item?.line_total ??
+            item?.total_price ??
+            item?.total;
+
+        if (explicitTotal !== null && explicitTotal !== undefined) {
+            return explicitTotal;
         }
 
-        return "";
+        const price =
+            item?.price ??
+            item?.unit_price ??
+            item?.amount ??
+            "";
+
+        const quantity = Number(getItemQuantity(item));
+        const numericPrice = Number(
+            String(price).replace(/,/g, "")
+        );
+
+        if (
+            price !== "" &&
+            Number.isFinite(numericPrice) &&
+            Number.isFinite(quantity)
+        ) {
+            return numericPrice * quantity;
+        }
+
+        return price;
     };
 
-    const itemName = (item) =>
-        itemValue(item, [
-            "name",
-            "product_name",
-            "description",
-            "title",
-            "item_name",
-        ]);
+    const displayTotal = formatCurrency(total);
 
-    const itemQuantity = (item) =>
-        itemValue(item, [
-            "quantity",
-            "qty",
-            "count",
-        ]);
+    const displayVat =
+        vat !== null && vat !== undefined && vat !== ""
+            ? formatCurrency(vat)
+            : "";
 
-    const itemPrice = (item) =>
-        itemValue(item, [
-            "unit_price",
-            "price",
-            "selling_price",
-        ]);
-
-    const itemTotal = (item) =>
-        itemValue(item, [
-            "total",
-            "line_total",
-            "total_price",
-            "amount",
-            "subtotal",
-        ]);
+    const displayDate = formattedTransactionDate;
 
     return (
-        <div className="luxury-slip-page">
+        <div className="luxury-slip-shell">
             <style>{`
-                .luxury-slip-page {
-                    --lux-black: #050505;
-                    --lux-panel: #0b0b0b;
-                    --lux-gold: #d7b56d;
-                    --lux-gold-bright: #f5df9c;
-                    --lux-muted: #a9a39a;
-                    --lux-border: rgba(215, 181, 109, 0.27);
+                .luxury-slip-shell {
+                    --luxury-ink: #20201e;
+                    --luxury-muted: #85827c;
+                    --luxury-gold: #ad8950;
+                    --luxury-gold-light: #d5bd8b;
+                    --luxury-paper: #fffefa;
+                    --luxury-line: #e9e2d7;
 
                     width: 100%;
                     box-sizing: border-box;
-                    padding: 36px 16px;
-                    color: #f6f0e5;
+                    padding: 28px 14px;
+                    color: var(--luxury-ink);
                     background:
                         radial-gradient(
                             ellipse at 50% 0%,
-                            rgba(215, 181, 109, 0.10),
-                            transparent 48%
-                        ),
-                        #050505;
+                            rgba(255,255,255,0.98),
+                            rgba(239,235,226,0.92) 75%
+                        );
                     font-family:
-                        Inter,
-                        "Helvetica Neue",
-                        Arial,
-                        sans-serif;
+                        Inter, -apple-system, BlinkMacSystemFont,
+                        "Segoe UI", sans-serif;
                 }
 
-                .luxury-slip-page *,
-                .luxury-slip-page *::before,
-                .luxury-slip-page *::after {
+                .luxury-slip-shell *,
+                .luxury-slip-shell *::before,
+                .luxury-slip-shell *::after {
                     box-sizing: border-box;
                 }
 
-                .luxury-slip-toolbar {
-                    width: 100%;
-                    max-width: 760px;
-                    margin: 0 auto 18px;
-                    display: flex;
-                    justify-content: flex-end;
-                }
-
-                .luxury-slip-download {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    padding: 12px 19px;
-                    border: 1px solid rgba(215, 181, 109, 0.65);
-                    border-radius: 5px;
-                    background: linear-gradient(
-                        135deg,
-                        #f5df9c,
-                        #c49b4d
-                    );
-                    color: #17120a;
-                    font-size: 12px;
-                    font-weight: 800;
-                    letter-spacing: 1.3px;
-                    text-transform: uppercase;
-                    cursor: pointer;
-                    transition:
-                        transform 180ms ease,
-                        box-shadow 180ms ease;
-                }
-
-                .luxury-slip-download:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 24px rgba(215, 181, 109, 0.17);
-                }
-
-                .luxury-slip-download:focus-visible {
-                    outline: 2px solid #f5df9c;
-                    outline-offset: 4px;
-                }
-
-                .luxury-slip {
+                .luxury-slip-card {
                     position: relative;
                     isolation: isolate;
-                    overflow: hidden;
                     width: 100%;
-                    max-width: 760px;
+                    max-width: 690px;
                     margin: 0 auto;
-                    padding: 44px clamp(18px, 5vw, 48px) 32px;
-                    background:
-                        linear-gradient(
-                            135deg,
-                            rgba(255, 255, 255, 0.018),
-                            transparent 30%
-                        ),
-                        linear-gradient(
-                            180deg,
-                            #0b0b0b 0%,
-                            #060606 100%
-                        );
-                    border: 1px solid var(--lux-border);
+                    overflow: hidden;
+                    padding: clamp(24px, 5.5vw, 48px);
+                    border: 1px solid rgba(173,137,80,0.20);
+                    border-radius: 27px;
+                    background: var(--luxury-paper);
                     box-shadow:
-                        0 0 0 5px rgba(215, 181, 109, 0.025),
-                        0 24px 80px rgba(0, 0, 0, 0.55),
-                        inset 0 0 50px rgba(215, 181, 109, 0.018);
-                }
-
-                .luxury-slip::before {
-                    content: "";
-                    position: absolute;
-                    z-index: -1;
-                    inset: 8px;
-                    border: 1px solid rgba(215, 181, 109, 0.10);
-                    pointer-events: none;
-                }
-
-                .luxury-slip::after {
-                    content: "";
-                    position: absolute;
-                    z-index: -1;
-                    top: -100px;
-                    left: -140px;
-                    width: 320px;
-                    height: 320px;
-                    border-radius: 50%;
-                    border: 1px solid rgba(215, 181, 109, 0.07);
-                    box-shadow:
-                        0 0 0 22px rgba(215, 181, 109, 0.015),
-                        0 0 0 44px rgba(215, 181, 109, 0.012);
-                    pointer-events: none;
+                        0 20px 55px rgba(46,37,23,0.09),
+                        0 3px 12px rgba(46,37,23,0.035);
                 }
 
                 .luxury-slip-watermark {
                     position: absolute;
                     z-index: -1;
-                    top: 38%;
                     left: 50%;
-                    width: min(68%, 370px);
+                    top: 43%;
+                    width: min(64%, 330px);
                     max-height: 350px;
                     object-fit: contain;
-                    opacity: 0.045;
-                    filter: grayscale(1);
                     transform: translate(-50%, -50%);
+                    opacity: 0.035;
                     pointer-events: none;
+                    filter: grayscale(1);
                 }
 
-                .luxury-slip-header {
-                    text-align: center;
-                    padding-bottom: 27px;
-                }
-
-                .luxury-slip-logo-frame {
-                    width: 92px;
-                    height: 92px;
-                    margin: 0 auto 18px;
+                .luxury-slip-topline {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    border: 1px solid rgba(215, 181, 109, 0.48);
-                    outline: 1px solid rgba(215, 181, 109, 0.12);
-                    outline-offset: 5px;
-                    background: rgba(215, 181, 109, 0.025);
-                    clip-path: polygon(
-                        50% 0%,
-                        91% 18%,
-                        91% 75%,
-                        50% 100%,
-                        9% 75%,
-                        9% 18%
-                    );
+                    gap: 13px;
+                    color: var(--luxury-muted);
+                    font-size: 9px;
+                    font-weight: 600;
+                    letter-spacing: 0.30em;
+                    line-height: 1.8;
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                .luxury-slip-topline::before,
+                .luxury-slip-topline::after {
+                    content: "";
+                    height: 1px;
+                    flex: 1;
+                    background: var(--luxury-line);
+                }
+
+                .luxury-slip-brand {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                    padding: 27px 0 25px;
                 }
 
                 .luxury-slip-logo {
                     display: block;
-                    width: 78%;
-                    height: 78%;
+                    width: 88px;
+                    height: 88px;
+                    margin-bottom: 18px;
                     object-fit: contain;
+                    border-radius: 50%;
                 }
 
                 .luxury-slip-monogram {
-                    color: var(--lux-gold-bright);
-                    font-family: Georgia, serif;
-                    font-size: 39px;
-                    font-weight: 400;
-                    line-height: 1;
-                }
-
-                .luxury-slip-brand-name {
-                    margin: 0;
-                    overflow-wrap: anywhere;
-                    color: var(--lux-gold-bright);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 76px;
+                    height: 76px;
+                    margin-bottom: 20px;
+                    border: 1px solid var(--luxury-gold-light);
+                    border-radius: 50%;
+                    color: var(--luxury-gold);
                     font-family: Georgia, "Times New Roman", serif;
-                    font-size: clamp(25px, 5vw, 37px);
-                    font-weight: 400;
-                    letter-spacing: 0.19em;
-                    line-height: 1.35;
-                    text-transform: uppercase;
+                    font-size: 32px;
                 }
 
-                .luxury-slip-brand-name:empty {
+                .luxury-slip-business-name {
+                    margin: 0;
+                    color: var(--luxury-ink);
+                    font-family: Georgia, "Times New Roman", serif;
+                    font-size: clamp(25px, 5vw, 36px);
+                    font-weight: 400;
+                    letter-spacing: 0.045em;
+                    line-height: 1.25;
+                    overflow-wrap: anywhere;
+                }
+
+                .luxury-slip-gold-rule {
+                    width: 82px;
+                    height: 1px;
+                    margin: 19px auto 17px;
+                    background: var(--luxury-gold);
+                }
+
+                .luxury-slip-contact {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 8px;
+                    max-width: 100%;
+                    color: #65615b;
+                    font-size: 12px;
+                    line-height: 1.7;
+                    text-align: center;
+                    overflow-wrap: anywhere;
+                }
+
+                .luxury-slip-contact:empty {
                     display: none;
                 }
 
-                .luxury-slip-tagline {
-                    margin-top: 7px;
-                    color: var(--lux-muted);
-                    font-size: 10px;
-                    letter-spacing: 0.31em;
-                    line-height: 1.8;
-                    text-transform: uppercase;
-                }
-
-                .luxury-slip-thankyou {
-                    margin: 23px 0 0;
-                    color: var(--lux-gold);
-                    font-family: Georgia, "Times New Roman", serif;
-                    font-size: 20px;
-                    font-style: italic;
-                    line-height: 1.5;
-                }
-
-                .luxury-slip-ornament {
+                .luxury-slip-meta {
                     display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    gap: 15px;
+                    padding: 20px 0;
+                    border-top: 1px solid var(--luxury-line);
+                    border-bottom: 1px solid var(--luxury-line);
+                }
+
+                .luxury-slip-verified {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 9px 12px;
+                    border: 1px solid #e8ddc8;
+                    border-radius: 999px;
+                    color: #866a3d;
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: 0.13em;
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
+
+                .luxury-slip-check {
+                    display: inline-flex;
+                    width: 17px;
+                    height: 17px;
                     align-items: center;
                     justify-content: center;
-                    gap: 12px;
-                    margin: 24px 0;
-                    color: var(--lux-gold);
+                    border-radius: 50%;
+                    background: var(--luxury-gold);
+                    color: white;
+                    font-size: 11px;
                 }
 
-                .luxury-slip-ornament::before,
-                .luxury-slip-ornament::after {
-                    content: "";
-                    width: 64px;
-                    height: 1px;
-                    background: linear-gradient(
-                        90deg,
-                        transparent,
-                        var(--lux-gold)
-                    );
-                }
-
-                .luxury-slip-ornament::after {
-                    transform: rotate(180deg);
-                }
-
-                .luxury-slip-ornament span {
-                    width: 7px;
-                    height: 7px;
-                    border: 1px solid var(--lux-gold);
-                    transform: rotate(45deg);
-                }
-
-                .luxury-slip-section {
-                    border-top: 1px solid var(--lux-border);
-                    padding-top: 19px;
-                    margin-top: 19px;
-                }
-
-                .luxury-slip-section-title {
-                    margin: 0 0 17px;
-                    color: var(--lux-gold);
-                    font-size: 10px;
-                    font-weight: 700;
-                    letter-spacing: 2.2px;
-                    line-height: 1.6;
-                    text-transform: uppercase;
-                }
-
-                .luxury-slip-meta {
-                    display: grid;
-                    grid-template-columns: repeat(2, minmax(0, 1fr));
-                    gap: 20px;
-                }
-
-                .luxury-slip-meta-block:last-child {
+                .luxury-slip-transaction {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
                     text-align: right;
+                    overflow-wrap: anywhere;
                 }
 
                 .luxury-slip-label {
-                    display: block;
-                    margin-bottom: 7px;
-                    color: var(--lux-muted);
-                    font-size: 9px;
-                    letter-spacing: 1.3px;
-                    line-height: 1.6;
-                    text-transform: uppercase;
-                }
-
-                .luxury-slip-value {
-                    display: block;
-                    color: #eee7da;
-                    font-size: 12px;
-                    line-height: 1.8;
-                    overflow-wrap: anywhere;
-                }
-
-                .luxury-slip-table-wrap {
-                    width: 100%;
-                    overflow-x: auto;
-                }
-
-                .luxury-slip-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 11px;
-                    text-align: left;
-                }
-
-                .luxury-slip-table th {
-                    padding: 12px 6px;
-                    border-bottom: 1px solid rgba(215, 181, 109, 0.4);
-                    color: var(--lux-gold);
+                    color: var(--luxury-muted);
                     font-size: 9px;
                     font-weight: 700;
-                    letter-spacing: 1px;
-                    text-transform: uppercase;
-                    white-space: nowrap;
-                }
-
-                .luxury-slip-table td {
-                    padding: 14px 6px;
-                    border-bottom: 1px solid rgba(255, 255, 255, 0.055);
-                    color: #e0d9ce;
-                    line-height: 1.6;
-                    vertical-align: top;
-                }
-
-                .luxury-slip-table th:first-child,
-                .luxury-slip-table td:first-child {
-                    padding-left: 0;
-                }
-
-                .luxury-slip-table th:last-child,
-                .luxury-slip-table td:last-child {
-                    padding-right: 0;
-                }
-
-                .luxury-slip-number {
-                    text-align: center;
-                    white-space: nowrap;
-                }
-
-                .luxury-slip-money {
-                    text-align: right;
-                    white-space: nowrap;
-                    font-variant-numeric: tabular-nums;
-                }
-
-                .luxury-slip-product {
-                    min-width: 100px;
-                    overflow-wrap: anywhere;
-                }
-
-                .luxury-slip-empty {
-                    padding: 26px 8px !important;
-                    text-align: center;
-                    color: var(--lux-muted) !important;
-                    font-size: 11px;
-                    letter-spacing: 0.5px;
-                }
-
-                .luxury-slip-totals {
-                    width: 100%;
-                    max-width: 350px;
-                    margin: 20px 0 0 auto;
-                }
-
-                .luxury-slip-total-row {
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: space-between;
-                    gap: 18px;
-                    padding: 7px 0;
-                    color: var(--lux-muted);
-                    font-size: 11px;
-                    line-height: 1.6;
-                }
-
-                .luxury-slip-total-row > :last-child {
-                    color: #eee7da;
-                    text-align: right;
-                    font-variant-numeric: tabular-nums;
-                }
-
-                .luxury-slip-grand-total {
-                    margin-top: 10px;
-                    padding-top: 16px;
-                    border-top: 1px solid rgba(215, 181, 109, 0.45);
-                    color: var(--lux-gold-bright);
-                    font-family: Georgia, "Times New Roman", serif;
-                    font-size: 15px;
-                    letter-spacing: 1.5px;
+                    letter-spacing: 0.18em;
                     text-transform: uppercase;
                 }
 
-                .luxury-slip-grand-total > :last-child {
-                    color: var(--lux-gold-bright);
-                    font-size: clamp(19px, 4vw, 26px);
-                    letter-spacing: 0;
-                }
-
-                .luxury-slip-bottom {
-                    display: grid;
-                    grid-template-columns: minmax(0, 1fr) minmax(130px, 0.8fr);
-                    gap: 24px;
-                    align-items: start;
-                }
-
-                .luxury-slip-payment {
-                    min-width: 0;
-                }
-
-                .luxury-slip-payment-value {
-                    margin: 0 0 13px;
-                    color: #eee7da;
+                .luxury-slip-date {
                     font-size: 12px;
-                    line-height: 1.8;
-                    overflow-wrap: anywhere;
+                    line-height: 1.6;
+                    font-variant-numeric: tabular-nums;
                 }
 
-                .luxury-slip-qr-column {
-                    min-width: 0;
-                    text-align: center;
+                .luxury-slip-reference {
+                    color: var(--luxury-muted);
+                    font-size: 10px;
                 }
 
-                .luxury-slip-qr-frame {
+                .luxury-slip-section {
+                    padding-top: 27px;
+                }
+
+                .luxury-slip-section-title {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    width: 100%;
-                    max-width: 180px;
-                    aspect-ratio: 1;
-                    margin: 0 auto;
-                    padding: 10px;
-                    border: 1px solid rgba(215, 181, 109, 0.65);
-                    background: #f5f0e6;
-                    box-shadow: 0 0 22px rgba(215, 181, 109, 0.06);
+                    gap: 14px;
+                    margin: 0 0 22px;
+                    color: #8b6b3c;
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: 0.25em;
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                .luxury-slip-section-title::before,
+                .luxury-slip-section-title::after {
+                    content: "";
+                    height: 1px;
+                    flex: 1;
+                    background: var(--luxury-line);
+                }
+
+                .luxury-slip-item {
+                    display: grid;
+                    grid-template-columns: 35px minmax(0, 1fr) auto;
+                    align-items: start;
+                    gap: 10px;
+                    padding: 17px 0;
+                    border-bottom: 1px solid var(--luxury-line);
+                }
+
+                .luxury-slip-item:last-child {
+                    border-bottom: 0;
+                }
+
+                .luxury-slip-item-number {
+                    padding-top: 2px;
+                    color: var(--luxury-gold);
+                    font-family: Georgia, "Times New Roman", serif;
+                    font-size: 15px;
+                }
+
+                .luxury-slip-item-name {
+                    color: #292824;
+                    font-size: 13px;
+                    font-weight: 500;
+                    line-height: 1.65;
+                    overflow-wrap: anywhere;
+                }
+
+                .luxury-slip-item-detail {
+                    margin-top: 4px;
+                    color: var(--luxury-muted);
+                    font-size: 11px;
+                    line-height: 1.5;
+                }
+
+                .luxury-slip-item-price {
+                    padding-top: 2px;
+                    color: #45423c;
+                    font-size: 12px;
+                    font-variant-numeric: tabular-nums;
+                    text-align: right;
+                    white-space: nowrap;
+                }
+
+                .luxury-slip-empty {
+                    padding: 25px 10px;
+                    color: var(--luxury-muted);
+                    font-size: 12px;
+                    text-align: center;
+                }
+
+                .luxury-slip-total {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 15px;
+                    margin-top: 19px;
+                    padding: 24px 20px;
+                    border: 1px solid #e7ddcc;
+                    border-radius: 12px;
+                    background: linear-gradient(
+                        120deg,
+                        #fffefa,
+                        #faf6ee
+                    );
+                }
+
+                .luxury-slip-total-label {
+                    color: #33312c;
+                    font-family: Georgia, "Times New Roman", serif;
+                    font-size: 13px;
+                    letter-spacing: 0.11em;
+                }
+
+                .luxury-slip-total-amount {
+                    color: #9b763f;
+                    font-family: Georgia, "Times New Roman", serif;
+                    font-size: clamp(22px, 4.5vw, 30px);
+                    font-weight: 400;
+                    font-variant-numeric: tabular-nums;
+                    text-align: right;
+                    overflow-wrap: anywhere;
+                }
+
+                .luxury-slip-vat {
+                    display: flex;
+                    justify-content: space-between;
+                    gap: 12px;
+                    padding: 13px 3px 0;
+                    color: var(--luxury-muted);
+                    font-size: 11px;
+                }
+
+                .luxury-slip-voucher {
+                    margin-top: 31px;
+                    padding: 27px 20px;
+                    border: 1px solid var(--luxury-line);
+                    border-radius: 18px;
+                    background: #fffefa;
+                    text-align: center;
+                }
+
+                .luxury-slip-gift-icon {
+                    display: flex;
+                    width: 46px;
+                    height: 46px;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 15px;
+                    border: 1px solid var(--luxury-gold-light);
+                    border-radius: 50%;
+                    color: var(--luxury-gold);
+                    font-family: Georgia, "Times New Roman", serif;
+                    font-size: 23px;
+                }
+
+                .luxury-slip-voucher-heading {
+                    margin: 0 0 20px;
+                    color: #8b6b3c;
+                    font-size: 9px;
+                    font-weight: 700;
+                    letter-spacing: 0.20em;
+                    line-height: 1.8;
+                    text-transform: uppercase;
                 }
 
                 .luxury-slip-qr {
                     display: block;
-                    width: 100%;
-                    height: 100%;
+                    width: 142px;
+                    height: 142px;
+                    margin: 0 auto 18px;
+                    padding: 9px;
+                    border: 1px solid #eee7da;
+                    border-radius: 10px;
+                    background: #fff;
                     object-fit: contain;
                 }
 
-                .luxury-slip-qr-empty {
-                    color: #766345;
-                    font-size: 10px;
-                    line-height: 1.6;
-                    letter-spacing: 0.8px;
-                    text-transform: uppercase;
-                }
-
-                .luxury-slip-qr-caption {
-                    margin-top: 13px;
-                    color: var(--lux-gold);
-                    font-size: 9px;
-                    letter-spacing: 1.6px;
+                .luxury-slip-qr-placeholder {
+                    display: flex;
+                    width: 142px;
+                    height: 142px;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 18px;
+                    padding: 18px;
+                    border: 1px dashed #d8c7a7;
+                    border-radius: 10px;
+                    color: var(--luxury-muted);
+                    font-size: 11px;
                     line-height: 1.7;
-                    text-transform: uppercase;
                 }
 
-                .luxury-slip-qr-link {
-                    display: inline-block;
-                    margin-top: 7px;
-                    color: var(--lux-muted);
-                    font-size: 10px;
-                    text-decoration: underline;
-                    text-underline-offset: 3px;
+                .luxury-slip-claim {
+                    margin: 0 0 10px;
+                    color: #302e29;
+                    font-family: Georgia, "Times New Roman", serif;
+                    font-size: 13px;
+                    letter-spacing: 0.12em;
+                }
+
+                .luxury-slip-voucher-description {
+                    max-width: 340px;
+                    margin: 0 auto;
+                    color: var(--luxury-muted);
+                    font-size: 12px;
+                    line-height: 1.9;
                     overflow-wrap: anywhere;
                 }
 
-                .luxury-slip-footer {
-                    margin-top: 30px;
-                    padding-top: 22px;
-                    border-top: 1px solid var(--lux-border);
-                    text-align: center;
+                .luxury-slip-discount {
+                    color: #98723b;
+                    font-weight: 700;
                 }
 
-                .luxury-slip-footer-mark {
-                    margin-bottom: 9px;
-                    color: var(--lux-gold);
-                    font-family: Georgia, serif;
-                    font-size: 19px;
-                }
-
-                .luxury-slip-footer-message {
-                    margin: 0;
-                    color: var(--lux-gold);
-                    font-family: Georgia, "Times New Roman", serif;
+                .luxury-slip-code {
+                    margin-top: 13px;
+                    color: #78613e;
                     font-size: 11px;
-                    letter-spacing: 2.7px;
-                    line-height: 1.9;
+                    letter-spacing: 0.08em;
+                    overflow-wrap: anywhere;
+                }
+
+                .luxury-slip-expiry {
+                    margin-top: 22px;
+                    padding-top: 18px;
+                    border-top: 1px dashed #e6ddce;
+                    color: var(--luxury-muted);
+                    font-size: 10px;
+                    line-height: 1.8;
+                    letter-spacing: 0.07em;
                     text-transform: uppercase;
                 }
 
-                .luxury-slip-footer-note {
-                    margin: 10px 0 0;
-                    color: #77716a;
-                    font-size: 9px;
-                    line-height: 1.8;
-                    letter-spacing: 0.6px;
+                .luxury-slip-expiry strong {
+                    color: #96703b;
                 }
 
-                @media (min-width: 900px) {
-                    .luxury-slip {
-                        padding-top: 52px;
-                        padding-bottom: 40px;
-                    }
+                .luxury-slip-expiry.is-expired,
+                .luxury-slip-expiry.is-expired strong {
+                    color: #a64b43;
                 }
 
-                @media (max-width: 520px) {
-                    .luxury-slip-page {
-                        padding: 20px 8px;
+                .luxury-slip-download {
+                    display: flex;
+                    width: 100%;
+                    min-height: 57px;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    margin-top: 27px;
+                    padding: 17px 16px;
+                    border: 1px solid #9c7a47;
+                    border-radius: 9px;
+                    background: #242320;
+                    color: #e4c995;
+                    font-family: inherit;
+                    font-size: 10px;
+                    font-weight: 700;
+                    letter-spacing: 0.15em;
+                    line-height: 1.7;
+                    text-align: center;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                    transition:
+                        background 180ms ease,
+                        color 180ms ease,
+                        box-shadow 180ms ease,
+                        transform 180ms ease;
+                }
+
+                .luxury-slip-download:hover {
+                    background: #39352d;
+                    color: #f5e7c7;
+                    box-shadow: 0 8px 20px rgba(63,48,25,0.12);
+                }
+
+                .luxury-slip-download:active {
+                    transform: scale(0.99);
+                }
+
+                .luxury-slip-download:focus-visible {
+                    outline: 2px solid var(--luxury-gold);
+                    outline-offset: 4px;
+                }
+
+                .luxury-slip-download-icon {
+                    font-size: 19px;
+                    font-weight: 400;
+                }
+
+                .luxury-slip-footer {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 9px;
+                    margin-top: 23px;
+                    color: #a39a8b;
+                    font-size: 8px;
+                    letter-spacing: 0.22em;
+                    text-align: center;
+                    text-transform: uppercase;
+                }
+
+                .luxury-slip-footer::before,
+                .luxury-slip-footer::after {
+                    content: "";
+                    width: 18px;
+                    height: 1px;
+                    background: #e7dfd2;
+                }
+
+                @media (max-width: 480px) {
+                    .luxury-slip-shell {
+                        padding: 12px 7px;
                     }
 
-                    .luxury-slip {
-                        padding: 32px 17px 24px;
+                    .luxury-slip-card {
+                        padding: 23px 17px;
+                        border-radius: 19px;
                     }
 
-                    .luxury-slip-brand-name {
-                        letter-spacing: 0.12em;
-                    }
-
-                    .luxury-slip-tagline {
-                        letter-spacing: 0.18em;
-                    }
-
-                    .luxury-slip-thankyou {
-                        font-size: 18px;
+                    .luxury-slip-topline {
+                        gap: 8px;
+                        font-size: 8px;
+                        letter-spacing: 0.17em;
                     }
 
                     .luxury-slip-meta {
-                        gap: 12px;
+                        gap: 10px;
                     }
 
-                    .luxury-slip-value {
-                        font-size: 11px;
+                    .luxury-slip-verified {
+                        gap: 6px;
+                        padding: 8px;
+                        font-size: 8px;
+                        letter-spacing: 0.06em;
                     }
 
-                    .luxury-slip-table {
+                    .luxury-slip-date {
                         font-size: 10px;
                     }
 
-                    .luxury-slip-table th {
-                        font-size: 8px;
-                        letter-spacing: 0.5px;
+                    .luxury-slip-reference {
+                        font-size: 9px;
                     }
 
-                    .luxury-slip-table th,
-                    .luxury-slip-table td {
-                        padding-left: 4px;
-                        padding-right: 4px;
+                    .luxury-slip-item {
+                        grid-template-columns: 25px minmax(0, 1fr) auto;
+                        gap: 7px;
                     }
 
-                    .luxury-slip-bottom {
-                        grid-template-columns: minmax(0, 1fr);
-                        gap: 25px;
+                    .luxury-slip-item-name {
+                        font-size: 12px;
                     }
 
-                    .luxury-slip-qr-column {
-                        width: 100%;
+                    .luxury-slip-item-price {
+                        font-size: 11px;
                     }
 
-                    .luxury-slip-qr-frame {
-                        max-width: 155px;
+                    .luxury-slip-total {
+                        padding: 19px 14px;
+                    }
+
+                    .luxury-slip-total-label {
+                        font-size: 11px;
+                    }
+
+                    .luxury-slip-voucher {
+                        padding: 24px 13px;
+                    }
+
+                    .luxury-slip-download {
+                        font-size: 9px;
+                        letter-spacing: 0.09em;
                     }
                 }
 
                 @media print {
-                    @page {
-                        margin: 8mm;
-                        size: auto;
-                    }
-
-                    .luxury-slip-page {
+                    .luxury-slip-shell {
                         padding: 0;
                         background: #fff;
-                        print-color-adjust: exact;
-                        -webkit-print-color-adjust: exact;
                     }
 
-                    .luxury-slip-toolbar {
-                        display: none !important;
-                    }
-
-                    .luxury-slip {
+                    .luxury-slip-card {
                         max-width: none;
-                        border: 1px solid #b99a5b;
+                        border: 0;
+                        border-radius: 0;
                         box-shadow: none;
-                        break-inside: avoid;
-                        print-color-adjust: exact;
-                        -webkit-print-color-adjust: exact;
+                    }
+
+                    .luxury-slip-download {
+                        display: none;
                     }
 
                     .luxury-slip-watermark {
-                        print-color-adjust: exact;
-                        -webkit-print-color-adjust: exact;
+                        opacity: 0.035;
                     }
                 }
 
@@ -866,35 +909,7 @@ export default function LuxuryTillSlip({
                 }
             `}</style>
 
-            <div className="luxury-slip-toolbar">
-                <button
-                    type="button"
-                    className="luxury-slip-download"
-                    onClick={handleDownload}
-                >
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                    >
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <path d="m7 10 5 5 5-5" />
-                        <path d="M12 15V3" />
-                    </svg>
-                    Download Till Slip
-                </button>
-            </div>
-
-            <article
-                className="luxury-slip"
-                aria-label="Digital till slip"
-            >
+            <article className="luxury-slip-card">
                 {watermarkUrl && (
                     <img
                         className="luxury-slip-watermark"
@@ -904,336 +919,247 @@ export default function LuxuryTillSlip({
                     />
                 )}
 
-                {/* MERCHANT BRANDING */}
+                <div className="luxury-slip-topline">
+                    <span>Digital Transaction Receipt</span>
+                </div>
 
-                <header className="luxury-slip-header">
-                    <div className="luxury-slip-logo-frame">
-                        {logoUrl ? (
-                            <img
-                                className="luxury-slip-logo"
-                                src={logoUrl}
-                                alt="Merchant logo"
-                            />
-                        ) : (
-                            <span
-                                className="luxury-slip-monogram"
-                                aria-hidden="true"
-                            >
-                                ✦
-                            </span>
-                        )}
-                    </div>
-
-                    <h1 className="luxury-slip-brand-name">
-                        {settings?.business_name ??
-                            settings?.merchant_name ??
-                            ""}
-                    </h1>
-
-                    {settings?.tagline && (
-                        <div className="luxury-slip-tagline">
-                            {settings.tagline}
+                {/* Merchant identity is supplied by real application data. */}
+                <header className="luxury-slip-brand">
+                    {logoUrl ? (
+                        <img
+                            className="luxury-slip-logo"
+                            src={logoUrl}
+                            alt={merchantName ? `${merchantName} logo` : "Merchant logo"}
+                        />
+                    ) : (
+                        <div
+                            className="luxury-slip-monogram"
+                            aria-hidden="true"
+                        >
+                            {merchantName
+                                ? merchantName
+                                    .trim()
+                                    .split(/\s+/)
+                                    .slice(0, 2)
+                                    .map((word) => word[0])
+                                    .join("")
+                                    .toUpperCase()
+                                : "✦"}
                         </div>
                     )}
 
-                    <p className="luxury-slip-thankyou">
-                        {settings?.thank_you_message || ""}
-                    </p>
+                    {merchantName && (
+                        <>
+                            <h1 className="luxury-slip-business-name">
+                                {merchantName}
+                            </h1>
+                            <div className="luxury-slip-gold-rule" />
+                        </>
+                    )}
 
-                    <div
-                        className="luxury-slip-ornament"
-                        aria-hidden="true"
-                    >
-                        <span />
+                    <div className="luxury-slip-contact">
+                        {merchantAddress && <div>{merchantAddress}</div>}
+                        {merchantEmail && <div>{merchantEmail}</div>}
+                        {merchantPhone && <div>{merchantPhone}</div>}
                     </div>
                 </header>
 
-                {/* TRANSACTION DETAILS */}
-
                 <section
-                    className="luxury-slip-section"
-                    aria-label="Transaction details"
+                    className="luxury-slip-meta"
+                    aria-label="Transaction information"
                 >
-                    <div className="luxury-slip-meta">
-                        <div className="luxury-slip-meta-block">
-                            <span className="luxury-slip-label">
-                                Transaction date
-                            </span>
-
-                            <span className="luxury-slip-value">
-                                {formattedTransactionDate}
-                            </span>
-                        </div>
-
-                        <div className="luxury-slip-meta-block">
-                            <span className="luxury-slip-label">
-                                Receipt number
-                            </span>
-
-                            <span className="luxury-slip-value">
-                                {slipNumber}
-                            </span>
-                        </div>
+                    <div className="luxury-slip-verified">
+                        <span className="luxury-slip-check" aria-hidden="true">
+                            ✓
+                        </span>
+                        Verified Mode
                     </div>
 
-                    {customerName && (
-                        <div style={{ marginTop: 18 }}>
-                            <span className="luxury-slip-label">
-                                Customer
-                            </span>
+                    <div className="luxury-slip-transaction">
+                        <span className="luxury-slip-label">
+                            Transaction
+                        </span>
 
-                            <span className="luxury-slip-value">
-                                {customerName}
+                        <time className="luxury-slip-date">
+                            {displayDate}
+                        </time>
+
+                        {transactionReference && (
+                            <span className="luxury-slip-reference">
+                                Ref. {transactionReference}
                             </span>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </section>
-
-                {/* ITEMIZED PURCHASES */}
 
                 <section
                     className="luxury-slip-section"
                     aria-label="Purchased items"
                 >
                     <h2 className="luxury-slip-section-title">
-                        Purchase details
+                        Items Purchased
                     </h2>
 
-                    <div className="luxury-slip-table-wrap">
-                        <table className="luxury-slip-table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Item</th>
-                                    <th
-                                        scope="col"
-                                        className="luxury-slip-number"
-                                    >
-                                        Qty
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="luxury-slip-money"
-                                    >
-                                        Price
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="luxury-slip-money"
-                                    >
-                                        Total
-                                    </th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {receiptDataItems.length > 0 ? (
-                                    receiptDataItems.map((item, index) => (
-                                        <tr
-                                            key={
-                                                item?.id ??
-                                                item?.product_id ??
-                                                `${itemName(item)}-${index}`
-                                            }
-                                        >
-                                            <td className="luxury-slip-product">
-                                                {itemName(item)}
-                                            </td>
-
-                                            <td className="luxury-slip-number">
-                                                {itemQuantity(item)}
-                                            </td>
-
-                                            <td className="luxury-slip-money">
-                                                {formatCurrency(
-                                                    itemPrice(item)
-                                                )}
-                                            </td>
-
-                                            <td className="luxury-slip-money">
-                                                {formatCurrency(
-                                                    itemTotal(item)
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan={4}
-                                            className="luxury-slip-empty"
-                                        >
-                                            No item details available.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* TOTALS */}
-
-                    <div className="luxury-slip-totals">
-                        {subtotal !== null && subtotal !== "" && (
-                            <div className="luxury-slip-total-row">
-                                <span>Subtotal</span>
-                                <span>
-                                    {formatCurrency(subtotal)}
-                                </span>
-                            </div>
-                        )}
-
-                        {discount !== null &&
-                            discount !== "" &&
-                            Number(
-                                String(discount).replace(/,/g, "")
-                            ) !== 0 && (
-                                <div className="luxury-slip-total-row">
-                                    <span>Discount</span>
-                                    <span>
-                                        {formatCurrency(discount)}
-                                    </span>
-                                </div>
-                            )}
-
-                        {vat !== null && vat !== "" && (
-                            <div className="luxury-slip-total-row">
-                                <span>VAT</span>
-                                <span>{formatCurrency(vat)}</span>
-                            </div>
-                        )}
-
-                        <div className="luxury-slip-total-row luxury-slip-grand-total">
-                            <span>Total</span>
-                            <span>{formatCurrency(total)}</span>
-                        </div>
-                    </div>
-                </section>
-
-                {/* PAYMENT AND QR CODE */}
-
-                <section
-                    className="luxury-slip-section"
-                    aria-label="Payment and verification"
-                >
-                    <div className="luxury-slip-bottom">
-                        <div className="luxury-slip-payment">
-                            <h2 className="luxury-slip-section-title">
-                                Payment details
-                            </h2>
-
-                            {paymentMethod && (
-                                <>
-                                    <span className="luxury-slip-label">
-                                        Payment method
-                                    </span>
-
-                                    <p className="luxury-slip-payment-value">
-                                        {paymentMethod}
-                                    </p>
-                                </>
-                            )}
-
-                            {paymentReference && (
-                                <>
-                                    <span className="luxury-slip-label">
-                                        Payment reference
-                                    </span>
-
-                                    <p className="luxury-slip-payment-value">
-                                        {paymentReference}
-                                    </p>
-                                </>
-                            )}
-
-                            {receiptData?.payment_status && (
-                                <>
-                                    <span className="luxury-slip-label">
-                                        Payment status
-                                    </span>
-
-                                    <p className="luxury-slip-payment-value">
-                                        {receiptData.payment_status}
-                                    </p>
-                                </>
-                            )}
-
-                            {receiptData?.currency && (
-                                <>
-                                    <span className="luxury-slip-label">
-                                        Currency
-                                    </span>
-
-                                    <p className="luxury-slip-payment-value">
-                                        {receiptData.currency}
-                                    </p>
-                                </>
-                            )}
-                        </div>
-
-                        <div className="luxury-slip-qr-column">
-                            <div className="luxury-slip-qr-frame">
-                                {qrCodeUrl ? (
-                                    <img
-                                        className="luxury-slip-qr"
-                                        src={qrCodeUrl}
-                                        alt="Receipt QR code"
-                                    />
-                                ) : (
-                                    <span className="luxury-slip-qr-empty">
-                                        QR code not provided
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="luxury-slip-qr-caption">
-                                Scan to verify
-                            </div>
-
-                            {checkoutPayloadLink && (
-                                <a
-                                    className="luxury-slip-qr-link"
-                                    href={checkoutPayloadLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                    {receiptDataItems.length > 0 ? (
+                        <div>
+                            {receiptDataItems.map((item, index) => (
+                                <div
+                                    className="luxury-slip-item"
+                                    key={
+                                        item?.id ??
+                                        item?.product_id ??
+                                        `${getItemName(item)}-${index}`
+                                    }
                                 >
-                                    Open receipt link
-                                </a>
-                            )}
+                                    <span className="luxury-slip-item-number">
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+
+                                    <div>
+                                        <div className="luxury-slip-item-name">
+                                            {getItemName(item)}
+                                        </div>
+
+                                        <div className="luxury-slip-item-detail">
+                                            Qty: {getItemQuantity(item)}
+                                            {item?.variant
+                                                ? ` · ${item.variant}`
+                                                : ""}
+                                        </div>
+                                    </div>
+
+                                    <div className="luxury-slip-item-price">
+                                        {formatCurrency(getItemPrice(item))}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                    </div>
+                    ) : (
+                        <div className="luxury-slip-empty">
+                            No purchased items available.
+                        </div>
+                    )}
                 </section>
 
-                {/* MERCHANT FOOTER */}
+                <section aria-label="Receipt total">
+                    <div className="luxury-slip-total">
+                        <span className="luxury-slip-total-label">
+                            Total Due
+                        </span>
 
-                <footer className="luxury-slip-footer">
-                    <div
-                        className="luxury-slip-footer-mark"
+                        <span className="luxury-slip-total-amount">
+                            {displayTotal || "—"}
+                        </span>
+                    </div>
+
+                    {displayVat && (
+                        <div className="luxury-slip-vat">
+                            <span>VAT</span>
+                            <span>{displayVat}</span>
+                        </div>
+                    )}
+                </section>
+
+                {hasVoucher && (
+                    <section
+                        className="luxury-slip-voucher"
+                        aria-label="Voucher and discount"
+                    >
+                        <div className="luxury-slip-gift-icon" aria-hidden="true">
+                            ♧
+                        </div>
+
+                        <h2 className="luxury-slip-voucher-heading">
+                            A Little Something Extra
+                        </h2>
+
+                        {qrCodeUrl ? (
+                            <img
+                                className="luxury-slip-qr"
+                                src={qrCodeUrl}
+                                alt="Scan to access the voucher"
+                            />
+                        ) : checkoutPayloadLink ? (
+                            <a
+                                href={checkoutPayloadLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                aria-label="Open voucher checkout link"
+                            >
+                                <div className="luxury-slip-qr-placeholder">
+                                    Open your voucher
+                                </div>
+                            </a>
+                        ) : (
+                            <div className="luxury-slip-qr-placeholder">
+                                Voucher QR unavailable
+                            </div>
+                        )}
+
+                        <h3 className="luxury-slip-claim">
+                            {voucherLabel || "Claim Your Discount"}
+                        </h3>
+
+                        <p className="luxury-slip-voucher-description">
+                            {discountText ? (
+                                <>
+                                    Enjoy a special{" "}
+                                    <span className="luxury-slip-discount">
+                                        {discountText} discount
+                                    </span>
+                                    {voucher?.description
+                                        ? ` — ${voucher.description}`
+                                        : " on your next eligible purchase."}
+                                </>
+                            ) : (
+                                voucher?.description ||
+                                "Your voucher details are ready to explore."
+                            )}
+                        </p>
+
+                        {voucher?.code && (
+                            <div className="luxury-slip-code">
+                                Voucher code: {voucher.code}
+                            </div>
+                        )}
+
+                        <div
+                            className={`luxury-slip-expiry ${isExpired ? "is-expired" : ""
+                                }`}
+                        >
+                            {isExpired ? (
+                                <>
+                                    Voucher status: <strong>Expired</strong>
+                                </>
+                            ) : (
+                                <>
+                                    Expires in:{" "}
+                                    <strong>
+                                        {daysRemaining}{" "}
+                                        {daysRemaining === 1 ? "day" : "days"}
+                                    </strong>
+                                </>
+                            )}
+                        </div>
+                    </section>
+                )}
+
+                <button
+                    type="button"
+                    className="luxury-slip-download"
+                    onClick={handleDownload}
+                >
+                    <span
+                        className="luxury-slip-download-icon"
                         aria-hidden="true"
                     >
-                        ✦
-                    </div>
+                        ↓
+                    </span>
+                    Download Official Invoice PDF
+                </button>
 
-                    <p className="luxury-slip-footer-message">
-                        {settings?.footer_message || ""}
-                    </p>
-
-                    {settings?.website && (
-                        <p className="luxury-slip-footer-note">
-                            {settings.website}
-                        </p>
-                    )}
-
-                    {settings?.contact_email && (
-                        <p className="luxury-slip-footer-note">
-                            {settings.contact_email}
-                        </p>
-                    )}
-
-                    {settings?.phone && (
-                        <p className="luxury-slip-footer-note">
-                            {settings.phone}
-                        </p>
-                    )}
+                <footer className="luxury-slip-footer">
+                    End of Transaction
                 </footer>
             </article>
         </div>

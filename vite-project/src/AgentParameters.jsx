@@ -3,9 +3,11 @@ import React, { useEffect, useState } from "react";
 import { useBusiness } from "./backend/businessService";
 
 import MatrixTillSlip from "./models/MatrixTillSlip";
-import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import SpaceTillSlip from "./models/SpaceTillSlip";
+import CyberTillSlip from "./models/CyberTillSlip";
+import LuxuryTillSlip from "./models/LuxuryTillSlip";
 
 // --------------------
 // Static data
@@ -2349,8 +2351,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                         user={user}
                         activeCurrencySymbol={activeCurrencySymbol}
                       />
-                    ) : currentTemplate === "luxury" ? (
-                      <LuxuryTillSlip
+                    ) : currentTemplate === "black-gold" ? (
+                      <BlackGoldTillSlip
                         receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}
@@ -2365,6 +2367,20 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       />
                     ) : currentTemplate === "infinity-space" ? (
                       <SpaceTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "cyber-neon" ? (
+                      <CyberTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "luxury" ? (
+                      <LuxuryTillSlip
                         receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}

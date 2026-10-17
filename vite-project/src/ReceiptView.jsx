@@ -9,9 +9,11 @@ import html2pdf from "html2pdf.js";
 
 // Current production receipt design
 import MatrixTillSlip from "./models/MatrixTillSlip";
-import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import SpaceTillSlip from ".models/SpaceTillSlip";
+import CyberTillSlip from ".models/CyberTillSlip";
+import LuxuryTillSlip from ".models/LuxuryTillSlip";
 
 // Add your other designs here as they are created.
 //
@@ -46,9 +48,11 @@ import SpaceTillSlip from ".models/SpaceTillSlip";
 
 const templates = {
   "matrix-grid": MatrixTillSlip,
-  "luxury": LuxuryTillSlip,
+  "black-gold": BlackGoldTillSlip,
   "titanium": TitaniumTillSlip,
   "infinity-space": SpaceTillSlip,
+  "cyber-neon": CyberTillSlip,
+  "luxury": LuxuryTillSlip,
   // Add additional templates here when their files exist.
   //
   // "titanium": TitaniumTillSlip,

@@ -7,9 +7,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useBusiness } from "./backend/businessService";
 import MatrixTillSlip from "./models/MatrixTillSlip";
-import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import SpaceTillSlip from "./models/SpaceTillSlip";
+import CyberTillSlip from "./models/CyberTillSlip";
+import LuxuryTillSlip from "./models/LuxuryTillSlip";
 import {
     Search,
     LayoutGrid,
@@ -1125,8 +1127,8 @@ export default function TillSlipsCollection({
                                                                 ""
                                                             }
                                                         />
-                                                    ) : design.id === "luxury" ? (
-                                                        <LuxuryTillSlip
+                                                    ) : design.id === "black-gold" ? (
+                                                        <BlackGoldTillSlip
                                                             receiptData={receiptData}
                                                             settings={settings}
                                                             user={user}
@@ -1149,6 +1151,28 @@ export default function TillSlipsCollection({
                                                         />
                                                     ) : design.id === "infinity-space" ? (
                                                         <SpaceTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "cyber-neon" ? (
+                                                        <CyberTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "luxury" ? (
+                                                        <LuxuryTillSlip
                                                             receiptData={receiptData}
                                                             settings={settings}
                                                             user={user}
