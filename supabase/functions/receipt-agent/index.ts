@@ -147,6 +147,7 @@ serve(async (req: Request) => {
       "luxury"
       "titanium",
       "black-gold"
+      "infinity-space"
     ];
 
     const selectedTemplateId =

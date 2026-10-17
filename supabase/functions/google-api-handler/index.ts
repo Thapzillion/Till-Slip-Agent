@@ -68,6 +68,7 @@ Examples may include:
 - black-gold
 - minimalist-thermal
 - neon-glow
+- infinity-space
 
 These templates already contain their own:
 

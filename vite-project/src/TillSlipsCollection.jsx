@@ -9,6 +9,7 @@ import { useBusiness } from "./backend/businessService";
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
+import SpaceTillSlip from "./models/SpaceTillSlip";
 import {
     Search,
     LayoutGrid,
@@ -29,7 +30,7 @@ const DESIGN_CATEGORIES = [
     "Cyber",
     "Matrix",
     "Luxury",
-    "Minimal",
+    "Space",
     "Black Gold",
     "Titanium",
     "Business",
@@ -88,6 +89,12 @@ const DESIGNS = [
         id: "classic-ink",
         name: "Classic Ink",
         category: "Classic"
+    },
+
+    {
+        id: "infinity-space",
+        name: "Infinity Space",
+        category: "Space"
     }
 
 ];
@@ -1131,6 +1138,17 @@ export default function TillSlipsCollection({
                                                         />
                                                     ) : design.id === "titanium" ? (
                                                         <TitaniumTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "infinity-space" ? (
+                                                        <SpaceTillSlip
                                                             receiptData={receiptData}
                                                             settings={settings}
                                                             user={user}

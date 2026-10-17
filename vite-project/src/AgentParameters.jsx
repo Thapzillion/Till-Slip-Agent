@@ -5,6 +5,7 @@ import { useBusiness } from "./backend/businessService";
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
+import SpaceTillSlip from "./models/SpaceTillSlip";
 
 // --------------------
 // Static data
@@ -2357,6 +2358,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       />
                     ) : currentTemplate === "titanium" ? (
                       <TitaniumTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "infinity-space" ? (
+                      <SpaceTillSlip
                         receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}

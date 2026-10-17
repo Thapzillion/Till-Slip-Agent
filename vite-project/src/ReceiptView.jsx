@@ -11,6 +11,7 @@ import html2pdf from "html2pdf.js";
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
+import SpaceTillSlip from ".models/SpaceTillSlip";
 
 // Add your other designs here as they are created.
 //
@@ -47,6 +48,7 @@ const templates = {
   "matrix-grid": MatrixTillSlip,
   "luxury": LuxuryTillSlip,
   "titanium": TitaniumTillSlip,
+  "infinity-space": SpaceTillSlip,
   // Add additional templates here when their files exist.
   //
   // "titanium": TitaniumTillSlip,
