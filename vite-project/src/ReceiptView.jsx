@@ -11,9 +11,9 @@ import html2pdf from "html2pdf.js";
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
-import SpaceTillSlip from ".models/SpaceTillSlip";
-import CyberTillSlip from ".models/CyberTillSlip";
-import LuxuryTillSlip from ".models/LuxuryTillSlip";
+import SpaceTillSlip from "./models/SpaceTillSlip";
+import CyberTillSlip from "./models/CyberTillSlip";
+import LuxuryTillSlip from "./models/LuxuryTillSlip";
 
 // Add your other designs here as they are created.
 //
