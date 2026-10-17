@@ -6,7 +6,7 @@ import React from "react";
    Preserved from the supplied backend implementation.
    ================================================================ */
 
-export function TitaniumTillSlip({
+export function useTitaniumTillSlipBackend({
     receiptData = {},
     settings = {},
     user = null,

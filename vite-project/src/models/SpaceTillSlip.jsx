@@ -1,6 +1,6 @@
 import React from "react";
 
-export function SpaceTillSlip({
+export function useSpaceTillSlipBackend({
     receiptData = {},
     settings = {},
     user = null,
