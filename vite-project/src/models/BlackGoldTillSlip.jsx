@@ -866,7 +866,7 @@ export default function BlackGoldTillSlip({
                 }
             `}</style>
 
-            <div className="black-goldgold-slip-toolbar">
+            <div className="black-gold-slip-toolbar">
                 <button
                     type="button"
                     className="black-gold-slip-download"
@@ -910,7 +910,7 @@ export default function BlackGoldTillSlip({
                     <div className="black-gold-slip-logo-frame">
                         {logoUrl ? (
                             <img
-                                className="black-goldgold-slip-logo"
+                                className="black-gold-slip-logo"
                                 src={logoUrl}
                                 alt="Merchant logo"
                             />

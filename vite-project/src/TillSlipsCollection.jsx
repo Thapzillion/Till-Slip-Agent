@@ -12,6 +12,9 @@ import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import SpaceTillSlip from "./models/SpaceTillSlip";
 import CyberTillSlip from "./models/CyberTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import ClassicTillSlip from "./models/ClassicTillSlip";
+import GraffitiTillSlip from "./models/GraffitiTillSlip";
+import TechTillSlip from "./models/TechTillSlip";
 import {
     Search,
     LayoutGrid,
@@ -36,7 +39,8 @@ const DESIGN_CATEGORIES = [
     "Black Gold",
     "Titanium",
     "Business",
-    "Classic"
+    "Classic",
+    "Graffiti"
 ];
 
 /* ============================================================================
@@ -97,6 +101,12 @@ const DESIGNS = [
         id: "infinity-space",
         name: "Infinity Space",
         category: "Space"
+    },
+
+    {
+        id: "graffiti-vibes",
+        name: "Graffiti Vibes",
+        category: "Graffiti"
     }
 
 ];
@@ -1173,6 +1183,39 @@ export default function TillSlipsCollection({
                                                         />
                                                     ) : design.id === "luxury" ? (
                                                         <LuxuryTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "classic-ink" ? (
+                                                        <ClassicTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "graffiti-vibes" ? (
+                                                        <GraffitiTillSlip
+                                                            receiptData={receiptData}
+                                                            settings={settings}
+                                                            user={user}
+                                                            activeCurrencySymbol={
+                                                                settings?.currency_symbol ||
+                                                                settings?.currencySymbol ||
+                                                                ""
+                                                            }
+                                                        />
+                                                    ) : design.id === "tech-hud" ? (
+                                                        <TechTillSlip
                                                             receiptData={receiptData}
                                                             settings={settings}
                                                             user={user}

@@ -8,6 +8,9 @@ import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import SpaceTillSlip from "./models/SpaceTillSlip";
 import CyberTillSlip from "./models/CyberTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import ClassicTillSlip from "./models/ClassicTillSlip";
+import GraffitiTillSlip from "./models/GraffitiTillSlip";
+import TechTillSlip from "./models/TechTillSlip";
 
 // --------------------
 // Static data
@@ -2381,6 +2384,27 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       />
                     ) : currentTemplate === "luxury" ? (
                       <LuxuryTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "classic-ink" ? (
+                      <ClassicTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "graffiti-vibes" ? (
+                      <GraffitiTillSlip
+                        receiptData={livePreviewReceipt}
+                        settings={settings}
+                        user={user}
+                        activeCurrencySymbol={activeCurrencySymbol}
+                      />
+                    ) : currentTemplate === "tech-hud" ? (
+                      <TechTillSlip
                         receiptData={livePreviewReceipt}
                         settings={settings}
                         user={user}

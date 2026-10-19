@@ -144,11 +144,14 @@ serve(async (req: Request) => {
     // Expand this section as your designs increase.
     const ALLOWED_TEMPLATES = [
       "matrix-grid",
-      "luxury"
+      "luxury",
       "titanium",
-      "black-gold"
-      "infinity-space"
-      "cyber-neon"
+      "black-gold",
+      "infinity-space",
+      "cyber-neon",
+      "classic-ink",
+      "graffiti-vibes",
+      "tech-hud"
     ];
 
     const selectedTemplateId =

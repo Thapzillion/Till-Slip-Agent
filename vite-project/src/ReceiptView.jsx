@@ -14,6 +14,9 @@ import TitaniumTillSlip from "./models/TitaniumTillSlip";
 import SpaceTillSlip from "./models/SpaceTillSlip";
 import CyberTillSlip from "./models/CyberTillSlip";
 import LuxuryTillSlip from "./models/LuxuryTillSlip";
+import ClassicTillSlip from "./models/ClassicTillSlip";
+import GraffitiTillSlip from "./models/GraffitiTillSlip";
+import TechTillSlip from "./models/TechTillSlip";
 
 // Add your other designs here as they are created.
 //
@@ -53,6 +56,9 @@ const templates = {
   "infinity-space": SpaceTillSlip,
   "cyber-neon": CyberTillSlip,
   "luxury": LuxuryTillSlip,
+  "classic-ink": ClassicTillSlip,
+  "graffiti-vibes": GraffitiTillSlip,
+  "tech-hud": TechTillSlip,
   // Add additional templates here when their files exist.
   //
   // "titanium": TitaniumTillSlip,

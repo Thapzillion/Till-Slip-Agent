@@ -69,6 +69,9 @@ Examples may include:
 - minimalist-thermal
 - neon-glow
 - infinity-space
+- classic-ink
+- graffiti-vibes
+- tech-hud
 
 These templates already contain their own:
 
