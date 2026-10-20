@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e05bd7f-4f15-430e-87c1-d38958bb24f3" name="Changes" comment="" />
+    <list default="true" id="8e05bd7f-4f15-430e-87c1-d38958bb24f3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/supabase/functions/google-api-handler/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/supabase/functions/google-api-handler/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/supabase/functions/receipt-agent/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/supabase/functions/receipt-agent/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite-project/src/AgentParameters.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/vite-project/src/AgentParameters.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite-project/src/ReceiptView.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/vite-project/src/ReceiptView.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite-project/src/TillSlipsCollection.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/vite-project/src/TillSlipsCollection.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vite-project/src/models/BlackGoldTillSlip.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/vite-project/src/models/BlackGoldTillSlip.jsx" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

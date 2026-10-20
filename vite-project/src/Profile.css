@@ -1,0 +1,648 @@
+.ruach-profile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+    background:
+        radial-gradient(ellipse at 50% 0%,
+            rgba(44, 143, 214, 0.14),
+            transparent 46%),
+        rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    animation: ruachProfileOverlayIn 0.3s ease-out;
+}
+
+.ruach-profile-modal {
+    --profile-blue: #78d5ff;
+    --profile-muted: #8995a5;
+
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    max-width: 510px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+    color: #f6f8fb;
+    border: 1px solid rgba(173, 196, 220, 0.19);
+    border-radius: 25px;
+    background:
+        linear-gradient(145deg,
+            rgba(29, 31, 36, 0.99) 0%,
+            rgba(13, 14, 17, 0.99) 44%,
+            #060709 100%);
+    box-shadow:
+        0 35px 110px rgba(0, 0, 0, 0.78),
+        0 0 50px rgba(59, 163, 255, 0.075),
+        inset 0 1px 0 rgba(255, 255, 255, 0.075);
+    animation: ruachProfileCardIn 0.48s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ruach-profile-modal::before {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 12%;
+    width: 76%;
+    height: 1px;
+    content: "";
+    pointer-events: none;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.5),
+            rgba(91, 195, 255, 0.85),
+            transparent);
+}
+
+.ruach-profile-grid {
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.15;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px,
+            transparent 1px),
+        linear-gradient(90deg,
+            rgba(255, 255, 255, 0.035) 1px,
+            transparent 1px);
+    background-size: 35px 35px;
+    mask-image: linear-gradient(to bottom,
+            black,
+            transparent 75%);
+}
+
+.ruach-profile-glow {
+    position: absolute;
+    z-index: -1;
+    top: -150px;
+    left: 50%;
+    width: 360px;
+    height: 300px;
+    pointer-events: none;
+    border-radius: 50%;
+    background: rgba(34, 137, 228, 0.12);
+    filter: blur(75px);
+    transform: translateX(-50%);
+    animation: ruachProfileGlow 5s ease-in-out infinite;
+}
+
+.ruach-profile-topline {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.ruach-profile-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #cbd4df;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2.6px;
+}
+
+.ruach-profile-brand-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--profile-blue, #78d5ff);
+    box-shadow: 0 0 13px rgba(100, 204, 255, 0.8);
+    animation: ruachProfileDot 2.5s ease-in-out infinite;
+}
+
+.ruach-profile-close {
+    display: grid;
+    width: 37px;
+    height: 37px;
+    padding: 0;
+    place-items: center;
+    color: #b9c2ce;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.035);
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.ruach-profile-close:hover {
+    color: #fff;
+    border-color: rgba(120, 213, 255, 0.4);
+    background: rgba(120, 213, 255, 0.09);
+    transform: rotate(4deg);
+}
+
+.ruach-profile-content {
+    position: relative;
+    padding: 28px 30px 25px;
+}
+
+.ruach-profile-emblem {
+    position: relative;
+    display: grid;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 22px;
+    place-items: center;
+    color: #e8f5ff;
+    border: 1px solid rgba(136, 197, 238, 0.28);
+    border-radius: 23px;
+    background: linear-gradient(145deg,
+            #30343c,
+            #15171c 72%);
+    box-shadow:
+        0 14px 38px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 0 24px rgba(73, 168, 255, 0.08);
+}
+
+.ruach-profile-emblem-ring {
+    position: absolute;
+    inset: -6px;
+    pointer-events: none;
+    border: 1px solid rgba(103, 193, 255, 0.28);
+    border-radius: 28px;
+    animation: ruachProfileRing 3s ease-in-out infinite;
+}
+
+.ruach-profile-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #7acfff;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2.2px;
+}
+
+.ruach-profile-title {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(29px, 5vw, 36px);
+    font-weight: 760;
+    line-height: 1.2;
+    letter-spacing: -1.5px;
+    text-align: center;
+}
+
+.ruach-profile-title span {
+    color: #a9dfff;
+    text-shadow: 0 0 25px rgba(87, 178, 255, 0.18);
+}
+
+.ruach-profile-subtitle {
+    max-width: 340px;
+    margin: 12px auto 29px;
+    color: #929ba8;
+    font-size: 12px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+.ruach-profile-section-label {
+    margin: 0 0 11px;
+    color: #717e8e;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.9px;
+}
+
+.ruach-profile-info-card {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 13px;
+    padding: 16px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.085);
+    border-radius: 15px;
+    background: linear-gradient(120deg,
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.018));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.ruach-profile-info-icon,
+.ruach-profile-plan-symbol,
+.ruach-profile-expiry-icon {
+    display: grid;
+    flex-shrink: 0;
+    place-items: center;
+    color: #8ed8ff;
+    border: 1px solid rgba(120, 199, 255, 0.17);
+    background: rgba(77, 163, 235, 0.085);
+}
+
+.ruach-profile-info-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+}
+
+.ruach-profile-info-copy,
+.ruach-profile-plan-heading,
+.ruach-profile-expiry-copy {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ruach-profile-field-label {
+    color: #778393;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.35px;
+}
+
+.ruach-profile-email {
+    overflow-wrap: anywhere;
+    color: #f1f5fa;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.ruach-profile-verified-icon {
+    flex-shrink: 0;
+    color: #81d4ff;
+}
+
+.ruach-profile-plan-card {
+    padding: 19px;
+    border: 1px solid rgba(115, 179, 227, 0.18);
+    border-radius: 18px;
+    background:
+        radial-gradient(ellipse at 100% 0%,
+            rgba(42, 133, 211, 0.105),
+            transparent 50%),
+        linear-gradient(145deg,
+            rgba(255, 255, 255, 0.045),
+            rgba(255, 255, 255, 0.012));
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 14px 35px rgba(0, 0, 0, 0.12);
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.ruach-profile-plan-card:hover {
+    border-color: rgba(115, 195, 255, 0.3);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 0 28px rgba(65, 157, 240, 0.055);
+}
+
+.ruach-profile-plan-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ruach-profile-plan-symbol {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+}
+
+.ruach-profile-plan-heading h3 {
+    margin: 2px 0 0;
+    color: #f7f9fc;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    overflow-wrap: anywhere;
+}
+
+.ruach-profile-status {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 8px;
+    color: #82d7ff;
+    border: 1px solid rgba(100, 196, 255, 0.2);
+    border-radius: 20px;
+    background: rgba(77, 169, 245, 0.075);
+    font-size: 7px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+}
+
+.ruach-profile-status-dot {
+    width: 5px;
+    height: 5px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 9px currentColor;
+}
+
+.ruach-profile-status.is-expired {
+    color: #ff9292;
+    border-color: rgba(255, 120, 120, 0.2);
+    background: rgba(255, 100, 100, 0.06);
+}
+
+.ruach-profile-plan-divider {
+    height: 1px;
+    margin: 19px 0;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            rgba(120, 200, 255, 0.2),
+            transparent);
+}
+
+.ruach-profile-countdown {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.ruach-profile-days {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin-top: 8px;
+    font-size: clamp(34px, 7vw, 43px);
+    font-weight: 750;
+    line-height: 1.1;
+    letter-spacing: -1.8px;
+    text-shadow: 0 0 25px rgba(95, 192, 255, 0.1);
+}
+
+.ruach-profile-days span {
+    color: #a2acb8;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+}
+
+.ruach-profile-clock {
+    display: grid;
+    width: 47px;
+    height: 47px;
+    flex-shrink: 0;
+    place-items: center;
+    color: #84d4ff;
+    border: 1px solid rgba(120, 198, 255, 0.16);
+    border-radius: 15px;
+    background: rgba(68, 151, 220, 0.07);
+}
+
+.ruach-profile-countdown-caption {
+    margin-top: 9px;
+    color: #818e9e;
+    font-size: 10px;
+}
+
+.ruach-profile-countdown-caption.is-expired {
+    color: #ff9292;
+}
+
+.ruach-profile-expiry-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 17px;
+    margin-top: 19px;
+    border-top: 1px solid rgba(255, 255, 255, 0.065);
+}
+
+.ruach-profile-expiry-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+}
+
+.ruach-profile-expiry-copy strong {
+    color: #e5eaf0;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.ruach-profile-security-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 19px 0;
+    color: #778392;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.ruach-profile-security-note svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #75cfff;
+}
+
+.ruach-profile-done {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 13px 17px;
+    color: #071019;
+    border: 1px solid rgba(168, 224, 255, 0.35);
+    border-radius: 13px;
+    background: linear-gradient(110deg,
+            #eaf8ff 0%,
+            #a4ddff 52%,
+            #70c7ff 100%);
+    box-shadow: 0 7px 25px rgba(47, 155, 232, 0.1);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+.ruach-profile-done:hover {
+    filter: brightness(1.06);
+    box-shadow: 0 8px 30px rgba(47, 155, 232, 0.23);
+    transform: translateY(-2px);
+}
+
+.ruach-profile-done:active {
+    transform: scale(0.99);
+}
+
+.ruach-profile-arrow {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.ruach-profile-done:hover .ruach-profile-arrow {
+    transform: translate(2px, -2px);
+}
+
+.ruach-profile-footer {
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    margin-top: 22px;
+    color: #555f6c;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1.7px;
+}
+
+.ruach-profile-footer span {
+    color: #76cfff;
+}
+
+.ruach-profile-loading {
+    display: flex;
+    min-height: 120px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #9aa8b8;
+    font-size: 11px;
+}
+
+.ruach-profile-spinner {
+    color: #7bd3ff;
+    animation: ruachProfileSpin 1s linear infinite;
+}
+
+@keyframes ruachProfileOverlayIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes ruachProfileCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.975);
+        filter: blur(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+@keyframes ruachProfileGlow {
+
+    0%,
+    100% {
+        opacity: 0.65;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes ruachProfileRing {
+
+    0%,
+    100% {
+        opacity: 0.45;
+        transform: scale(0.98);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.035);
+    }
+}
+
+@keyframes ruachProfileDot {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes ruachProfileSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 560px) {
+    .ruach-profile-overlay {
+        padding: 12px;
+    }
+
+    .ruach-profile-modal {
+        max-height: calc(100dvh - 24px);
+        border-radius: 20px;
+    }
+
+    .ruach-profile-topline {
+        padding: 17px 18px;
+    }
+
+    .ruach-profile-content {
+        padding: 23px 18px 20px;
+    }
+
+    .ruach-profile-plan-card {
+        padding: 15px;
+    }
+
+    .ruach-profile-plan-top {
+        flex-wrap: wrap;
+    }
+
+    .ruach-profile-status {
+        margin-left: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ruach-profile-overlay,
+    .ruach-profile-modal,
+    .ruach-profile-emblem-ring,
+    .ruach-profile-glow,
+    .ruach-profile-brand-dot,
+    .ruach-profile-spinner {
+        animation: none !important;
+    }
+
+    .ruach-profile-modal *,
+    .ruach-profile-modal *::before,
+    .ruach-profile-modal *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
