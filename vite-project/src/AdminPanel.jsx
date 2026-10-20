@@ -12,6 +12,8 @@ import ConnectedStores from "./ConnectedStores";
 import AgentParameters from "./AgentParameters";
 import TillSlipsCollection from "./TillSlipsCollection";
 
+import Profile from "./Profile";
+
 import {
   LayoutDashboard,
   Store,
@@ -3293,7 +3295,7 @@ export default function AdminPanel() {
                         role="menuitem"
                         onClick={() => {
                           setShowAccountMenu(false);
-                          navigate("/profile");
+                          navigate("/Profile");
                         }}
                         style={accountMenuButtonStyle}
                       >
@@ -3307,7 +3309,7 @@ export default function AdminPanel() {
                         role="menuitem"
                         onClick={() => {
                           setShowAccountMenu(false);
-                          navigate("/billing");
+                          navigate("/Billing");
                         }}
                         style={accountMenuButtonStyle}
                       >
@@ -3321,7 +3323,7 @@ export default function AdminPanel() {
                         role="menuitem"
                         onClick={() => {
                           setShowAccountMenu(false);
-                          navigate("/help");
+                          navigate("/Help");
                         }}
                         style={accountMenuButtonStyle}
                       >
