@@ -119,6 +119,7 @@ export default function AdminPanel() {
   const navigate = useNavigate();
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -3295,7 +3296,7 @@ export default function AdminPanel() {
                         role="menuitem"
                         onClick={() => {
                           setShowAccountMenu(false);
-                          navigate("/Profile");
+                          setShowProfile(true);
                         }}
                         style={accountMenuButtonStyle}
                       >
@@ -3598,6 +3599,16 @@ export default function AdminPanel() {
           </div>
         )}
       </main>
+
+      <Profile
+        isOpen={showProfile}
+        onClose={() => setShowProfile(false)}
+        user={user}
+        subscription={subscription}
+        subscriptionLoading={subscriptionLoading}
+        trialDaysRemaining={trialDaysRemaining}
+        trialExpiryDate={trialExpiryDate}
+      />
     </div>
   );
 }

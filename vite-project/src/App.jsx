@@ -17,6 +17,9 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
 import Support from './pages/Support';
 
+// ACCOUNT MENU
+import Profile from './Profile';
+
 export default function App() {
   return (
     <Router>
@@ -44,6 +47,9 @@ export default function App() {
         {/* SETTINGS PAGES */}
         <Route path="/agent-parameters" element={<AgentParameters />} />
         <Route path="/till-slips-collection" element={<TillSlipsCollection />} />
+
+        {/* ACCOUNT MENU PAGES */}
+        <Route path="/profile" element={<Profile />} />
 
         {/* Clean, safe default fallback routing */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
