@@ -13,6 +13,7 @@ import AgentParameters from "./AgentParameters";
 import TillSlipsCollection from "./TillSlipsCollection";
 
 import Profile from "./Profile";
+import Plan from "./Plan";
 
 import {
   LayoutDashboard,
@@ -120,6 +121,7 @@ export default function AdminPanel() {
 
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showPlan, setShowPlan] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -3310,7 +3312,7 @@ export default function AdminPanel() {
                         role="menuitem"
                         onClick={() => {
                           setShowAccountMenu(false);
-                          navigate("/Billing");
+                          setShowPlan(true);
                         }}
                         style={accountMenuButtonStyle}
                       >
@@ -3603,6 +3605,15 @@ export default function AdminPanel() {
       <Profile
         isOpen={showProfile}
         onClose={() => setShowProfile(false)}
+        user={user}
+        subscription={subscription}
+        subscriptionLoading={subscriptionLoading}
+        trialDaysRemaining={trialDaysRemaining}
+        trialExpiryDate={trialExpiryDate}
+      />
+      <Plan
+        isOpen={showPlan}
+        onClose={() => setShowPlan(false)}
         user={user}
         subscription={subscription}
         subscriptionLoading={subscriptionLoading}

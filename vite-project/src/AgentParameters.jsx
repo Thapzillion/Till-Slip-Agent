@@ -2489,68 +2489,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   </div>
                 </div>
 
-                {/* ========================================================
-                    DOWNLOAD BUTTON — DECORATIVE PREVIEW ONLY
-                    --------------------------------------------------------
-                    Intentionally not connected to any download backend or
-                    click handler. This is only a visual part of the
-                    Agent Parameters receipt preview.
-                ======================================================== */}
-                <div
-                  className="matrix-receipt-download"
-                  aria-hidden="true"
-                  style={{
-                    marginTop: 18,
-                    textAlign: "center",
-                    pointerEvents: "none",
-                    userSelect: "none",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "block",
-                      background:
-                        "linear-gradient(90deg, #08C6E3, #00A8FF)",
-                      color: "#041014",
-                      textDecoration: "none",
-                      padding: 14,
-                      borderRadius: 14,
-                      fontSize: 11,
-                      fontWeight: 900,
-                      letterSpacing: "0.7px",
-                      textTransform: "uppercase",
-                      boxShadow:
-                        "0 10px 28px rgba(8, 198, 227, 0.22)",
-                      boxSizing: "border-box",
-                    }}
-                  >
-                    Download Official Invoice PDF
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    marginTop: '12px',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-                    gap: '9px',
-                  }}
-                >
-
-                  <div style={styles.insight}>
-
-                    <div style={styles.insightLabel}>
-                      TEMPLATE
-                    </div>
-
-                    <div style={styles.insightValue}>
-                      {settings?.receipt_template || 'matrix-grid'}
-                    </div>
-
-                  </div>
-
-                </div>
-
               </section>
 
             </div>

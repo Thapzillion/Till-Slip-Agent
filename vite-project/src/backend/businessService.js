@@ -1017,17 +1017,32 @@ export function useBusiness() {
         }
     }
 
+
     async function checkSubscription(userId) {
+        if (!userId) {
+            setSubscriptionRecord(null);
+            setSubscriptionLoading(false);
+            return null;
+        }
+
         setSubscriptionLoading(true);
 
         try {
-            let { data, error } = await supabase
+            let { data: subscriptionData, error } = await supabase
                 .from("subscriptions")
                 .select(`
-          subscription_status,
-          trial_ends_at,
-          trial_welcome_seen
-        `)
+        user_id,
+        subscription_status,
+        subscription_plan,
+        trial_started_at,
+        trial_ends_at,
+        created_at,
+        updated_at,
+        trial_welcome_seen,
+        paid_until,
+        last_payment_at,
+        payment_provider
+      `)
                 .eq("user_id", userId)
                 .maybeSingle();
 
@@ -1035,11 +1050,7 @@ export function useBusiness() {
                 throw error;
             }
 
-            // ---------------------------------------
-            // NO SUBSCRIPTION RECORD FOUND
-            // Auto-create 3-Day Trial and welcome user directly
-            // ---------------------------------------
-            if (!data) {
+            if (!subscriptionData) {
                 const trialEnds = new Date();
                 trialEnds.setDate(trialEnds.getDate() + 3);
 
@@ -1062,15 +1073,17 @@ export function useBusiness() {
                     throw insertError;
                 }
 
-                data = newSub;
+                subscriptionData = newSub;
             }
 
-            // ---------------------------------------
-            // CALCULATE DATES & EXPIRATION
-            // ---------------------------------------
-            const now = new Date();
-            const expiry = new Date(data.trial_ends_at);
-            const msRemaining = expiry.getTime() - now.getTime();
+            setSubscriptionRecord(subscriptionData);
+
+            const expiry = subscriptionData?.trial_ends_at
+                ? new Date(subscriptionData.trial_ends_at)
+                : null;
+            const msRemaining = expiry
+                ? expiry.getTime() - Date.now()
+                : 0;
 
             const daysRemaining = Math.max(
                 0,
@@ -1080,38 +1093,28 @@ export function useBusiness() {
             setTrialDaysRemaining(daysRemaining);
             setTrialExpiryDate(expiry);
 
-            // Cache subscription record for UI consumers
-            try {
-                setSubscriptionRecord(data);
-            } catch (e) {
-                console.warn('Failed to cache subscription record', e);
-            }
-
             const expired = msRemaining <= 0;
 
-            // ---------------------------------------
-            // ACTIVE PREMIUM TRIAL WELCOME
-            // ---------------------------------------
             if (
-                data.subscription_status === "trial" &&
+                subscriptionData.subscription_status === "trial" &&
                 !expired &&
-                !data.trial_welcome_seen
+                !subscriptionData.trial_welcome_seen
             ) {
                 setShowTrialWelcomeModal(true);
             }
 
-            // ---------------------------------------
-            // TRIAL EXPIRED
-            // ---------------------------------------
             if (
                 expired &&
-                data.subscription_status !== "active"
+                subscriptionData.subscription_status !== "active"
             ) {
                 setShowSubscriptionModal(true);
             }
 
-        } catch (err) {
-            console.error("Subscription check failed:", err);
+            return subscriptionData;
+        } catch (error) {
+            console.error("Subscription check failed:", error);
+            setSubscriptionRecord(null);
+            return null;
         } finally {
             setSubscriptionLoading(false);
         }

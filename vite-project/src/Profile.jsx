@@ -1,440 +1,401 @@
 
-import React, { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
     X,
     UserRound,
     Mail,
-    ShieldCheck,
     Crown,
+    CalendarClock,
     Clock3,
-    CalendarDays,
-    CheckCircle2,
-    Zap,
-    CircleAlert,
-    LoaderCircle,
+    ShieldCheck,
+    RefreshCw,
+    AlertCircle,
 } from "lucide-react";
+import { supabase } from "../supabaseClient";
 import "./Profile.css";
 
-const DAY_IN_MS = 24 * 60 * 60 * 1000;
+const DAY_MS = 1000 * 60 * 60 * 24;
+const noop = () => { };
 
-function getValidDate(...values) {
-    for (const value of values) {
-        if (!value) continue;
+function getDaysRemaining(dateValue) {
+    if (!dateValue) return null;
 
-        const date = new Date(value);
+    const timestamp = new Date(dateValue).getTime();
 
-        if (!Number.isNaN(date.getTime())) {
-            return date;
-        }
-    }
+    if (!Number.isFinite(timestamp)) return null;
 
-    return null;
+    return Math.max(0, Math.ceil((timestamp - Date.now()) / DAY_MS));
 }
 
-function getDaysRemaining(expiryDate) {
-    if (!expiryDate) return null;
+function formatDate(dateValue) {
+    if (!dateValue) return "Not available";
 
-    const difference = expiryDate.getTime() - Date.now();
+    const date = new Date(dateValue);
 
-    if (difference <= 0) return 0;
-
-    return Math.ceil(difference / DAY_IN_MS);
-}
-
-function formatDate(date) {
-    if (!date) return "Not available";
+    if (!Number.isFinite(date.getTime())) return "Not available";
 
     return new Intl.DateTimeFormat(undefined, {
         day: "numeric",
         month: "long",
         year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
     }).format(date);
 }
 
-function getSubscriptionDetails({
-    subscription,
-    trialExpiryDate,
-    trialDaysRemaining,
-}) {
-    const planType = String(
-        subscription?.plan_type ??
-        subscription?.plan ??
-        subscription?.type ??
-        subscription?.name ??
-        ""
-    ).toLowerCase();
-
-    const status = String(
-        subscription?.status ?? ""
-    ).toLowerCase();
-
-    const isTrial =
-        status.includes("trial") ||
-        planType.includes("trial") ||
-        subscription?.is_trial === true ||
-        subscription?.trial_active === true;
-
-    const trialExpiry = getValidDate(
-        trialExpiryDate,
-        subscription?.trial_ends_at,
-        subscription?.trial_end,
-        subscription?.trial_expiry_date,
-        subscription?.trial_expires_at
-    );
-
-    const premiumExpiry = getValidDate(
-        subscription?.current_period_end,
-        subscription?.expires_at,
-        subscription?.end_date,
-        subscription?.expiry_date,
-        subscription?.premium_expiry_date,
-        subscription?.subscription_end_date,
-        subscription?.period_end
-    );
-
-    const expiryDate = isTrial
-        ? trialExpiry
-        : premiumExpiry;
-
-    const calculatedDays = getDaysRemaining(expiryDate);
-
-    // Use the existing trial countdown only as a fallback when
-    // the actual trial expiry timestamp is unavailable.
-    const daysRemaining =
-        calculatedDays !== null
-            ? calculatedDays
-            : isTrial &&
-                Number.isFinite(Number(trialDaysRemaining))
-                ? Math.max(0, Number(trialDaysRemaining))
-                : null;
-
-    const isExpired =
-        daysRemaining === 0 ||
-        status === "expired" ||
-        status === "cancelled" ||
-        status === "canceled";
-
-    let planName = "Premium";
-
-    if (isTrial) {
-        planName = "3-Day Free Trial";
-    } else if (
-        planType.includes("free") ||
-        status === "free"
-    ) {
-        planName = "Free Plan";
-    } else if (
-        subscription?.plan_name ||
-        subscription?.name
-    ) {
-        planName =
-            subscription.plan_name || subscription.name;
+function getSubscriptionDetails(subscription) {
+    if (!subscription) {
+        return {
+            plan: "Subscription unavailable",
+            status: "Unknown",
+            endDate: null,
+            daysRemaining: null,
+            periodLabel: "Renewal / expiry",
+            isTrial: false,
+            isExpired: false,
+        };
     }
 
-    let statusLabel = "ACTIVE";
+    const status = String(
+        subscription.subscription_status || "unknown"
+    ).toLowerCase();
 
-    if (isExpired) {
-        statusLabel = "EXPIRED";
-    } else if (
-        status === "pending" ||
-        status === "incomplete"
-    ) {
-        statusLabel = "PENDING";
-    } else if (
-        status === "past_due" ||
-        status === "payment_failed"
-    ) {
-        statusLabel = "PAYMENT REQUIRED";
+    const isTrial = status === "trial";
+
+    // The supplied database schema uses trial_ends_at for trials
+    // and paid_until for paid subscriptions.
+    const endDate = isTrial
+        ? subscription.trial_ends_at
+        : subscription.paid_until;
+
+    const daysRemaining = getDaysRemaining(endDate);
+    const isExpired =
+        endDate &&
+        Number.isFinite(new Date(endDate).getTime()) &&
+        new Date(endDate).getTime() <= Date.now();
+
+    const planName = subscription.subscription_plan
+        ? String(subscription.subscription_plan)
+            .replace(/[_-]/g, " ")
+            .replace(/\b\w/g, (letter) => letter.toUpperCase())
+        : "Premium";
+
+    let statusLabel = status.replace(/[_-]/g, " ");
+    statusLabel = statusLabel.replace(/\b\w/g, (letter) =>
+        letter.toUpperCase()
+    );
+
+    if (isExpired && status !== "active") {
+        statusLabel = "Expired";
+    } else if (isExpired && status === "active") {
+        statusLabel = "Payment period ended";
     }
 
     return {
-        planName,
-        isTrial,
-        expiryDate,
+        plan: planName,
+        status: statusLabel,
+        endDate,
         daysRemaining,
-        isExpired,
-        statusLabel,
+        periodLabel: isTrial ? "Free trial ends" : "Paid plan ends",
+        isTrial,
+        isExpired: Boolean(isExpired),
     };
 }
 
 export default function Profile({
     isOpen = true,
-    onClose = () => { },
+    onClose = noop,
     user = null,
-    subscription = null,
-    subscriptionLoading = false,
-    trialDaysRemaining = null,
-    trialExpiryDate = null,
 }) {
-    const details = useMemo(
-        () =>
-            getSubscriptionDetails({
-                subscription,
-                trialExpiryDate,
-                trialDaysRemaining,
-            }),
-        [
-            subscription,
-            trialExpiryDate,
-            trialDaysRemaining,
-        ]
-    );
+    const [currentUser, setCurrentUser] = useState(user);
+    const [subscription, setSubscription] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState("");
+
+    const loadProfile = useCallback(async ({ silent = false } = {}) => {
+        if (silent) {
+            setRefreshing(true);
+        } else {
+            setLoading(true);
+        }
+
+        setError("");
+
+        try {
+            // Use the authenticated session as a fallback if the parent
+            // has not passed the user object yet.
+            let activeUser = user;
+
+            if (!activeUser?.id) {
+                const {
+                    data: { user: authenticatedUser },
+                    error: authError,
+                } = await supabase.auth.getUser();
+
+                if (authError) throw authError;
+
+                activeUser = authenticatedUser;
+            }
+
+            if (!activeUser?.id) {
+                setCurrentUser(null);
+                setSubscription(null);
+                setError("Please sign in to view your subscription.");
+                return;
+            }
+
+            setCurrentUser(activeUser);
+
+            // Read the actual row from public.subscriptions.
+            // Never query another user's subscription.
+            const { data, error: subscriptionError } = await supabase
+                .from("subscriptions")
+                .select(`
+          user_id,
+          subscription_status,
+          subscription_plan,
+          trial_started_at,
+          trial_ends_at,
+          created_at,
+          updated_at,
+          trial_welcome_seen,
+          paid_until,
+          last_payment_at,
+          payment_provider
+        `)
+                .eq("user_id", activeUser.id)
+                .maybeSingle();
+
+            if (subscriptionError) throw subscriptionError;
+
+            setSubscription(data || null);
+
+            if (!data) {
+                setError(
+                    "No subscription record was found for this account."
+                );
+            }
+        } catch (err) {
+            console.error("Profile subscription fetch failed:", err);
+            setError(
+                err?.message || "Unable to load your subscription details."
+            );
+        } finally {
+            setLoading(false);
+            setRefreshing(false);
+        }
+    }, [user]);
 
     useEffect(() => {
-        if (!isOpen) return;
+        setCurrentUser(user);
+    }, [user]);
+
+    useEffect(() => {
+        if (!isOpen) return undefined;
+
+        loadProfile();
+
+        // Keep the modal synchronized if the subscription row changes.
+        let channel;
+
+        if (user?.id) {
+            channel = supabase
+                .channel(`profile-subscription-${user.id}`)
+                .on(
+                    "postgres_changes",
+                    {
+                        event: "*",
+                        schema: "public",
+                        table: "subscriptions",
+                        filter: `user_id=eq.${user.id}`,
+                    },
+                    () => {
+                        loadProfile({ silent: true });
+                    }
+                )
+                .subscribe();
+        }
 
         const handleKeyDown = (event) => {
-            if (event.key === "Escape") {
-                onClose();
-            }
+            if (event.key === "Escape") onClose();
         };
 
-        document.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
 
         return () => {
-            document.removeEventListener(
-                "keydown",
-                handleKeyDown
-            );
+            window.removeEventListener("keydown", handleKeyDown);
+
+            if (channel) {
+                supabase.removeChannel(channel);
+            }
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, user?.id, loadProfile, onClose]);
 
     if (!isOpen) return null;
 
-    const email = user?.email || "Email unavailable";
-    const {
-        planName,
-        isTrial,
-        expiryDate,
-        daysRemaining,
-        isExpired,
-        statusLabel,
-    } = details;
-
-    const statusColor = isExpired
-        ? "#ff7777"
-        : "#78d5ff";
-
-    const countdownLabel =
-        daysRemaining === null
-            ? "Awaiting expiry date"
-            : daysRemaining === 0
-                ? "Expired or ending today"
-                : `${daysRemaining} ${daysRemaining === 1 ? "day" : "days"
-                } remaining`;
+    const details = getSubscriptionDetails(subscription);
+    const email = currentUser?.email || "Email unavailable";
 
     return (
         <div
-            className="ruach-profile-overlay"
+            className="profile-modal-overlay"
             onMouseDown={(event) => {
-                if (event.target === event.currentTarget) {
-                    onClose();
-                }
+                if (event.target === event.currentTarget) onClose();
             }}
         >
             <section
-                className="ruach-profile-modal"
+                className="profile-modal"
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="ruach-profile-title"
+                aria-labelledby="profile-modal-title"
             >
-                <div className="ruach-profile-grid" />
-                <div className="ruach-profile-glow" />
+                <header className="profile-modal-header">
+                    <div className="profile-heading-icon">
+                        <UserRound size={22} />
+                    </div>
 
-                <div className="ruach-profile-topline">
-                    <span className="ruach-profile-brand">
-                        <span className="ruach-profile-brand-dot" />
-                        RUACHAGENT
-                    </span>
+                    <div>
+                        <p className="profile-eyebrow">RUACHAGENT / ACCOUNT</p>
+                        <h2 id="profile-modal-title">Your Profile</h2>
+                        <p className="profile-subtitle">
+                            Account identity and subscription status
+                        </p>
+                    </div>
 
                     <button
                         type="button"
-                        className="ruach-profile-close"
+                        className="profile-close-button"
                         onClick={onClose}
                         aria-label="Close profile"
                     >
-                        <X size={19} />
+                        <X size={20} />
                     </button>
-                </div>
+                </header>
 
-                <div className="ruach-profile-content">
-                    <div className="ruach-profile-emblem">
-                        <div className="ruach-profile-emblem-ring" />
-                        <UserRound size={31} strokeWidth={1.5} />
-                    </div>
-
-                    <div className="ruach-profile-eyebrow">
-                        <ShieldCheck size={13} />
-                        SECURE ACCOUNT IDENTITY
-                    </div>
-
-                    <h2
-                        id="ruach-profile-title"
-                        className="ruach-profile-title"
-                    >
-                        Your <span>Profile.</span>
-                    </h2>
-
-                    <p className="ruach-profile-subtitle">
-                        Your account identity and membership status,
-                        in one place.
-                    </p>
-
-                    <div className="ruach-profile-section-label">
-                        ACCOUNT INFORMATION
-                    </div>
-
-                    <div className="ruach-profile-info-card">
-                        <div className="ruach-profile-info-icon">
-                            <Mail size={18} />
+                <div className="profile-content">
+                    <article className="profile-info-card">
+                        <div className="profile-card-icon">
+                            <Mail size={19} />
                         </div>
 
-                        <div className="ruach-profile-info-copy">
-                            <span className="ruach-profile-field-label">
-                                REGISTERED EMAIL
-                            </span>
-
-                            <span
-                                className="ruach-profile-email"
-                                title={email}
-                            >
-                                {email}
-                            </span>
+                        <div className="profile-card-copy">
+                            <span className="profile-label">ACCOUNT EMAIL</span>
+                            <strong className="profile-email">{email}</strong>
                         </div>
 
-                        <CheckCircle2
-                            className="ruach-profile-verified-icon"
-                            size={17}
+                        <ShieldCheck
+                            className="profile-security-icon"
+                            size={20}
                         />
-                    </div>
+                    </article>
 
-                    <div className="ruach-profile-section-label">
-                        MEMBERSHIP OVERVIEW
-                    </div>
-
-                    <div className="ruach-profile-plan-card">
-                        <div className="ruach-profile-plan-top">
-                            <div className="ruach-profile-plan-symbol">
-                                {isTrial ? (
-                                    <Zap size={21} />
-                                ) : (
-                                    <Crown size={21} />
-                                )}
+                    <article className="profile-subscription-card">
+                        <div className="profile-plan-top">
+                            <div className="profile-card-icon">
+                                <Crown size={20} />
                             </div>
 
-                            <div className="ruach-profile-plan-heading">
-                                <span className="ruach-profile-field-label">
+                            <div className="profile-card-copy">
+                                <span className="profile-label">
                                     CURRENT SUBSCRIPTION
                                 </span>
-
-                                <h3>{planName}</h3>
+                                <h3>{details.plan}</h3>
                             </div>
 
-                            <span
-                                className={`ruach-profile-status ${isExpired ? "is-expired" : ""
-                                    }`}
-                            >
-                                <span className="ruach-profile-status-dot" />
-                                {statusLabel}
+                            <span className="profile-status">
+                                {loading ? "Loading" : details.status}
                             </span>
                         </div>
 
-                        <div className="ruach-profile-plan-divider" />
-
-                        {subscriptionLoading ? (
-                            <div className="ruach-profile-loading">
-                                <LoaderCircle
-                                    size={19}
-                                    className="ruach-profile-spinner"
-                                />
-                                <span>
-                                    Synchronizing subscription details...
-                                </span>
+                        {loading ? (
+                            <div className="profile-loading">
+                                <span className="profile-loading-indicator" />
+                                Connecting to subscription database…
+                            </div>
+                        ) : error ? (
+                            <div className="profile-error">
+                                <AlertCircle size={18} />
+                                <span>{error}</span>
                             </div>
                         ) : (
                             <>
-                                <div className="ruach-profile-countdown">
-                                    <div>
-                                        <span className="ruach-profile-field-label">
-                                            {isTrial
-                                                ? "FREE TRIAL TIME LEFT"
-                                                : "SUBSCRIPTION TIME LEFT"}
-                                        </span>
+                                <div className="profile-countdown">
+                                    <span className="profile-label">
+                                        {details.isTrial
+                                            ? "FREE TRIAL TIME REMAINING"
+                                            : "SUBSCRIPTION TIME REMAINING"}
+                                    </span>
 
-                                        <div
-                                            className="ruach-profile-days"
-                                            style={{ color: statusColor }}
-                                        >
-                                            {daysRemaining === null
-                                                ? "--"
-                                                : daysRemaining}
-                                            <span>
-                                                {daysRemaining === 1
-                                                    ? "day"
-                                                    : "days"}
+                                    <div className="profile-countdown-value">
+                                        {details.daysRemaining === null
+                                            ? "--"
+                                            : details.daysRemaining}
+                                        <span>
+                                            {details.daysRemaining === 1 ? "day" : "days"}
+                                        </span>
+                                    </div>
+
+                                    <p>
+                                        {details.daysRemaining === null
+                                            ? "An expiry date is not available."
+                                            : details.isExpired
+                                                ? "This subscription period has ended."
+                                                : details.daysRemaining === 0
+                                                    ? "Less than one day remains."
+                                                    : details.isTrial
+                                                        ? "remaining until your free trial ends."
+                                                        : "remaining until your paid period ends."}
+                                    </p>
+                                </div>
+
+                                <div className="profile-date-row">
+                                    <CalendarClock size={18} />
+                                    <div>
+                                        <span className="profile-label">
+                                            {details.periodLabel.toUpperCase()}
+                                        </span>
+                                        <strong>{formatDate(details.endDate)}</strong>
+                                    </div>
+                                </div>
+
+                                {subscription?.last_payment_at && (
+                                    <div className="profile-date-row">
+                                        <Clock3 size={18} />
+                                        <div>
+                                            <span className="profile-label">
+                                                LAST PAYMENT
                                             </span>
+                                            <strong>
+                                                {formatDate(subscription.last_payment_at)}
+                                            </strong>
                                         </div>
                                     </div>
-
-                                    <div className="ruach-profile-clock">
-                                        <Clock3 size={22} />
-                                    </div>
-                                </div>
-
-                                <div
-                                    className={`ruach-profile-countdown-caption ${isExpired ? "is-expired" : ""
-                                        }`}
-                                >
-                                    {countdownLabel}
-                                </div>
-
-                                <div className="ruach-profile-expiry-row">
-                                    <div className="ruach-profile-expiry-icon">
-                                        {isExpired ? (
-                                            <CircleAlert size={17} />
-                                        ) : (
-                                            <CalendarDays size={17} />
-                                        )}
-                                    </div>
-
-                                    <div className="ruach-profile-expiry-copy">
-                                        <span className="ruach-profile-field-label">
-                                            {isTrial
-                                                ? "TRIAL END DATE"
-                                                : "PLAN EXPIRY DATE"}
-                                        </span>
-
-                                        <strong>
-                                            {formatDate(expiryDate)}
-                                        </strong>
-                                    </div>
-                                </div>
+                                )}
                             </>
                         )}
-                    </div>
-
-                    <div className="ruach-profile-security-note">
-                        <ShieldCheck size={15} />
-                        <span>
-                            Your account details are displayed securely
-                            within your RuachAgent workspace.
-                        </span>
-                    </div>
+                    </article>
 
                     <button
                         type="button"
-                        className="ruach-profile-done"
-                        onClick={onClose}
+                        className="profile-refresh-button"
+                        onClick={() => loadProfile({ silent: true })}
+                        disabled={loading || refreshing}
                     >
-                        <span>Return to workspace</span>
-                        <span className="ruach-profile-arrow">↗</span>
+                        <RefreshCw
+                            size={16}
+                            className={refreshing ? "profile-spin" : ""}
+                        />
+                        {refreshing ? "Refreshing…" : "Refresh subscription"}
                     </button>
-
-                    <div className="ruach-profile-footer">
-                        RUACHAGENT <span>·</span> ACCOUNT CENTRE
-                    </div>
                 </div>
+
+                <footer className="profile-modal-footer">
+                    <span className="profile-live-dot" />
+                    Subscription data from Supabase
+                </footer>
             </section>
         </div>
     );
 }
+

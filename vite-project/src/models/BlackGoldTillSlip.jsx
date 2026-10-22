@@ -303,7 +303,7 @@ export default function BlackGoldTillSlip({
                     justify-content: flex-end;
                 }
 
-                .black-goldgold-slip-download {
+                .black-gold-slip-download {
                     display: inline-flex;
                     align-items: center;
                     justify-content: center;
@@ -327,7 +327,7 @@ export default function BlackGoldTillSlip({
                         box-shadow 180ms ease;
                 }
 
-                .black-goldgold-slip-download:hover {
+                .black-gold-slip-download:hover {
                     transform: translateY(-2px);
                     box-shadow: 0 8px 24px rgba(215, 181, 109, 0.17);
                 }
