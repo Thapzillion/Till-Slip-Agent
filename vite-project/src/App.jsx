@@ -20,6 +20,7 @@ import Support from './pages/Support';
 // ACCOUNT MENU
 import Profile from './Profile';
 import Plan from './Plan';
+import Help from './Help';
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
         {/* ACCOUNT MENU PAGES */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/plan" element={<Plan />} />
+        <Route path="/help" element={<Help />} />
 
         {/* Clean, safe default fallback routing */}
         <Route path="*" element={<Navigate to="/admin" replace />} />

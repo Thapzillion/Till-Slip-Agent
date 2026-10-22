@@ -14,6 +14,7 @@ import TillSlipsCollection from "./TillSlipsCollection";
 
 import Profile from "./Profile";
 import Plan from "./Plan";
+import Help from "./Help";
 
 import {
   LayoutDashboard,
@@ -122,6 +123,7 @@ export default function AdminPanel() {
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showPlan, setShowPlan] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -3326,7 +3328,7 @@ export default function AdminPanel() {
                         role="menuitem"
                         onClick={() => {
                           setShowAccountMenu(false);
-                          navigate("/Help");
+                          setShowHelp(true);
                         }}
                         style={accountMenuButtonStyle}
                       >
@@ -3619,6 +3621,11 @@ export default function AdminPanel() {
         subscriptionLoading={subscriptionLoading}
         trialDaysRemaining={trialDaysRemaining}
         trialExpiryDate={trialExpiryDate}
+      />
+      <Help
+        isOpen={showHelp}
+        onClose={() => setShowHelp(false)}
+        user={user}
       />
     </div>
   );
