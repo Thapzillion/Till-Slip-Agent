@@ -168,27 +168,27 @@ export default function Help({
                 throw new Error("Please sign in again to use RuachAgent AI.");
             }
 
+
             const { data, error: functionError } =
                 await supabase.functions.invoke("google-api-handler", {
                     body: {
-                        message,
-                        history: historyForRequest,
-                        userId: user?.id ?? session.user?.id ?? null,
+                        prompt: message.trim(),
+                        userId: user?.id ?? session?.user?.id ?? null,
                     },
                 });
 
             if (functionError) {
-                // Supabase may return a FunctionsHttpError with a response body.
                 let detail = "";
 
                 try {
                     const response = functionError.context;
+
                     if (response && typeof response.json === "function") {
                         const body = await response.json();
                         detail = body?.error || body?.message || "";
                     }
                 } catch {
-                    // Use the normal error message if no readable response body exists.
+                    // Fall back to the Supabase error message.
                 }
 
                 throw new Error(
@@ -202,9 +202,37 @@ export default function Help({
                 throw new Error(
                     typeof data.error === "string"
                         ? data.error
-                        : "RuachAgent AI returned an error."
+                        : data.error?.message ||
+                        "RuachAgent AI returned an error."
                 );
             }
+
+            const answer =
+                data?.chatResponse ||
+                data?.reply ||
+                data?.response ||
+                data?.text ||
+                data?.answer ||
+                data?.candidates?.[0]?.content?.parts
+                    ?.map((part) => part.text || "")
+                    .join("")
+                    .trim();
+
+            if (!answer) {
+                throw new Error(
+                    "RuachAgent AI returned no answer. Check the Edge Function response format."
+                );
+            }
+
+            // Add this answer to your existing assistant-message state update.
+            setMessages((previous) => [
+                ...previous,
+                {
+                    role: "assistant",
+                    text: answer,
+                },
+            ]);
+
 
             const assistantText = getAssistantText(data);
 
