@@ -12,7 +12,7 @@ import {
     CheckCircle2,
     AlertCircle,
 } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "./supabaseClient";
 import "./Plan.css";
 
 const PREMIUM_PRICE = "$6.99";

@@ -11,7 +11,7 @@ import {
     RefreshCw,
     AlertCircle,
 } from "lucide-react";
-import { supabase } from "../supabaseClient";
+import { supabase } from "./supabaseClient";
 import "./Profile.css";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
