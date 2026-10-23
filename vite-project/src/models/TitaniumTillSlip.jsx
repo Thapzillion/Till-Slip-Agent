@@ -968,7 +968,7 @@ export default function TitaniumTillSlip({
                                 style={{
                                     marginTop: "9px",
                                     color: "#aeb5bb",
-                                    fontSize: "10px",
+                                    fontSize: "5px",
                                     textAlign: "right",
                                     letterSpacing: "1px",
                                 }}
