@@ -529,6 +529,7 @@ const styles = {
    RESPONSIVE ITEM ROW
    ================================================================ */
 
+
 function TitaniumReceiptItem({ item, formatCurrency }) {
     const name =
         item?.name ??
@@ -560,70 +561,35 @@ function TitaniumReceiptItem({ item, formatCurrency }) {
                 : unitPrice
         );
 
-    const imageUrl =
-        item?.image_url ??
-        item?.image ??
-        item?.product_image ??
-        "";
-
     return (
-        <div style={styles.item}>
-            <div style={styles.itemImageBox}>
-                {imageUrl ? (
-                    <img
-                        src={imageUrl}
-                        alt={name || "Receipt item"}
-                        style={styles.itemImage}
-                    />
-                ) : (
-                    <span
-                        aria-hidden="true"
-                        style={{
-                            fontSize: "35px",
-                            color: "#aeb5bb",
-                            textShadow: "0 3px 8px #000",
-                        }}
-                    >
-                        ◈
-                    </span>
+        <div className="titanium-item">
+            <div className="titanium-item-details">
+                <div className="titanium-item-name">
+                    {quantity}x {name}
+                </div>
+
+                {unitPrice !== null &&
+                    unitPrice !== undefined &&
+                    unitPrice !== "" && (
+                        <div className="titanium-item-unit-price">
+                            Unit price: {formatCurrency(unitPrice)}
+                        </div>
+                    )}
+
+                {item?.sku && (
+                    <div className="titanium-item-sku">
+                        SKU: {item.sku}
+                    </div>
                 )}
             </div>
 
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    gap: "12px",
-                }}
-            >
-                <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={styles.itemName}>
-                        {quantity}x {name}
-                    </div>
-
-                    {unitPrice !== null &&
-                        unitPrice !== undefined &&
-                        unitPrice !== "" && (
-                            <div style={styles.itemMeta}>
-                                Unit price: {formatCurrency(unitPrice)}
-                            </div>
-                        )}
-
-                    {item?.sku && (
-                        <div style={styles.itemMeta}>
-                            SKU: {item.sku}
-                        </div>
-                    )}
-                </div>
-
-                <div style={styles.itemPrice}>
-                    {formatCurrency(lineTotal)}
-                </div>
+            <div className="titanium-item-price">
+                {formatCurrency(lineTotal)}
             </div>
         </div>
     );
 }
+
 
 /* ================================================================
    MAIN DIGITAL TILL SLIP COMPONENT
@@ -935,23 +901,21 @@ export default function TitaniumTillSlip({
                             ITEMS PURCHASED
                         </h2>
 
+
                         {receiptDataItems.length > 0 ? (
-                            receiptDataItems.map((item, index) => (
-                                <div
-                                    key={
-                                        item?.id ??
-                                        item?.product_id ??
-                                        `${item?.name ?? item?.description ?? "item"}-${index}`
-                                    }
-                                    className="titanium-item"
-                                    style={styles.item}
-                                >
+                            <div className="titanium-items-list">
+                                {receiptDataItems.map((item, index) => (
                                     <TitaniumReceiptItem
+                                        key={
+                                            item?.id ??
+                                            item?.product_id ??
+                                            `${item?.name ?? item?.description ?? "item"}-${index}`
+                                        }
                                         item={item}
                                         formatCurrency={formatCurrency}
                                     />
-                                </div>
-                            ))
+                                ))}
+                            </div>
                         ) : (
                             <div
                                 style={{
