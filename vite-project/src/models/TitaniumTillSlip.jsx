@@ -1,6 +1,8 @@
 
 import React from "react";
 
+import "./TitaniumTillSlip.css";
+
 /* ================================================================
    TITANIUM TILL SLIP — BACKEND LOGIC
    Preserved from the supplied backend implementation.
@@ -733,7 +735,7 @@ export default function TitaniumTillSlip({
         Boolean(checkoutPayloadLink);
 
     return (
-        <div style={styles.page}>
+        <div className="titanium-page" style={styles.page}>
             <style>
                 {`
                     .titanium-receipt,
