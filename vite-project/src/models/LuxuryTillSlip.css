@@ -1,0 +1,742 @@
+/* ================================================================
+   LUXURY TILL SLIP — BLACK & METALLIC GOLD
+   ================================================================ */
+
+.luxury-slip-scene {
+    --luxury-black: #080808;
+    --luxury-black-soft: #101010;
+    --luxury-gold: #d4af62;
+    --luxury-gold-light: #f2d995;
+    --luxury-gold-dark: #80602b;
+    --luxury-white: #eee9df;
+
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 12px;
+    box-sizing: border-box;
+    color: var(--luxury-white);
+    font-family: "Georgia", "Times New Roman", serif;
+}
+
+.luxury-slip-scene *,
+.luxury-slip-scene *::before,
+.luxury-slip-scene *::after {
+    box-sizing: border-box;
+}
+
+.luxury-slip {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    width: 100%;
+    max-width: 660px;
+    padding: 42px 38px 30px;
+    color: var(--luxury-white);
+    background:
+        radial-gradient(ellipse at 50% 0%,
+            rgba(212, 175, 98, 0.065),
+            transparent 45%),
+        linear-gradient(145deg, #111 0%, #050505 45%, #0c0b09 100%);
+    border: 1px solid rgba(212, 175, 98, 0.85);
+    box-shadow:
+        0 0 0 4px #090909,
+        0 0 0 5px rgba(212, 175, 98, 0.28),
+        0 22px 65px rgba(0, 0, 0, 0.38),
+        inset 0 0 45px rgba(212, 175, 98, 0.025);
+}
+
+/* Double metallic frame */
+
+.luxury-slip-frame {
+    position: absolute;
+    z-index: -1;
+    inset: 8px;
+    border: 1px solid rgba(212, 175, 98, 0.32);
+    pointer-events: none;
+}
+
+.luxury-slip-corner {
+    position: absolute;
+    width: 29px;
+    height: 29px;
+    border-color: var(--luxury-gold-light);
+    border-style: solid;
+    pointer-events: none;
+}
+
+.luxury-slip-corner-tl {
+    top: 0;
+    left: 0;
+    border-width: 2px 0 0 2px;
+}
+
+.luxury-slip-corner-tr {
+    top: 0;
+    right: 0;
+    border-width: 2px 2px 0 0;
+}
+
+.luxury-slip-corner-bl {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 2px 2px;
+}
+
+.luxury-slip-corner-br {
+    bottom: 0;
+    right: 0;
+    border-width: 0 2px 2px 0;
+}
+
+/* Merchant watermark */
+
+.luxury-slip-watermark {
+    position: absolute;
+    z-index: -1;
+    top: 40%;
+    left: 50%;
+    width: 58%;
+    max-height: 330px;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+    opacity: 0.045;
+    filter: grayscale(1);
+    pointer-events: none;
+}
+
+/* ================================================================
+   HEADER AND MERCHANT BRANDING
+   ================================================================ */
+
+.luxury-slip-header {
+    position: relative;
+    text-align: center;
+    padding-bottom: 23px;
+}
+
+.luxury-slip-crest {
+    width: 106px;
+    height: 106px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px;
+    padding: 8px;
+    border: 1px solid var(--luxury-gold);
+    outline: 1px solid rgba(212, 175, 98, 0.32);
+    outline-offset: 5px;
+    clip-path: polygon(50% 0,
+            90% 12%,
+            100% 30%,
+            100% 67%,
+            50% 100%,
+            0 67%,
+            0 30%,
+            10% 12%);
+    background: linear-gradient(145deg, #1d1910, #080808);
+}
+
+.luxury-slip-logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(212, 175, 98, 0.2));
+}
+
+.luxury-slip-empty-crest {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: var(--luxury-gold-light);
+    font-size: 42px;
+}
+
+.luxury-slip-merchant {
+    margin: 0;
+    color: var(--luxury-gold-light);
+    font-size: clamp(25px, 5vw, 39px);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.19em;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
+    text-shadow: 0 0 18px rgba(212, 175, 98, 0.12);
+}
+
+.luxury-slip-brand-caption {
+    margin: 10px 0 0;
+    color: var(--luxury-gold);
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.31em;
+}
+
+.luxury-slip-thank-you {
+    margin-top: 26px;
+    color: var(--luxury-gold-light);
+    font-family: "Georgia", serif;
+    font-size: clamp(19px, 3.6vw, 26px);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+.luxury-slip-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 19px auto 0;
+    color: var(--luxury-gold);
+}
+
+.luxury-slip-ornament span {
+    width: 28%;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            var(--luxury-gold-dark),
+            var(--luxury-gold));
+}
+
+.luxury-slip-ornament span:last-child {
+    transform: rotate(180deg);
+}
+
+.luxury-slip-ornament b {
+    font-size: 19px;
+    font-weight: 400;
+}
+
+/* ================================================================
+   TRANSACTION DETAILS
+   ================================================================ */
+
+.luxury-slip-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 15px 0 20px;
+    font-family: Arial, sans-serif;
+}
+
+.luxury-slip-meta>div {
+    min-width: 0;
+}
+
+.luxury-slip-meta-right {
+    text-align: right;
+}
+
+.luxury-slip-label {
+    display: block;
+    color: var(--luxury-gold);
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+}
+
+.luxury-slip-meta p {
+    margin: 6px 0 0;
+    color: var(--luxury-white);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.luxury-slip-rule {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(212, 175, 98, 0.85) 12%,
+            rgba(212, 175, 98, 0.35) 50%,
+            rgba(212, 175, 98, 0.85) 88%,
+            transparent);
+}
+
+/* ================================================================
+   ITEMISED RECEIPT
+   ================================================================ */
+
+.luxury-slip-items {
+    padding-top: 13px;
+    font-family: Arial, sans-serif;
+}
+
+.luxury-slip-table-head,
+.luxury-slip-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 36px minmax(66px, auto) minmax(75px, auto);
+    align-items: start;
+    gap: 9px;
+}
+
+.luxury-slip-table-head {
+    padding: 0 0 12px;
+    color: var(--luxury-gold);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid rgba(212, 175, 98, 0.3);
+}
+
+.luxury-slip-table-head span:not(:first-child),
+.luxury-slip-item-qty,
+.luxury-slip-item-price,
+.luxury-slip-item-total {
+    text-align: right;
+}
+
+.luxury-slip-item {
+    padding: 12px 0;
+    color: #e8e3da;
+    font-size: 11px;
+    line-height: 1.65;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+}
+
+.luxury-slip-item-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.luxury-slip-item-qty,
+.luxury-slip-item-price,
+.luxury-slip-item-total {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.luxury-slip-item-total {
+    color: var(--luxury-white);
+}
+
+.luxury-slip-empty-items {
+    padding: 22px 0;
+    color: #a99c84;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+}
+
+.luxury-slip-items-bottom {
+    margin-top: 10px;
+}
+
+/* ================================================================
+   SUBTOTAL, DISCOUNT, VAT AND GRAND TOTAL
+   ================================================================ */
+
+.luxury-slip-totals {
+    width: 100%;
+    max-width: 320px;
+    margin: 18px 0 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.luxury-slip-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 6px 0;
+    color: #c9c0b2;
+    font-size: 11px;
+}
+
+.luxury-slip-summary-row span:last-child {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.luxury-slip-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-top: 9px;
+    padding-top: 13px;
+    border-top: 1px solid rgba(212, 175, 98, 0.45);
+}
+
+.luxury-slip-total>span {
+    color: var(--luxury-white);
+    font-family: Georgia, serif;
+    font-size: 20px;
+    letter-spacing: 0.07em;
+}
+
+.luxury-slip-total strong {
+    color: var(--luxury-gold-light);
+    font-family: Georgia, serif;
+    font-size: clamp(20px, 4vw, 29px);
+    font-weight: 400;
+    line-height: 1.3;
+    text-align: right;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.luxury-slip-total-ornament {
+    margin: 18px auto 22px;
+}
+
+.luxury-slip-total-ornament span {
+    width: 40%;
+}
+
+/* ================================================================
+   PAYMENT / QR CODE / CONTACT INFORMATION
+   ================================================================ */
+
+.luxury-slip-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+    font-family: Arial, sans-serif;
+}
+
+.luxury-slip-payment,
+.luxury-slip-qr-column,
+.luxury-slip-contact {
+    min-width: 0;
+}
+
+.luxury-slip-payment {
+    padding-right: 12px;
+    border-right: 1px solid rgba(212, 175, 98, 0.45);
+}
+
+.luxury-slip-payment>p {
+    margin: 11px 0;
+    color: var(--luxury-white);
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
+}
+
+.luxury-slip-small-detail {
+    margin-top: 9px;
+    color: #b9ad9b;
+    font-size: 10px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.luxury-slip-voucher,
+.luxury-slip-expiry {
+    margin-top: 10px;
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.luxury-slip-voucher {
+    color: var(--luxury-gold-light);
+}
+
+.luxury-slip-expiry {
+    color: #e0b2a6;
+}
+
+.luxury-slip-qr-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.luxury-slip-qr {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 156px;
+    height: 156px;
+    padding: 6px;
+    background: #fff;
+    border: 1px solid var(--luxury-gold);
+    border-radius: 3px;
+    box-shadow:
+        0 0 0 3px rgba(212, 175, 98, 0.09),
+        0 0 20px rgba(212, 175, 98, 0.07);
+}
+
+.luxury-slip-qr-image,
+.luxury-slip-qr-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.luxury-slip-qr-unavailable {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 100%;
+    color: #40331b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.luxury-slip-qr-unavailable span {
+    font-size: 8px;
+    font-weight: 400;
+}
+
+.luxury-slip-qr-caption {
+    margin-top: 12px;
+    color: var(--luxury-gold);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.luxury-slip-qr-subcaption {
+    margin-top: 5px;
+    color: #c8c0b2;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+}
+
+.luxury-slip-contact {
+    padding-left: 12px;
+    border-left: 1px solid rgba(212, 175, 98, 0.45);
+}
+
+.luxury-slip-contact-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.luxury-slip-contact-icon {
+    flex: 0 0 auto;
+    color: var(--luxury-gold);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.luxury-slip-contact-block p {
+    min-width: 0;
+    margin: 0;
+    color: #cfc6b8;
+    font-size: 10px;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+}
+
+/* ================================================================
+   FOOTER
+   ================================================================ */
+
+.luxury-slip-footer {
+    position: relative;
+    margin-top: 28px;
+    padding: 20px 0 7px;
+    text-align: center;
+    border-top: 1px solid rgba(212, 175, 98, 0.28);
+}
+
+.luxury-slip-footer-emblem {
+    margin-bottom: 7px;
+    color: var(--luxury-gold);
+    font-size: 22px;
+}
+
+.luxury-slip-footer p {
+    margin: 0;
+    color: var(--luxury-gold);
+    font-size: 10px;
+    letter-spacing: 0.23em;
+}
+
+/* ================================================================
+   DOWNLOAD CONTROL
+   ================================================================ */
+
+.luxury-slip-download {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 22px;
+    padding: 13px 18px;
+    color: var(--luxury-gold-light);
+    background: linear-gradient(135deg, #19150d, #090909);
+    border: 1px solid rgba(212, 175, 98, 0.55);
+    border-radius: 3px;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    cursor: pointer;
+    transition:
+        border-color 220ms ease,
+        background 220ms ease,
+        box-shadow 220ms ease,
+        transform 220ms ease;
+}
+
+.luxury-slip-download>span {
+    font-size: 17px;
+}
+
+.luxury-slip-download:hover {
+    background: linear-gradient(135deg, #302411, #111 80%);
+    border-color: var(--luxury-gold-light);
+    box-shadow: 0 0 22px rgba(212, 175, 98, 0.13);
+    transform: translateY(-1px);
+}
+
+.luxury-slip-download:focus-visible {
+    outline: 2px solid var(--luxury-gold-light);
+    outline-offset: 4px;
+}
+
+/* ================================================================
+   RESPONSIVE LAYOUT
+   ================================================================ */
+
+@media (max-width: 560px) {
+    .luxury-slip-scene {
+        padding: 12px 6px;
+    }
+
+    .luxury-slip {
+        padding: 29px 17px 22px;
+    }
+
+    .luxury-slip-crest {
+        width: 82px;
+        height: 82px;
+    }
+
+    .luxury-slip-brand-caption {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+    }
+
+    .luxury-slip-meta {
+        gap: 8px;
+    }
+
+    .luxury-slip-meta p {
+        font-size: 10px;
+    }
+
+    .luxury-slip-table-head,
+    .luxury-slip-item {
+        grid-template-columns:
+            minmax(0, 1fr) 25px minmax(48px, auto) minmax(55px, auto);
+        gap: 5px;
+    }
+
+    .luxury-slip-table-head {
+        font-size: 9px;
+        letter-spacing: 0.02em;
+    }
+
+    .luxury-slip-item {
+        font-size: 10px;
+    }
+
+    .luxury-slip-bottom {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 15px 10px;
+    }
+
+    .luxury-slip-payment {
+        padding-right: 8px;
+    }
+
+    .luxury-slip-qr {
+        width: 124px;
+        height: 124px;
+    }
+
+    .luxury-slip-contact {
+        grid-column: 1 / -1;
+        padding: 16px 0 0;
+        border-top: 1px solid rgba(212, 175, 98, 0.35);
+        border-left: 0;
+    }
+
+    .luxury-slip-contact-block {
+        margin-bottom: 10px;
+    }
+
+    .luxury-slip-contact-block p {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 350px) {
+    .luxury-slip {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .luxury-slip-bottom {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .luxury-slip-payment {
+        padding: 0 0 14px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(212, 175, 98, 0.35);
+    }
+
+    .luxury-slip-qr {
+        width: 144px;
+        height: 144px;
+    }
+
+    .luxury-slip-contact {
+        grid-column: auto;
+    }
+}
+
+/* Receipt printing */
+
+@media print {
+    .luxury-slip-scene {
+        padding: 0;
+        background: #fff;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .luxury-slip {
+        width: 100%;
+        max-width: none;
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+    .luxury-slip-download {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .luxury-slip-download {
+        transition: none;
+    }
+}
