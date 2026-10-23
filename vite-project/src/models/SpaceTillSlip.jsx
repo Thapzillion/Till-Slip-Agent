@@ -1,8 +1,8 @@
 import React from "react";
-
+import { QRCodeSVG } from "qrcode.react";
 import "./SpaceTillSlip.css";
 
-export function useSpaceTillSlipBackend({
+export default function SpaceTillSlip({
     receiptData = {},
     settings = {},
     user = null,
@@ -15,7 +15,6 @@ export function useSpaceTillSlipBackend({
     receiptId = null,
     onDownload,
 }) {
-
     /* ================================================================
        RECEIPT DATA PROCESSING
        ================================================================ */
@@ -122,973 +121,319 @@ export function useSpaceTillSlipBackend({
         }
     };
 
-    return {
-        receiptDataItems,
-        total,
-        vat,
-        transactionDate,
-        formattedTransactionDate,
-        logoUrl,
-        watermarkUrl,
-        resolvedCurrencySymbol,
-        formatCurrency,
-        handleDownload,
-    };
-}
-
-/* ====================================================================
-   SPACETILLSLIP — DIGITAL RECEIPT INTERFACE
-   ==================================================================== */
-
-export default function SpaceTillSlip(props) {
-    const {
-        receiptData = {},
-        settings = {},
-        user = null,
-        activeCurrencySymbol = "",
-        voucher = null,
-        isExpired = false,
-        daysRemaining = 0,
-        qrCodeUrl = "",
-        checkoutPayloadLink = "",
-        receiptId = null,
-        onDownload,
-    } = props;
-
-    const {
-        receiptDataItems,
-        total,
-        vat,
-        transactionDate,
-        formattedTransactionDate,
-        logoUrl,
-        watermarkUrl,
-        resolvedCurrencySymbol,
-        formatCurrency,
-        handleDownload,
-    } = useSpaceTillSlipBackend(props);
-
     /* ================================================================
-       DYNAMIC RECEIPT VALUES
+       DISPLAY HELPERS
+       These read existing data only; no merchant inputs are created.
        ================================================================ */
 
-    const receiptNumber =
-        receiptData?.receipt_number ??
-        receiptData?.receipt_id ??
-        receiptId ??
+    const merchantName =
+        settings?.business_name ||
+        settings?.merchant_name ||
+        receiptData?.business_name ||
+        receiptData?.merchant_name ||
         "";
 
-    const currency = resolvedCurrencySymbol;
+    const merchantAddress =
+        settings?.business_address ||
+        settings?.address ||
+        receiptData?.business_address ||
+        receiptData?.address ||
+        "";
+
+    const merchantPhone =
+        settings?.business_phone ||
+        settings?.phone ||
+        receiptData?.business_phone ||
+        receiptData?.phone ||
+        "";
+
+    const merchantWebsite =
+        settings?.website ||
+        settings?.website_url ||
+        receiptData?.website ||
+        "";
+
+    const receiptNumber =
+        receiptId ||
+        receiptData?.receipt_id ||
+        receiptData?.receipt_number ||
+        receiptData?.id ||
+        "";
+
+    const cashier =
+        receiptData?.cashier_name ||
+        receiptData?.cashier ||
+        user?.name ||
+        user?.email ||
+        "";
 
     const subtotal =
         receiptData?.subtotal ??
-        receiptData?.subtotal_amount ??
+        receiptData?.sub_total ??
         null;
 
     const discount =
         receiptData?.discount ??
         receiptData?.discount_amount ??
+        voucher?.discount_amount ??
         null;
 
-    const transactionItems = receiptDataItems.map((item, index) => {
-        const quantity =
-            item?.quantity ??
-            item?.qty ??
-            1;
+    const taxRate =
+        receiptData?.tax_rate ??
+        receiptData?.vat_rate ??
+        settings?.vat_rate ??
+        null;
 
-        const unitPrice =
-            item?.unit_price ??
-            item?.price ??
-            item?.amount ??
-            "";
+    const hasValue = (value) =>
+        value !== null && value !== undefined && value !== "";
 
-        const lineTotal =
-            item?.line_total ??
-            item?.total ??
-            item?.total_price ??
-            (
-                Number(unitPrice) * Number(quantity)
-            );
+    const getItemName = (item) =>
+        item?.name ??
+        item?.item_name ??
+        item?.description ??
+        item?.product_name ??
+        "Item";
 
-        return {
-            ...item,
-            _spaceKey: item?.id ?? index,
-            _spaceName:
-                item?.name ??
-                item?.product_name ??
-                item?.description ??
-                "",
-            _spaceQuantity: quantity,
-            _spacePrice: unitPrice,
-            _spaceTotal: lineTotal,
-        };
-    });
+    const getItemQuantity = (item) =>
+        item?.quantity ?? item?.qty ?? 1;
 
-    const formattedVat =
-        vat !== null && vat !== undefined && vat !== ""
-            ? formatCurrency(vat)
-            : "";
+    const getItemPrice = (item) =>
+        item?.unit_price ??
+        item?.price ??
+        item?.amount ??
+        "";
 
-    const formattedTotal = formatCurrency(total);
+    const getItemTotal = (item) =>
+        item?.total ??
+        item?.line_total ??
+        item?.total_price ??
+        (Number(getItemQuantity(item)) * Number(getItemPrice(item)));
 
-    /* ================================================================
-       SPACE AGE DESIGN SYSTEM
-       ================================================================ */
+    const qrSource = String(qrCodeUrl || "").trim();
+    const qrSourceLooksLikeImage =
+        /^(data:image\/|blob:)/i.test(qrSource) ||
+        /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(qrSource);
 
-    const styles = {
-        shell: {
-            width: "100%",
-            maxWidth: "560px",
-            margin: "0 auto",
-            padding: "12px",
-            boxSizing: "border-box",
-            color: "#e8f4ff",
-            fontFamily:
-                "'Inter', 'Segoe UI', Arial, sans-serif",
-        },
+    // Prefer the actual checkout/receipt payload when generating a QR code.
+    // If qrCodeUrl is already a QR image, display it as supplied.
+    const qrPayload =
+        String(checkoutPayloadLink || "").trim() ||
+        (!qrSourceLooksLikeImage ? qrSource : "");
 
-        receipt: {
-            position: "relative",
-            overflow: "hidden",
-            isolation: "isolate",
-            width: "100%",
-            boxSizing: "border-box",
-            padding: "clamp(16px, 4vw, 28px)",
-            background:
-                "radial-gradient(ellipse at 50% 0%, rgba(38,101,156,0.20), transparent 42%), linear-gradient(160deg, #050a12 0%, #02050a 58%, #07121e 100%)",
-            border: "1px solid rgba(184,220,255,0.62)",
-            borderRadius: "24px",
-            boxShadow:
-                "0 0 0 4px rgba(109,177,255,0.035), 0 0 35px rgba(66,153,255,0.12), inset 0 0 35px rgba(74,147,230,0.035)",
-        },
-
-        frame: {
-            position: "absolute",
-            inset: "7px",
-            border: "1px solid rgba(150,203,255,0.19)",
-            borderRadius: "17px",
-            pointerEvents: "none",
-            zIndex: 0,
-        },
-
-        content: {
-            position: "relative",
-            zIndex: 1,
-        },
-
-        microLabel: {
-            color: "#8fbde9",
-            fontSize: "9px",
-            fontWeight: 600,
-            letterSpacing: "3px",
-            textTransform: "uppercase",
-        },
-
-        divider: {
-            height: "1px",
-            margin: "19px 0",
-            background:
-                "linear-gradient(90deg, transparent, rgba(133,196,255,0.65), rgba(255,255,255,0.12), transparent)",
-        },
-
-        section: {
-            background: "rgba(7,17,29,0.74)",
-            border: "1px solid rgba(139,190,244,0.19)",
-            borderRadius: "13px",
-            padding: "14px",
-        },
-
-        label: {
-            color: "#8ba8c7",
-            fontSize: "10px",
-            letterSpacing: "1.3px",
-            textTransform: "uppercase",
-        },
-
-        value: {
-            color: "#edf6ff",
-            fontSize: "12px",
-            overflowWrap: "anywhere",
-        },
-    };
-
-    /* ================================================================
-       RECEIPT CONTENT
-       ================================================================ */
+    const hasQrImage = Boolean(qrSource && qrSourceLooksLikeImage);
+    const hasQrPayload = Boolean(qrPayload);
 
     return (
-        <div className="space-receipt-shell" style={styles.shell}>
-            <style>{`
-                @keyframes spacePulse {
-                    0%, 100% {
-                        opacity: .48;
-                        filter: brightness(.85);
-                    }
-                    50% {
-                        opacity: 1;
-                        filter: brightness(1.3);
-                    }
-                }
+        <section className="space-slip-shell">
+            <article className="space-slip" aria-label="Digital till slip">
+                <div className="space-slip-frame space-slip-frame-outer" />
+                <div className="space-slip-frame space-slip-frame-inner" />
 
-                @keyframes spaceOrbit {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
+                <div className="space-slip-top-mark" aria-hidden="true">
+                    <span className="space-slip-infinity">∞</span>
+                </div>
 
-                @keyframes spaceShimmer {
-                    0% { background-position: -200% 0; }
-                    100% { background-position: 200% 0; }
-                }
+                <div className="space-slip-orbit space-slip-orbit-one" aria-hidden="true" />
+                <div className="space-slip-orbit space-slip-orbit-two" aria-hidden="true" />
 
-                .space-receipt-glow {
-                    animation: spacePulse 4s ease-in-out infinite;
-                }
+                <header className="space-slip-header">
+                    <p className="space-slip-eyebrow">INFINITY INTERFACE</p>
 
-                .space-receipt-orbit {
-                    animation: spaceOrbit 24s linear infinite;
-                }
-
-                .space-receipt-item {
-                    transition:
-                        background .2s ease,
-                        border-color .2s ease;
-                }
-
-                .space-receipt-item:hover {
-                    background: rgba(89,165,255,.065);
-                }
-
-                .space-receipt-download {
-                    appearance: none;
-                    border: 1px solid rgba(174,215,255,.65);
-                    border-radius: 12px;
-                    padding: 13px 18px;
-                    width: 100%;
-                    background: linear-gradient(
-                        110deg,
-                        #d8edff 0%,
-                        #8dc6ff 38%,
-                        #eef7ff 52%,
-                        #91c8ff 70%,
-                        #d8edff 100%
-                    );
-                    background-size: 200% 100%;
-                    color: #07111e;
-                    font-size: 11px;
-                    font-weight: 800;
-                    letter-spacing: 2px;
-                    cursor: pointer;
-                    transition: box-shadow .2s ease;
-                }
-
-                .space-receipt-download:hover {
-                    box-shadow: 0 0 24px rgba(105,180,255,.25);
-                    animation: spaceShimmer 2s linear infinite;
-                }
-
-                @media (prefers-reduced-motion: reduce) {
-                    .space-receipt-glow,
-                    .space-receipt-orbit,
-                    .space-receipt-download {
-                        animation: none !important;
-                    }
-
-                    .space-receipt-item {
-                        transition: none;
-                    }
-                }
-
-                @media print {
-                    .space-receipt-no-print {
-                        display: none !important;
-                    }
-
-                    .space-receipt-shell {
-                        padding: 0 !important;
-                    }
-
-                    .space-receipt-card {
-                        box-shadow: none !important;
-                        print-color-adjust: exact;
-                        -webkit-print-color-adjust: exact;
-                    }
-                }
-            `}</style>
-
-            <article
-                className="space-receipt-card"
-                style={styles.receipt}
-            >
-                <div style={styles.frame} />
-
-                {/* AMBIENT SPACE LIGHTING */}
-
-                <div
-                    aria-hidden="true"
-                    className="space-receipt-glow"
-                    style={{
-                        position: "absolute",
-                        top: "-95px",
-                        left: "20%",
-                        width: "60%",
-                        height: "180px",
-                        background:
-                            "radial-gradient(ellipse, rgba(67,153,255,.15), transparent 70%)",
-                        pointerEvents: "none",
-                    }}
-                />
-
-                {/* HEADER / MERCHANT LOGO */}
-
-                <div className="space-receipt-content" style={styles.content}>
-                    <div style={{ textAlign: "center" }}>
-                        <div
-                            style={{
-                                ...styles.microLabel,
-                                marginBottom: "17px",
-                            }}
-                        >
-                            INFINITY INTERFACE
-                        </div>
-
-                        <div
-                            style={{
-                                position: "relative",
-                                width: "100px",
-                                height: "100px",
-                                margin: "0 auto 12px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <div
-                                aria-hidden="true"
-                                className="space-receipt-orbit"
-                                style={{
-                                    position: "absolute",
-                                    inset: "3px",
-                                    border: "1px solid rgba(144,204,255,.5)",
-                                    borderRadius: "50%",
-                                    boxShadow:
-                                        "0 0 22px rgba(82,158,255,.12)",
-                                }}
-                            />
-
-                            <div
-                                aria-hidden="true"
-                                style={{
-                                    position: "absolute",
-                                    inset: "13px",
-                                    border: "1px solid rgba(144,204,255,.2)",
-                                    borderRadius: "50%",
-                                }}
-                            />
-
-                            {logoUrl ? (
-                                <img
-                                    src={logoUrl}
-                                    alt="Merchant logo"
-                                    style={{
-                                        position: "relative",
-                                        zIndex: 1,
-                                        width: "65px",
-                                        height: "65px",
-                                        objectFit: "contain",
-                                        filter:
-                                            "drop-shadow(0 0 12px rgba(106,183,255,.22))",
-                                    }}
-                                />
-                            ) : (
-                                <svg
-                                    viewBox="0 0 100 100"
-                                    width="68"
-                                    height="68"
-                                    aria-hidden="true"
-                                    style={{
-                                        position: "relative",
-                                        zIndex: 1,
-                                    }}
-                                >
-                                    <defs>
-                                        <linearGradient
-                                            id="spaceLogoGradient"
-                                            x1="0"
-                                            y1="0"
-                                            x2="1"
-                                            y2="1"
-                                        >
-                                            <stop
-                                                offset="0%"
-                                                stopColor="#ffffff"
-                                            />
-                                            <stop
-                                                offset="55%"
-                                                stopColor="#a9d5ff"
-                                            />
-                                            <stop
-                                                offset="100%"
-                                                stopColor="#548cc7"
-                                            />
-                                        </linearGradient>
-                                    </defs>
-
-                                    <path
-                                        d="M50 8 L88 77 L12 77 Z"
-                                        fill="none"
-                                        stroke="url(#spaceLogoGradient)"
-                                        strokeWidth="2"
-                                    />
-
-                                    <path
-                                        d="M26 56 L50 17 L74 56"
-                                        fill="none"
-                                        stroke="url(#spaceLogoGradient)"
-                                        strokeWidth="3"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-
-                                    <circle
-                                        cx="50"
-                                        cy="57"
-                                        r="4"
-                                        fill="#d7edff"
-                                    />
-                                </svg>
-                            )}
-                        </div>
-
-                        <div
-                            style={{
-                                fontSize: "clamp(23px, 6vw, 34px)",
-                                fontWeight: 300,
-                                letterSpacing: "clamp(4px, 1.3vw, 8px)",
-                                color: "#f1f7ff",
-                                overflowWrap: "anywhere",
-                                textShadow:
-                                    "0 0 20px rgba(133,194,255,.22)",
-                            }}
-                        >
-                            TILL SLIP
-                        </div>
-
-                        <div
-                            style={{
-                                ...styles.microLabel,
-                                marginTop: "10px",
-                                letterSpacing: "2px",
-                            }}
-                        >
-                            DIGITAL TRANSACTION RECORD
-                        </div>
-                    </div>
-
-                    <div style={styles.divider} />
-
-                    {/* TRANSACTION METADATA */}
-
-                    <div style={styles.section}>
-                        <div
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns:
-                                    "repeat(auto-fit, minmax(125px, 1fr))",
-                                gap: "16px",
-                            }}
-                        >
-                            <div>
-                                <div style={styles.label}>
-                                    Transaction date
-                                </div>
-                                <div
-                                    style={{
-                                        ...styles.value,
-                                        marginTop: "6px",
-                                    }}
-                                >
-                                    {formattedTransactionDate}
-                                </div>
-                            </div>
-
-                            <div>
-                                <div style={styles.label}>
-                                    Receipt reference
-                                </div>
-                                <div
-                                    style={{
-                                        ...styles.value,
-                                        marginTop: "6px",
-                                    }}
-                                >
-                                    {receiptNumber || ""}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style={styles.divider} />
-
-                    {/* ITEMS TABLE */}
-
-                    <section>
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                gap: "8px",
-                                marginBottom: "14px",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    color: "#d8eaff",
-                                    fontSize: "11px",
-                                    fontWeight: 700,
-                                    letterSpacing: "2px",
-                                }}
-                            >
-                                PURCHASE MANIFEST
-                            </div>
-
-                            <div style={styles.microLabel}>
-                                {transactionItems.length} ITEMS
-                            </div>
-                        </div>
-
-                        <div
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns:
-                                    "minmax(0, 1fr) 36px minmax(65px, auto)",
-                                gap: "8px",
-                                padding: "10px 4px",
-                                borderTop:
-                                    "1px solid rgba(141,194,255,.25)",
-                                borderBottom:
-                                    "1px solid rgba(141,194,255,.25)",
-                                color: "#8fbde9",
-                                fontSize: "9px",
-                                letterSpacing: "1px",
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            <div>Item</div>
-                            <div style={{ textAlign: "center" }}>Qty</div>
-                            <div style={{ textAlign: "right" }}>Total</div>
-                        </div>
-
-                        {transactionItems.map((item) => (
-                            <div
-                                key={item._spaceKey}
-                                className="space-receipt-item"
-                                style={{
-                                    display: "grid",
-                                    gridTemplateColumns:
-                                        "minmax(0, 1fr) 36px minmax(65px, auto)",
-                                    gap: "8px",
-                                    alignItems: "center",
-                                    padding: "13px 4px",
-                                    borderBottom:
-                                        "1px solid rgba(129,170,213,.13)",
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        minWidth: 0,
-                                        color: "#e3efff",
-                                        fontSize: "12px",
-                                        lineHeight: 1.5,
-                                        overflowWrap: "anywhere",
-                                    }}
-                                >
-                                    {item._spaceName}
-
-                                    <div
-                                        style={{
-                                            marginTop: "3px",
-                                            color: "#7997b9",
-                                            fontSize: "10px",
-                                        }}
-                                    >
-                                        {formatCurrency(item._spacePrice)}
-                                    </div>
-                                </div>
-
-                                <div
-                                    style={{
-                                        textAlign: "center",
-                                        fontSize: "12px",
-                                        color: "#b9d9fb",
-                                    }}
-                                >
-                                    {item._spaceQuantity}
-                                </div>
-
-                                <div
-                                    style={{
-                                        textAlign: "right",
-                                        fontSize: "12px",
-                                        color: "#f0f7ff",
-                                        whiteSpace: "nowrap",
-                                    }}
-                                >
-                                    {formatCurrency(item._spaceTotal)}
-                                </div>
-                            </div>
-                        ))}
-
-                        {transactionItems.length === 0 && (
-                            <div
-                                style={{
-                                    padding: "22px 4px",
-                                    color: "#7997b9",
-                                    fontSize: "12px",
-                                    textAlign: "center",
-                                }}
-                            >
-                                No receipt items available.
-                            </div>
-                        )}
-                    </section>
-
-                    <div style={styles.divider} />
-
-                    {/* TOTALS PANEL */}
-
-                    <section
-                        style={{
-                            ...styles.section,
-                            borderColor:
-                                "rgba(132,191,255,.35)",
-                            boxShadow:
-                                "inset 0 0 22px rgba(71,135,205,.035)",
-                        }}
-                    >
-                        {subtotal !== null &&
-                            subtotal !== undefined &&
-                            subtotal !== "" && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        gap: "12px",
-                                        marginBottom: "12px",
-                                    }}
-                                >
-                                    <span style={styles.label}>
-                                        Subtotal
-                                    </span>
-                                    <span style={styles.value}>
-                                        {formatCurrency(subtotal)}
-                                    </span>
-                                </div>
-                            )}
-
-                        {discount !== null &&
-                            discount !== undefined &&
-                            discount !== "" && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        gap: "12px",
-                                        marginBottom: "12px",
-                                    }}
-                                >
-                                    <span style={styles.label}>
-                                        Discount
-                                    </span>
-                                    <span
-                                        style={{
-                                            ...styles.value,
-                                            color: "#9fe4ff",
-                                        }}
-                                    >
-                                        {formatCurrency(discount)}
-                                    </span>
-                                </div>
-                            )}
-
-                        {formattedVat !== "" && (
-                            <div
-                                style={{
-                                    display: "flex",
-                                    justifyContent: "space-between",
-                                    gap: "12px",
-                                    marginBottom: "12px",
-                                }}
-                            >
-                                <span style={styles.label}>VAT</span>
-                                <span style={styles.value}>
-                                    {formattedVat}
-                                </span>
-                            </div>
-                        )}
-
-                        <div
-                            style={{
-                                height: "1px",
-                                margin: "15px 0",
-                                background:
-                                    "rgba(143,190,245,.22)",
-                            }}
-                        />
-
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                                flexWrap: "wrap",
-                                gap: "8px",
-                            }}
-                        >
-                            <div
-                                style={{
-                                    color: "#c7e2ff",
-                                    fontSize: "12px",
-                                    fontWeight: 700,
-                                    letterSpacing: "2px",
-                                }}
-                            >
-                                TOTAL
-                            </div>
-
-                            <div
-                                style={{
-                                    color: "#f0f8ff",
-                                    fontSize: "clamp(23px, 6vw, 32px)",
-                                    fontWeight: 500,
-                                    letterSpacing: "-.5px",
-                                    textShadow:
-                                        "0 0 20px rgba(104,178,255,.25)",
-                                    overflowWrap: "anywhere",
-                                }}
-                            >
-                                {formattedTotal}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* MERCHANT WATERMARK */}
-
-                    {watermarkUrl && (
-                        <div
-                            aria-hidden="true"
-                            style={{
-                                position: "absolute",
-                                zIndex: -1,
-                                top: "43%",
-                                left: "50%",
-                                width: "65%",
-                                height: "220px",
-                                transform: "translate(-50%, -50%)",
-                                opacity: 0.045,
-                                pointerEvents: "none",
-                            }}
-                        >
+                    <div className="space-slip-logo-wrap">
+                        {logoUrl ? (
                             <img
-                                src={watermarkUrl}
-                                alt=""
-                                style={{
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "contain",
-                                }}
+                                className="space-slip-logo"
+                                src={logoUrl}
+                                alt={merchantName ? `${merchantName} logo` : "Merchant logo"}
                             />
-                        </div>
+                        ) : (
+                            <div className="space-slip-logo-placeholder" aria-label="Merchant logo will appear here">
+                                <span>∞</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {merchantName && (
+                        <h2 className="space-slip-merchant-name">{merchantName}</h2>
                     )}
 
-                    <div style={styles.divider} />
+                    <p className="space-slip-tagline">DIGITAL TRANSACTION RECORD</p>
 
-                    {/* QR CODE / DIGITAL RECEIPT */}
+                    <div className="space-slip-title-rule">
+                        <span />
+                        <h1>TILL SLIP</h1>
+                        <span />
+                    </div>
+                </header>
 
-                    <section
-                        style={{
-                            ...styles.section,
-                            textAlign: "center",
-                            padding: "20px 14px",
-                        }}
-                    >
-                        <div
-                            style={{
-                                ...styles.microLabel,
-                                marginBottom: "15px",
-                            }}
-                        >
-                            DIGITAL RECEIPT ACCESS
-                        </div>
-
-                        {qrCodeUrl ? (
-                            <div
-                                style={{
-                                    display: "inline-flex",
-                                    padding: "10px",
-                                    background: "#f4f8ff",
-                                    borderRadius: "12px",
-                                    border:
-                                        "1px solid rgba(163,211,255,.8)",
-                                    boxShadow:
-                                        "0 0 25px rgba(82,159,255,.14)",
-                                }}
-                            >
-                                <img
-                                    src={qrCodeUrl}
-                                    alt="Receipt QR code"
-                                    style={{
-                                        display: "block",
-                                        width: "150px",
-                                        height: "150px",
-                                        maxWidth: "100%",
-                                        objectFit: "contain",
-                                    }}
-                                />
-                            </div>
-                        ) : (
-                            <div
-                                style={{
-                                    width: "150px",
-                                    height: "150px",
-                                    maxWidth: "100%",
-                                    margin: "0 auto",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    border:
-                                        "1px dashed rgba(143,190,245,.35)",
-                                    borderRadius: "12px",
-                                    color: "#7997b9",
-                                    fontSize: "10px",
-                                    lineHeight: 1.6,
-                                    padding: "12px",
-                                    boxSizing: "border-box",
-                                }}
-                            >
-                                QR code will appear when supplied by the application.
-                            </div>
+                <section className="space-slip-meta" aria-label="Merchant and transaction information">
+                    <div className="space-slip-merchant-details">
+                        {merchantAddress && (
+                            <p><span className="space-slip-meta-icon">⌖</span><span>{merchantAddress}</span></p>
                         )}
-
-                        <div
-                            style={{
-                                marginTop: "15px",
-                                color: "#b8d8fa",
-                                fontSize: "10px",
-                                lineHeight: 1.8,
-                                letterSpacing: "1px",
-                            }}
-                        >
-                            SCAN TO ACCESS YOUR DIGITAL RECEIPT
-                        </div>
-
-                        {checkoutPayloadLink && (
-                            <a
-                                href={checkoutPayloadLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: "inline-block",
-                                    marginTop: "12px",
-                                    color: "#9ed1ff",
-                                    fontSize: "11px",
-                                    textDecoration: "none",
-                                    borderBottom:
-                                        "1px solid rgba(158,209,255,.4)",
-                                    paddingBottom: "3px",
-                                }}
-                            >
-                                Open digital receipt ↗
-                            </a>
+                        {merchantPhone && (
+                            <p><span className="space-slip-meta-icon">◖</span><span>{merchantPhone}</span></p>
                         )}
-                    </section>
+                        {merchantWebsite && (
+                            <p><span className="space-slip-meta-icon">◎</span><span>{merchantWebsite}</span></p>
+                        )}
+                    </div>
 
-                    {/* TRANSACTION FOOTER */}
-
-                    <div
-                        style={{
-                            marginTop: "23px",
-                            textAlign: "center",
-                        }}
-                    >
-                        <div
-                            style={{
-                                color: "#d5eaff",
-                                fontSize: "12px",
-                                fontWeight: 600,
-                                letterSpacing: "3px",
-                            }}
-                        >
-                            THANK YOU
-                        </div>
-
-                        <div
-                            style={{
-                                marginTop: "8px",
-                                color: "#8da9c9",
-                                fontSize: "10px",
-                                letterSpacing: "1.5px",
-                                lineHeight: 1.8,
-                            }}
-                        >
-                            YOUR TRANSACTION HAS BEEN RECORDED
-                        </div>
-
+                    <div className="space-slip-transaction-details">
+                        <p><span>DATE</span><strong>{formattedTransactionDate}</strong></p>
                         {receiptNumber && (
-                            <div
-                                style={{
-                                    marginTop: "12px",
-                                    color: "#6f91b6",
-                                    fontSize: "9px",
-                                    letterSpacing: "1px",
-                                    overflowWrap: "anywhere",
-                                }}
-                            >
-                                REFERENCE: {receiptNumber}
+                            <p><span>RECEIPT</span><strong>{receiptNumber}</strong></p>
+                        )}
+                        {cashier && (
+                            <p><span>CASHIER</span><strong>{cashier}</strong></p>
+                        )}
+                    </div>
+                </section>
+
+                <section className="space-slip-items" aria-label="Purchased items">
+                    <div className="space-slip-table-head">
+                        <span>ITEM</span>
+                        <span>QTY</span>
+                        <span>PRICE</span>
+                        <span>TOTAL</span>
+                    </div>
+
+                    {receiptDataItems.length > 0 ? (
+                        <div className="space-slip-item-list">
+                            {receiptDataItems.map((item, index) => (
+                                <div className="space-slip-item-row" key={item?.id ?? item?.sku ?? index}>
+                                    <div className="space-slip-item-name">
+                                        <span className="space-slip-item-glyph" aria-hidden="true">
+                                            {String(index + 1).padStart(2, "0")}
+                                        </span>
+                                        <span>{getItemName(item)}</span>
+                                    </div>
+                                    <span className="space-slip-item-qty">{getItemQuantity(item)}</span>
+                                    <span className="space-slip-item-price">{formatCurrency(getItemPrice(item))}</span>
+                                    <span className="space-slip-item-total">{formatCurrency(getItemTotal(item))}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="space-slip-empty-items">
+                            ITEM DETAILS WILL APPEAR HERE WHEN PROVIDED
+                        </div>
+                    )}
+                </section>
+
+                <section className="space-slip-lower">
+                    <div className="space-slip-watermark-panel" aria-hidden="true">
+                        {watermarkUrl ? (
+                            <img src={watermarkUrl} alt="" className="space-slip-watermark-logo" />
+                        ) : (
+                            <div className="space-slip-planet">
+                                <span />
+                            </div>
+                        )}
+                        <div className="space-slip-panel-caption">TRANSACTION VERIFIED</div>
+                    </div>
+
+                    <div className="space-slip-totals">
+                        {hasValue(subtotal) && (
+                            <div className="space-slip-total-line">
+                                <span>SUBTOTAL</span>
+                                <strong>{formatCurrency(subtotal)}</strong>
                             </div>
                         )}
 
-                        <div
-                            aria-hidden="true"
-                            style={{
-                                margin: "22px auto 0",
-                                width: "75%",
-                                height: "1px",
-                                background:
-                                    "linear-gradient(90deg, transparent, #82bfff, transparent)",
-                            }}
-                        />
+                        {hasValue(discount) && (
+                            <div className="space-slip-total-line">
+                                <span>DISCOUNT{voucher?.code ? ` (${voucher.code})` : ""}</span>
+                                <strong>
+                                    {String(discount).trim().startsWith("-")
+                                        ? formatCurrency(discount)
+                                        : `-${formatCurrency(discount)}`}
+                                </strong>
+                            </div>
+                        )}
 
-                        <div
-                            style={{
-                                ...styles.microLabel,
-                                marginTop: "15px",
-                                fontSize: "8px",
-                                letterSpacing: "2px",
-                            }}
-                        >
-                            INFINITY INTERFACE · SPACE AGE EDITION
+                        {hasValue(vat) && (
+                            <div className="space-slip-total-line">
+                                <span>TAX{hasValue(taxRate) ? ` (${taxRate}${String(taxRate).includes("%") ? "" : "%"})` : ""}</span>
+                                <strong>{formatCurrency(vat)}</strong>
+                            </div>
+                        )}
+
+                        <div className="space-slip-grand-total">
+                            <span>TOTAL</span>
+                            <strong>{formatCurrency(total)}</strong>
+                        </div>
+
+                        {isExpired && (
+                            <p className="space-slip-voucher-status">VOUCHER EXPIRED</p>
+                        )}
+                        {!isExpired && hasValue(daysRemaining) && daysRemaining > 0 && voucher && (
+                            <p className="space-slip-voucher-status">
+                                VOUCHER ACTIVE · {daysRemaining} DAY{daysRemaining === 1 ? "" : "S"} REMAINING
+                            </p>
+                        )}
+                    </div>
+                </section>
+
+                <section className="space-slip-footer">
+                    <div className="space-slip-thanks">
+                        <p className="space-slip-thanks-title">THANK YOU</p>
+                        <p>FOR YOUR PURCHASE</p>
+                        {merchantName && <p className="space-slip-footer-merchant">{merchantName}</p>}
+                        <span>∞ &nbsp; STAY LIMITLESS &nbsp; ∞</span>
+                    </div>
+
+                    <div className="space-slip-qr-frame">
+                        <div className="space-slip-qr-inner">
+                            {hasQrPayload ? (
+                                <QRCodeSVG
+                                    value={qrPayload}
+                                    size={168}
+                                    level="H"
+                                    includeMargin
+                                    bgColor="#ffffff"
+                                    fgColor="#000000"
+                                    title="Scan to open digital receipt"
+                                />
+                            ) : hasQrImage ? (
+                                <img className="space-slip-qr-image" src={qrSource} alt="Receipt QR code" />
+                            ) : (
+                                <div className="space-slip-qr-placeholder">
+                                    <span className="space-slip-qr-symbol">⌗</span>
+                                    <span>QR CODE</span>
+                                    <small>AWAITING RECEIPT LINK</small>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* DOWNLOAD CONTROL */}
+                    <div className="space-slip-scan-copy">
+                        <p>SCAN TO VIEW</p>
+                        <p>DIGITAL RECEIPT</p>
+                        <p>AND TRANSACTION DETAILS</p>
+                        <span className="space-slip-mini-orbit" aria-hidden="true">◎</span>
+                    </div>
+                </section>
 
-                    {typeof onDownload === "function" && (
-                        <div
-                            className="space-receipt-no-print"
-                            style={{ marginTop: "22px" }}
-                        >
-                            <button
-                                type="button"
-                                className="space-receipt-download"
-                                onClick={handleDownload}
-                            >
-                                ↓ &nbsp; DOWNLOAD DIGITAL RECEIPT
-                            </button>
-                        </div>
-                    )}
+                <footer className="space-slip-bottom">
+                    <span />
+                    <p>POWERED BY DIGITAL RECEIPT TECHNOLOGY</p>
+                    <span />
+                </footer>
+
+                <div className="space-slip-side-label space-slip-side-label-left" aria-hidden="true">
+                    INFINITY POSSIBILITIES
+                </div>
+                <div className="space-slip-side-label space-slip-side-label-right" aria-hidden="true">
+                    SPACE AGE INTERFACE
                 </div>
             </article>
-        </div>
+
+            <div className="space-slip-actions">
+                <button type="button" className="space-slip-download" onClick={handleDownload}>
+                    <span aria-hidden="true">↓</span> DOWNLOAD RECEIPT
+                </button>
+            </div>
+        </section>
     );
 }

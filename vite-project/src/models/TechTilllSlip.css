@@ -1,919 +1,1380 @@
-/* ============================================================
-   TechTillSlip.css
-   FUTURISTIC WHITE-LIGHT DIGITAL RECEIPT
-   ============================================================ */
+/* ================================================================
+   TECH TILL SLIP — MONOCHROME FUTURISTIC DESIGN
+   Palette: black, white and grayscale only
+   ================================================================ */
 
-.tech-till-slip {
+.tech-slip-scene {
+    --tech-black: #050505;
+    --tech-black-soft: #0b0b0b;
     --tech-white: #ffffff;
-    --tech-silver: #dfe3e9;
-    --tech-muted: #aeb5c0;
-    --tech-dim: #777f8b;
-    --tech-black: #030405;
-    --tech-panel: rgba(255, 255, 255, 0.035);
-    --tech-border: rgba(255, 255, 255, 0.26);
-    --tech-glow: rgba(255, 255, 255, 0.15);
+    --tech-white-soft: #e5e5e5;
+    --tech-gray: #929292;
+    --tech-line: rgba(255, 255, 255, 0.24);
+    --tech-line-soft: rgba(255, 255, 255, 0.12);
+    --tech-glow: rgba(255, 255, 255, 0.2);
 
     width: 100%;
     box-sizing: border-box;
     padding: 28px 14px;
-    overflow: hidden;
-
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #050505;
     color: var(--tech-white);
-    background:
-        radial-gradient(ellipse at 50% 0%,
-            rgba(255, 255, 255, 0.045),
-            transparent 45%),
-        #030405;
-
-    font-family:
-        "Inter",
-        "Segoe UI",
-        Arial,
-        sans-serif;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    isolation: isolate;
 }
 
-.tech-till-slip *,
-.tech-till-slip *::before,
-.tech-till-slip *::after {
+.tech-slip-scene *,
+.tech-slip-scene *::before,
+.tech-slip-scene *::after {
     box-sizing: border-box;
 }
 
-.tech-till-slip__receipt {
+/* ================================================================
+   MAIN RECEIPT FRAME
+   ================================================================ */
+
+.tech-slip {
     position: relative;
+    width: 100%;
+    max-width: 790px;
+    overflow: hidden;
     isolation: isolate;
-
-    width: 100%;
-    max-width: 760px;
-    margin: 0 auto;
-    padding: clamp(18px, 4vw, 36px);
-
-    overflow: hidden;
-
-    color: var(--tech-white);
-
     background:
-        radial-gradient(ellipse at 50% 0%,
-            rgba(255, 255, 255, 0.065),
-            transparent 45%),
-        linear-gradient(145deg,
-            #111419 0%,
-            #080a0d 48%,
-            #040506 100%);
-
-    border: 1px solid rgba(255, 255, 255, 0.58);
-    border-radius: 20px;
-
+        radial-gradient(ellipse at 15% 5%,
+            rgba(255, 255, 255, 0.055),
+            transparent 34%),
+        radial-gradient(ellipse at 90% 45%,
+            rgba(255, 255, 255, 0.025),
+            transparent 35%),
+        linear-gradient(150deg, #0d0d0d 0%, #050505 55%, #0b0b0b 100%);
+    border: 1px solid rgba(255, 255, 255, 0.72);
     box-shadow:
-        0 0 12px rgba(255, 255, 255, 0.10),
-        0 0 42px rgba(255, 255, 255, 0.045),
-        inset 0 0 35px rgba(255, 255, 255, 0.018);
-
-    animation: tech-receipt-enter 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
-
-    transition:
-        border-color 350ms ease,
-        box-shadow 350ms ease;
-}
-
-.tech-till-slip__receipt:hover {
-    border-color: rgba(255, 255, 255, 0.85);
-
-    box-shadow:
-        0 0 18px rgba(255, 255, 255, 0.14),
-        0 0 55px rgba(255, 255, 255, 0.065),
+        0 0 0 5px #050505,
+        0 0 0 6px rgba(255, 255, 255, 0.16),
+        0 24px 75px rgba(0, 0, 0, 0.85),
         inset 0 0 35px rgba(255, 255, 255, 0.025);
+    animation: tech-slip-enter 700ms ease-out both;
 }
 
-/* ============================================================
-   ANIMATED FRAME
-   ============================================================ */
-
-.tech-till-slip__frame {
-    position: absolute;
-    inset: 7px;
-
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
-
-    pointer-events: none;
-    z-index: -1;
-}
-
-.tech-till-slip__top-line {
-    position: relative;
-    height: 2px;
-    width: 100%;
-    margin-bottom: 28px;
-    overflow: hidden;
-
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.tech-till-slip__top-line::after {
+/* Subtle scanning highlight */
+.tech-slip::before {
     content: "";
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: -100%;
+    width: 65%;
+    height: 1px;
+    background: linear-gradient(90deg,
+            transparent,
+            #ffffff,
+            transparent);
+    animation: tech-scan-line 7s ease-in-out 1s infinite;
+    pointer-events: none;
+}
+
+.tech-slip::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    z-index: -1;
+    border: 1px solid rgba(255, 255, 255, 0.065);
+    pointer-events: none;
+}
+
+/* Outer geometric corner decorations */
+
+.tech-slip-frame {
     position: absolute;
     inset: 0;
-
-    background: linear-gradient(90deg,
-            transparent,
-            #ffffff 45%,
-            #aeb5c0 55%,
-            transparent);
-
-    transform: translateX(-110%);
-    animation: tech-light-sweep 4s ease-in-out infinite;
-
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
-}
-
-/* Moving shine across the outer border */
-
-.tech-till-slip__receipt::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -70%;
-
-    width: 45%;
-    height: 200%;
-
-    background: linear-gradient(90deg,
-            transparent,
-            rgba(255, 255, 255, 0.035),
-            rgba(255, 255, 255, 0.085),
-            transparent);
-
-    transform: rotate(20deg);
+    z-index: 4;
     pointer-events: none;
-    z-index: 2;
-
-    animation: tech-metallic-shine 9s ease-in-out infinite;
 }
 
-/* ============================================================
-   BRAND HEADER
-   ============================================================ */
-
-.tech-till-slip__header {
-    display: grid;
-    grid-template-columns: minmax(76px, 0.65fr) minmax(0, 1.8fr);
-    align-items: center;
-    gap: 22px;
-
-    padding-bottom: 26px;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.30);
-
-    animation: tech-content-enter 700ms 100ms both;
-}
-
-.tech-till-slip__eyebrow {
-    margin-bottom: 10px;
-
-    color: var(--tech-silver);
-
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 4px;
-    line-height: 1.7;
-    text-transform: uppercase;
-}
-
-.tech-till-slip__logo-frame {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 100%;
-    max-width: 140px;
-    aspect-ratio: 1;
-    margin: 0 auto;
-    padding: 12px;
-
-    border: 1px solid rgba(255, 255, 255, 0.70);
-    border-radius: 16px;
-
-    background: linear-gradient(145deg,
-            rgba(255, 255, 255, 0.09),
-            rgba(255, 255, 255, 0.015));
-
-    box-shadow:
-        0 0 18px rgba(255, 255, 255, 0.08),
-        inset 0 0 16px rgba(255, 255, 255, 0.045);
-
-    transition:
-        transform 350ms ease,
-        border-color 350ms ease,
-        box-shadow 350ms ease;
-}
-
-.tech-till-slip__logo-frame:hover {
-    transform: translateY(-3px) scale(1.025);
-
-    border-color: #ffffff;
-
-    box-shadow:
-        0 0 25px rgba(255, 255, 255, 0.17),
-        inset 0 0 20px rgba(255, 255, 255, 0.07);
-}
-
-.tech-till-slip__logo {
-    display: block;
-
-    max-width: 100%;
-    max-height: 100%;
-
-    object-fit: contain;
-}
-
-.tech-till-slip__business-name {
-    margin: 0;
-
-    color: #ffffff;
-
-    font-size: clamp(21px, 4.5vw, 35px);
-    font-weight: 750;
-    line-height: 1.15;
-    letter-spacing: 1.5px;
-
-    overflow-wrap: anywhere;
-
-    text-shadow: 0 0 18px rgba(255, 255, 255, 0.17);
-}
-
-.tech-till-slip__business-details {
-    margin-top: 12px;
-
-    color: #c3c8d0;
-
-    font-size: 12px;
-    line-height: 1.9;
-
-    overflow-wrap: anywhere;
-}
-
-/* ============================================================
-   GLASS PANELS
-   ============================================================ */
-
-.tech-till-slip__panel {
-    position: relative;
-
-    min-width: 0;
-    margin-top: 22px;
-    padding: 17px;
-
-    border: 1px solid var(--tech-border);
-    border-radius: 12px;
-
-    background:
-        linear-gradient(135deg,
-            rgba(255, 255, 255, 0.055),
-            rgba(255, 255, 255, 0.008));
-
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
-
-    transition:
-        border-color 300ms ease,
-        background 300ms ease,
-        box-shadow 300ms ease;
-}
-
-.tech-till-slip__panel:hover {
-    border-color: rgba(255, 255, 255, 0.43);
-
-    background:
-        linear-gradient(135deg,
-            rgba(255, 255, 255, 0.075),
-            rgba(255, 255, 255, 0.015));
-
-    box-shadow: 0 0 18px rgba(255, 255, 255, 0.025);
-}
-
-.tech-till-slip__section-title {
-    position: relative;
-
-    margin: 0 0 16px;
-    padding-left: 12px;
-
-    color: #ffffff;
-
-    font-size: 11px;
-    font-weight: 650;
-    letter-spacing: 3px;
-    line-height: 1.7;
-    text-transform: uppercase;
-}
-
-.tech-till-slip__section-title::before {
-    content: "";
-
+.tech-frame-corner {
     position: absolute;
-    top: 2px;
-    bottom: 2px;
+    width: 38px;
+    height: 38px;
+    border-color: #ffffff;
+    border-style: solid;
+    opacity: 0.95;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.22));
+}
+
+.tech-frame-tl {
+    top: 0;
     left: 0;
-
-    width: 2px;
-
-    background: #ffffff;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.65);
+    border-width: 2px 0 0 2px;
+    clip-path: polygon(0 0, 100% 0, 100% 15%, 20% 15%, 20% 100%, 0 100%);
 }
 
-.tech-till-slip__metadata {
+.tech-frame-tr {
+    top: 0;
+    right: 0;
+    border-width: 2px 2px 0 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 80% 100%, 80% 15%, 0 15%);
+}
+
+.tech-frame-bl {
+    bottom: 0;
+    left: 0;
+    border-width: 0 0 2px 2px;
+    clip-path: polygon(0 0, 20% 0, 20% 85%, 100% 85%, 100% 100%, 0 100%);
+}
+
+.tech-frame-br {
+    right: 0;
+    bottom: 0;
+    border-width: 0 2px 2px 0;
+    clip-path: polygon(80% 0, 100% 0, 100% 100%, 0 100%, 0 85%, 80% 85%);
+}
+
+.tech-slip-inner {
+    position: relative;
+    z-index: 1;
+    padding: 32px;
+}
+
+/* ================================================================
+   BUSINESS HEADER
+   ================================================================ */
+
+.tech-slip-header {
     display: grid;
-    grid-template-columns: repeat(auto-fit,
-            minmax(125px, 1fr));
-
-    gap: 18px;
+    grid-template-columns: minmax(150px, 0.85fr) minmax(0, 1.4fr);
+    gap: 28px;
+    align-items: center;
+    padding: 14px 0 32px;
+    border-bottom: 1px solid var(--tech-line);
 }
 
-.tech-till-slip__field-label {
-    display: block;
-    margin-bottom: 7px;
-
-    color: var(--tech-muted);
-
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.tech-till-slip__field-value {
-    display: block;
-
-    color: #ffffff;
-
-    font-size: 12px;
-    line-height: 1.7;
-
-    overflow-wrap: anywhere;
-}
-
-/* ============================================================
-   ITEM LIST
-   ============================================================ */
-
-.tech-till-slip__table-wrap {
-    width: 100%;
-    overflow-x: auto;
-
-    scrollbar-width: thin;
-    scrollbar-color: #737983 #101216;
-}
-
-.tech-till-slip__table {
-    width: 100%;
-
-    border-collapse: collapse;
-    border-spacing: 0;
-
-    color: #e7e9ee;
-    font-size: 12px;
-    text-align: left;
-}
-
-.tech-till-slip__table thead {
-    background: rgba(255, 255, 255, 0.035);
-}
-
-.tech-till-slip__table th {
-    padding: 13px 8px;
-
-    color: #f5f6f8;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.65);
-
-    font-size: 9px;
-    font-weight: 650;
-    letter-spacing: 1.2px;
-    text-transform: uppercase;
-}
-
-.tech-till-slip__table td {
-    padding: 14px 8px;
-
-    color: #e2e5ea;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-
-    line-height: 1.6;
-    vertical-align: top;
-
-    transition:
-        background 220ms ease,
-        color 220ms ease;
-}
-
-.tech-till-slip__table tbody tr {
-    transition: background 220ms ease;
-}
-
-.tech-till-slip__table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.045);
-}
-
-.tech-till-slip__table tbody tr:hover td {
-    color: #ffffff;
-}
-
-.tech-till-slip__table tbody tr:last-child td {
-    border-bottom-color: rgba(255, 255, 255, 0.35);
-}
-
-.tech-till-slip__right {
-    text-align: right;
-    white-space: nowrap;
-}
-
-.tech-till-slip__empty {
-    padding: 24px 8px !important;
-
-    color: var(--tech-muted) !important;
-    text-align: center;
-}
-
-/* ============================================================
-   QR CODE AND PAYMENT SUMMARY
-   ============================================================ */
-
-.tech-till-slip__bottom-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
-
-    gap: 18px;
-    margin-top: 22px;
-
-    align-items: stretch;
-}
-
-.tech-till-slip__qr-frame {
+.tech-slip-brand-visual {
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    min-width: 0;
-    padding: 17px 11px;
-    gap: 14px;
-
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    border-radius: 12px;
-
-    background: #090a0c;
-
-    box-shadow:
-        inset 0 0 20px rgba(255, 255, 255, 0.025),
-        0 0 15px rgba(255, 255, 255, 0.025);
-
-    transition:
-        border-color 300ms ease,
-        box-shadow 300ms ease;
+    gap: 20px;
 }
 
-.tech-till-slip__qr-frame:hover {
-    border-color: #ffffff;
-
-    box-shadow:
-        inset 0 0 22px rgba(255, 255, 255, 0.045),
-        0 0 20px rgba(255, 255, 255, 0.08);
-}
-
-.tech-till-slip__qr-image {
-    display: block;
-
-    width: 100%;
-    max-width: 170px;
+.tech-slip-logo-orbit {
+    position: relative;
+    width: min(100%, 220px);
     aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    isolation: isolate;
+}
 
-    padding: 6px;
+.tech-slip-logo-orbit::before {
+    content: "";
+    position: absolute;
+    inset: 12%;
+    z-index: -1;
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    transform: rotate(45deg);
+    animation: tech-orbit-rotate 24s linear infinite;
+}
 
+.tech-slip-logo-orbit::after {
+    content: "";
+    position: absolute;
+    inset: 21%;
+    z-index: -1;
+    border: 1px dashed rgba(255, 255, 255, 0.24);
+    border-radius: 50%;
+    animation: tech-orbit-rotate 32s linear infinite reverse;
+}
+
+.tech-orbit-ring {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.38);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.tech-orbit-ring.ring-one {
+    width: 86%;
+    height: 86%;
+}
+
+.tech-orbit-ring.ring-two {
+    width: 104%;
+    height: 104%;
+    border-style: dashed;
+    opacity: 0.6;
+}
+
+.tech-slip-logo {
+    width: 60%;
+    aspect-ratio: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 13px;
+    background: linear-gradient(145deg, #171717, #030303);
+    border: 2px solid #ffffff;
+    clip-path: polygon(50% 0, 94% 23%, 94% 75%, 50% 100%, 6% 75%, 6% 23%);
+    box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+}
+
+.tech-slip-logo img,
+.tech-slip-logo svg {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
+}
 
+.tech-logo-cross {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border: 1px solid #ffffff;
+    transform: rotate(45deg);
+}
+
+.tech-logo-cross::before,
+.tech-logo-cross::after {
+    content: "";
+    position: absolute;
     background: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.85);
-    border-radius: 5px;
-
-    transition: transform 300ms ease;
 }
 
-.tech-till-slip__qr-frame:hover .tech-till-slip__qr-image {
-    transform: scale(1.025);
+.tech-logo-cross::before {
+    width: 14px;
+    height: 1px;
+    top: 3px;
+    left: -4px;
 }
 
-.tech-till-slip__qr-placeholder {
+.tech-logo-cross::after {
+    height: 14px;
+    width: 1px;
+    left: 3px;
+    top: -4px;
+}
+
+.cross-one {
+    top: 4%;
+    right: 9%;
+}
+
+.cross-two {
+    bottom: 8%;
+    left: 7%;
+}
+
+.tech-slip-logo-caption {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #dedede;
+    text-align: center;
+}
+
+.tech-status-dot {
+    display: inline-block;
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 0 7px rgba(255, 255, 255, 0.7);
+    animation: tech-status-pulse 2.5s ease-in-out infinite;
+}
+
+.tech-slip-business {
+    min-width: 0;
+    padding: 10px 0 10px 24px;
+    border-left: 1px solid var(--tech-line);
+}
+
+.tech-slip-overline {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 17px;
+    color: #c9c9c9;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.4px;
+}
+
+.tech-overline-line {
+    width: 34px;
+    height: 1px;
+    background: #ffffff;
+}
+
+.tech-slip-business-name {
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: clamp(18px, 3vw, 30px);
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.tech-slip-title {
+    margin: 0;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 300;
+    letter-spacing: 5px;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+}
+
+.tech-slip-title span {
+    font-weight: 800;
+}
+
+.tech-slip-business-divider {
+    width: 100%;
+    height: 1px;
+    margin: 20px 0;
+    background: linear-gradient(90deg,
+            #ffffff 0%,
+            rgba(255, 255, 255, 0.25) 65%,
+            transparent 100%);
+}
+
+.tech-slip-business-divider span {
+    display: block;
+    width: 7px;
+    height: 7px;
+    transform: translateY(-3px) rotate(45deg);
+    background: #ffffff;
+}
+
+.tech-slip-contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.tech-contact-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+    color: #e0e0e0;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.tech-contact-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-
-    width: 100%;
-    max-width: 170px;
-    aspect-ratio: 1;
-    padding: 12px;
-
-    color: var(--tech-muted);
-    border: 1px dashed rgba(255, 255, 255, 0.38);
-    border-radius: 5px;
-
-    font-size: 10px;
-    line-height: 1.7;
-    text-align: center;
+    flex: 0 0 17px;
+    width: 17px;
+    height: 17px;
+    color: #ffffff;
 }
 
-.tech-till-slip__scan-text {
-    color: #f1f3f6;
-
-    font-size: 9px;
-    font-weight: 600;
-    letter-spacing: 1.7px;
-    text-align: center;
-    text-transform: uppercase;
+.tech-contact-icon svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-/* ============================================================
-   TOTALS
-   ============================================================ */
+.tech-contact-value {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
 
-.tech-till-slip__summary-row {
+/* ================================================================
+   TRANSACTION METADATA
+   ================================================================ */
+
+.tech-slip-metadata {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1.15fr 0.75fr;
+    gap: 0;
+    margin: 25px 0 32px;
+    border: 1px solid var(--tech-line);
+    background: rgba(255, 255, 255, 0.018);
+    clip-path: polygon(12px 0,
+            calc(100% - 12px) 0,
+            100% 12px,
+            100% calc(100% - 12px),
+            calc(100% - 12px) 100%,
+            12px 100%,
+            0 calc(100% - 12px),
+            0 12px);
+}
+
+.tech-meta-cell {
+    min-width: 0;
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-
-    gap: 12px;
-    padding: 13px 0;
-
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-
-    font-size: 12px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+    padding: 17px 18px;
 }
 
-.tech-till-slip__summary-label {
-    color: #bfc4cc;
+.tech-meta-cell+.tech-meta-cell {
+    border-left: 1px solid var(--tech-line-soft);
+}
+
+.tech-meta-label {
+    color: #c4c4c4;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.tech-meta-cell strong {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.tech-meta-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ================================================================
+   SECTION HEADINGS
+   ================================================================ */
+
+.tech-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    margin-bottom: 18px;
+}
+
+.tech-section-index {
+    display: flex;
+    flex: 0 0 28px;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
     letter-spacing: 1px;
 }
 
-.tech-till-slip__summary-value {
+.tech-section-heading h3 {
+    flex: 0 1 auto;
+    margin: 0;
     color: #ffffff;
-
-    text-align: right;
-    overflow-wrap: anywhere;
-}
-
-.tech-till-slip__total-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 12px;
-    margin: 5px -17px 0;
-    padding: 17px;
-
-    border-top: 1px solid #ffffff;
-    border-bottom: 1px solid #ffffff;
-
-    background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.13),
-            rgba(255, 255, 255, 0.015));
-
-    box-shadow: 0 0 16px rgba(255, 255, 255, 0.035);
-}
-
-.tech-till-slip__total-label {
-    color: #ffffff;
-
-    font-size: 12px;
-    font-weight: 750;
+    font-size: 11px;
+    font-weight: 700;
     letter-spacing: 2px;
+    line-height: 1.5;
 }
 
-.tech-till-slip__total-value {
+.tech-heading-line {
+    flex: 1;
+    height: 1px;
+    min-width: 12px;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.65),
+            transparent);
+}
+
+/* ================================================================
+   ITEMIZED RECEIPT TABLE
+   ================================================================ */
+
+.tech-slip-items-section {
+    margin-bottom: 34px;
+}
+
+.tech-slip-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--tech-line);
+    background: rgba(0, 0, 0, 0.22);
+}
+
+.tech-slip-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    color: #f3f3f3;
+    font-size: 12px;
+}
+
+.tech-slip-table thead {
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.tech-slip-table th {
+    padding: 16px 12px;
     color: #ffffff;
-
-    font-size: clamp(17px, 3vw, 25px);
-    font-weight: 750;
-    text-align: right;
-
-    overflow-wrap: anywhere;
-
-    text-shadow: 0 0 13px rgba(255, 255, 255, 0.23);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.55);
 }
 
-/* ============================================================
-   FOOTER
-   ============================================================ */
+.tech-item-heading {
+    width: 48%;
+    text-align: left;
+}
 
-.tech-till-slip__footer {
-    margin-top: 24px;
-    padding: 23px 12px 7px;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.48);
-
+.tech-qty-heading,
+.tech-item-qty {
     text-align: center;
 }
 
-.tech-till-slip__footer-title {
-    margin: 0 0 10px;
-
-    color: #ffffff;
-
-    font-size: 12px;
-    font-weight: 650;
-    letter-spacing: 3px;
-    line-height: 1.8;
+.tech-price-heading,
+.tech-total-heading,
+.tech-item-price,
+.tech-item-total {
+    text-align: right;
 }
 
-.tech-till-slip__footer-text {
-    margin: 0;
+.tech-slip-table tbody tr {
+    transition: background 180ms ease;
+}
 
-    color: var(--tech-muted);
+.tech-slip-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.055);
+}
 
-    font-size: 10px;
-    line-height: 1.9;
+.tech-slip-table td {
+    padding: 16px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.105);
+    line-height: 1.55;
+    vertical-align: middle;
+}
+
+.tech-slip-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tech-item-name {
+    min-width: 160px;
     overflow-wrap: anywhere;
 }
 
-/* ============================================================
-   DOWNLOAD BUTTON
-   ============================================================ */
-
-.tech-till-slip__download {
-    display: block;
-
-    width: 100%;
-    max-width: 270px;
-    margin: 23px auto 0;
-    padding: 14px 18px;
-
-    color: #050607;
-
-    background: linear-gradient(135deg,
-            #ffffff 0%,
-            #e1e4e9 55%,
-            #b9bec7 100%);
-
-    border: 1px solid #ffffff;
-    border-radius: 8px;
-
-    font-family: inherit;
-    font-size: 10px;
-    font-weight: 750;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-
-    cursor: pointer;
-
-    box-shadow:
-        0 0 12px rgba(255, 255, 255, 0.09),
-        inset 0 1px 0 rgba(255, 255, 255, 0.85);
-
-    transition:
-        transform 220ms ease,
-        box-shadow 250ms ease,
-        background 250ms ease;
+.tech-item-name>span:last-child {
+    display: inline;
 }
 
-.tech-till-slip__download:hover {
-    transform: translateY(-2px);
-
+.tech-item-marker {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 10px;
+    vertical-align: 2px;
     background: #ffffff;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+    transform: rotate(45deg);
+}
 
+.tech-item-qty {
+    white-space: nowrap;
+}
+
+.tech-item-price,
+.tech-item-total {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.tech-item-total {
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.tech-slip-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 90px;
+    padding: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    border-top: 0;
+    color: #bdbdbd;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-align: center;
+}
+
+.tech-empty-symbol {
+    font-size: 22px;
+    color: #ffffff;
+}
+
+/* ================================================================
+   QR CODE AND TOTALS PANELS
+   ================================================================ */
+
+.tech-slip-payment-layout {
+    display: grid;
+    grid-template-columns: minmax(180px, 0.78fr) minmax(0, 1.35fr);
+    gap: 24px;
+    align-items: stretch;
+    margin-bottom: 32px;
+}
+
+.tech-slip-qr-panel,
+.tech-slip-totals-panel {
+    min-width: 0;
+    border: 1px solid var(--tech-line);
+    background: rgba(255, 255, 255, 0.018);
+}
+
+.tech-slip-qr-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 14px;
+}
+
+.tech-qr-heading {
+    align-self: stretch;
+    gap: 8px;
+}
+
+.tech-qr-heading .tech-section-index {
+    flex-basis: 25px;
+    width: 25px;
+    height: 25px;
+}
+
+.tech-qr-heading h3 {
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.tech-qr-frame {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: min(100%, 225px);
+    aspect-ratio: 1;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #ffffff;
     box-shadow:
-        0 0 20px rgba(255, 255, 255, 0.20),
-        0 5px 20px rgba(255, 255, 255, 0.06);
+        0 0 0 4px #080808,
+        0 0 0 5px rgba(255, 255, 255, 0.65),
+        0 0 22px rgba(255, 255, 255, 0.1);
 }
 
-.tech-till-slip__download:active {
-    transform: translateY(0) scale(0.985);
+.tech-qr-image,
+.tech-qr-canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    image-rendering: pixelated;
 }
 
-.tech-till-slip__download:focus-visible {
+.tech-qr-corner {
+    position: absolute;
+    z-index: 2;
+    width: 23px;
+    height: 23px;
+    border-color: #000000;
+    border-style: solid;
+    pointer-events: none;
+}
+
+.qr-corner-tl {
+    top: -5px;
+    left: -5px;
+    border-width: 3px 0 0 3px;
+}
+
+.qr-corner-tr {
+    top: -5px;
+    right: -5px;
+    border-width: 3px 3px 0 0;
+}
+
+.qr-corner-bl {
+    bottom: -5px;
+    left: -5px;
+    border-width: 0 0 3px 3px;
+}
+
+.qr-corner-br {
+    right: -5px;
+    bottom: -5px;
+    border-width: 0 3px 3px 0;
+}
+
+.tech-qr-unavailable {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    color: #000000;
+    text-align: center;
+}
+
+.tech-qr-unavailable svg {
+    display: block;
+    width: 78%;
+    max-width: 130px;
+    height: auto;
+}
+
+.tech-qr-unavailable span {
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.tech-qr-instruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    text-align: center;
+}
+
+.tech-qr-scan-icon {
+    font-size: 20px;
+}
+
+.tech-qr-reference {
+    margin-top: 10px;
+    max-width: 100%;
+    color: #a9a9a9;
+    font-size: 8px;
+    letter-spacing: 0.7px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+/* ================================================================
+   TOTALS
+   ================================================================ */
+
+.tech-slip-totals-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.tech-slip-totals-panel .tech-section-heading {
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--tech-line);
+}
+
+.tech-total-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--tech-line-soft);
+    color: #d0d0d0;
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.tech-total-row strong {
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.tech-grand-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 12px -20px 10px;
+    padding: 18px 20px;
+    border-top: 1px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.tech-grand-total span {
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.tech-grand-total strong {
+    color: #ffffff;
+    font-size: clamp(17px, 3vw, 23px);
+    font-weight: 800;
+    text-align: right;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.tech-payment-method,
+.tech-voucher-info,
+.tech-validity {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--tech-line-soft);
+    font-size: 9px;
+    line-height: 1.6;
+}
+
+.tech-payment-method>span,
+.tech-voucher-info>span,
+.tech-validity>span {
+    color: #c4c4c4;
+    letter-spacing: 1px;
+}
+
+.tech-payment-method strong,
+.tech-voucher-info strong,
+.tech-validity strong {
+    color: #ffffff;
+    font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.tech-payment-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 24px;
+    color: #d2d2d2;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-align: center;
+}
+
+.tech-footer-mini-line {
+    width: 18px;
+    height: 1px;
+    background: #ffffff;
+}
+
+/* ================================================================
+   AUTHENTICITY FOOTER
+   ================================================================ */
+
+.tech-slip-authenticity {
+    display: grid;
+    grid-template-columns: 55px minmax(0, 1fr) minmax(120px, 0.8fr);
+    gap: 18px;
+    align-items: center;
+    padding: 23px 18px;
+    border: 1px solid var(--tech-line);
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.tech-auth-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 55px;
+    color: #ffffff;
+}
+
+.tech-auth-icon svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.tech-auth-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+}
+
+.tech-auth-copy strong {
+    color: #ffffff;
+    font-size: 10px;
+    letter-spacing: 1.4px;
+}
+
+.tech-auth-copy span {
+    color: #c8c8c8;
+    font-size: 10px;
+    line-height: 1.7;
+}
+
+.tech-thank-you {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 9px;
+    min-width: 0;
+    padding-left: 20px;
+    border-left: 1px solid var(--tech-line);
+    text-align: center;
+}
+
+.tech-thank-you span {
+    color: #ffffff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: clamp(16px, 2.8vw, 24px);
+    font-weight: 300;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+.tech-thank-you small {
+    color: #c8c8c8;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+}
+
+/* ================================================================
+   WEBSITE FOOTER
+   ================================================================ */
+
+.tech-slip-website {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px auto 0;
+    color: #e3e3e3;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.tech-website-globe {
+    font-size: 19px;
+}
+
+/* ================================================================
+   DOWNLOAD BUTTON
+   ================================================================ */
+
+.tech-slip-download {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 49px;
+    margin-top: 25px;
+    padding: 13px 18px;
+    border: 1px solid #ffffff;
+    background: #ffffff;
+    color: #050505;
+    font: inherit;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition:
+        background 220ms ease,
+        color 220ms ease,
+        box-shadow 220ms ease;
+}
+
+.tech-slip-download svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.tech-download-arrow {
+    position: absolute;
+    right: 17px;
+    font-size: 16px;
+}
+
+.tech-slip-download:hover {
+    background: #080808;
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px #ffffff;
+}
+
+.tech-slip-download:focus-visible {
     outline: 2px solid #ffffff;
-    outline-offset: 5px;
+    outline-offset: 4px;
 }
 
-/* ============================================================
-   ANIMATIONS
-   ============================================================ */
+.tech-slip-download:active {
+    transform: translateY(1px);
+}
 
-@keyframes tech-receipt-enter {
+/* ================================================================
+   OPTIONAL WATERMARK
+   ================================================================ */
+
+.tech-slip-watermark {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: min(60%, 360px);
+    height: auto;
+    max-height: 50%;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+    opacity: 0.035;
+    filter: grayscale(1) brightness(1.6);
+    pointer-events: none;
+}
+
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+@keyframes tech-slip-enter {
     from {
         opacity: 0;
-        transform: translateY(22px) scale(0.99);
-        filter: brightness(0.7);
+        transform: translateY(18px) scale(0.99);
     }
 
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
-        filter: brightness(1);
     }
 }
 
-@keyframes tech-content-enter {
-    from {
+@keyframes tech-scan-line {
+    0% {
+        left: -100%;
         opacity: 0;
-        transform: translateY(12px);
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    35% {
+        left: 120%;
+        opacity: 0;
+    }
+
+    100% {
+        left: 120%;
+        opacity: 0;
+    }
+}
+
+@keyframes tech-orbit-rotate {
+    from {
+        transform: rotate(0deg);
     }
 
     to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes tech-status-pulse {
+
+    0%,
+    100% {
+        opacity: 0.65;
+        box-shadow: 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    50% {
         opacity: 1;
-        transform: translateY(0);
+        box-shadow: 0 0 9px rgba(255, 255, 255, 0.75);
     }
 }
 
-@keyframes tech-light-sweep {
-
-    0%,
-    15% {
-        transform: translateX(-110%);
-    }
-
-    65%,
-    100% {
-        transform: translateX(110%);
-    }
-}
-
-@keyframes tech-metallic-shine {
-
-    0%,
-    55% {
-        left: -70%;
-    }
-
-    100% {
-        left: 140%;
-    }
-}
-
-/* ============================================================
+/* ================================================================
    RESPONSIVE DESIGN
-   ============================================================ */
+   ================================================================ */
 
-@media (max-width: 600px) {
-    .tech-till-slip {
-        padding: 14px 7px;
+@media (max-width: 620px) {
+    .tech-slip-scene {
+        padding: 16px 8px;
     }
 
-    .tech-till-slip__receipt {
-        padding: 18px 13px;
-        border-radius: 14px;
+    .tech-slip-inner {
+        padding: 20px 15px;
     }
 
-    .tech-till-slip__header {
-        grid-template-columns: 74px minmax(0, 1fr);
-        gap: 13px;
-        padding-bottom: 20px;
-    }
-
-    .tech-till-slip__logo-frame {
-        padding: 7px;
-        border-radius: 11px;
-    }
-
-    .tech-till-slip__eyebrow {
-        font-size: 8px;
-        letter-spacing: 2px;
-    }
-
-    .tech-till-slip__business-name {
-        font-size: clamp(18px, 5vw, 26px);
-        letter-spacing: 0.5px;
-    }
-
-    .tech-till-slip__business-details {
-        font-size: 11px;
-    }
-
-    .tech-till-slip__panel {
-        margin-top: 16px;
-        padding: 12px 9px;
-    }
-
-    .tech-till-slip__bottom-grid {
+    .tech-slip-header {
         grid-template-columns: minmax(0, 1fr);
-        gap: 14px;
-        margin-top: 16px;
+        gap: 22px;
+        padding-top: 10px;
     }
 
-    .tech-till-slip__qr-frame {
-        flex-direction: row;
-        flex-wrap: wrap;
-        padding: 14px;
+    .tech-slip-brand-visual {
+        gap: 12px;
     }
 
-    .tech-till-slip__qr-image,
-    .tech-till-slip__qr-placeholder {
-        max-width: 145px;
+    .tech-slip-logo-orbit {
+        width: 145px;
     }
 
-    .tech-till-slip__metadata {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 15px 10px;
+    .tech-slip-business {
+        padding: 20px 0 0;
+        border-top: 1px solid var(--tech-line);
+        border-left: 0;
     }
 
-    .tech-till-slip__table {
-        font-size: 11px;
-    }
-
-    .tech-till-slip__table th {
+    .tech-slip-overline {
         font-size: 8px;
-        letter-spacing: 0.5px;
     }
 
-    .tech-till-slip__table th,
-    .tech-till-slip__table td {
-        padding: 11px 5px;
+    .tech-slip-title {
+        font-size: clamp(30px, 9vw, 43px);
+        letter-spacing: 4px;
     }
 
-    .tech-till-slip__summary-row {
+    .tech-slip-metadata {
+        grid-template-columns: 1fr 1fr;
+        margin: 20px 0 25px;
+    }
+
+    .tech-meta-cell {
+        padding: 13px 10px;
+    }
+
+    .tech-meta-cell:last-child {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--tech-line-soft);
+        border-left: 0;
+    }
+
+    .tech-meta-label {
+        font-size: 8px;
+        letter-spacing: 1.4px;
+    }
+
+    .tech-meta-cell strong {
+        font-size: 10px;
+    }
+
+    .tech-slip-table {
         font-size: 11px;
     }
 
-    .tech-till-slip__total-row {
-        margin-right: -9px;
-        margin-left: -9px;
-        padding: 14px 9px;
+    .tech-slip-table th {
+        padding: 13px 8px;
+        font-size: 8px;
+        letter-spacing: 0.6px;
     }
 
-    .tech-till-slip__total-label {
-        font-size: 10px;
+    .tech-slip-table td {
+        padding: 13px 8px;
+    }
+
+    .tech-item-heading {
+        min-width: 145px;
+    }
+
+    .tech-item-name {
+        min-width: 145px;
+    }
+
+    .tech-item-marker {
+        width: 5px;
+        height: 5px;
+        margin-right: 5px;
+    }
+
+    .tech-slip-payment-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .tech-slip-qr-panel {
+        padding: 20px;
+    }
+
+    .tech-qr-frame {
+        width: min(100%, 215px);
+    }
+
+    .tech-slip-totals-panel {
+        padding: 17px;
+    }
+
+    .tech-grand-total {
+        margin-right: -17px;
+        margin-left: -17px;
+        padding: 17px;
+    }
+
+    .tech-slip-authenticity {
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 12px;
+        padding: 18px 12px;
+    }
+
+    .tech-auth-icon {
+        width: 38px;
+        height: 42px;
+    }
+
+    .tech-auth-copy strong {
+        font-size: 9px;
+        letter-spacing: 0.8px;
+    }
+
+    .tech-auth-copy span {
+        font-size: 9px;
+    }
+
+    .tech-thank-you {
+        grid-column: 1 / -1;
+        padding: 17px 0 0;
+        border-top: 1px solid var(--tech-line);
+        border-left: 0;
+    }
+
+    .tech-thank-you span {
+        font-size: 24px;
+    }
+
+    .tech-slip-website {
+        font-size: 9px;
+        letter-spacing: 1px;
+    }
+}
+
+@media (max-width: 360px) {
+    .tech-slip-inner {
+        padding: 16px 10px;
+    }
+
+    .tech-slip-title {
+        font-size: 27px;
+        letter-spacing: 3px;
+    }
+
+    .tech-section-heading {
+        gap: 7px;
+    }
+
+    .tech-section-heading h3 {
+        font-size: 9px;
         letter-spacing: 1px;
     }
 
-    .tech-till-slip__total-value {
-        font-size: 19px;
+    .tech-meta-cell {
+        padding: 12px 8px;
+    }
+
+    .tech-total-row {
+        gap: 8px;
+        font-size: 9px;
+    }
+
+    .tech-grand-total span {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .tech-slip-download {
+        padding-right: 30px;
+        padding-left: 10px;
+        font-size: 9px;
+        letter-spacing: 1px;
     }
 }
 
-/* ============================================================
-   ACCESSIBILITY
-   ============================================================ */
-
+/* Respect accessibility preferences. */
 @media (prefers-reduced-motion: reduce) {
 
-    .tech-till-slip *,
-    .tech-till-slip *::before,
-    .tech-till-slip *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
+    .tech-slip,
+    .tech-slip::before,
+    .tech-slip-logo-orbit::before,
+    .tech-slip-logo-orbit::after,
+    .tech-status-dot {
+        animation: none !important;
+    }
+
+    .tech-slip-download,
+    .tech-slip-table tbody tr {
+        transition: none;
     }
 }
 
-/* ============================================================
-   PRINT-FRIENDLY RECEIPT
-   ============================================================ */
-
+/* Print only the receipt, without the surrounding dark scene. */
 @media print {
-    .tech-till-slip {
+    .tech-slip-scene {
+        display: block;
         padding: 0;
-        color: #000000;
         background: #ffffff;
+        color: #000000;
     }
 
-    .tech-till-slip__receipt {
+    .tech-slip {
         max-width: none;
-        padding: 12px;
-
+        border: 1px solid #000000;
+        box-shadow: none;
         color: #000000;
         background: #ffffff;
-
-        border: 1px solid #777777;
-        border-radius: 0;
-        box-shadow: none;
-
         animation: none;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
     }
 
-    .tech-till-slip__receipt::before,
-    .tech-till-slip__top-line::after {
+    .tech-slip::before,
+    .tech-slip-frame {
         display: none;
     }
 
-    .tech-till-slip__business-name,
-    .tech-till-slip__section-title,
-    .tech-till-slip__field-value,
-    .tech-till-slip__table th,
-    .tech-till-slip__table td,
-    .tech-till-slip__summary-value,
-    .tech-till-slip__total-label,
-    .tech-till-slip__total-value,
-    .tech-till-slip__footer-title {
-        color: #000000;
-        text-shadow: none;
-    }
-
-    .tech-till-slip__panel,
-    .tech-till-slip__qr-frame {
-        background: #ffffff;
-        border-color: #999999;
-        box-shadow: none;
-        break-inside: avoid;
-    }
-
-    .tech-till-slip__download {
+    .tech-slip-download {
         display: none;
     }
 }

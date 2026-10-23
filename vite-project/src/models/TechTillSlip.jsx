@@ -1,10 +1,9 @@
+
 import React from "react";
+import { QRCodeCanvas } from "qrcode.react";
+import "./TechTillSlip.css";
 
-/* ================================================================
-   BACKEND LOGIC — PRESERVED
-   ================================================================ */
-
-export function useTechTillSlipBackend({
+export default function TechTillSlip({
     receiptData = {},
     settings = {},
     user = null,
@@ -124,804 +123,516 @@ export function useTechTillSlipBackend({
         }
     };
 
-    return {
-        receiptDataItems,
-        total,
-        vat,
-        transactionDate,
-        formattedTransactionDate,
-        logoUrl,
-        watermarkUrl,
-        resolvedCurrencySymbol,
-        formatCurrency,
-        handleDownload,
-    };
-}
-
-/* ================================================================
-   FUTURISTIC WHITE-LIGHT DIGITAL TILL SLIP
-   ================================================================ */
-
-export default function TechTillSlip({
-    receiptData = {},
-    settings = {},
-    user = null,
-    activeCurrencySymbol = "",
-    voucher = null,
-    isExpired = false,
-    daysRemaining = 0,
-    qrCodeUrl = "",
-    checkoutPayloadLink = "",
-    receiptId = null,
-    onDownload,
-
-    // Connect this to the actual business-name field in your app.
-    businessName = settings?.business_name || "",
-}) {
-    const {
-        receiptDataItems,
-        total,
-        vat,
-        formattedTransactionDate,
-        logoUrl,
-        watermarkUrl,
-        formatCurrency,
-        handleDownload,
-    } = useTechTillSlipBackend({
-        receiptData,
-        settings,
-        user,
-        activeCurrencySymbol,
-        voucher,
-        isExpired,
-        daysRemaining,
-        qrCodeUrl,
-        checkoutPayloadLink,
-        receiptId,
-        onDownload,
-    });
-
-    const styles = {
-        page: {
-            width: "100%",
-            boxSizing: "border-box",
-            padding: "24px 12px",
-            background: "#030405",
-            color: "#F7FAFF",
-            fontFamily:
-                "'Inter', 'Segoe UI', Arial, sans-serif",
-        },
-
-        receipt: {
-            position: "relative",
-            isolation: "isolate",
-            overflow: "hidden",
-            width: "100%",
-            maxWidth: "760px",
-            margin: "0 auto",
-            padding: "clamp(16px, 4vw, 34px)",
-            boxSizing: "border-box",
-            background:
-                "radial-gradient(ellipse at 50% 0%, #20242A 0%, #0B0D10 38%, #050607 100%)",
-            border: "1px solid rgba(255,255,255,0.8)",
-            borderRadius: "20px",
-            boxShadow:
-                "0 0 12px rgba(255,255,255,0.15), 0 0 45px rgba(255,255,255,0.06), inset 0 0 30px rgba(255,255,255,0.025)",
-        },
-
-        glow: {
-            position: "absolute",
-            inset: "7px",
-            border: "1px solid rgba(255,255,255,0.16)",
-            borderRadius: "14px",
-            pointerEvents: "none",
-            zIndex: -1,
-        },
-
-        topLine: {
-            height: "2px",
-            width: "100%",
-            marginBottom: "28px",
-            background:
-                "linear-gradient(90deg, transparent, #FFFFFF 15%, #858B94 50%, #FFFFFF 85%, transparent)",
-            boxShadow: "0 0 12px rgba(255,255,255,0.55)",
-        },
-
-        eyebrow: {
-            fontSize: "10px",
-            letterSpacing: "4px",
-            color: "#D7DBE2",
-            textTransform: "uppercase",
-            marginBottom: "10px",
-        },
-
-        header: {
-            display: "grid",
-            gridTemplateColumns: "minmax(76px, 0.65fr) minmax(0, 1.8fr)",
-            alignItems: "center",
-            gap: "22px",
-            paddingBottom: "26px",
-            borderBottom: "1px solid rgba(255,255,255,0.3)",
-        },
-
-        logoFrame: {
-            width: "100%",
-            maxWidth: "140px",
-            aspectRatio: "1 / 1",
-            margin: "0 auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "10px",
-            boxSizing: "border-box",
-            border: "1px solid rgba(255,255,255,0.7)",
-            borderRadius: "16px",
-            background:
-                "linear-gradient(145deg, rgba(255,255,255,0.09), rgba(255,255,255,0.015))",
-            boxShadow:
-                "0 0 18px rgba(255,255,255,0.09), inset 0 0 16px rgba(255,255,255,0.05)",
-        },
-
-        logo: {
-            display: "block",
-            maxWidth: "100%",
-            maxHeight: "100%",
-            objectFit: "contain",
-        },
-
-        businessName: {
-            margin: 0,
-            fontSize: "clamp(21px, 4.5vw, 35px)",
-            lineHeight: 1.15,
-            fontWeight: 700,
-            letterSpacing: "1.5px",
-            overflowWrap: "anywhere",
-            color: "#FFFFFF",
-            textShadow: "0 0 15px rgba(255,255,255,0.22)",
-        },
-
-        address: {
-            marginTop: "12px",
-            color: "#C3C7CF",
-            fontSize: "12px",
-            lineHeight: 1.8,
-            overflowWrap: "anywhere",
-        },
-
-        panel: {
-            marginTop: "22px",
-            padding: "16px",
-            border: "1px solid rgba(255,255,255,0.26)",
-            borderRadius: "12px",
-            background:
-                "linear-gradient(135deg, rgba(255,255,255,0.055), rgba(255,255,255,0.012))",
-        },
-
-        sectionTitle: {
-            margin: "0 0 15px",
-            color: "#FFFFFF",
-            fontSize: "11px",
-            fontWeight: 600,
-            letterSpacing: "3px",
-            textTransform: "uppercase",
-        },
-
-        metadataGrid: {
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(125px, 1fr))",
-            gap: "18px",
-        },
-
-        label: {
-            display: "block",
-            marginBottom: "7px",
-            fontSize: "9px",
-            letterSpacing: "2px",
-            color: "#AEB4BE",
-            textTransform: "uppercase",
-        },
-
-        value: {
-            display: "block",
-            color: "#FFFFFF",
-            fontSize: "12px",
-            lineHeight: 1.6,
-            overflowWrap: "anywhere",
-        },
-
-        tableWrap: {
-            width: "100%",
-            overflowX: "auto",
-        },
-
-        table: {
-            width: "100%",
-            borderCollapse: "collapse",
-            fontSize: "12px",
-            textAlign: "left",
-        },
-
-        th: {
-            padding: "12px 7px",
-            borderBottom: "1px solid rgba(255,255,255,0.65)",
-            color: "#E9ECF2",
-            fontSize: "9px",
-            fontWeight: 600,
-            letterSpacing: "1.3px",
-            textTransform: "uppercase",
-        },
-
-        td: {
-            padding: "13px 7px",
-            borderBottom: "1px solid rgba(255,255,255,0.12)",
-            color: "#E2E5EA",
-            lineHeight: 1.5,
-            verticalAlign: "top",
-        },
-
-        right: {
-            textAlign: "right",
-            whiteSpace: "nowrap",
-        },
-
-        bottomGrid: {
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 0.9fr) minmax(0, 1.4fr)",
-            gap: "18px",
-            marginTop: "22px",
-            alignItems: "stretch",
-        },
-
-        qrFrame: {
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "12px",
-            minWidth: 0,
-            padding: "16px 10px",
-            border: "1px solid rgba(255,255,255,0.65)",
-            borderRadius: "12px",
-            background: "#090A0C",
-            boxShadow: "inset 0 0 18px rgba(255,255,255,0.035)",
-        },
-
-        qrImage: {
-            display: "block",
-            width: "100%",
-            maxWidth: "170px",
-            aspectRatio: "1 / 1",
-            objectFit: "contain",
-            background: "#FFFFFF",
-            padding: "6px",
-            boxSizing: "border-box",
-            borderRadius: "5px",
-        },
-
-        qrPlaceholder: {
-            width: "100%",
-            maxWidth: "170px",
-            aspectRatio: "1 / 1",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "12px",
-            boxSizing: "border-box",
-            border: "1px dashed rgba(255,255,255,0.38)",
-            borderRadius: "5px",
-            color: "#BFC4CC",
-            fontSize: "10px",
-            textAlign: "center",
-            lineHeight: 1.7,
-        },
-
-        scanText: {
-            color: "#F1F3F6",
-            fontSize: "9px",
-            letterSpacing: "1.5px",
-            textAlign: "center",
-            textTransform: "uppercase",
-        },
-
-        summaryRow: {
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            gap: "12px",
-            padding: "12px 0",
-            borderBottom: "1px solid rgba(255,255,255,0.14)",
-            fontSize: "12px",
-        },
-
-        summaryLabel: {
-            color: "#BFC4CC",
-            letterSpacing: "1px",
-        },
-
-        summaryValue: {
-            color: "#FFFFFF",
-            textAlign: "right",
-            overflowWrap: "anywhere",
-        },
-
-        totalRow: {
-            margin: "5px -16px 0",
-            padding: "16px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "12px",
-            borderTop: "1px solid #FFFFFF",
-            borderBottom: "1px solid #FFFFFF",
-            background:
-                "linear-gradient(90deg, rgba(255,255,255,0.13), rgba(255,255,255,0.025))",
-            boxShadow: "0 0 15px rgba(255,255,255,0.04)",
-        },
-
-        totalLabel: {
-            color: "#FFFFFF",
-            fontSize: "12px",
-            fontWeight: 700,
-            letterSpacing: "2px",
-        },
-
-        totalValue: {
-            color: "#FFFFFF",
-            fontSize: "clamp(17px, 3vw, 25px)",
-            fontWeight: 700,
-            textAlign: "right",
-            overflowWrap: "anywhere",
-            textShadow: "0 0 12px rgba(255,255,255,0.28)",
-        },
-
-        footer: {
-            marginTop: "22px",
-            padding: "20px 12px 6px",
-            borderTop: "1px solid rgba(255,255,255,0.5)",
-            textAlign: "center",
-        },
-
-        footerTitle: {
-            margin: "0 0 9px",
-            color: "#FFFFFF",
-            fontSize: "12px",
-            fontWeight: 600,
-            letterSpacing: "3px",
-        },
-
-        footerText: {
-            margin: 0,
-            color: "#AEB4BE",
-            fontSize: "10px",
-            lineHeight: 1.8,
-        },
-
-        downloadButton: {
-            display: "block",
-            width: "100%",
-            maxWidth: "270px",
-            margin: "22px auto 0",
-            padding: "14px 18px",
-            border: "1px solid rgba(255,255,255,0.85)",
-            borderRadius: "8px",
-            background:
-                "linear-gradient(135deg, #FFFFFF, #BFC4CC)",
-            color: "#050607",
-            fontSize: "11px",
-            fontWeight: 700,
-            letterSpacing: "2px",
-            textTransform: "uppercase",
-            cursor: "pointer",
-            boxShadow: "0 0 18px rgba(255,255,255,0.12)",
-        },
-    };
-
     /* ================================================================
-       DATA HELPERS
+       CONNECTED BUSINESS AND RECEIPT DETAILS
+       Reads existing data only. No simulator inputs are created.
        ================================================================ */
 
-    const getItemName = (item) =>
-        item?.name ??
-        item?.product_name ??
-        item?.description ??
-        item?.title ??
-        "Item";
-
-    const getItemQuantity = (item) =>
-        item?.quantity ?? item?.qty ?? 1;
-
-    const getItemPrice = (item) =>
-        item?.price ??
-        item?.unit_price ??
-        item?.selling_price ??
+    const businessName =
+        settings?.business_name ||
+        settings?.company_name ||
+        receiptData?.business_name ||
+        receiptData?.company_name ||
         "";
 
-    const getItemTotal = (item) =>
-        item?.total ??
-        item?.subtotal ??
-        item?.line_total ??
-        (
-            Number(getItemQuantity(item)) *
-            Number(getItemPrice(item))
-        );
-
     const businessAddress =
-        settings?.business_address ??
-        settings?.address ??
-        receiptData?.business_address ??
+        settings?.business_address ||
+        settings?.address ||
+        receiptData?.business_address ||
+        receiptData?.address ||
         "";
 
     const businessPhone =
-        settings?.phone ??
-        settings?.business_phone ??
-        receiptData?.business_phone ??
+        settings?.business_phone ||
+        settings?.phone ||
+        receiptData?.business_phone ||
+        receiptData?.phone ||
         "";
 
     const businessEmail =
-        settings?.email ??
-        settings?.business_email ??
-        receiptData?.business_email ??
+        settings?.business_email ||
+        settings?.email ||
+        receiptData?.business_email ||
+        receiptData?.email ||
         "";
 
-    const receiptNumber =
-        receiptId ??
-        receiptData?.receipt_id ??
-        receiptData?.receipt_number ??
-        receiptData?.id ??
+    const businessWebsite =
+        settings?.website ||
+        settings?.website_url ||
+        receiptData?.website ||
+        "";
+
+    const displayReceiptId =
+        receiptId ||
+        receiptData?.receipt_id ||
+        receiptData?.id ||
         "";
 
     const paymentMethod =
-        receiptData?.payment_method ??
-        receiptData?.paymentMethod ??
+        receiptData?.payment_method ||
+        receiptData?.paymentMethod ||
         "";
 
-    const website =
-        settings?.website ??
-        settings?.website_url ??
+    const subtotal =
+        receiptData?.subtotal ??
+        receiptData?.sub_total ??
+        receiptData?.subtotal_amount ??
+        null;
+
+    const itemName = (item) =>
+        item?.name ??
+        item?.item_name ??
+        item?.product_name ??
+        item?.description ??
         "";
 
-    const qrImage = qrCodeUrl;
+    const itemQuantity = (item) =>
+        item?.quantity ??
+        item?.qty ??
+        1;
+
+    const itemPrice = (item) =>
+        item?.price ??
+        item?.unit_price ??
+        item?.selling_price ??
+        null;
+
+    const itemTotal = (item) =>
+        item?.total ??
+        item?.total_price ??
+        item?.amount ??
+        null;
+
+    const hasQrImage = Boolean(qrCodeUrl);
+    const hasQrPayload = Boolean(checkoutPayloadLink);
+
+    /* ================================================================
+       DIGITAL TILL SLIP UI
+       ================================================================ */
 
     return (
-        <div style={styles.page}>
-            <article style={styles.receipt}>
-                <div style={styles.glow} />
+        <section className="tech-slip-scene">
+            <article className="tech-slip">
 
-                {watermarkUrl && (
-                    <img
-                        src={watermarkUrl}
-                        alt=""
-                        aria-hidden="true"
-                        style={{
-                            position: "absolute",
-                            width: "220px",
-                            height: "220px",
-                            objectFit: "contain",
-                            opacity: 0.035,
-                            top: "35%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            pointerEvents: "none",
-                            zIndex: -1,
-                        }}
-                    />
-                )}
+                {/* Decorative frame */}
+                <div className="tech-slip-frame" aria-hidden="true">
+                    <span className="tech-frame-corner tech-frame-tl" />
+                    <span className="tech-frame-corner tech-frame-tr" />
+                    <span className="tech-frame-corner tech-frame-bl" />
+                    <span className="tech-frame-corner tech-frame-br" />
+                </div>
 
-                <div style={styles.topLine} />
+                <div className="tech-slip-inner">
 
-                {/* BUSINESS BRANDING */}
+                    {/* =================================================
+                        BUSINESS HEADER
+                        ================================================= */}
 
-                <header style={styles.header}>
-                    <div style={styles.logoFrame}>
-                        {logoUrl && (
-                            <img
-                                src={logoUrl}
-                                alt="Business logo"
-                                style={styles.logo}
-                            />
-                        )}
-                    </div>
+                    <header className="tech-slip-header">
 
-                    <div style={{ minWidth: 0 }}>
-                        <div style={styles.eyebrow}>
-                            Digital Transaction / Verified Record
-                        </div>
+                        <div className="tech-slip-brand-visual">
+                            <div className="tech-slip-logo-orbit">
+                                <span className="tech-orbit-ring ring-one" />
+                                <span className="tech-orbit-ring ring-two" />
 
-                        <h1 style={styles.businessName}>
-                            {businessName}
-                        </h1>
+                                <div className="tech-slip-logo">
+                                    {logoUrl ? (
+                                        <img
+                                            src={logoUrl}
+                                            alt="Business logo"
+                                        />
+                                    ) : (
+                                        <svg
+                                            viewBox="0 0 100 100"
+                                            role="img"
+                                            aria-label="Business logo placeholder"
+                                        >
+                                            <path
+                                                d="M50 5 91 28 91 72 50 95 9 72 9 28Z"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                            />
+                                            <path
+                                                d="M50 20 77 35 77 65 50 80 23 65 23 35Z"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="1.5"
+                                            />
+                                            <path
+                                                d="M35 35H55Q70 35 70 47Q70 56 59 58L72 70H57L44 57V70H35Z"
+                                                fill="currentColor"
+                                            />
+                                        </svg>
+                                    )}
+                                </div>
 
-                        {businessAddress && (
-                            <div style={styles.address}>
-                                {businessAddress}
+                                <span className="tech-logo-cross cross-one" />
+                                <span className="tech-logo-cross cross-two" />
                             </div>
-                        )}
 
-                        {businessPhone && (
-                            <div style={styles.address}>
-                                {businessPhone}
+                            <div className="tech-slip-logo-caption">
+                                <span className="tech-status-dot" />
+                                DIGITAL RECEIPT
                             </div>
-                        )}
+                        </div>
 
-                        {businessEmail && (
-                            <div style={styles.address}>
-                                {businessEmail}
+                        <div className="tech-slip-business">
+
+                            <div className="tech-slip-overline">
+                                <span>TRANSACTION DOCUMENT</span>
+                                <span className="tech-overline-line" />
                             </div>
-                        )}
-                    </div>
-                </header>
 
-                {/* TRANSACTION DETAILS */}
+                            {businessName && (
+                                <h2 className="tech-slip-business-name">
+                                    {businessName}
+                                </h2>
+                            )}
 
-                <section style={styles.panel}>
-                    <h2 style={styles.sectionTitle}>
-                        Transaction Data
-                    </h2>
+                            <div className="tech-slip-title">
+                                <span>TILL</span> SLIP
+                            </div>
 
-                    <div style={styles.metadataGrid}>
-                        <div>
-                            <span style={styles.label}>
-                                Receipt ID
-                            </span>
-                            <span style={styles.value}>
-                                {receiptNumber || "—"}
-                            </span>
+                            <div className="tech-slip-business-divider">
+                                <span />
+                            </div>
+
+                            <div className="tech-slip-contact-list">
+
+                                {businessAddress && (
+                                    <div className="tech-contact-row">
+                                        <span className="tech-contact-icon">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
+                                                <circle cx="12" cy="10" r="2.5" />
+                                            </svg>
+                                        </span>
+                                        <span>{businessAddress}</span>
+                                    </div>
+                                )}
+
+                                {businessPhone && (
+                                    <div className="tech-contact-row">
+                                        <span className="tech-contact-icon">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M22 16.9v3a2 2 0 0 1-2.2 2A19.8 19.8 0 0 1 3 5.2 2 2 0 0 1 5 3h3a2 2 0 0 1 2 1.7l.5 3a2 2 0 0 1-.6 1.7l-1.5 1.5a16 16 0 0 0 5.7 5.7l1.5-1.5a2 2 0 0 1 1.7-.6l3 .5a2 2 0 0 1 1.7 1.9Z" />
+                                            </svg>
+                                        </span>
+                                        <span>{businessPhone}</span>
+                                    </div>
+                                )}
+
+                                {businessEmail && (
+                                    <div className="tech-contact-row">
+                                        <span className="tech-contact-icon">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                <rect x="3" y="5" width="18" height="14" rx="1" />
+                                                <path d="m3 7 9 7 9-7" />
+                                            </svg>
+                                        </span>
+                                        <span className="tech-contact-value">
+                                            {businessEmail}
+                                        </span>
+                                    </div>
+                                )}
+
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* =================================================
+                        TRANSACTION METADATA
+                        ================================================= */}
+
+                    <section className="tech-slip-metadata">
+                        <div className="tech-meta-cell">
+                            <span className="tech-meta-label">RECEIPT ID</span>
+                            <strong>
+                                {displayReceiptId || "—"}
+                            </strong>
                         </div>
 
-                        <div>
-                            <span style={styles.label}>
-                                Transaction Date
-                            </span>
-                            <span style={styles.value}>
-                                {formattedTransactionDate}
-                            </span>
+                        <div className="tech-meta-cell">
+                            <span className="tech-meta-label">DATE & TIME</span>
+                            <strong>{formattedTransactionDate}</strong>
                         </div>
 
-                        <div>
-                            <span style={styles.label}>
-                                Currency
-                            </span>
-                            <span style={styles.value}>
-                                {activeCurrencySymbol ||
-                                    settings?.currency ||
-                                    receiptData?.currency ||
-                                    "ZAR"}
-                            </span>
+                        <div className="tech-meta-cell">
+                            <span className="tech-meta-label">STATUS</span>
+                            <strong className="tech-meta-status">
+                                <span className="tech-status-dot" />
+                                {isExpired ? "EXPIRED" : "RECORDED"}
+                            </strong>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                {/* PURCHASED ITEMS */}
+                    {/* =================================================
+                        ITEMIZED PURCHASES
+                        ================================================= */}
 
-                <section style={styles.panel}>
-                    <h2 style={styles.sectionTitle}>
-                        Itemised Purchase
-                    </h2>
+                    <section className="tech-slip-items-section">
 
-                    <div style={styles.tableWrap}>
-                        <table style={styles.table}>
-                            <thead>
-                                <tr>
-                                    <th style={styles.th}>Item</th>
-                                    <th
-                                        style={{
-                                            ...styles.th,
-                                            ...styles.right,
-                                        }}
-                                    >
-                                        Qty
-                                    </th>
-                                    <th
-                                        style={{
-                                            ...styles.th,
-                                            ...styles.right,
-                                        }}
-                                    >
-                                        Price
-                                    </th>
-                                    <th
-                                        style={{
-                                            ...styles.th,
-                                            ...styles.right,
-                                        }}
-                                    >
-                                        Total
-                                    </th>
-                                </tr>
-                            </thead>
+                        <div className="tech-section-heading">
+                            <span className="tech-section-index">01</span>
+                            <h3>TRANSACTION ITEMS</h3>
+                            <span className="tech-heading-line" />
+                        </div>
 
-                            <tbody>
-                                {receiptDataItems.length > 0 ? (
-                                    receiptDataItems.map((item, index) => (
+                        <div className="tech-slip-table-wrap">
+                            <table className="tech-slip-table">
+                                <thead>
+                                    <tr>
+                                        <th className="tech-item-heading">ITEM DESCRIPTION</th>
+                                        <th className="tech-qty-heading">QTY</th>
+                                        <th className="tech-price-heading">PRICE</th>
+                                        <th className="tech-total-heading">TOTAL</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {receiptDataItems.map((item, index) => (
                                         <tr
                                             key={
                                                 item?.id ??
-                                                item?.product_id ??
-                                                index
+                                                item?.item_id ??
+                                                `${itemName(item)}-${index}`
                                             }
                                         >
-                                            <td style={styles.td}>
-                                                {getItemName(item)}
+                                            <td className="tech-item-name">
+                                                <span className="tech-item-marker" />
+                                                <span>{itemName(item)}</span>
                                             </td>
 
-                                            <td
-                                                style={{
-                                                    ...styles.td,
-                                                    ...styles.right,
-                                                }}
-                                            >
-                                                {getItemQuantity(item)}
+                                            <td className="tech-item-qty">
+                                                {itemQuantity(item)}
                                             </td>
 
-                                            <td
-                                                style={{
-                                                    ...styles.td,
-                                                    ...styles.right,
-                                                }}
-                                            >
-                                                {formatCurrency(
-                                                    getItemPrice(item)
-                                                )}
+                                            <td className="tech-item-price">
+                                                {itemPrice(item) !== null &&
+                                                    itemPrice(item) !== ""
+                                                    ? formatCurrency(itemPrice(item))
+                                                    : "—"}
                                             </td>
 
-                                            <td
-                                                style={{
-                                                    ...styles.td,
-                                                    ...styles.right,
-                                                }}
-                                            >
-                                                {formatCurrency(
-                                                    getItemTotal(item)
-                                                )}
+                                            <td className="tech-item-total">
+                                                {itemTotal(item) !== null &&
+                                                    itemTotal(item) !== ""
+                                                    ? formatCurrency(itemTotal(item))
+                                                    : "—"}
                                             </td>
                                         </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td
-                                            colSpan={4}
-                                            style={{
-                                                ...styles.td,
-                                                textAlign: "center",
-                                                color: "#AEB4BE",
-                                                padding: "24px 8px",
-                                            }}
-                                        >
-                                            No transaction items available.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
-                {/* QR VERIFICATION + TOTALS */}
-
-                <div style={styles.bottomGrid}>
-                    <section style={styles.qrFrame}>
-                        {qrImage ? (
-                            <img
-                                src={qrImage}
-                                alt="Receipt QR code"
-                                style={styles.qrImage}
-                            />
-                        ) : (
-                            <div style={styles.qrPlaceholder}>
-                                QR code will appear here when the actual
-                                business QR asset is connected.
+                        {receiptDataItems.length === 0 && (
+                            <div className="tech-slip-empty">
+                                <span className="tech-empty-symbol">＋</span>
+                                <span>TRANSACTION ITEMS WILL APPEAR HERE</span>
                             </div>
                         )}
+                    </section>
 
-                        <div style={styles.scanText}>
-                            Scan to verify
+                    {/* =================================================
+                        QR CODE + TOTALS
+                        ================================================= */}
+
+                    <section className="tech-slip-payment-layout">
+
+                        <div className="tech-slip-qr-panel">
+
+                            <div className="tech-section-heading tech-qr-heading">
+                                <span className="tech-section-index">02</span>
+                                <h3>QR VERIFICATION</h3>
+                            </div>
+
+                            <div className="tech-qr-frame">
+
+                                <span className="tech-qr-corner qr-corner-tl" />
+                                <span className="tech-qr-corner qr-corner-tr" />
+                                <span className="tech-qr-corner qr-corner-bl" />
+                                <span className="tech-qr-corner qr-corner-br" />
+
+                                {hasQrImage ? (
+                                    <img
+                                        className="tech-qr-image"
+                                        src={qrCodeUrl}
+                                        alt="Receipt verification QR code"
+                                    />
+                                ) : hasQrPayload ? (
+                                    <QRCodeCanvas
+                                        value={checkoutPayloadLink}
+                                        size={220}
+                                        level="H"
+                                        marginSize={2}
+                                        bgColor="#ffffff"
+                                        fgColor="#000000"
+                                        title="Scan to verify this receipt"
+                                        className="tech-qr-canvas"
+                                    />
+                                ) : (
+                                    <div className="tech-qr-unavailable">
+                                        <svg viewBox="0 0 100 100" aria-hidden="true">
+                                            <rect x="8" y="8" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="6" />
+                                            <rect x="17" y="17" width="10" height="10" fill="currentColor" />
+                                            <rect x="64" y="8" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="6" />
+                                            <rect x="73" y="17" width="10" height="10" fill="currentColor" />
+                                            <rect x="8" y="64" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="6" />
+                                            <rect x="17" y="73" width="10" height="10" fill="currentColor" />
+                                            <path d="M48 8h8v8h-8zM48 24h8v8h-8zM40 40h8v8h-8zM56 40h8v8h-8zM72 48h8v8h-8zM48 56h8v8h-8zM64 64h8v8h-8zM80 72h8v8h-8zM48 80h8v8h-8zM56 88h8v4h-8z" fill="currentColor" />
+                                        </svg>
+                                        <span>AWAITING QR DATA</span>
+                                    </div>
+                                )}
+
+                            </div>
+
+                            <div className="tech-qr-instruction">
+                                <span className="tech-qr-scan-icon">⌗</span>
+                                SCAN TO VERIFY
+                            </div>
+
+                            <div className="tech-qr-reference">
+                                {displayReceiptId
+                                    ? `REF: ${displayReceiptId}`
+                                    : "SECURE RECEIPT REFERENCE"}
+                            </div>
+                        </div>
+
+                        <div className="tech-slip-totals-panel">
+
+                            <div className="tech-section-heading">
+                                <span className="tech-section-index">03</span>
+                                <h3>PAYMENT SUMMARY</h3>
+                            </div>
+
+                            <div className="tech-total-row">
+                                <span>SUBTOTAL</span>
+                                <strong>
+                                    {subtotal !== null && subtotal !== ""
+                                        ? formatCurrency(subtotal)
+                                        : "—"}
+                                </strong>
+                            </div>
+
+                            <div className="tech-total-row">
+                                <span>VAT / TAX</span>
+                                <strong>
+                                    {vat !== null && vat !== ""
+                                        ? formatCurrency(vat)
+                                        : "—"}
+                                </strong>
+                            </div>
+
+                            <div className="tech-grand-total">
+                                <span>TOTAL</span>
+                                <strong>
+                                    {total !== ""
+                                        ? formatCurrency(total)
+                                        : "—"}
+                                </strong>
+                            </div>
+
+                            <div className="tech-payment-method">
+                                <span>PAYMENT METHOD</span>
+                                <strong>{paymentMethod || "—"}</strong>
+                            </div>
+
+                            {voucher && (
+                                <div className="tech-voucher-info">
+                                    <span>VOUCHER</span>
+                                    <strong>
+                                        {voucher?.code ||
+                                            voucher?.name ||
+                                            "APPLIED"}
+                                    </strong>
+                                </div>
+                            )}
+
+                            {Number(daysRemaining) > 0 && (
+                                <div className="tech-validity">
+                                    <span>VALIDITY REMAINING</span>
+                                    <strong>
+                                        {daysRemaining} {Number(daysRemaining) === 1
+                                            ? "DAY"
+                                            : "DAYS"}
+                                    </strong>
+                                </div>
+                            )}
+
+                            <div className="tech-payment-footer">
+                                <span className="tech-footer-mini-line" />
+                                TRANSACTION SUMMARY
+                                <span className="tech-footer-mini-line" />
+                            </div>
                         </div>
                     </section>
 
-                    <section
-                        style={{
-                            ...styles.panel,
-                            marginTop: 0,
-                            minWidth: 0,
-                        }}
-                    >
-                        <h2 style={styles.sectionTitle}>
-                            Payment Summary
-                        </h2>
+                    {/* =================================================
+                        AUTHENTICITY FOOTER
+                        ================================================= */}
 
-                        <div style={styles.summaryRow}>
-                            <span style={styles.summaryLabel}>
-                                Subtotal
-                            </span>
-                            <span style={styles.summaryValue}>
-                                {formatCurrency(
-                                    receiptData?.subtotal ??
-                                    receiptData?.sub_total ??
-                                    ""
-                                ) || "—"}
+                    <footer className="tech-slip-authenticity">
+
+                        <div className="tech-auth-icon">
+                            <svg viewBox="0 0 64 64" aria-hidden="true">
+                                <path d="M32 4 53 12V29C53 43 44 53 32 60 20 53 11 43 11 29V12Z" />
+                                <path d="m21 31 8 8 15-17" />
+                            </svg>
+                        </div>
+
+                        <div className="tech-auth-copy">
+                            <strong>DIGITAL RECEIPT</strong>
+                            <span>
+                                Transaction record generated from connected
+                                receipt data.
                             </span>
                         </div>
 
-                        <div style={styles.summaryRow}>
-                            <span style={styles.summaryLabel}>
-                                VAT / Tax
-                            </span>
-                            <span style={styles.summaryValue}>
-                                {vat !== null && vat !== ""
-                                    ? formatCurrency(vat)
-                                    : "—"}
-                            </span>
+                        <div className="tech-thank-you">
+                            <span>THANK YOU</span>
+                            <small>FOR YOUR PURCHASE</small>
                         </div>
 
-                        <div style={styles.totalRow}>
-                            <span style={styles.totalLabel}>
-                                TOTAL
-                            </span>
-                            <span style={styles.totalValue}>
-                                {formatCurrency(total) || "—"}
-                            </span>
+                    </footer>
+
+                    {businessWebsite && (
+                        <div className="tech-slip-website">
+                            <span className="tech-website-globe">◎</span>
+                            <span>{businessWebsite}</span>
                         </div>
-
-                        <div style={styles.summaryRow}>
-                            <span style={styles.summaryLabel}>
-                                Payment
-                            </span>
-                            <span style={styles.summaryValue}>
-                                {paymentMethod || "—"}
-                            </span>
-                        </div>
-
-                        {checkoutPayloadLink && (
-                            <a
-                                href={checkoutPayloadLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    display: "inline-block",
-                                    marginTop: "12px",
-                                    color: "#FFFFFF",
-                                    fontSize: "10px",
-                                    textUnderlineOffset: "4px",
-                                }}
-                            >
-                                Open transaction link
-                            </a>
-                        )}
-                    </section>
-                </div>
-
-                {/* AUTHENTICITY FOOTER */}
-
-                <footer style={styles.footer}>
-                    <h2 style={styles.footerTitle}>
-                        THANK YOU FOR YOUR PURCHASE
-                    </h2>
-
-                    <p style={styles.footerText}>
-                        Digital transaction receipt
-                    </p>
-
-                    {website && (
-                        <p
-                            style={{
-                                ...styles.footerText,
-                                marginTop: "8px",
-                                letterSpacing: "1px",
-                            }}
-                        >
-                            {website}
-                        </p>
                     )}
+
+                    {/* =================================================
+                        DOWNLOAD ACTION
+                        ================================================= */}
 
                     <button
                         type="button"
+                        className="tech-slip-download"
                         onClick={handleDownload}
-                        style={styles.downloadButton}
                     >
-                        Download Till Slip
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 3v12m-5-5 5 5 5-5M4 17v4h16v-4" />
+                        </svg>
+                        DOWNLOAD RECEIPT
+                        <span className="tech-download-arrow">↗</span>
                     </button>
-                </footer>
+
+                    {/* Watermark stays behind the receipt content. */}
+                    {watermarkUrl && (
+                        <img
+                            className="tech-slip-watermark"
+                            src={watermarkUrl}
+                            alt=""
+                            aria-hidden="true"
+                        />
+                    )}
+
+                </div>
             </article>
-        </div>
+        </section>
     );
 }
