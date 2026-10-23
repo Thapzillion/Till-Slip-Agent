@@ -1,5 +1,7 @@
 import React from "react";
 
+import "./SpaceTillSlip.css";
+
 export function useSpaceTillSlipBackend({
     receiptData = {},
     settings = {},
@@ -315,7 +317,7 @@ export default function SpaceTillSlip(props) {
        ================================================================ */
 
     return (
-        <div style={styles.shell}>
+        <div className="space-receipt-shell" style={styles.shell}>
             <style>{`
                 @keyframes spacePulse {
                     0%, 100% {
@@ -438,7 +440,7 @@ export default function SpaceTillSlip(props) {
 
                 {/* HEADER / MERCHANT LOGO */}
 
-                <div style={styles.content}>
+                <div className="space-receipt-content" style={styles.content}>
                     <div style={{ textAlign: "center" }}>
                         <div
                             style={{
