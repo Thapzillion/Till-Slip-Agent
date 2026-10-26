@@ -6,7 +6,7 @@ import "./LuxuryTillSlip.css";
    PRESERVED BACKEND LOGIC
    ================================================================ */
 
-export default function useLuxuryTillSlipBackend({
+export function useLuxuryTillSlipBackend({
     receiptData = {},
     settings = {},
     user = null,
@@ -144,7 +144,7 @@ export default function useLuxuryTillSlipBackend({
    LUXURY DIGITAL TILL SLIP
    ================================================================ */
 
-export function LuxuryTillSlip(props) {
+export default function LuxuryTillSlip(props) {
     const {
         receiptData = {},
         settings = {},
