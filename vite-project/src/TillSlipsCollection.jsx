@@ -1095,7 +1095,26 @@ export default function TillSlipsCollection({
         position: relative;
     }
 
-   
+    /*
+     * ==========================================================
+     * ACTUAL RECEIPT / TILL SLIP
+     * ==========================================================
+     *
+     * IMPORTANT:
+     * This changes the MatrixTillSlip INSIDE the futuristic
+     * card. It does NOT change .ruach-slip-frame.
+     */
+    .till-slip-live-slot > * {
+        width: 410px !important;
+        min-width: 410px !important;
+        max-width: 410px !important;
+
+        zoom: 0.80;            //TO ZOOM OUT THE WIDTH OF THE TILL SLOP INTERIOR
+
+        transform-origin: center top;
+
+        flex: 0 0 410px !important;
+    }
 `}</style>
 
                                                 <div
