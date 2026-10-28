@@ -1,12 +1,13 @@
 
 import React from "react";
+import { QRCodeSVG } from "qrcode.react";
 import "./BlackGoldTillSlip.css";
 
 /* ================================================================
    PRESERVED BACKEND LOGIC
    ================================================================ */
 
-export function useBlackGoldTillSlipBackend({
+export default function useBlackGoldTillSlipBackend({
     receiptData = {},
     settings = {},
     user = null,
@@ -141,39 +142,32 @@ export function useBlackGoldTillSlipBackend({
 }
 
 /* ================================================================
-   DISPLAY COMPONENT
-   All merchant/receipt details are supplied through props; this
-   component deliberately adds no simulator or editable text inputs.
+   BLACK GOLD LUXURY TILL SLIP
    ================================================================ */
 
-const firstDefined = (...values) =>
-    values.find((value) => value !== undefined && value !== null && value !== "");
-
-const itemName = (item) =>
-    firstDefined(item?.name, item?.description, item?.product_name, item?.title, "Item");
-
-const itemQuantity = (item) =>
-    firstDefined(item?.quantity, item?.qty, 1);
-
-const itemAmount = (item) =>
-    firstDefined(item?.total, item?.total_price, item?.amount, item?.subtotal, item?.price, "");
-
-export default function BlackGoldTillSlip(props) {
+export function BlackGoldTillSlip({
+    receiptData = {},
+    settings = {},
+    user = null,
+    activeCurrencySymbol = "",
+    voucher = null,
+    isExpired = false,
+    daysRemaining = 0,
+    qrCodeUrl = "",
+    checkoutPayloadLink = "",
+    receiptId = null,
+    onDownload,
+}) {
     const {
-        receiptData = {},
-        settings = {},
-        user = null,
-        activeCurrencySymbol = "",
-        voucher = null,
-        isExpired = false,
-        daysRemaining = 0,
-        qrCodeUrl = "",
-        checkoutPayloadLink = "",
-        receiptId = null,
-        onDownload,
-    } = props;
-
-    const backend = useBlackGoldTillSlipBackend({
+        receiptDataItems,
+        total,
+        vat,
+        formattedTransactionDate,
+        logoUrl,
+        watermarkUrl,
+        formatCurrency,
+        handleDownload,
+    } = useBlackGoldTillSlipBackend({
         receiptData,
         settings,
         user,
@@ -187,189 +181,424 @@ export default function BlackGoldTillSlip(props) {
         onDownload,
     });
 
-    const {
-        receiptDataItems,
-        total,
-        vat,
-        formattedTransactionDate,
-        logoUrl,
-        watermarkUrl,
-        formatCurrency,
-        handleDownload,
-    } = backend;
+    /* ---------------------------------------------------------------
+       Read existing business and transaction data.
+       These are data bindings, not simulator inputs.
+       --------------------------------------------------------------- */
 
-    const businessName = firstDefined(
-        receiptData?.business_name,
-        settings?.business_name,
-        settings?.company_name,
-        user?.business_name,
-        user?.company_name
-    );
+    const businessName =
+        settings?.business_name ??
+        settings?.businessName ??
+        receiptData?.business_name ??
+        receiptData?.businessName ??
+        "";
 
-    const businessAddress = firstDefined(
-        receiptData?.business_address,
-        settings?.business_address,
-        settings?.address,
-        user?.business_address,
-        user?.address
-    );
+    const businessAddress =
+        settings?.business_address ??
+        settings?.address ??
+        receiptData?.business_address ??
+        receiptData?.businessAddress ??
+        "";
 
-    const businessEmail = firstDefined(
-        receiptData?.business_email,
-        settings?.business_email,
-        settings?.email,
-        user?.email
-    );
+    const businessEmail =
+        settings?.business_email ??
+        settings?.email ??
+        receiptData?.business_email ??
+        receiptData?.businessEmail ??
+        user?.email ??
+        "";
 
-    const transactionId = firstDefined(
-        receiptData?.transaction_id,
-        receiptData?.reference,
-        receiptId
-    );
+    const businessPhone =
+        settings?.business_phone ??
+        settings?.phone ??
+        receiptData?.business_phone ??
+        receiptData?.businessPhone ??
+        "";
 
-    const voucherCode = firstDefined(
-        voucher?.code,
-        voucher?.voucher_code,
-        receiptData?.voucher_code
-    );
+    const transactionReference =
+        receiptId ??
+        receiptData?.receipt_id ??
+        receiptData?.receipt_number ??
+        receiptData?.transaction_id ??
+        "";
 
-    const discount = firstDefined(
-        voucher?.discount_percentage,
-        voucher?.discount,
-        receiptData?.discount_percentage
-    );
+    const currencyCode =
+        settings?.currency ??
+        receiptData?.currency ??
+        "";
 
-    // If qrCodeUrl is supplied, use it. Otherwise generate a QR image
-    // from the checkout payload link. For production, a local QR library
-    // such as qrcode.react avoids relying on a third-party QR endpoint.
-    const qrImageSrc = qrCodeUrl || (
-        checkoutPayloadLink
-            ? `https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=${encodeURIComponent(checkoutPayloadLink)}`
-            : ""
-    );
+    /* ---------------------------------------------------------------
+       QR CODE SOURCE
+       --------------------------------------------------------------- */
 
-    const currencyTotal = formatCurrency(total);
-    const hasVoucher = Boolean(voucher || voucherCode || qrImageSrc);
+    const generatedQrValue =
+        checkoutPayloadLink ||
+        voucher?.claim_url ||
+        voucher?.url ||
+        voucher?.code ||
+        "";
+
+    const hasQrImage = Boolean(qrCodeUrl);
+    const hasGeneratedQr = Boolean(generatedQrValue);
+    const hasVoucher = Boolean(voucher || hasQrImage || hasGeneratedQr);
+
+    const voucherDiscount =
+        voucher?.discount_percentage ??
+        voucher?.discount_percent ??
+        voucher?.discount ??
+        null;
+
+    const voucherCode = voucher?.code ?? "";
+
+    const voucherExpiry =
+        voucher?.expires_at ??
+        voucher?.expiry_date ??
+        null;
+
+    const voucherExpired =
+        Boolean(isExpired) ||
+        (voucherExpiry &&
+            !Number.isNaN(new Date(voucherExpiry).getTime()) &&
+            new Date(voucherExpiry).getTime() < Date.now());
+
+    const expiryText = voucherExpired
+        ? "VOUCHER EXPIRED"
+        : voucherExpiry
+            ? `EXPIRES ${new Date(voucherExpiry).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+            })}`
+            : daysRemaining === 0
+                ? "EXPIRES TODAY"
+                : `EXPIRES IN ${daysRemaining} ${daysRemaining === 1 ? "DAY" : "DAYS"
+                }`;
 
     return (
-        <main className="bgts-page">
-            <article className="bgts-card">
-                <div className="bgts-topline">
-                    <span className="bgts-kicker">DIGITAL RECEIPT</span>
-                    <span className="bgts-status"><i /> VERIFIED</span>
-                </div>
+        <main className="bg-slip-page">
+            <article className="bg-slip">
 
-                <header className="bgts-brand">
-                    {logoUrl ? (
-                        <img className="bgts-logo" src={logoUrl} alt="Business logo" />
-                    ) : (
-                        <div className="bgts-monogram" aria-hidden="true">✦</div>
+                {/* Luxury top accent */}
+                <div className="bg-slip-topline" />
+
+                {/* HEADER */}
+                <header className="bg-slip-header">
+
+                    {logoUrl && (
+                        <div className="bg-slip-logo-wrap">
+                            <img
+                                src={logoUrl}
+                                alt="Business logo"
+                                className="bg-slip-logo"
+                            />
+                        </div>
                     )}
-                    {businessName && <h1>{businessName}</h1>}
-                    <div className="bgts-gold-rule"><span /></div>
-                    {businessAddress && <p className="bgts-detail">{businessAddress}</p>}
-                    {businessEmail && <p className="bgts-detail bgts-muted">{businessEmail}</p>}
+
+                    {businessName && (
+                        <h1 className="bg-slip-business-name">
+                            {businessName}
+                        </h1>
+                    )}
+
+                    <div className="bg-slip-heading-rule">
+                        <span />
+                        <p>OFFICIAL TRANSACTION RECEIPT</p>
+                        <span />
+                    </div>
+
+                    <div className="bg-slip-meta">
+                        <span className="bg-slip-verified">
+                            <span className="bg-slip-check">✓</span>
+                            VERIFIED TRANSACTION
+                        </span>
+
+                        <div className="bg-slip-date">
+                            <span className="bg-slip-label">
+                                TRANSACTION DATE
+                            </span>
+                            <time>
+                                {formattedTransactionDate}
+                            </time>
+                        </div>
+                    </div>
                 </header>
 
-                <section className="bgts-transaction" aria-label="Transaction details">
-                    <div>
-                        <span className="bgts-label">TRANSACTION DATE</span>
-                        <strong>{formattedTransactionDate}</strong>
-                    </div>
-                    {transactionId && (
-                        <div className="bgts-transaction-id">
-                            <span className="bgts-label">REFERENCE</span>
-                            <strong>{transactionId}</strong>
-                        </div>
-                    )}
-                </section>
+                {/* BUSINESS DETAILS */}
+                {(businessAddress || businessEmail || businessPhone) && (
+                    <section className="bg-slip-contact">
+                        {businessAddress && (
+                            <p>
+                                <span className="bg-slip-contact-icon">
+                                    ◇
+                                </span>
+                                {businessAddress}
+                            </p>
+                        )}
 
-                <section className="bgts-items">
-                    <div className="bgts-section-heading"><span>ITEMS PURCHASED</span></div>
-                    {receiptDataItems.length > 0 ? (
-                        <div className="bgts-item-list">
-                            {receiptDataItems.map((item, index) => (
-                                <div className="bgts-item" key={item?.id ?? item?.sku ?? index}>
-                                    <span className="bgts-item-index">{String(index + 1).padStart(2, "0")}</span>
-                                    <div className="bgts-item-description">
-                                        <strong>{itemName(item)}</strong>
-                                        {item?.variant && <small>{item.variant}</small>}
-                                        {item?.subtitle && <small>{item.subtitle}</small>}
-                                        <small>Qty {itemQuantity(item)}</small>
-                                    </div>
-                                    <span className="bgts-item-price">{formatCurrency(itemAmount(item))}</span>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="bgts-empty">No items available for this transaction.</p>
-                    )}
-                </section>
+                        {businessEmail && (
+                            <p>
+                                <span className="bg-slip-contact-icon">
+                                    ✉
+                                </span>
+                                <a href={`mailto:${businessEmail}`}>
+                                    {businessEmail}
+                                </a>
+                            </p>
+                        )}
 
-                {vat !== null && vat !== undefined && vat !== "" && (
-                    <div className="bgts-vat-row">
-                        <span>VAT</span>
-                        <strong>{formatCurrency(vat)}</strong>
+                        {businessPhone && (
+                            <p>
+                                <span className="bg-slip-contact-icon">
+                                    ☎
+                                </span>
+                                <a href={`tel:${businessPhone}`}>
+                                    {businessPhone}
+                                </a>
+                            </p>
+                        )}
+                    </section>
+                )}
+
+                {/* TRANSACTION REFERENCE */}
+                {transactionReference && (
+                    <div className="bg-slip-reference">
+                        <span>RECEIPT REFERENCE</span>
+                        <strong>{transactionReference}</strong>
                     </div>
                 )}
 
-                <section className="bgts-total">
-                    <span>TOTAL DUE</span>
-                    <strong>{currencyTotal}</strong>
+                {/* ITEMS */}
+                <section className="bg-slip-items">
+                    <div className="bg-slip-section-heading">
+                        <span />
+                        <h2>ITEMS PURCHASED</h2>
+                        <span />
+                    </div>
+
+                    {receiptDataItems.length > 0 ? (
+                        <div className="bg-slip-items-list">
+                            {receiptDataItems.map((item, index) => {
+                                const quantity =
+                                    item?.quantity ??
+                                    item?.qty ??
+                                    1;
+
+                                const itemName =
+                                    item?.name ??
+                                    item?.item_name ??
+                                    item?.description ??
+                                    item?.product_name ??
+                                    "Item";
+
+                                const itemDescription =
+                                    item?.description &&
+                                        item?.name &&
+                                        item.description !== item.name
+                                        ? item.description
+                                        : item?.subtitle ?? "";
+
+                                const unitPrice =
+                                    item?.price ??
+                                    item?.unit_price ??
+                                    item?.amount ??
+                                    "";
+
+                                const lineTotal =
+                                    item?.total ??
+                                    item?.line_total ??
+                                    item?.subtotal ??
+                                    (Number(unitPrice) * Number(quantity));
+
+                                return (
+                                    <div
+                                        className="bg-slip-item"
+                                        key={item?.id ?? item?.item_id ?? index}
+                                    >
+                                        <div className="bg-slip-item-number">
+                                            {String(index + 1).padStart(2, "0")}
+                                        </div>
+
+                                        <div className="bg-slip-item-info">
+                                            <div className="bg-slip-item-name">
+                                                {quantity} × {itemName}
+                                            </div>
+
+                                            {itemDescription && (
+                                                <div className="bg-slip-item-description">
+                                                    {itemDescription}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="bg-slip-item-price">
+                                            {formatCurrency(lineTotal)}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="bg-slip-empty">
+                            No receipt items available.
+                        </div>
+                    )}
                 </section>
 
-                {hasVoucher && (
-                    <section className="bgts-voucher">
-                        <div className="bgts-voucher-emblem" aria-hidden="true">✧</div>
-                        <p className="bgts-voucher-kicker">A LITTLE SOMETHING EXTRA</p>
-                        <h2>{voucherCode ? "YOUR VOUCHER" : "SCAN YOUR VOUCHER"}</h2>
+                {/* OPTIONAL VAT */}
+                {vat !== null && vat !== undefined && vat !== "" && (
+                    <div className="bg-slip-vat">
+                        <span>VAT</span>
+                        <span>{formatCurrency(vat)}</span>
+                    </div>
+                )}
 
-                        {qrImageSrc ? (
-                            <div className="bgts-qr-frame">
-                                <img src={qrImageSrc} alt="Scannable voucher QR code" />
-                            </div>
-                        ) : (
-                            <div className="bgts-qr-placeholder" role="img" aria-label="QR code will appear when a QR image or checkout link is connected">
-                                <span>QR</span>
-                                <small>Voucher QR appears when connected</small>
+                {/* TOTAL */}
+                <section className="bg-slip-total">
+                    <div>
+                        <span className="bg-slip-total-label">
+                            TOTAL DUE
+                        </span>
+
+                        <span className="bg-slip-total-caption">
+                            {currencyCode}
+                        </span>
+                    </div>
+
+                    <strong>{formatCurrency(total)}</strong>
+                </section>
+
+                {/* VOUCHER / QR CODE */}
+                {hasVoucher && (
+                    <section className="bg-slip-voucher">
+                        <div className="bg-slip-voucher-emblem">
+                            <svg
+                                viewBox="0 0 48 48"
+                                aria-hidden="true"
+                                fill="none"
+                            >
+                                <path
+                                    d="M24 21V42M24 21H10C5 21 5 11 12 11C19 11 24 21 24 21ZM24 21H38C43 21 43 11 36 11C29 11 24 21 24 21ZM8 23H40V42H8V23Z"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinejoin="round"
+                                />
+                                <path
+                                    d="M24 21V8M20 12L24 7L28 12"
+                                    stroke="currentColor"
+                                    strokeWidth="1.6"
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+                        </div>
+
+                        <p className="bg-slip-voucher-overline">
+                            EXCLUSIVE CUSTOMER PRIVILEGE
+                        </p>
+
+                        <h2 className="bg-slip-voucher-title">
+                            Your Next Reward
+                        </h2>
+
+                        <p className="bg-slip-voucher-subtitle">
+                            A special offer, reserved for you.
+                        </p>
+
+                        {(hasQrImage || hasGeneratedQr) && (
+                            <div className="bg-slip-qr-frame">
+                                {hasQrImage ? (
+                                    <img
+                                        className="bg-slip-qr-image"
+                                        src={qrCodeUrl}
+                                        alt="Scan to access your voucher"
+                                    />
+                                ) : (
+                                    <QRCodeSVG
+                                        value={generatedQrValue}
+                                        size={210}
+                                        level="H"
+                                        marginSize={2}
+                                        bgColor="#ffffff"
+                                        fgColor="#111111"
+                                        title="Scan to access your voucher"
+                                    />
+                                )}
                             </div>
                         )}
 
-                        {voucherCode && <p className="bgts-voucher-code">{voucherCode}</p>}
-                        <p className="bgts-voucher-copy">
-                            {discount !== undefined
-                                ? <>Enjoy <strong>{String(discount).includes("%") ? discount : `${discount}%`}</strong> off your next visit.</>
-                                : "Scan to open your voucher or checkout link."}
+                        {voucherCode && (
+                            <div className="bg-slip-voucher-code">
+                                <span>VOUCHER CODE</span>
+                                <strong>{voucherCode}</strong>
+                            </div>
+                        )}
+
+                        <h3 className="bg-slip-claim-title">
+                            {voucherExpired
+                                ? "OFFER NO LONGER AVAILABLE"
+                                : "CLAIM YOUR REWARD"}
+                        </h3>
+
+                        <p className="bg-slip-voucher-description">
+                            {voucherDiscount !== null &&
+                                voucherDiscount !== undefined
+                                ? `Enjoy ${voucherDiscount}% off your next eligible purchase.`
+                                : "Scan the QR code to access your exclusive offer."}
                         </p>
 
-                        <div className="bgts-voucher-expiry">
-                            {isExpired
-                                ? "VOUCHER EXPIRED"
-                                : daysRemaining > 0
-                                    ? <>EXPIRES IN <strong>{daysRemaining} DAYS</strong></>
-                                    : voucher?.expires_at
-                                        ? <>VALID UNTIL <strong>{new Date(voucher.expires_at).toLocaleDateString("en-GB")}</strong></>
-                                        : "VOUCHER DETAILS"}
+                        <div
+                            className={`bg-slip-expiry ${voucherExpired
+                                    ? "bg-slip-expiry--expired"
+                                    : ""
+                                }`}
+                        >
+                            {expiryText}
                         </div>
                     </section>
                 )}
 
+                {/* FOOTER */}
+                <footer className="bg-slip-footer">
+                    <div className="bg-slip-footer-brand">
+                        <span className="bg-slip-footer-line" />
+                        <span>THANK YOU FOR YOUR BUSINESS</span>
+                        <span className="bg-slip-footer-line" />
+                    </div>
+
+                    {transactionReference && (
+                        <p className="bg-slip-footer-reference">
+                            REF. {transactionReference}
+                        </p>
+                    )}
+
+                    <button
+                        type="button"
+                        className="bg-slip-download"
+                        onClick={handleDownload}
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            fill="none"
+                        >
+                            <path
+                                d="M12 3V15M7 10L12 15L17 10M4 17V21H20V17"
+                                stroke="currentColor"
+                                strokeWidth="1.6"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
+                        </svg>
+
+                        <span>DOWNLOAD OFFICIAL INVOICE PDF</span>
+                    </button>
+                </footer>
+
+                {/* Decorative watermark, behind the receipt content */}
                 {watermarkUrl && (
-                    <div className="bgts-watermark" aria-hidden="true">
+                    <div className="bg-slip-watermark" aria-hidden="true">
                         <img src={watermarkUrl} alt="" />
                     </div>
                 )}
-
-                <button type="button" className="bgts-download" onClick={handleDownload}>
-                    <span className="bgts-download-icon" aria-hidden="true">↓</span>
-                    <span>DOWNLOAD OFFICIAL INVOICE</span>
-                    <span className="bgts-download-format">PDF</span>
-                </button>
-
-                <footer className="bgts-footer">
-                    <span>THANK YOU</span>
-                    <span>{transactionId ? `REF · ${transactionId}` : "PLEASE KEEP THIS RECEIPT"}</span>
-                </footer>
             </article>
         </main>
     );
