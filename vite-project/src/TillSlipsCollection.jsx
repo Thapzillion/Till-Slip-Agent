@@ -1073,10 +1073,13 @@ export default function TillSlipsCollection({
                                                     }}
                                                 />
 
+
                                                 {/* ===================================================
-                                            LIVE DESIGN SLOT
-                                        ==================================================== */}
-                                                {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP WHICH IS INTERIOR ==*/}
+    LIVE DESIGN SLOT — MATRIX TILL SLIP
+    Preserves original design proportions while fitting
+    the available card width.
+==================================================== */}
+
                                                 <style>{`
     .till-slip-live-slot {
         container-type: inline-size;
@@ -1086,34 +1089,39 @@ export default function TillSlipsCollection({
         justify-content: center;
         align-items: flex-start;
 
-        overflow: visible;
-        width: 100%;
-        min-height: 700px;
-
-        zoom: 0.80;        //TO ZOOM OUT THE HEIGHT OF THE TILL SLOP INTERIOR
-
         position: relative;
+        width: 100%;
+        min-width: 0;
+        min-height: 0;
+
+        overflow: visible;
+        box-sizing: border-box;
+        padding: 0;
     }
 
     /*
-     * ==========================================================
-     * ACTUAL RECEIPT / TILL SLIP
-     * ==========================================================
+     * MATRIX TILL SLIP
      *
-     * IMPORTANT:
-     * This changes the MatrixTillSlip INSIDE the futuristic
-     * card. It does NOT change .ruach-slip-frame.
+     * Preserve the receipt's original width and internal
+     * design. Scale it proportionally to fit the card.
+     *
+     * Do not modify .ruach-slip-frame.
      */
     .till-slip-live-slot > * {
         width: 410px !important;
         min-width: 410px !important;
         max-width: 410px !important;
 
-        zoom: 0.80;            //TO ZOOM OUT THE WIDTH OF THE TILL SLOP INTERIOR
-
-        transform-origin: center top;
+        height: auto;
 
         flex: 0 0 410px !important;
+
+        transform: scale(
+            min(1, calc(100cqw / 410px))
+        );
+        transform-origin: center top;
+
+        box-sizing: border-box;
     }
 `}</style>
 
@@ -1123,7 +1131,8 @@ export default function TillSlipsCollection({
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
-                                                        minHeight: "700px"
+                                                        minWidth: 0,
+                                                        minHeight: 0
                                                     }}
                                                 >
                                                     {design.id === "matrix-grid" ? (
@@ -1137,6 +1146,7 @@ export default function TillSlipsCollection({
                                                                 ""
                                                             }
                                                         />
+
                                                     ) : design.id === "black-gold" ? (
                                                         <BlackGoldTillSlip
                                                             receiptData={receiptData}
