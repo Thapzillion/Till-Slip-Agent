@@ -12,6 +12,8 @@ import ClassicTillSlip from "./models/ClassicTillSlip";
 import GraffitiTillSlip from "./models/GraffitiTillSlip";
 import TechTillSlip from "./models/TechTillSlip";
 
+import PosSimulatorView from ".PosSimulatorView";
+
 // --------------------
 // Static data
 // --------------------
