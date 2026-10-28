@@ -56,12 +56,6 @@ const DESIGN_CATEGORIES = [
 const DESIGNS = [
 
     {
-        id: "matrix-grid",
-        name: "Matrix Grid",
-        category: "Matrix"
-    },
-
-    {
         id: "cyber-neon",
         name: "Cyber Neon",
         category: "Cyber"
@@ -95,6 +89,12 @@ const DESIGNS = [
         id: "classic-ink",
         name: "Classic Ink",
         category: "Classic"
+    },
+
+    {
+        id: "matrix-grid",
+        name: "Matrix Grid",
+        category: "Matrix"
     },
 
     {
@@ -1073,13 +1073,10 @@ export default function TillSlipsCollection({
                                                     }}
                                                 />
 
-
                                                 {/* ===================================================
-    LIVE DESIGN SLOT — MATRIX TILL SLIP
-    Preserves original design proportions while fitting
-    the available card width.
-==================================================== */}
-
+                                            LIVE DESIGN SLOT
+                                        ==================================================== */}
+                                                {/*== zoom: 0.78; INCREASES ZOOMOUT FOR TILL SLIP WHICH IS INTERIOR ==*/}
                                                 <style>{`
     .till-slip-live-slot {
         container-type: inline-size;
@@ -1089,40 +1086,16 @@ export default function TillSlipsCollection({
         justify-content: center;
         align-items: flex-start;
 
-        position: relative;
-        width: 100%;
-        min-width: 0;
-        min-height: 0;
-
         overflow: visible;
-        box-sizing: border-box;
-        padding: 0;
+        width: 100%;
+        min-height: 700px;
+
+        zoom: 0.80;        //TO ZOOM OUT THE HEIGHT OF THE TILL SLOP INTERIOR
+
+        position: relative;
     }
 
-    /*
-     * MATRIX TILL SLIP
-     *
-     * Preserve the receipt's original width and internal
-     * design. Scale it proportionally to fit the card.
-     *
-     * Do not modify .ruach-slip-frame.
-     */
-    .till-slip-live-slot > * {
-        width: 410px !important;
-        min-width: 410px !important;
-        max-width: 410px !important;
-
-        height: auto;
-
-        flex: 0 0 410px !important;
-
-        transform: scale(
-            min(1, calc(100cqw / 410px))
-        );
-        transform-origin: center top;
-
-        box-sizing: border-box;
-    }
+   
 `}</style>
 
                                                 <div
@@ -1131,8 +1104,7 @@ export default function TillSlipsCollection({
                                                         position: "relative",
                                                         zIndex: 2,
                                                         width: "100%",
-                                                        minWidth: 0,
-                                                        minHeight: 0
+                                                        minHeight: "700px"
                                                     }}
                                                 >
                                                     {design.id === "matrix-grid" ? (
@@ -1146,7 +1118,6 @@ export default function TillSlipsCollection({
                                                                 ""
                                                             }
                                                         />
-
                                                     ) : design.id === "black-gold" ? (
                                                         <BlackGoldTillSlip
                                                             receiptData={receiptData}
