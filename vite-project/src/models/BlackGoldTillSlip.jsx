@@ -7,7 +7,7 @@ import "./BlackGoldTillSlip.css";
    PRESERVED BACKEND LOGIC
    ================================================================ */
 
-export default function useBlackGoldTillSlipBackend({
+export function useBlackGoldTillSlipBackend({
     receiptData = {},
     settings = {},
     user = null,
@@ -145,7 +145,7 @@ export default function useBlackGoldTillSlipBackend({
    BLACK GOLD LUXURY TILL SLIP
    ================================================================ */
 
-export function BlackGoldTillSlip({
+export default function BlackGoldTillSlip({
     receiptData = {},
     settings = {},
     user = null,
@@ -547,8 +547,8 @@ export function BlackGoldTillSlip({
 
                         <div
                             className={`bg-slip-expiry ${voucherExpired
-                                    ? "bg-slip-expiry--expired"
-                                    : ""
+                                ? "bg-slip-expiry--expired"
+                                : ""
                                 }`}
                         >
                             {expiryText}
