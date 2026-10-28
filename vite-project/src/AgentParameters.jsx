@@ -1692,14 +1692,13 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                         COPY ENDPOINT
                       </button>
 
-
+                       //THIS CONNECTION BUTTON SHOULD LEAD TO A PAGE THAT ENABLES THE MERCHANT TO TEST WHETHER THEIR CHOSEN TILL SLIP CAN BE SENT TO A DIFFERENT.
                       <button
                         type="button"
                         style={styles.secondaryButton}
                         onClick={() => {
-                          alert(
-                            'Connection testing will be connected to the receipt-agent health check.'
-                          );
+                          // Navigate to the interactive POS simulator page
+                          window.location.href = `/demo-pos?slug=${settings.webhook_slug || 'default'}&template=${currentTemplate}`;
                         }}
                       >
                         TEST CONNECTION

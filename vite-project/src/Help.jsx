@@ -44,29 +44,48 @@ const SUGGESTED_QUESTIONS = [
 const createMessageId = () =>
     `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
+
 function getAssistantText(data) {
-    if (typeof data === "string") return data;
+    if (typeof data === "string") {
+        return data.trim();
+    }
 
-    return (
-        data?.reply ??
-        data?.response ??
-        data?.text ??
-        data?.message ??
-        data?.answer ??
-        data?.output ??
-        data?.content ??
-        data?.candidates?.[0]?.content?.parts
-            ?.map((part) => part.text || "")
+    if (!data || typeof data !== "object") {
+        return "";
+    }
+
+    const directResponse =
+        data.chatResponse ??
+        data.reply ??
+        data.response ??
+        data.text ??
+        data.answer ??
+        data.output ??
+        data.content ??
+        data.message;
+
+    if (typeof directResponse === "string" && directResponse.trim()) {
+        return directResponse.trim();
+    }
+
+    // Handle Gemini's candidates-based response format.
+    const parts = data.candidates?.[0]?.content?.parts;
+
+    if (Array.isArray(parts)) {
+        return parts
+            .map((part) => part?.text ?? "")
             .join("\n")
-            .trim() ??
-        ""
-    );
+            .trim();
+    }
+
+    // Handle an Edge Function returning { data: { reply: "..." } }.
+    if (data.data && typeof data.data === "object") {
+        return getAssistantText(data.data);
+    }
+
+    return "";
 }
 
-function formatMessageText(text) {
-    // Keep assistant output as text rather than interpreting model output as HTML.
-    return String(text ?? "");
-}
 
 function SuggestionIcon({ type }) {
     if (type === "receipt") return <MessageSquare size={16} />;
@@ -148,12 +167,6 @@ export default function Help({
             createdAt: new Date().toISOString(),
         };
 
-        // Send the existing conversation before adding the new user message.
-        const historyForRequest = messages.map(({ role, content }) => ({
-            role,
-            content,
-        }));
-
         setMessages((current) => [...current, userMessage]);
 
         try {
@@ -207,38 +220,16 @@ export default function Help({
                 );
             }
 
-            const answer =
-                data?.chatResponse ||
-                data?.reply ||
-                data?.response ||
-                data?.text ||
-                data?.answer ||
-                data?.candidates?.[0]?.content?.parts
-                    ?.map((part) => part.text || "")
-                    .join("")
-                    .trim();
-
-            if (!answer) {
-                throw new Error(
-                    "RuachAgent AI returned no answer. Check the Edge Function response format."
-                );
-            }
-
-            // Add this answer to your existing assistant-message state update.
-            setMessages((previous) => [
-                ...previous,
-                {
-                    role: "assistant",
-                    text: answer,
-                },
-            ]);
-
-
             const assistantText = getAssistantText(data);
 
             if (!assistantText) {
+                console.error(
+                    "RuachAgent AI returned an unexpected response:",
+                    data
+                );
+
                 throw new Error(
-                    "The AI service returned an empty response. Check the google-api-handler response format."
+                    "RuachAgent AI received no readable answer from the AI service. Check the Edge Function logs."
                 );
             }
 
@@ -247,10 +238,11 @@ export default function Help({
                 {
                     id: createMessageId(),
                     role: "assistant",
-                    content: formatMessageText(assistantText),
+                    content: assistantText,
                     createdAt: new Date().toISOString(),
                 },
             ]);
+
         } catch (err) {
             console.error("RuachAgent AI chat error:", err);
             setError(

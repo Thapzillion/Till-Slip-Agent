@@ -22,6 +22,8 @@ import Profile from './Profile';
 import Plan from './Plan';
 import Help from './Help';
 
+import PosSimulatorView from './PosSimulatorView';
+
 export default function App() {
   return (
     <Router>
@@ -54,6 +56,8 @@ export default function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/plan" element={<Plan />} />
         <Route path="/help" element={<Help />} />
+
+        <Route path="/demo-pos" element={<PosSimulatorView />} />
 
         {/* Clean, safe default fallback routing */}
         <Route path="*" element={<Navigate to="/admin" replace />} />
