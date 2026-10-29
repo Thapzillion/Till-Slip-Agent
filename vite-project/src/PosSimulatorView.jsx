@@ -32,10 +32,19 @@ const CATALOG_ITEMS = [
     { name: "Synthetic Espresso Beans", price: 150.00 },
 ];
 
-export default function PosSimulatorView() {
+export default function PosSimulatorView({
+    webhookSlug: configuredWebhookSlug,
+    templateId: configuredTemplateId,
+} = {}) {
     const [searchParams] = useSearchParams();
-    const webhookSlug = searchParams.get("slug") || "demo-store";
-    const templateId = searchParams.get("template") || "matrix-grid";
+    const webhookSlug =
+        configuredWebhookSlug ||
+        searchParams.get("slug") ||
+        "demo-store";
+    const templateId =
+        configuredTemplateId ||
+        searchParams.get("template") ||
+        "matrix-grid";
 
     const [customerEmail, setCustomerEmail] = useState("messengerthapelo@gmail.com");
     const [cart, setCart] = useState([CATALOG_ITEMS[0]]);

@@ -12,7 +12,6 @@ import ClassicTillSlip from "./models/ClassicTillSlip";
 import GraffitiTillSlip from "./models/GraffitiTillSlip";
 import TechTillSlip from "./models/TechTillSlip";
 
-import PosSimulatorView from ".PosSimulatorView";
 
 // --------------------
 // Static data
@@ -1694,7 +1693,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                         COPY ENDPOINT
                       </button>
 
-                       //THIS CONNECTION BUTTON SHOULD LEAD TO A PAGE THAT ENABLES THE MERCHANT TO TEST WHETHER THEIR CHOSEN TILL SLIP CAN BE SENT TO A DIFFERENT.
                       <button
                         type="button"
                         style={styles.secondaryButton}
