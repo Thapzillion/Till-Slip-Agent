@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 
-// Import your template registry so the user sees a live preview of their selected design
+// Import your till slip templates
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
@@ -37,10 +37,10 @@ export default function PosSimulatorView() {
     const webhookSlug = searchParams.get("slug") || "demo-store";
     const templateId = searchParams.get("template") || "matrix-grid";
 
-    const [customerEmail, setCustomerEmail] = useState("");
+    const [customerEmail, setCustomerEmail] = useState("messengerthapelo@gmail.com");
     const [cart, setCart] = useState([CATALOG_ITEMS[0]]);
     const [isSending, setIsSending] = useState(false);
-    const [successMessage, setSuccessMessage] = useState("");
+    const [createdReceiptUrl, setCreatedReceiptUrl] = useState("");
 
     const handleAddToCart = (item) => {
         setCart((prev) => [...prev, item]);
@@ -51,65 +51,70 @@ export default function PosSimulatorView() {
     };
 
     const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-    const vat = subtotal * 0.15; // 15% VAT example
+    const vat = subtotal * 0.15;
     const total = subtotal + vat;
 
-    // Construct live mock receipt object matching your till slip props
+    const SelectedTemplateComponent = TEMPLATE_MAP[templateId] || MatrixTillSlip;
+
+    const handleSimulatePurchase = async () => {
+        if (!customerEmail) {
+            alert("Please enter an email address.");
+            return;
+        }
+
+        setIsSending(true);
+        setCreatedReceiptUrl("");
+
+        try {
+            // 1. Look up the business_id using the webhook_slug from your business_settings table
+            const { data: business, error: bizError } = await supabase
+                .from("business_settings")
+                .select("id")
+                .eq("webhook_slug", webhookSlug)
+                .maybeSingle();
+
+            if (bizError || !business) {
+                throw new Error(`Business settings not found for webhook slug: "${webhookSlug}". Make sure you saved your Agent Parameters first!`);
+            }
+
+            // 2. Insert the simulated transaction directly into your public.receipts table
+            const { data: newReceipt, error: receiptError } = await supabase
+                .from("receipts")
+                .insert({
+                    business_id: business.id,
+                    customer_email: customerEmail,
+                    items: cart,
+                    total_amount: total,
+                    template_id: templateId,
+                    design_config: {}
+                })
+                .select()
+                .single();
+
+            if (receiptError) {
+                throw receiptError;
+            }
+
+            // 3. Generate the live ReceiptView link
+            const receiptLink = `${window.location.origin}/receipt/${newReceipt.id}`;
+            setCreatedReceiptUrl(receiptLink);
+
+            alert(`Success! Receipt created in database for ${customerEmail}.`);
+        } catch (err) {
+            console.error("Simulation error:", err);
+            alert("Simulation failed: " + err.message);
+        } finally {
+            setIsSending(false);
+        }
+    };
+
     const mockReceiptData = {
         merchantName: webhookSlug.toUpperCase() + " STORE",
         location: "Gauteng, South Africa",
         items: cart.map(i => ({ name: i.name, price: i.price.toFixed(2) })),
         vat: vat.toFixed(2),
         total: total.toFixed(2),
-        customer_email: customerEmail || "test.customer@example.com",
-        template_id: templateId
-    };
-
-    const SelectedTemplateComponent = TEMPLATE_MAP[templateId] || MatrixTillSlip;
-
-    const handleSimulatePurchase = async () => {
-        if (!customerEmail) {
-            alert("Please enter a recipient customer email address.");
-            return;
-        }
-        if (cart.length === 0) {
-            alert("Add at least one demo item to the cart.");
-            return;
-        }
-
-        setIsSending(true);
-        setSuccessMessage("");
-
-        try {
-            // Option A: Invoke your Supabase Edge Function webhook endpoint directly
-            const response = await fetch(
-                `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${webhookSlug}`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        customer_email: customerEmail,
-                        items: cart,
-                        total: total.toFixed(2),
-                        template_id: templateId
-                    })
-                }
-            );
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || "Webhook dispatch failed.");
-            }
-
-            setSuccessMessage(`Success! Till slip with ${templateId} design dispatched to ${customerEmail}.`);
-        } catch (err) {
-            console.error("Simulation error:", err);
-            // Fallback simulation success if edge function requires specific POS headers
-            setSuccessMessage(`Simulation Dispatched Successfully! (Check inbox for ${customerEmail})`);
-        } finally {
-            setIsSending(false);
-        }
+        customer_email: customerEmail
     };
 
     return (
@@ -121,13 +126,13 @@ export default function PosSimulatorView() {
                         ⚡ POS Webhook & Till Slip Simulator
                     </h1>
                     <p style={{ fontSize: "12px", color: "#888", marginTop: "5px" }}>
-                        Simulating live store checkout for webhook slug: <strong style={{ color: "#fff" }}>{webhookSlug}</strong> | Design: <strong style={{ color: "#fff" }}>{templateId}</strong>
+                        Simulating checkout for Slug: <strong style={{ color: "#fff" }}>{webhookSlug}</strong> | Template: <strong style={{ color: "#fff" }}>{templateId}</strong>
                     </p>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px" }}>
 
-                    {/* Left Column: Store Checkout Simulation Controls */}
+                    {/* Controls */}
                     <div style={{ background: "#0a0e12", padding: "24px", borderRadius: "16px", border: "1px solid rgba(0,240,255,0.2)" }}>
                         <h3 style={{ fontSize: "14px", fontWeight: "700", marginBottom: "15px", color: "#00f0ff" }}>
                             1. Simulate Customer Order
@@ -135,11 +140,10 @@ export default function PosSimulatorView() {
 
                         <div style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", color: "#aaa", marginBottom: "6px" }}>
-                                Customer Test Email
+                                Recipient Email
                             </label>
                             <input
                                 type="email"
-                                placeholder="customer@example.com"
                                 value={customerEmail}
                                 onChange={(e) => setCustomerEmail(e.target.value)}
                                 style={{ width: "100%", padding: "10px", background: "#000", border: "1px solid #333", color: "#fff", borderRadius: "8px" }}
@@ -148,7 +152,7 @@ export default function PosSimulatorView() {
 
                         <div style={{ marginBottom: "15px" }}>
                             <label style={{ display: "block", fontSize: "10px", textTransform: "uppercase", color: "#aaa", marginBottom: "6px" }}>
-                                Select Store Catalog Items
+                                Add Demo Items
                             </label>
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
                                 {CATALOG_ITEMS.map((item, idx) => (
@@ -168,16 +172,12 @@ export default function PosSimulatorView() {
                                 Cart Items ({cart.length})
                             </label>
                             <div style={{ background: "#000", padding: "10px", borderRadius: "8px", maxHeight: "150px", overflowY: "auto" }}>
-                                {cart.length === 0 ? (
-                                    <div style={{ color: "#555", fontSize: "11px" }}>Cart is empty</div>
-                                ) : (
-                                    cart.map((item, idx) => (
-                                        <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "6px", borderBottom: "1px solid #111", paddingBottom: "4px" }}>
-                                            <span>{item.name}</span>
-                                            <span>R{item.price.toFixed(2)} <button onClick={() => handleRemoveItem(idx)} style={{ color: "red", background: "none", border: "none", cursor: "pointer" }}>×</button></span>
-                                        </div>
-                                    ))
-                                )}
+                                {cart.map((item, idx) => (
+                                    <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", marginBottom: "6px", borderBottom: "1px solid #111", paddingBottom: "4px" }}>
+                                        <span>{item.name}</span>
+                                        <span>R{item.price.toFixed(2)} <button onClick={() => handleRemoveItem(idx)} style={{ color: "red", background: "none", border: "none", cursor: "pointer" }}>×</button></span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
@@ -186,22 +186,30 @@ export default function PosSimulatorView() {
                             disabled={isSending}
                             style={{ width: "100%", padding: "14px", background: "#00f0ff", color: "#000", fontWeight: "bold", border: "none", borderRadius: "8px", cursor: "pointer", textTransform: "uppercase", letterSpacing: "1px" }}
                         >
-                            {isSending ? "Dispatching Webhook..." : "Click Buy & Send Till Slip 🚀"}
+                            {isSending ? "Processing..." : "Complete Test Purchase 🚀"}
                         </button>
 
-                        {successMessage && (
-                            <div style={{ marginTop: "15px", padding: "10px", background: "rgba(0,255,100,0.1)", border: "1px solid #0f5", color: "#0f5", fontSize: "11px", borderRadius: "8px" }}>
-                                {successMessage}
+                        {createdReceiptUrl && (
+                            <div style={{ marginTop: "15px", padding: "12px", background: "rgba(0,255,100,0.1)", border: "1px solid #0f5", borderRadius: "8px" }}>
+                                <p style={{ fontSize: "11px", color: "#0f5", marginBottom: "6px" }}>Receipt generated successfully!</p>
+                                <a
+                                    href={createdReceiptUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{ fontSize: "11px", color: "#00f0ff", textDecoration: "underline", wordBreak: "break-all" }}
+                                >
+                                    Open Generated Till Slip Link ↗
+                                </a>
                             </div>
                         )}
                     </div>
 
-                    {/* Right Column: Live Till Slip Preview */}
+                    {/* Live Preview */}
                     <div style={{ background: "#0a0e12", padding: "24px", borderRadius: "16px", border: "1px solid rgba(0,240,255,0.2)", display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <h3 style={{ fontSize: "14px", fontWeight: "700", marginBottom: "15px", color: "#00f0ff", alignSelf: "flex-start" }}>
-                            2. Live Design Preview ({templateId})
+                            2. Live Till Slip Design Preview ({templateId})
                         </h3>
-                        <div style={{ transform: "scale(0.9)", transformOrigin: "top center" }}>
+                        <div style={{ transform: "scale(0.85)", transformOrigin: "top center" }}>
                             <SelectedTemplateComponent
                                 receiptData={mockReceiptData}
                                 settings={{ business_name: webhookSlug.toUpperCase(), currency: "ZAR", discount_percentage: 10, store_address: "Gauteng, South Africa" }}
