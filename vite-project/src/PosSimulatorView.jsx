@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 
-// Till slip templates
+// Import your till slip templates
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
 import TitaniumTillSlip from "./models/TitaniumTillSlip";
@@ -14,6 +14,7 @@ import ClassicTillSlip from "./models/ClassicTillSlip";
 import GraffitiTillSlip from "./models/GraffitiTillSlip";
 import TechTillSlip from "./models/TechTillSlip";
 
+// This must match the template IDs accepted by receipt-agent.
 const TEMPLATE_MAP = {
     "matrix-grid": MatrixTillSlip,
     "black-gold": BlackGoldTillSlip,
@@ -26,6 +27,7 @@ const TEMPLATE_MAP = {
     "tech-hud": TechTillSlip,
 };
 
+// Demo products used only by the simulator.
 const CATALOG_ITEMS = [
     { name: "Neural Quantum T-Shirt", price: 350.00 },
     { name: "Titanium Cargo Pants", price: 890.00 },
@@ -33,22 +35,21 @@ const CATALOG_ITEMS = [
     { name: "Synthetic Espresso Beans", price: 150.00 },
 ];
 
+const RECEIPT_FUNCTION = "receipt-agent";
+
 export default function PosSimulatorView({
     webhookSlug: configuredWebhookSlug,
     templateId: configuredTemplateId,
-    selectedtemplateID,
-    transactionFunctionName,
 } = {}) {
     const [searchParams] = useSearchParams();
 
+    // Read configuration from props first, then URL parameters.
     const webhookSlug =
         configuredWebhookSlug ||
         searchParams.get("slug") ||
         "demo-store";
 
-    // Preserve the template selected by the parent page.
     const templateId =
-        selectedtemplateID ||
         configuredTemplateId ||
         searchParams.get("template") ||
         "matrix-grid";
@@ -56,20 +57,24 @@ export default function PosSimulatorView({
     const [customerEmail, setCustomerEmail] = useState(
         "messengerthapelo@gmail.com"
     );
+
     const [cart, setCart] = useState([CATALOG_ITEMS[0]]);
     const [isSending, setIsSending] = useState(false);
     const [createdReceiptUrl, setCreatedReceiptUrl] = useState("");
-    const [statusMessage, setStatusMessage] = useState("");
-    const [statusType, setStatusType] = useState("info");
 
     const handleAddToCart = (item) => {
-        setCart((prev) => [...prev, item]);
+        setCart((previousCart) => [...previousCart, item]);
+        setCreatedReceiptUrl("");
     };
 
     const handleRemoveItem = (index) => {
-        setCart((prev) => prev.filter((_, i) => i !== index));
+        setCart((previousCart) =>
+            previousCart.filter((_, itemIndex) => itemIndex !== index)
+        );
+        setCreatedReceiptUrl("");
     };
 
+    // Calculate the simulated transaction totals.
     const subtotal = cart.reduce(
         (sum, item) => sum + Number(item.price || 0),
         0
@@ -81,75 +86,59 @@ export default function PosSimulatorView({
     const SelectedTemplateComponent =
         TEMPLATE_MAP[templateId] || MatrixTillSlip;
 
+    // Submit the test transaction through the deployed Edge Function.
     const handleSimulatePurchase = async () => {
-        if (isSending) return;
-
-        const normalizedEmail = customerEmail.trim();
-
-        if (!normalizedEmail) {
-            setStatusType("error");
-            setStatusMessage("Please enter a customer email address.");
+        if (!webhookSlug || webhookSlug === "demo-store") {
+            alert(
+                "A valid business webhook slug is required. Configure your simulator with the merchant's actual webhook slug."
+            );
             return;
         }
 
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-            setStatusType("error");
-            setStatusMessage("Please enter a valid email address.");
+        if (!customerEmail.trim()) {
+            alert("Please enter a customer email address.");
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail.trim())) {
+            alert("Please enter a valid email address.");
             return;
         }
 
         if (cart.length === 0) {
-            setStatusType("error");
-            setStatusMessage("Please add at least one item to the cart.");
-            return;
-        }
-
-        if (!TEMPLATE_MAP[templateId]) {
-            setStatusType("error");
-            setStatusMessage(
-                `Unknown till slip template: ${templateId}`
-            );
-            return;
-        }
-
-        if (!transactionFunctionName) {
-            setStatusType("error");
-            setStatusMessage(
-                "Configure transactionFunctionName with your deployed " +
-                "Supabase transaction Edge Function name."
-            );
+            alert("Please add at least one item to the cart.");
             return;
         }
 
         setIsSending(true);
         setCreatedReceiptUrl("");
-        setStatusMessage("");
 
         try {
-            // 1. Require an authenticated user.
-            const {
-                data: { user },
-                error: authError,
-            } = await supabase.auth.getUser();
+            /*
+             * IMPORTANT:
+             * Do not insert directly into public.receipts here.
+             *
+             * The receipt-agent Edge Function handles the database insert
+             * using its service-role client.
+             *
+             * test_purchase: true tells the updated Edge Function to:
+             * - Authenticate the signed-in merchant.
+             * - Verify that the merchant owns the webhook slug.
+             * - Save the test receipt.
+             * - Skip loyalty voucher creation.
+             * - Skip customer email delivery.
+             */
 
-            if (authError || !user) {
-                throw new Error(
-                    "You must be signed in to complete a test purchase."
-                );
-            }
-
-            // 2. Submit the transaction to the existing server-side
-            // transaction handler, which uses Resend for email delivery.
-            //
-            // The handler must accept slug from the request body and
-            // persist template_id and design_config on the receipt.
             const { data, error } = await supabase.functions.invoke(
-                transactionFunctionName,
+                RECEIPT_FUNCTION,
                 {
                     body: {
                         slug: webhookSlug,
-                        customer_email: normalizedEmail,
-                        items: cart,
+                        customer_email: customerEmail.trim(),
+                        items: cart.map((item) => ({
+                            name: item.name,
+                            price: Number(item.price),
+                        })),
                         total_amount: Number(total.toFixed(2)),
                         template_id: templateId,
                         design_config: {},
@@ -159,85 +148,69 @@ export default function PosSimulatorView({
             );
 
             if (error) {
-                let details = error.message;
+                let detailedMessage = error.message;
 
-                if (error.context?.json) {
-                    try {
-                        const responseBody = await error.context.json();
-                        details =
-                            responseBody?.error ||
-                            responseBody?.message ||
-                            details;
-                    } catch {
-                        // Retain the original error message.
+                // Supabase Functions errors can contain a JSON response body.
+                try {
+                    const response = error.context;
+
+                    if (response && typeof response.json === "function") {
+                        const errorBody = await response.json();
+
+                        detailedMessage =
+                            errorBody?.error ||
+                            errorBody?.message ||
+                            detailedMessage;
                     }
+                } catch (parseError) {
+                    console.warn(
+                        "Could not read Edge Function error response:",
+                        parseError
+                    );
                 }
 
-                throw new Error(details || "Transaction request failed.");
+                throw new Error(detailedMessage);
             }
 
-            if (data?.error || data?.success === false) {
+            if (!data || data.success !== true || !data.receipt_id) {
                 throw new Error(
-                    data.error || "The transaction was not successful."
+                    data?.error ||
+                    data?.message ||
+                    "The receipt-agent function did not return a valid receipt ID."
                 );
             }
 
-            if (!data?.success) {
-                throw new Error(
-                    "The server did not confirm transaction success."
-                );
-            }
+            // Open the generated receipt using the returned database ID.
+            const receiptLink = `${window.location.origin}/receipt/${data.receipt_id}`;
 
-            // The existing handler returns success and voucher_token.
-            // Update it to also return receipt_id and email_sent before
-            // enabling this receipt-link and delivery confirmation.
-            if (data.receipt_id) {
-                setCreatedReceiptUrl(
-                    `${window.location.origin}/receipt/${data.receipt_id}`
-                );
-            }
+            setCreatedReceiptUrl(receiptLink);
 
-            if (data.email_sent === true) {
-                setStatusType("success");
-                setStatusMessage(
-                    `Test purchase completed. The server confirmed that ` +
-                    `the till slip email was sent to ${normalizedEmail}.`
-                );
-            } else {
-                setStatusType("warning");
-                setStatusMessage(
-                    "The transaction was processed, but email delivery " +
-                    "was not confirmed. Check the server response and Resend logs."
-                );
-            }
+            alert(
+                `Test receipt created successfully for ${customerEmail}. No customer email or loyalty voucher was generated.`
+            );
         } catch (err) {
-            console.error("Simulation error:", err);
-            setStatusType("error");
-            setStatusMessage(
-                `Simulation failed: ${err.message || "Unknown error"}`
+            console.error("POS simulation error:", err);
+
+            alert(
+                "Simulation failed: " +
+                (err?.message || "An unexpected error occurred.")
             );
         } finally {
             setIsSending(false);
         }
     };
 
+    // Preview data for the selected till-slip template.
     const mockReceiptData = {
         merchantName: webhookSlug.toUpperCase() + " STORE",
         location: "Gauteng, South Africa",
         items: cart.map((item) => ({
             name: item.name,
-            price: item.price.toFixed(2),
+            price: Number(item.price).toFixed(2),
         })),
         vat: vat.toFixed(2),
         total: total.toFixed(2),
         customer_email: customerEmail,
-    };
-
-    const statusColors = {
-        success: "#00ff66",
-        error: "#ff6464",
-        warning: "#ffd166",
-        info: "#00f0ff",
     };
 
     return (
@@ -251,7 +224,14 @@ export default function PosSimulatorView({
             }}
         >
             <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-                <div style={{ marginBottom: "30px", textAlign: "center" }}>
+
+                {/* Header */}
+                <div
+                    style={{
+                        marginBottom: "30px",
+                        textAlign: "center",
+                    }}
+                >
                     <h1
                         style={{
                             fontSize: "20px",
@@ -288,7 +268,10 @@ export default function PosSimulatorView({
                         gap: "30px",
                     }}
                 >
-                    {/* Purchase controls */}
+
+                    {/* ==================================================
+                        CUSTOMER ORDER CONTROLS
+                    ================================================== */}
                     <div
                         style={{
                             background: "#0a0e12",
@@ -308,6 +291,7 @@ export default function PosSimulatorView({
                             1. Simulate Customer Order
                         </h3>
 
+                        {/* Customer email */}
                         <div style={{ marginBottom: "15px" }}>
                             <label
                                 style={{
@@ -324,10 +308,10 @@ export default function PosSimulatorView({
                             <input
                                 type="email"
                                 value={customerEmail}
-                                onChange={(event) =>
-                                    setCustomerEmail(event.target.value)
-                                }
-                                autoComplete="email"
+                                onChange={(event) => {
+                                    setCustomerEmail(event.target.value);
+                                    setCreatedReceiptUrl("");
+                                }}
                                 style={{
                                     width: "100%",
                                     boxSizing: "border-box",
@@ -340,6 +324,7 @@ export default function PosSimulatorView({
                             />
                         </div>
 
+                        {/* Demo products */}
                         <div style={{ marginBottom: "15px" }}>
                             <label
                                 style={{
@@ -363,6 +348,7 @@ export default function PosSimulatorView({
                                 {CATALOG_ITEMS.map((item, index) => (
                                     <button
                                         key={index}
+                                        type="button"
                                         onClick={() => handleAddToCart(item)}
                                         style={{
                                             padding: "10px",
@@ -385,6 +371,7 @@ export default function PosSimulatorView({
                             </div>
                         </div>
 
+                        {/* Cart */}
                         <div style={{ marginBottom: "20px" }}>
                             <label
                                 style={{
@@ -407,64 +394,112 @@ export default function PosSimulatorView({
                                     overflowY: "auto",
                                 }}
                             >
-                                {cart.map((item, index) => (
-                                    <div
-                                        key={index}
+                                {cart.length === 0 ? (
+                                    <p
                                         style={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
+                                            color: "#777",
                                             fontSize: "11px",
-                                            marginBottom: "6px",
-                                            borderBottom: "1px solid #111",
-                                            paddingBottom: "4px",
                                         }}
                                     >
-                                        <span>{item.name}</span>
-                                        <span>
-                                            R{item.price.toFixed(2)}{" "}
-                                            <button
-                                                onClick={() =>
-                                                    handleRemoveItem(index)
-                                                }
-                                                aria-label={`Remove ${item.name}`}
+                                        Your cart is empty.
+                                    </p>
+                                ) : (
+                                    cart.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            style={{
+                                                display: "flex",
+                                                justifyContent: "space-between",
+                                                alignItems: "center",
+                                                gap: "10px",
+                                                fontSize: "11px",
+                                                marginBottom: "6px",
+                                                borderBottom: "1px solid #111",
+                                                paddingBottom: "4px",
+                                            }}
+                                        >
+                                            <span>{item.name}</span>
+
+                                            <span
                                                 style={{
-                                                    color: "red",
-                                                    background: "none",
-                                                    border: "none",
-                                                    cursor: "pointer",
+                                                    whiteSpace: "nowrap",
                                                 }}
                                             >
-                                                ×
-                                            </button>
-                                        </span>
-                                    </div>
-                                ))}
+                                                R{item.price.toFixed(2)}
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleRemoveItem(index)
+                                                    }
+                                                    aria-label={`Remove ${item.name}`}
+                                                    style={{
+                                                        color: "red",
+                                                        background: "none",
+                                                        border: "none",
+                                                        cursor: "pointer",
+                                                        marginLeft: "8px",
+                                                    }}
+                                                >
+                                                    ×
+                                                </button>
+                                            </span>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
 
+                        {/* Totals */}
                         <div
                             style={{
-                                marginBottom: "16px",
+                                borderTop: "1px solid #222",
+                                paddingTop: "12px",
+                                marginBottom: "18px",
                                 fontSize: "12px",
-                                color: "#aaa",
                             }}
                         >
-                            <div>
-                                Subtotal: R{subtotal.toFixed(2)}
-                            </div>
-                            <div>VAT (15%): R{vat.toFixed(2)}</div>
                             <div
                                 style={{
-                                    marginTop: "6px",
-                                    color: "#00f0ff",
-                                    fontWeight: "bold",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginBottom: "6px",
+                                    color: "#aaa",
                                 }}
                             >
-                                Total: R{total.toFixed(2)}
+                                <span>Subtotal</span>
+                                <span>R{subtotal.toFixed(2)}</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    marginBottom: "6px",
+                                    color: "#aaa",
+                                }}
+                            >
+                                <span>VAT (15%)</span>
+                                <span>R{vat.toFixed(2)}</span>
+                            </div>
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    fontWeight: "bold",
+                                    color: "#00f0ff",
+                                    fontSize: "14px",
+                                }}
+                            >
+                                <span>Total</span>
+                                <span>R{total.toFixed(2)}</span>
                             </div>
                         </div>
 
+                        {/* Submit test purchase */}
                         <button
+                            type="button"
                             onClick={handleSimulatePurchase}
                             disabled={isSending}
                             style={{
@@ -475,7 +510,7 @@ export default function PosSimulatorView({
                                 fontWeight: "bold",
                                 border: "none",
                                 borderRadius: "8px",
-                                cursor: isSending ? "wait" : "pointer",
+                                cursor: isSending ? "not-allowed" : "pointer",
                                 textTransform: "uppercase",
                                 letterSpacing: "1px",
                             }}
@@ -485,27 +520,27 @@ export default function PosSimulatorView({
                                 : "Complete Test Purchase 🚀"}
                         </button>
 
-                        {statusMessage && (
+                        {/* Generated receipt link */}
+                        {createdReceiptUrl && (
                             <div
-                                role="status"
-                                aria-live="polite"
                                 style={{
                                     marginTop: "15px",
                                     padding: "12px",
-                                    background: "#111",
-                                    border: `1px solid ${statusColors[statusType]}`,
+                                    background: "rgba(0,255,100,0.1)",
+                                    border: "1px solid #0f5",
                                     borderRadius: "8px",
-                                    color: statusColors[statusType],
-                                    fontSize: "12px",
-                                    overflowWrap: "anywhere",
                                 }}
                             >
-                                {statusMessage}
-                            </div>
-                        )}
+                                <p
+                                    style={{
+                                        fontSize: "11px",
+                                        color: "#0f5",
+                                        marginBottom: "6px",
+                                    }}
+                                >
+                                    Test receipt generated successfully!
+                                </p>
 
-                        {createdReceiptUrl && (
-                            <div style={{ marginTop: "15px" }}>
                                 <a
                                     href={createdReceiptUrl}
                                     target="_blank"
@@ -514,16 +549,31 @@ export default function PosSimulatorView({
                                         fontSize: "11px",
                                         color: "#00f0ff",
                                         textDecoration: "underline",
-                                        overflowWrap: "anywhere",
+                                        wordBreak: "break-all",
                                     }}
                                 >
                                     Open Generated Till Slip Link ↗
                                 </a>
                             </div>
                         )}
+
+                        <p
+                            style={{
+                                fontSize: "10px",
+                                color: "#777",
+                                lineHeight: "1.5",
+                                marginTop: "12px",
+                            }}
+                        >
+                            Simulator mode: creates a test receipt only.
+                            It does not send a customer email or create a
+                            loyalty voucher.
+                        </p>
                     </div>
 
-                    {/* Live till slip preview */}
+                    {/* ==================================================
+                        LIVE TILL SLIP PREVIEW
+                    ================================================== */}
                     <div
                         style={{
                             background: "#0a0e12",
@@ -550,23 +600,34 @@ export default function PosSimulatorView({
 
                         <div
                             style={{
-                                transform: "scale(0.85)",
-                                transformOrigin: "top center",
-                                maxWidth: "100%",
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                minWidth: 0,
                             }}
                         >
-                            <SelectedTemplateComponent
-                                receiptData={mockReceiptData}
-                                settings={{
-                                    business_name: webhookSlug.toUpperCase(),
-                                    currency: "ZAR",
-                                    discount_percentage: 10,
-                                    store_address: "Gauteng, South Africa",
+                            <div
+                                style={{
+                                    transform: "scale(0.85)",
+                                    transformOrigin: "top center",
                                 }}
-                                activeCurrencySymbol="R"
-                            />
+                            >
+                                <SelectedTemplateComponent
+                                    receiptData={mockReceiptData}
+                                    settings={{
+                                        business_name:
+                                            webhookSlug.toUpperCase(),
+                                        currency: "ZAR",
+                                        discount_percentage: 10,
+                                        store_address:
+                                            "Gauteng, South Africa",
+                                    }}
+                                    activeCurrencySymbol="R"
+                                />
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
