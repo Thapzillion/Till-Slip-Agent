@@ -16,8 +16,6 @@ import Profile from "./Profile";
 import Plan from "./Plan";
 import Help from "./Help";
 
-import PosSimulatorView from "./PosSimulatorView";
-
 import {
   LayoutDashboard,
   Store,
@@ -3588,14 +3586,6 @@ export default function AdminPanel() {
 
                   {activeTab === "connected-stores" && (
                     <ConnectedStores key={`stores-${databaseRefreshKey}`} />
-                  )}
-
-                  {activeTab === "pos-simulator" && (
-                    <PosSimulatorView
-                      key={`pos-simulator-${databaseRefreshKey}`}
-                      webhookSlug={settings?.webhook_slug}
-                      templateId={selectedTemplateId}
-                    />
                   )}
 
                   {activeTab === "agent-parameters" && (
