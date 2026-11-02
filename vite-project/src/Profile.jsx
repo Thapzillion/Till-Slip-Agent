@@ -239,33 +239,33 @@ export default function Profile({
 
     return (
         <div
-            className="profile-modal-overlay"
+            className="profile-modal-overlay ruach-profile-overlay"
             onMouseDown={(event) => {
                 if (event.target === event.currentTarget) onClose();
             }}
         >
             <section
-                className="profile-modal"
+                className="profile-modal ruach-profile-modal"
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="profile-modal-title"
             >
-                <header className="profile-modal-header">
-                    <div className="profile-heading-icon">
+                <header className="profile-modal-header ruach-profile-topline">
+                    <div className="profile-heading-icon ruach-profile-emblem">
                         <UserRound size={22} />
                     </div>
 
                     <div>
-                        <p className="profile-eyebrow">RUACHAGENT / ACCOUNT</p>
-                        <h2 id="profile-modal-title">Your Profile</h2>
-                        <p className="profile-subtitle">
+                        <p className="profile-eyebrow ruach-profile-eyebrow">RUACHAGENT / ACCOUNT</p>
+                        <h2 id="profile-modal-title" className="ruach-profile-title">Your Profile</h2>
+                        <p className="profile-subtitle ruach-profile-subtitle">
                             Account identity and subscription status
                         </p>
                     </div>
 
                     <button
                         type="button"
-                        className="profile-close-button"
+                        className="profile-close-button ruach-profile-close"
                         onClick={onClose}
                         aria-label="Close profile"
                     >
@@ -273,44 +273,44 @@ export default function Profile({
                     </button>
                 </header>
 
-                <div className="profile-content">
-                    <article className="profile-info-card">
-                        <div className="profile-card-icon">
+                <div className="profile-content ruach-profile-content">
+                    <article className="profile-info-card ruach-profile-info-card">
+                        <div className="profile-card-icon ruach-profile-info-icon">
                             <Mail size={19} />
                         </div>
 
-                        <div className="profile-card-copy">
-                            <span className="profile-label">ACCOUNT EMAIL</span>
-                            <strong className="profile-email">{email}</strong>
+                        <div className="profile-card-copy ruach-profile-info-copy">
+                            <span className="profile-label ruach-profile-field-label">ACCOUNT EMAIL</span>
+                            <strong className="profile-email ruach-profile-email">{email}</strong>
                         </div>
 
                         <ShieldCheck
-                            className="profile-security-icon"
+                            className="profile-security-icon ruach-profile-verified-icon"
                             size={20}
                         />
                     </article>
 
-                    <article className="profile-subscription-card">
-                        <div className="profile-plan-top">
-                            <div className="profile-card-icon">
+                    <article className="profile-subscription-card ruach-profile-plan-card">
+                        <div className="profile-plan-top ruach-profile-plan-top">
+                            <div className="profile-card-icon ruach-profile-plan-symbol">
                                 <Crown size={20} />
                             </div>
 
-                            <div className="profile-card-copy">
-                                <span className="profile-label">
+                            <div className="profile-card-copy ruach-profile-plan-heading">
+                                <span className="profile-label ruach-profile-field-label">
                                     CURRENT SUBSCRIPTION
                                 </span>
                                 <h3>{details.plan}</h3>
                             </div>
 
-                            <span className="profile-status">
+                            <span className="profile-status ruach-profile-status">
                                 {loading ? "Loading" : details.status}
                             </span>
                         </div>
 
                         {loading ? (
-                            <div className="profile-loading">
-                                <span className="profile-loading-indicator" />
+                            <div className="profile-loading ruach-profile-loading">
+                                <span className="profile-loading-indicator ruach-profile-spinner" />
                                 Connecting to subscription database…
                             </div>
                         ) : error ? (
@@ -320,14 +320,14 @@ export default function Profile({
                             </div>
                         ) : (
                             <>
-                                <div className="profile-countdown">
-                                    <span className="profile-label">
+                                <div className="profile-countdown ruach-profile-countdown">
+                                    <span className="profile-label ruach-profile-field-label">
                                         {details.isTrial
                                             ? "FREE TRIAL TIME REMAINING"
                                             : "SUBSCRIPTION TIME REMAINING"}
                                     </span>
 
-                                    <div className="profile-countdown-value">
+                                    <div className="profile-countdown-value ruach-profile-days">
                                         {details.daysRemaining === null
                                             ? "--"
                                             : details.daysRemaining}
@@ -349,10 +349,10 @@ export default function Profile({
                                     </p>
                                 </div>
 
-                                <div className="profile-date-row">
+                                <div className="profile-date-row ruach-profile-expiry-row">
                                     <CalendarClock size={18} />
                                     <div>
-                                        <span className="profile-label">
+                                        <span className="profile-label ruach-profile-field-label">
                                             {details.periodLabel.toUpperCase()}
                                         </span>
                                         <strong>{formatDate(details.endDate)}</strong>
@@ -360,10 +360,10 @@ export default function Profile({
                                 </div>
 
                                 {subscription?.last_payment_at && (
-                                    <div className="profile-date-row">
+                                    <div className="profile-date-row ruach-profile-expiry-row">
                                         <Clock3 size={18} />
                                         <div>
-                                            <span className="profile-label">
+                                            <span className="profile-label ruach-profile-field-label">
                                                 LAST PAYMENT
                                             </span>
                                             <strong>
@@ -378,7 +378,7 @@ export default function Profile({
 
                     <button
                         type="button"
-                        className="profile-refresh-button"
+                        className="profile-refresh-button ruach-profile-done"
                         onClick={() => loadProfile({ silent: true })}
                         disabled={loading || refreshing}
                     >
@@ -390,8 +390,8 @@ export default function Profile({
                     </button>
                 </div>
 
-                <footer className="profile-modal-footer">
-                    <span className="profile-live-dot" />
+                <footer className="profile-modal-footer ruach-profile-footer">
+                    <span className="profile-live-dot ruach-profile-brand-dot" />
                     Subscription data from Supabase
                 </footer>
             </section>
