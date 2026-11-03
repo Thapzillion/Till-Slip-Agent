@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ruachagent-v1';
+const CACHE_NAME = 'ruachagent-v2';
 const ASSETS_TO_CACHE = [
   '/',           // This automatically serves your root index.html in Vite
   '/manifest.json',
@@ -38,18 +38,48 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const isMediaRequest = ['audio', 'video'].includes(event.request.destination);
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // If valid network response, clone it to cache for offline static fallback
-        if (event.request.method === 'GET' && response.status === 200) {
+        // Avoid caching large media files or rewritten HTML as media.
+        if (
+          !isMediaRequest &&
+          response.status === 200 &&
+          !response.headers.get('content-type')?.includes('text/html')
+        ) {
           const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
+          event.waitUntil(
+            caches.open(CACHE_NAME)
+              .then((cache) => cache.put(event.request, responseClone))
+              .catch((error) => {
+                console.warn('RuachAgent cache write failed:', error);
+              })
+          );
         }
         return response;
       })
-      .catch(() => caches.match(event.request)) // Fallback to cache if completely offline
+      .catch(async () => {
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
+
+        if (event.request.mode === 'navigate') {
+          const cachedAppShell = await caches.match('/');
+          if (cachedAppShell) return cachedAppShell;
+        }
+
+        return new Response(null, {
+          status: 503,
+          statusText: 'Offline',
+          headers: {
+            'Content-Type': isMediaRequest ? 'video/mp4' : 'text/plain',
+          },
+        });
+      })
   );
 });
