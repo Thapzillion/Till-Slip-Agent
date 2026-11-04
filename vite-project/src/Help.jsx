@@ -1,552 +1,417 @@
 
-import { useCallback, useEffect, useRef, useState } from "react";
+
+import React, { useEffect, useState } from "react";
 import {
     X,
-    Sparkles,
-    Send,
-    Bot,
-    UserRound,
-    Plus,
-    MessageSquare,
-    Zap,
-    CircleHelp,
+    Mail,
+    Phone,
+    Clock,
+    Headphones,
+    MessageCircle,
+    Building2,
+    ShieldCheck,
+    ChevronDown,
     ArrowUpRight,
-    LoaderCircle,
-    AlertCircle,
-    Copy,
+    Zap,
+    LifeBuoy
 } from "lucide-react";
-import { supabase } from "./supabaseClient";
+
 import "./Help.css";
 
-const SUGGESTED_QUESTIONS = [
-    {
-        icon: "receipt",
-        title: "Till slips",
-        prompt: "How do I configure and send digital till slips to customers?",
-    },
-    {
-        icon: "store",
-        title: "Connect a store",
-        prompt: "How do I connect my store or POS system to RuachAgent?",
-    },
-    {
-        icon: "settings",
-        title: "Agent parameters",
-        prompt: "Explain the Agent Parameters page and how to configure it.",
-    },
-    {
-        icon: "plan",
-        title: "My subscription",
-        prompt: "Explain my free trial, Premium plan, and subscription status.",
-    },
-];
-
-const createMessageId = () =>
-    `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-
-
-function getAssistantText(data) {
-    if (typeof data === "string") {
-        return data.trim();
-    }
-
-    if (!data || typeof data !== "object") {
-        return "";
-    }
-
-    const directResponse =
-        data.chatResponse ??
-        data.reply ??
-        data.response ??
-        data.text ??
-        data.answer ??
-        data.output ??
-        data.content ??
-        data.message;
-
-    if (typeof directResponse === "string" && directResponse.trim()) {
-        return directResponse.trim();
-    }
-
-    // Handle Gemini's candidates-based response format.
-    const parts = data.candidates?.[0]?.content?.parts;
-
-    if (Array.isArray(parts)) {
-        return parts
-            .map((part) => part?.text ?? "")
-            .join("\n")
-            .trim();
-    }
-
-    // Handle an Edge Function returning { data: { reply: "..." } }.
-    if (data.data && typeof data.data === "object") {
-        return getAssistantText(data.data);
-    }
-
-    return "";
-}
-
-
-function SuggestionIcon({ type }) {
-    if (type === "receipt") return <MessageSquare size={16} />;
-    if (type === "store") return <ArrowUpRight size={16} />;
-    if (type === "settings") return <Zap size={16} />;
-    return <CircleHelp size={16} />;
-}
-
-export default function Help({
-    isOpen = true,
-    onClose = () => { },
-    user = null,
-}) {
-    const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState("");
-    const [sending, setSending] = useState(false);
-    const [error, setError] = useState("");
-    const [copiedId, setCopiedId] = useState(null);
-
-    const listRef = useRef(null);
-    const inputRef = useRef(null);
-    const sendingRef = useRef(false);
-
-    const scrollToBottom = useCallback(() => {
-        requestAnimationFrame(() => {
-            listRef.current?.scrollTo({
-                top: listRef.current.scrollHeight,
-                behavior: "smooth",
-            });
-        });
-    }, []);
+const Help = ({ isOpen = true, onClose = () => { } }) => {
+    const [expandedFaq, setExpandedFaq] = useState(0);
 
     useEffect(() => {
         if (!isOpen) return;
 
         const handleEscape = (event) => {
-            if (event.key === "Escape") onClose();
+            if (event.key === "Escape") {
+                onClose();
+            }
         };
 
-        window.addEventListener("keydown", handleEscape);
-
-        const focusTimer = window.setTimeout(() => {
-            inputRef.current?.focus();
-        }, 250);
+        document.addEventListener("keydown", handleEscape);
 
         return () => {
-            window.removeEventListener("keydown", handleEscape);
-            window.clearTimeout(focusTimer);
+            document.removeEventListener("keydown", handleEscape);
         };
     }, [isOpen, onClose]);
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, sending, scrollToBottom]);
-
-    const startNewChat = () => {
-        if (sendingRef.current) return;
-        setMessages([]);
-        setInput("");
-        setError("");
-        setCopiedId(null);
-        inputRef.current?.focus();
-    };
-
-    const sendMessage = async (messageOverride) => {
-        const message = String(messageOverride ?? input).trim();
-
-        if (!message || sendingRef.current) return;
-
-        sendingRef.current = true;
-        setSending(true);
-        setError("");
-        setInput("");
-
-        const userMessage = {
-            id: createMessageId(),
-            role: "user",
-            content: message,
-            createdAt: new Date().toISOString(),
-        };
-
-        setMessages((current) => [...current, userMessage]);
-
-        try {
-            const {
-                data: { session },
-                error: sessionError,
-            } = await supabase.auth.getSession();
-
-            if (sessionError) throw sessionError;
-
-            if (!session?.access_token) {
-                throw new Error("Please sign in again to use RuachAgent AI.");
-            }
-
-
-            const { data, error: functionError } =
-                await supabase.functions.invoke("google-api-handler", {
-                    body: {
-                        prompt: message.trim(),
-                        userId: user?.id ?? session?.user?.id ?? null,
-                    },
-                });
-
-            if (functionError) {
-                let detail = "";
-
-                try {
-                    const response = functionError.context;
-
-                    if (response && typeof response.json === "function") {
-                        const body = await response.json();
-                        detail = body?.error || body?.message || "";
-                    }
-                } catch {
-                    // Fall back to the Supabase error message.
-                }
-
-                throw new Error(
-                    detail ||
-                    functionError.message ||
-                    "RuachAgent AI could not be reached. Please try again."
-                );
-            }
-
-            if (data?.error) {
-                throw new Error(
-                    typeof data.error === "string"
-                        ? data.error
-                        : data.error?.message ||
-                        "RuachAgent AI returned an error."
-                );
-            }
-
-            const assistantText = getAssistantText(data);
-
-            if (!assistantText) {
-                console.error(
-                    "RuachAgent AI returned an unexpected response:",
-                    data
-                );
-
-                throw new Error(
-                    "RuachAgent AI received no readable answer from the AI service. Check the Edge Function logs."
-                );
-            }
-
-            setMessages((current) => [
-                ...current,
-                {
-                    id: createMessageId(),
-                    role: "assistant",
-                    content: assistantText,
-                    createdAt: new Date().toISOString(),
-                },
-            ]);
-
-        } catch (err) {
-            console.error("RuachAgent AI chat error:", err);
-            setError(
-                err?.message ||
-                "Something went wrong while contacting RuachAgent AI."
-            );
-        } finally {
-            sendingRef.current = false;
-            setSending(false);
-            inputRef.current?.focus();
-        }
-    };
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        sendMessage();
-    };
-
-    const copyMessage = async (message) => {
-        try {
-            await navigator.clipboard.writeText(message.content);
-            setCopiedId(message.id);
-            window.setTimeout(() => {
-                setCopiedId((current) => current === message.id ? null : current);
-            }, 1600);
-        } catch (err) {
-            console.error("Unable to copy AI message:", err);
-            setError("Could not copy the message. Please select and copy it manually.");
-        }
-    };
-
     if (!isOpen) return null;
 
-    const isFirstVisit = messages.length === 0;
+    const emailAddress = "ruachagentts@gmail.com";
+    const phoneNumber = "+27679640375";
+
+    const faqs = [
+        {
+            question: "What details should I include when emailing support?",
+            answer:
+                "To help us resolve your issue quickly, please include your full name, account or order reference (if applicable), and a clear description of your question or issue."
+        },
+        {
+            question: "What is the response time for phone calls?",
+            answer:
+                "Calls made during operational hours are answered immediately by our support team. If you call outside of business hours, please leave a message or send an email, and we will follow up with you on the next business day."
+        }
+    ];
+
+    const departments = [
+        {
+            name: "Technical Support",
+            method: "Email",
+            detail: emailAddress,
+            icon: ShieldCheck,
+            link: `mailto:${emailAddress}`
+        },
+        {
+            name: "General Inquiries",
+            method: "Email or Phone",
+            detail: "Contact our support team",
+            icon: MessageCircle,
+            link: `mailto:${emailAddress}`
+        },
+        {
+            name: "Urgent Assistance",
+            method: "Phone",
+            detail: "+27 67 964 0375",
+            icon: Zap,
+            link: `tel:${phoneNumber}`
+        },
+        {
+            name: "Partnerships & Business",
+            method: "Email",
+            detail: emailAddress,
+            icon: Building2,
+            link: `mailto:${emailAddress}`
+        }
+    ];
 
     return (
         <div
-            className="help-overlay"
+            className="ra-help-overlay"
             onMouseDown={(event) => {
-                if (event.target === event.currentTarget) onClose();
+                if (event.target === event.currentTarget) {
+                    onClose();
+                }
             }}
         >
-            <section
-                className="help-modal"
+            <div
+                className="ra-help-modal"
                 role="dialog"
                 aria-modal="true"
-                aria-labelledby="help-heading"
+                aria-labelledby="ra-help-title"
             >
-                <div className="help-ambient help-ambient-one" />
-                <div className="help-ambient help-ambient-two" />
-
-                <header className="help-header">
-                    <div className="help-brand">
-                        <div className="help-logo">
-                            <Sparkles size={22} />
-                            <span className="help-logo-orbit" />
+                {/* HEADER */}
+                <header className="ra-help-header">
+                    <div className="ra-help-brand">
+                        <div className="ra-help-brand-icon">
+                            <LifeBuoy size={23} />
                         </div>
 
-                        <div className="help-brand-text">
-                            <div className="help-brand-line">
-                                <span className="help-brand-name">RUACHAGENT</span>
-                                <span className="help-ai-chip">AI</span>
+                        <div>
+                            <div className="ra-help-brand-name">
+                                RUACHAGENT
+                                <span className="ra-help-ai-label">
+                                    SUPPORT
+                                </span>
                             </div>
-                            <span className="help-brand-subtitle">Intelligent support system</span>
+
+                            <div className="ra-help-brand-subtitle">
+                                Customer assistance centre
+                            </div>
                         </div>
                     </div>
 
-                    <div className="help-header-actions">
-                        <button
-                            type="button"
-                            className="help-new-chat"
-                            onClick={startNewChat}
-                            disabled={sending}
-                            title="Start a new conversation"
-                        >
-                            <Plus size={16} />
-                            <span>New chat</span>
-                        </button>
-
-                        <button
-                            type="button"
-                            className="help-close"
-                            onClick={onClose}
-                            aria-label="Close AI help"
-                        >
-                            <X size={19} />
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        className="ra-help-close"
+                        onClick={onClose}
+                        aria-label="Close help"
+                    >
+                        <X size={19} />
+                    </button>
                 </header>
 
-                <div className="help-system-strip">
-                    <span className="help-online-indicator">
-                        <span />
+                {/* STATUS STRIP */}
+                <div className="ra-help-status">
+                    <div className="ra-help-status-left">
+                        <span className="ra-help-status-dot" />
+                        CUSTOMER SUPPORT
+                        <span className="ra-help-status-divider">/</span>
+                        WE'RE HERE TO HELP
+                    </div>
+
+                    <span className="ra-help-secure-label">
+                        RUACHAGENT SUPPORT
                     </span>
-                    <span>AI KNOWLEDGE ENGINE</span>
-                    <span className="help-strip-divider">/</span>
-                    <span className="help-strip-muted">GEMINI INTELLIGENCE</span>
-                    <span className="help-strip-spacer" />
-                    <span className="help-secure-label">SECURE SESSION</span>
                 </div>
 
-                <main className="help-chat-layout">
-                    <div className="help-messages" ref={listRef}>
-                        {isFirstVisit ? (
-                            <div className="help-welcome">
-                                <div className="help-welcome-core">
-                                    <div className="help-core-ring help-core-ring-one" />
-                                    <div className="help-core-ring help-core-ring-two" />
-                                    <div className="help-core-center">
-                                        <Sparkles size={30} />
+                {/* MAIN CONTENT */}
+                <main className="ra-help-content">
+
+                    {/* INTRODUCTION */}
+                    <section className="ra-help-intro">
+                        <div className="ra-help-eyebrow">
+                            <span className="ra-help-eyebrow-line" />
+                            DEDICATED CUSTOMER CARE
+                        </div>
+
+                        <h1 id="ra-help-title">
+                            Need Help?
+                            <span> We're Here for You.</span>
+                        </h1>
+
+                        <p>
+                            At <strong>RuachAgent</strong>, we are dedicated
+                            to providing fast, reliable support for all your
+                            inquiries, feedback, and technical assistance
+                            needs. Whether you have a question about our
+                            services, need assistance with your account, or
+                            want to discuss business opportunities, our team
+                            is ready to assist.
+                        </p>
+                    </section>
+
+                    {/* CONTACT CARDS */}
+                    <section className="ra-help-section">
+                        <div className="ra-help-section-heading">
+                            <div>
+                                <span className="ra-help-section-kicker">
+                                    GET IN TOUCH
+                                </span>
+                                <h2>Contact Information</h2>
+                            </div>
+
+                            <Headphones size={22} />
+                        </div>
+
+                        <div className="ra-help-contact-grid">
+
+                            {/* EMAIL */}
+                            <article className="ra-help-contact-card">
+                                <div className="ra-help-card-top">
+                                    <div className="ra-help-contact-icon">
+                                        <Mail size={21} />
                                     </div>
-                                    <span className="help-core-node help-core-node-one" />
-                                    <span className="help-core-node help-core-node-two" />
-                                    <span className="help-core-node help-core-node-three" />
+
+                                    <span className="ra-help-card-tag">
+                                        EMAIL SUPPORT
+                                    </span>
                                 </div>
 
-                                <span className="help-eyebrow">YOUR BUSINESS AI ASSISTANT</span>
-                                <h1 id="help-heading">
-                                    How can I
-                                    <br />
-                                    <span>help you today?</span>
-                                </h1>
-                                <p className="help-welcome-description">
-                                    Ask me about till slips, merchant settings, store connections,
-                                    webhooks, subscriptions, or how RuachAgent works.
+                                <h3>Email Support</h3>
+
+                                <p>
+                                    For general inquiries, customer support,
+                                    technical assistance, or business inquiries,
+                                    reach out to us via email.
                                 </p>
 
-                                <div className="help-suggestions-heading">
-                                    <span>QUICK START</span>
-                                    <span className="help-suggestion-line" />
+                                <div className="ra-help-contact-detail">
+                                    <span>Email Address</span>
+
+                                    <a href={`mailto:${emailAddress}`}>
+                                        {emailAddress}
+                                        <ArrowUpRight size={14} />
+                                    </a>
                                 </div>
 
-                                <div className="help-suggestions">
-                                    {SUGGESTED_QUESTIONS.map((item) => (
+                                <div className="ra-help-response-note">
+                                    <Clock size={14} />
+                                    <span>
+                                        Response within 24 business hours
+                                    </span>
+                                </div>
+
+                                <a
+                                    href={`mailto:${emailAddress}`}
+                                    className="ra-help-action"
+                                >
+                                    Send an Email
+                                    <ArrowUpRight size={16} />
+                                </a>
+                            </article>
+
+                            {/* PHONE */}
+                            <article className="ra-help-contact-card">
+                                <div className="ra-help-card-top">
+                                    <div className="ra-help-contact-icon">
+                                        <Phone size={21} />
+                                    </div>
+
+                                    <span className="ra-help-card-tag">
+                                        DIRECT ASSISTANCE
+                                    </span>
+                                </div>
+
+                                <h3>Phone Support</h3>
+
+                                <p>
+                                    Prefer to speak directly with our team?
+                                    Give us a call during our standard
+                                    business hours.
+                                </p>
+
+                                <div className="ra-help-contact-detail">
+                                    <span>Phone Number</span>
+
+                                    <a href={`tel:${phoneNumber}`}>
+                                        +27 67 964 0375
+                                        <ArrowUpRight size={14} />
+                                    </a>
+                                </div>
+
+                                <div className="ra-help-response-note">
+                                    <Clock size={14} />
+                                    <span>
+                                        Monday – Friday, 8:00 AM – 5:00 PM
+                                        (SAST)
+                                    </span>
+                                </div>
+
+                                <a
+                                    href={`tel:${phoneNumber}`}
+                                    className="ra-help-action"
+                                >
+                                    Call Support
+                                    <ArrowUpRight size={16} />
+                                </a>
+                            </article>
+                        </div>
+                    </section>
+
+                    {/* DEPARTMENTS */}
+                    <section className="ra-help-section">
+                        <div className="ra-help-section-heading">
+                            <div>
+                                <span className="ra-help-section-kicker">
+                                    SUPPORT DIRECTORY
+                                </span>
+                                <h2>How We Can Help</h2>
+                            </div>
+
+                            <Building2 size={21} />
+                        </div>
+
+                        <div className="ra-help-departments">
+                            {departments.map((department, index) => {
+                                const DepartmentIcon = department.icon;
+
+                                return (
+                                    <div
+                                        className="ra-help-department"
+                                        key={department.name}
+                                    >
+                                        <div className="ra-help-department-icon">
+                                            <DepartmentIcon size={17} />
+                                        </div>
+
+                                        <div className="ra-help-department-info">
+                                            <strong>{department.name}</strong>
+                                            <span>{department.method}</span>
+                                        </div>
+
+                                        <a
+                                            href={department.link}
+                                            className="ra-help-department-link"
+                                        >
+                                            {department.detail}
+                                            <ArrowUpRight size={13} />
+                                        </a>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
+
+                    {/* FAQ */}
+                    <section className="ra-help-section ra-help-faq-section">
+                        <div className="ra-help-section-heading">
+                            <div>
+                                <span className="ra-help-section-kicker">
+                                    QUICK ANSWERS
+                                </span>
+                                <h2>Frequently Asked Questions</h2>
+                            </div>
+
+                            <MessageCircle size={21} />
+                        </div>
+
+                        <div className="ra-help-faq-list">
+                            {faqs.map((faq, index) => {
+                                const isExpanded = expandedFaq === index;
+
+                                return (
+                                    <div
+                                        className={`ra-help-faq ${isExpanded ? "expanded" : ""
+                                            }`}
+                                        key={faq.question}
+                                    >
                                         <button
                                             type="button"
-                                            className="help-suggestion"
-                                            key={item.title}
-                                            onClick={() => sendMessage(item.prompt)}
-                                            disabled={sending}
+                                            className="ra-help-faq-question"
+                                            onClick={() =>
+                                                setExpandedFaq(
+                                                    isExpanded ? -1 : index
+                                                )
+                                            }
+                                            aria-expanded={isExpanded}
                                         >
-                                            <span className="help-suggestion-icon">
-                                                <SuggestionIcon type={item.icon} />
+                                            <span>
+                                                <span className="ra-help-faq-number">
+                                                    0{index + 1}
+                                                </span>
+
+                                                {faq.question}
                                             </span>
-                                            <span className="help-suggestion-copy">
-                                                <strong>{item.title}</strong>
-                                                <small>{item.prompt}</small>
-                                            </span>
-                                            <ArrowUpRight
-                                                size={15}
-                                                className="help-suggestion-arrow"
+
+                                            <ChevronDown
+                                                size={18}
+                                                className="ra-help-faq-chevron"
                                             />
                                         </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="help-conversation">
-                                <div className="help-conversation-label">
-                                    <span className="help-conversation-label-dot" />
-                                    CONVERSATION ACTIVE
-                                </div>
 
-                                {messages.map((message) => {
-                                    const isAssistant = message.role === "assistant";
-
-                                    return (
-                                        <article
-                                            key={message.id}
-                                            className={`help-message ${isAssistant ? "help-message-assistant" : "help-message-user"
-                                                }`}
-                                        >
-                                            <div className="help-message-avatar">
-                                                {isAssistant ? (
-                                                    <Sparkles size={16} />
-                                                ) : (
-                                                    <UserRound size={16} />
-                                                )}
+                                        {isExpanded && (
+                                            <div className="ra-help-faq-answer">
+                                                {faq.answer}
                                             </div>
-
-                                            <div className="help-message-main">
-                                                <div className="help-message-meta">
-                                                    <strong>
-                                                        {isAssistant ? "RuachAgent AI" : "You"}
-                                                    </strong>
-                                                    <span>
-                                                        {isAssistant ? "AI ASSISTANT" : "MESSAGE"}
-                                                    </span>
-                                                </div>
-
-                                                <div className="help-message-bubble">
-                                                    {message.content}
-                                                </div>
-
-                                                {isAssistant && (
-                                                    <button
-                                                        type="button"
-                                                        className="help-copy-button"
-                                                        onClick={() => copyMessage(message)}
-                                                        title="Copy response"
-                                                    >
-                                                        <Copy size={12} />
-                                                        {copiedId === message.id ? "Copied" : "Copy response"}
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </article>
-                                    );
-                                })}
-
-                                {sending && (
-                                    <div className="help-message help-message-assistant">
-                                        <div className="help-message-avatar help-typing-avatar">
-                                            <Sparkles size={16} />
-                                        </div>
-                                        <div className="help-message-main">
-                                            <div className="help-message-meta">
-                                                <strong>RuachAgent AI</strong>
-                                                <span>PROCESSING</span>
-                                            </div>
-                                            <div className="help-typing-bubble" aria-label="AI is typing">
-                                                <span />
-                                                <span />
-                                                <span />
-                                                <small>Thinking through your question</small>
-                                            </div>
-                                        </div>
+                                        )}
                                     </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-
-                    {error && (
-                        <div className="help-error" role="alert">
-                            <AlertCircle size={16} />
-                            <span>{error}</span>
-                            <button type="button" onClick={() => setError("")} aria-label="Dismiss error">
-                                <X size={14} />
-                            </button>
+                                );
+                            })}
                         </div>
-                    )}
+                    </section>
 
-                    <div className="help-composer-area">
-                        <form className="help-composer" onSubmit={handleSubmit}>
-                            <div className="help-composer-topline">
-                                <span className="help-composer-status">
-                                    <span />
-                                    MESSAGE RUACHAGENT AI
-                                </span>
-                                <span className="help-composer-hint">Enter to send</span>
-                            </div>
+                    {/* BOTTOM BANNER */}
+                    <section className="ra-help-bottom-banner">
+                        <div className="ra-help-bottom-icon">
+                            <Zap size={20} />
+                        </div>
 
-                            <textarea
-                                ref={inputRef}
-                                className="help-input"
-                                value={input}
-                                onChange={(event) => setInput(event.target.value)}
-                                onKeyDown={(event) => {
-                                    if (
-                                        event.key === "Enter" &&
-                                        !event.shiftKey &&
-                                        !event.nativeEvent.isComposing
-                                    ) {
-                                        event.preventDefault();
-                                        handleSubmit(event);
-                                    }
-                                }}
-                                placeholder="Ask anything about your RuachAgent workspace..."
-                                rows={2}
-                                maxLength={5000}
-                                disabled={sending}
-                                aria-label="Message RuachAgent AI"
-                            />
+                        <div>
+                            <strong>We're ready when you need us.</strong>
+                            <span>
+                                Your RuachAgent support team is just a message
+                                or phone call away.
+                            </span>
+                        </div>
 
-                            <div className="help-composer-bottom">
-                                <span className="help-ai-disclaimer">
-                                    <Bot size={14} />
-                                    AI responses can make mistakes. Verify important details.
-                                </span>
+                        <a href={`mailto:${emailAddress}`}>
+                            Contact Us
+                            <ArrowUpRight size={15} />
+                        </a>
+                    </section>
 
-                                <button
-                                    type="submit"
-                                    className="help-send-button"
-                                    disabled={!input.trim() || sending}
-                                    aria-label="Send message"
-                                >
-                                    {sending ? (
-                                        <LoaderCircle size={17} className="help-spin" />
-                                    ) : (
-                                        <Send size={16} />
-                                    )}
-                                    <span>{sending ? "Thinking..." : "Send"}</span>
-                                </button>
-                            </div>
-                        </form>
-
-                        <footer className="help-footer">
-                            <span>RUACHAGENT <span className="help-footer-dot">·</span> HELP CENTRE</span>
-                            <span>POWERED BY GEMINI</span>
-                        </footer>
-                    </div>
                 </main>
-            </section>
+
+                {/* FOOTER */}
+                <footer className="ra-help-footer">
+                    <span>RUACHAGENT · CUSTOMER SUPPORT</span>
+                    <span>POWERED BY RUACHAGENT</span>
+                </footer>
+            </div>
         </div>
     );
-}
+};
+
+export default Help;
