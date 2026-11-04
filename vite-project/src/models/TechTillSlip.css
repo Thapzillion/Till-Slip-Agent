@@ -15,6 +15,8 @@
 
     width: 100%;
     box-sizing: border-box;
+    container-type: inline-size;
+    container-name: tech-slip-scene;
     padding: 28px 14px;
     display: flex;
     justify-content: center;
@@ -1073,6 +1075,99 @@
     opacity: 0.035;
     filter: grayscale(1) brightness(1.6);
     pointer-events: none;
+}
+
+@container tech-slip-scene (max-width: 500px) {
+    .tech-slip-inner {
+        padding: 20px 15px;
+    }
+
+    .tech-slip-header {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 22px;
+        padding-top: 10px;
+    }
+
+    .tech-slip-brand-visual {
+        gap: 12px;
+    }
+
+    .tech-slip-logo-orbit {
+        width: 145px;
+    }
+
+    .tech-slip-business {
+        padding: 20px 0 0;
+        border-top: 1px solid var(--tech-line);
+        border-left: 0;
+    }
+
+    .tech-slip-title {
+        font-size: clamp(30px, 9cqw, 43px);
+        letter-spacing: 4px;
+    }
+
+    .tech-slip-metadata {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        margin: 20px 0 25px;
+    }
+
+    .tech-meta-cell {
+        padding: 13px 10px;
+    }
+
+    .tech-meta-cell:last-child {
+        grid-column: 1 / -1;
+        border-top: 1px solid var(--tech-line-soft);
+        border-left: 0;
+    }
+
+    .tech-slip-payment-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .tech-slip-qr-panel {
+        padding: 20px;
+    }
+
+    .tech-slip-totals-panel {
+        padding: 17px;
+    }
+
+    .tech-grand-total {
+        margin-right: -17px;
+        margin-left: -17px;
+        padding: 17px;
+    }
+
+    .tech-slip-authenticity {
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 12px;
+        padding: 18px 12px;
+    }
+
+    .tech-auth-icon {
+        width: 38px;
+        height: 42px;
+    }
+
+    .tech-auth-copy strong {
+        font-size: 9px;
+        letter-spacing: 0.8px;
+    }
+
+    .tech-auth-copy span {
+        font-size: 9px;
+    }
+
+    .tech-thank-you {
+        grid-column: 1 / -1;
+        padding: 17px 0 0;
+        border-top: 1px solid var(--tech-line);
+        border-left: 0;
+    }
 }
 
 /* ================================================================
