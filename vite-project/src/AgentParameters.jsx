@@ -1107,7 +1107,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
 
   return (
-    <div style={styles.page}>
+    <div className="agent-parameters-page" style={styles.page}>
 
       {/* =========================================================
         AMBIENT TESLA BACKGROUND
@@ -1204,7 +1204,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
           METRICS ROW
       ======================================================= */}
 
-          <section style={styles.metricsGrid}>
+          <section className="agent-parameters-mobile-metrics" style={styles.metricsGrid}>
 
             <div style={styles.metricCard}>
 
@@ -1298,7 +1298,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
           MAIN DASHBOARD GRID
       ======================================================= */}
 
-          <div style={styles.dashboardGrid}>
+          <div className="agent-parameters-mobile-dashboard" style={styles.dashboardGrid}>
 
             {/* =====================================================
             LEFT COLUMN
@@ -1468,7 +1468,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   BUSINESS INFORMATION
               =============================================== */}
 
-                  <div style={styles.fieldGrid}>
+                  <div className="agent-parameters-mobile-fields" style={styles.fieldGrid}>
 
                     <div style={styles.field}>
 
@@ -1825,7 +1825,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                   </div>
 
 
-                  <div style={styles.fieldGrid}>
+                  <div className="agent-parameters-mobile-fields" style={styles.fieldGrid}>
 
                     {/* CURRENCY */}
 

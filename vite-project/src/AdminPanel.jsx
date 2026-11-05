@@ -695,7 +695,7 @@ export default function AdminPanel() {
   }
 
   return (
-    <div style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
+    <div className="admin-app-root" style={{ ...styles.container, opacity: isAuthSyncing ? 0.6 : 1 }}>
 
 
       {/* GLOBAL MODAL 3: PREMIUM PAYMENT NEGOTIATION */}

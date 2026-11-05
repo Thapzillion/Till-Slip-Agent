@@ -290,6 +290,7 @@ export default function TillSlipsCollection({
 =========================================================================== */}
 
             <div
+                className="till-slips-collection-page"
                 style={{
                     display: "flex",
                     flexDirection: "column",
@@ -307,6 +308,7 @@ export default function TillSlipsCollection({
                 <div style={styles.gridOverlay} />
 
                 <div
+                    className="till-slips-collection-header"
                     style={{
                         flex: "0 0 auto",
                         flexShrink: 0,
@@ -410,6 +412,7 @@ export default function TillSlipsCollection({
                         {/* RIGHT */}
 
                         <div
+                            className="till-slips-search-row"
                             style={{
                                 display: "flex",
                                 gap: 14,
@@ -421,6 +424,7 @@ export default function TillSlipsCollection({
                             {/* LIVE */}
 
                             <div
+                                className="till-slips-search-field"
                                 style={{
                                     display: "flex",
                                     alignItems: "center",
@@ -501,6 +505,7 @@ export default function TillSlipsCollection({
                         {/* SEARCH */}
 
                         <div
+                            className="till-slips-design-grid"
                             style={{
                                 flex: 1,
                                 minWidth: 320,

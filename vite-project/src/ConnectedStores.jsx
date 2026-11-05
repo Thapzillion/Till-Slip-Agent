@@ -1340,14 +1340,14 @@ export default function ConnectedStores() {
     // ============================
 
     return (
-        <div style={styles.page}>
+        <div className="connected-stores-page" style={styles.page}>
             <div style={styles.shell}>
 
                 {/* ========================================= */}
                 {/* Page Header */}
                 {/* ========================================= */}
 
-                <header style={styles.header}>
+                <header className="connected-stores-mobile-header" style={styles.header}>
                     <div style={styles.headerLeft}>
 
                         <div style={styles.headerIcon}>
@@ -1371,7 +1371,7 @@ export default function ConnectedStores() {
 
                     </div>
 
-                    <div style={styles.headerActions}>
+                    <div className="connected-stores-mobile-header-actions" style={styles.headerActions}>
 
                         <button
                             type="button"
@@ -1397,7 +1397,7 @@ export default function ConnectedStores() {
                 {/* KPI Metrics */}
                 {/* ========================================= */}
 
-                <section style={styles.metrics}>
+                <section className="connected-stores-mobile-metrics" style={styles.metrics}>
 
                     <div style={styles.metricCard}>
                         <div style={styles.metricGlow} />
@@ -1576,7 +1576,7 @@ export default function ConnectedStores() {
                             </div>
                         </div>
 
-                        <div style={styles.controls}>
+                        <div className="connected-stores-mobile-controls" style={styles.controls}>
                             <div style={styles.searchWrapper}>
                                 <span style={styles.searchIcon}>⌕</span>
                                 <input
@@ -1773,7 +1773,7 @@ export default function ConnectedStores() {
                             </div>
 
                         ) : (
-                            <div style={styles.storeGrid}>
+                            <div className="connected-stores-mobile-grid" style={styles.storeGrid}>
                                 {filteredStores.map((store) => {
                                     const isConnected =
                                         store.status === "connected";

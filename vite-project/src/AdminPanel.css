@@ -3830,6 +3830,309 @@ button:active::after {
 
 @media (max-width:420px) {
 
+
+    /* ==========================================================
+   MOBILE WORKSPACE OVERRIDES
+   Desktop layout above remains unchanged.
+========================================================== */
+    @media (max-width: 768px) {
+        .admin-app-root {
+            zoom: 1 !important;
+            min-height: 100dvh !important;
+            height: auto !important;
+            overflow-x: hidden;
+        }
+
+        .admin-app-root>main {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 100dvh !important;
+        }
+
+        .admin-page {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            height: auto;
+            overflow: visible;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            z-index: 120;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            width: 100%;
+            min-width: 0;
+            height: auto;
+            min-height: 0;
+            padding: 8px 10px;
+            overflow-x: auto;
+            overflow-y: visible;
+            background: rgba(5, 7, 10, .97);
+            border-right: 0;
+            border-bottom: 1px solid var(--border);
+            scrollbar-width: thin;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .sidebar::after {
+            display: none;
+        }
+
+        .sidebar-logo {
+            flex: 0 0 auto;
+            gap: 8px !important;
+            margin: 0 !important;
+            padding-right: 10px;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar-logo img {
+            width: 34px !important;
+            height: 34px !important;
+        }
+
+        .sidebar-logo h2 {
+            display: block;
+            font-size: 12px !important;
+        }
+
+        .sidebar-logo span {
+            display: none !important;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex: 0 0 auto;
+            align-items: center;
+            gap: 6px;
+            margin: 0 !important;
+        }
+
+        .sidebar-title {
+            display: none;
+        }
+
+        .sidebar-item {
+            display: inline-flex;
+            flex: 0 0 auto;
+            width: auto;
+            height: 40px;
+            min-height: 40px;
+            gap: 7px;
+            margin: 0;
+            padding: 0 11px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        .sidebar-item span {
+            display: inline;
+            font-size: 11px;
+        }
+
+        .sidebar-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .sidebar-bottom {
+            position: sticky !important;
+            right: 0;
+            flex: 0 0 42px;
+            width: 42px;
+            min-width: 42px;
+            margin: 0 0 0 auto;
+            padding-left: 5px;
+            background: #05070a;
+        }
+
+        .bottom-profile {
+            padding: 0;
+            border: 0;
+            background: transparent;
+        }
+
+        .bottom-profile>button {
+            justify-content: center !important;
+            width: 40px !important;
+            height: 40px;
+            padding: 4px !important;
+            border-radius: 50% !important;
+        }
+
+        .bottom-profile>button>div:nth-child(2),
+        .bottom-profile>button>div:nth-child(3) {
+            display: none !important;
+        }
+
+        .account-menu {
+            position: fixed !important;
+            top: 56px !important;
+            right: 10px !important;
+            bottom: auto !important;
+            left: auto !important;
+            width: min(280px, calc(100vw - 20px));
+        }
+
+        .main-content {
+            width: 100%;
+            height: auto;
+            min-height: calc(100dvh - 58px);
+            overflow: visible;
+            padding: 14px 12px !important;
+        }
+
+        .ruach-auth-card {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .agent-parameters-page {
+            min-height: 0 !important;
+            overflow: hidden !important;
+        }
+
+        .agent-parameters-page>div:last-of-type {
+            padding: 18px 14px 36px !important;
+        }
+
+        .agent-parameters-page header {
+            align-items: flex-start !important;
+            gap: 12px !important;
+        }
+
+        .agent-parameters-mobile-metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+
+        .agent-parameters-mobile-dashboard {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .agent-parameters-mobile-fields {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .agent-parameters-page .agent-parameters-mobile-fields>* {
+            min-width: 0;
+        }
+
+        .connected-stores-page {
+            padding: 20px 14px 36px !important;
+        }
+
+        .connected-stores-mobile-header {
+            align-items: flex-start !important;
+            flex-direction: column !important;
+            gap: 15px !important;
+        }
+
+        .connected-stores-mobile-header-actions {
+            display: grid !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: 100%;
+        }
+
+        .connected-stores-mobile-metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 10px !important;
+        }
+
+        .connected-stores-mobile-controls {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .connected-stores-mobile-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .till-slips-collection-page {
+            height: auto !important;
+            min-height: 100%;
+            overflow: visible !important;
+        }
+
+        .till-slips-collection-header {
+            zoom: 1 !important;
+            padding: 12px !important;
+        }
+
+        .till-slips-collection-header>div:first-of-type {
+            gap: 12px !important;
+        }
+
+        .till-slips-search-row {
+            display: grid !important;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 9px !important;
+        }
+
+        .till-slips-search-field {
+            grid-column: 1 / -1;
+            min-width: 0 !important;
+        }
+
+        .till-slips-gallery-scroll {
+            flex: 1 1 auto !important;
+            height: auto !important;
+            min-height: 60dvh !important;
+            padding: 10px !important;
+        }
+
+        .till-slips-design-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+            gap: 14px !important;
+            zoom: 1 !important;
+        }
+
+        .ruach-slip-frame {
+            transform: none !important;
+            margin: 0 !important;
+        }
+
+        .ruach-slip-frame:hover {
+            transform: translateY(-2px) !important;
+        }
+
+        .till-slip-live-slot>* {
+            width: min(410px, calc(100vw - 76px)) !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            flex: 0 1 auto !important;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .sidebar-logo h2 {
+            display: none;
+        }
+
+        .sidebar-item {
+            gap: 5px;
+            padding: 0 9px;
+        }
+
+        .sidebar-item span {
+            font-size: 10px;
+        }
+
+        .agent-parameters-mobile-metrics,
+        .connected-stores-mobile-metrics {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+
+        .till-slips-collection-header h1 {
+            font-size: 20px !important;
+        }
+    }
+
     .chat-window {
 
         padding: 20px;
