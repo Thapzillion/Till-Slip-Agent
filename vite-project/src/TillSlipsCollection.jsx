@@ -4,7 +4,10 @@
    Imports • Component • State • Search Logic • Categories
    ============================================================================ */
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+
+import "./TillSlipsCollection.css";
+
 import { useBusiness } from "./backend/businessService";
 import MatrixTillSlip from "./models/MatrixTillSlip";
 import BlackGoldTillSlip from "./models/BlackGoldTillSlip";
@@ -125,6 +128,39 @@ export default function TillSlipsCollection({
         settings,
         receiptData
     } = useBusiness();
+
+    const galleryVideoRef = useRef(null);
+
+    /*
+     * Keep the gallery background video playing.
+     * The video is muted, so browser autoplay policies
+     * generally permit playback without user interaction.
+     */
+    useEffect(() => {
+        const video = galleryVideoRef.current;
+
+        if (!video) return;
+
+        video.muted = true;
+
+        const attemptPlayback = () => {
+            const playback = video.play();
+
+            if (playback && typeof playback.catch === "function") {
+                playback.catch(() => {
+                    // Browser may defer autoplay until playback is permitted.
+                });
+            }
+        };
+
+        attemptPlayback();
+
+        video.addEventListener("canplay", attemptPlayback);
+
+        return () => {
+            video.removeEventListener("canplay", attemptPlayback);
+        };
+    }, []);
 
     const [selectedDesign, setSelectedDesign] = useState(() => {
         return (
@@ -333,6 +369,7 @@ export default function TillSlipsCollection({
     ============================================================ */}
 
                     <div
+                        className="till-slips-title-row"
                         style={{
                             display: "flex",
                             justifyContent: "space-between",
@@ -494,6 +531,7 @@ export default function TillSlipsCollection({
     ============================================================ */}
 
                     <div
+                        className="till-slips-search-controls"
                         style={{
                             display: "flex",
                             gap: 16,
@@ -609,6 +647,7 @@ export default function TillSlipsCollection({
     ============================================================ */}
 
                     <div
+                        className="till-slips-category-list"
                         style={{
                             display: "flex",
                             gap: 12,
@@ -732,43 +771,18 @@ export default function TillSlipsCollection({
 =============================================================== */}
 
                     <div
+                        className="till-slips-video-layer"
                         aria-hidden="true"
-                        style={{
-                            position: "sticky",
-                            top: 0,
-                            left: 0,
-                            width: "100%",
-                            height: "100vh",
-                            marginTop: "-16px",
-                            marginLeft: "-16px",
-                            marginBottom: "-100vh",
-                            width: "calc(100% + 32px)",
-                            zIndex: 0,
-                            pointerEvents: "none",
-                            zoom: "1.10",
-                            overflow: "hidden"
-                        }}
                     >
                         <video
+                            ref={galleryVideoRef}
+                            className="till-slips-background-video"
                             autoPlay
                             loop
                             muted
                             playsInline
                             preload="auto"
                             aria-hidden="true"
-                            style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                objectPosition: "center center",
-                                pointerEvents: "none",
-                                opacity: 0.32,
-                                filter:
-                                    "brightness(.55) saturate(.8) contrast(1.08)"
-                            }}
                         >
                             <source
                                 src={GALLERY_BACKGROUND_VIDEO}
@@ -777,14 +791,8 @@ export default function TillSlipsCollection({
                         </video>
 
                         <div
+                            className="till-slips-video-overlay"
                             aria-hidden="true"
-                            style={{
-                                position: "absolute",
-                                inset: 0,
-                                pointerEvents: "none",
-                                background:
-                                    "linear-gradient(180deg, rgba(4,10,14,.42), rgba(3,8,12,.60)), radial-gradient(circle at 50% 25%, rgba(0,174,255,.08), transparent 55%)"
-                            }}
                         />
                     </div>
 
@@ -906,6 +914,7 @@ export default function TillSlipsCollection({
 =========================================================== */}
 
                     <div
+                        className="till-slips-gallery-grid-wrapper"
                         style={{
                             position: "relative",
                             width: "100%",
@@ -917,6 +926,7 @@ export default function TillSlipsCollection({
                         }}
                     >
                         <div
+                            className="till-slips-gallery-grid"
                             style={{
                                 display: "grid",
                                 position: "relative",
@@ -968,7 +978,7 @@ export default function TillSlipsCollection({
 
                                     <div
                                         key={design.id}
-                                        className="ruach-slip-frame"
+                                        className="ruach-slip-frame till-slips-design-card"
                                         style={{
                                             transition: "transform .25s ease, box-shadow .25s ease",
                                             transform: "scale(0.82)",
@@ -1059,7 +1069,7 @@ export default function TillSlipsCollection({
                                                 padding: "10px 12px 12px"
                                             }}
                                         >
-                                            <div className="ruach-slip-preview">
+                                            <div className="ruach-slip-preview till-slips-preview-area">
 
                                                 {/* FUTURISTIC NEON GRID / FRAME LINES */}
                                                 <div
@@ -1123,7 +1133,7 @@ export default function TillSlipsCollection({
 `}</style>
 
                                                 <div
-                                                    className="till-slip-live-slot"
+                                                    className="till-slip-live-slot till-slips-receipt-slot"
                                                     style={{
                                                         position: "relative",
                                                         zIndex: 2,

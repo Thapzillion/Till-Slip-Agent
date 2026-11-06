@@ -1,0 +1,762 @@
+/* ============================================================
+   RUACHAGENT — TILL SLIPS COLLECTION
+   Desktop + Mobile Design System
+
+   Desktop:
+   Preserve the existing futuristic gallery appearance.
+
+   Mobile:
+   Premium, compact, balanced and touch-friendly interface.
+
+   All styles are scoped to this page.
+============================================================ */
+
+.till-slips-collection-page {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    background: #050B10;
+    color: #F5F8FC;
+    box-sizing: border-box;
+}
+
+.till-slips-collection-page *,
+.till-slips-collection-page *::before,
+.till-slips-collection-page *::after {
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   DESKTOP HEADER
+============================================================ */
+
+.till-slips-collection-header {
+    position: relative;
+    z-index: 20;
+    flex: 0 0 auto;
+    width: 100%;
+    background: #020608;
+    border-bottom: 1px solid rgba(0, 197, 251, 0.55);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.32);
+}
+
+.till-slips-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.till-slips-search-controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+}
+
+.till-slips-search-controls>div:first-child {
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.till-slips-search-controls input {
+    width: 100%;
+    color: #FFFFFF;
+    background: #050B10;
+    border: 1px solid rgba(0, 197, 251, 0.35);
+    outline: none;
+}
+
+.till-slips-search-controls input:focus {
+    border-color: #08C6E3;
+    box-shadow: 0 0 0 3px rgba(8, 198, 227, 0.10);
+}
+
+.till-slips-category-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ============================================================
+   BACKGROUND VIDEO
+============================================================ */
+
+.till-slips-video-layer {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: calc(100% + 32px);
+    height: 100vh;
+    margin-top: -16px;
+    margin-left: -16px;
+    margin-bottom: -100vh;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+    transform: none;
+    zoom: 1;
+    isolation: isolate;
+    background: #050B10;
+}
+
+.till-slips-background-video {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center center;
+    opacity: 0.32;
+    filter: brightness(0.55) saturate(0.8) contrast(1.08);
+    pointer-events: none;
+}
+
+.till-slips-video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg,
+            rgba(4, 10, 14, 0.42),
+            rgba(3, 8, 12, 0.60)),
+        radial-gradient(circle at 50% 25%,
+            rgba(0, 174, 255, 0.08),
+            transparent 55%);
+}
+
+/* ============================================================
+   GALLERY SCROLL AREA
+============================================================ */
+
+.till-slips-gallery-scroll {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    isolation: isolate;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(8, 198, 227, 0.75) rgba(0, 0, 0, 0.35);
+}
+
+.till-slips-gallery-scroll::-webkit-scrollbar {
+    width: 9px;
+}
+
+.till-slips-gallery-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.till-slips-gallery-scroll::-webkit-scrollbar-thumb {
+    background: rgba(8, 198, 227, 0.75);
+    border-radius: 999px;
+    border: 2px solid rgba(23, 26, 29, 0.9);
+}
+
+/* ============================================================
+   DESKTOP GALLERY GRID
+============================================================ */
+
+.till-slips-gallery-grid-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100%;
+    overflow: visible;
+}
+
+.till-slips-gallery-grid {
+    display: grid;
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: repeat(auto-fill,
+            minmax(280px, 1fr));
+    gap: 18px;
+    align-items: start;
+}
+
+/* ============================================================
+   TILL SLIP CARDS
+============================================================ */
+
+.till-slips-design-card {
+    position: relative;
+    min-width: 0;
+    isolation: isolate;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 8%,
+            rgba(8, 183, 227, 0.12),
+            transparent 24%),
+        radial-gradient(circle at 88% 92%,
+            rgba(0, 168, 255, 0.10),
+            transparent 26%),
+        linear-gradient(145deg,
+            rgba(3, 10, 15, 0.98),
+            rgba(0, 0, 0, 0.98) 52%,
+            rgba(5, 15, 22, 0.98));
+    border: 1px solid rgba(8, 190, 227, 0.48);
+    box-shadow:
+        0 0 0 1px rgba(0, 168, 255, 0.10),
+        0 0 24px rgba(8, 154, 227, 0.10),
+        0 18px 40px rgba(0, 0, 0, 0.62);
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease;
+}
+
+.till-slips-design-card:hover {
+    border-color: rgba(8, 205, 227, 0.8);
+}
+
+.till-slips-design-card .ruach-slip-frame-content {
+    position: relative;
+    z-index: 2;
+}
+
+.till-slips-preview-area {
+    position: relative;
+    width: 100%;
+    min-height: 490px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+    padding: 18px 16px 16px;
+    background:
+        radial-gradient(circle at 50% 18%,
+            rgba(8, 190, 227, 0.07),
+            transparent 38%),
+        linear-gradient(180deg,
+            rgba(2, 9, 13, 0.92),
+            rgba(0, 0, 0, 0.96));
+    border: 1px solid rgba(8, 179, 227, 0.46);
+}
+
+.till-slips-receipt-slot {
+    container-type: inline-size;
+    container-name: till-slip-slot;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 700px;
+    overflow: visible;
+}
+
+/* Keep the desktop receipt dimensions unchanged. */
+.till-slips-receipt-slot>* {
+    width: 410px !important;
+    min-width: 410px !important;
+    max-width: 410px !important;
+    flex: 0 0 410px !important;
+    transform-origin: center top;
+}
+
+/* ============================================================
+   CHOOSE BUTTON
+============================================================ */
+
+.ruach-slip-choose {
+    min-height: 38px;
+    border: 1px solid rgba(8, 190, 227, 0.78) !important;
+    border-radius: 7px !important;
+    background:
+        linear-gradient(135deg,
+            rgba(8, 154, 227, 0.18),
+            rgba(0, 168, 255, 0.16)),
+        #031116 !important;
+    color: #7DD6FF !important;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.ruach-slip-choose:hover {
+    color: #031114 !important;
+    background: linear-gradient(135deg,
+            #08C2E3,
+            #00A8FF) !important;
+}
+
+.ruach-slip-choose.is-selected,
+.ruach-slip-choose.is-selected:hover {
+    color: #D7FFF2 !important;
+    background: linear-gradient(135deg,
+            #087E68,
+            #07584D) !important;
+    border-color: rgba(95, 244, 196, 0.85) !important;
+}
+
+/* ============================================================
+   MOBILE INTERFACE
+============================================================ */
+
+@media (max-width: 760px) {
+
+    /* PAGE */
+
+    .till-slips-collection-page {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    /* HEADER */
+
+    .till-slips-collection-header {
+        zoom: 1 !important;
+        padding: 19px 15px 16px !important;
+        background:
+            linear-gradient(180deg,
+                #020609 0%,
+                #050C12 100%) !important;
+        border-bottom: 1px solid rgba(0, 197, 251, 0.30);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .till-slips-title-row {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 15px !important;
+    }
+
+    .till-slips-title-row>div:first-child {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .till-slips-title-row>div:first-child>div {
+        gap: 11px !important;
+    }
+
+    .till-slips-title-row>div:first-child>div>div:first-child {
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px;
+        border-radius: 13px !important;
+        border-width: 1px !important;
+        box-shadow: 0 0 18px rgba(0, 190, 255, 0.16) !important;
+    }
+
+    .till-slips-title-row h1 {
+        font-size: clamp(19px, 5.3vw, 23px) !important;
+        line-height: 1.18 !important;
+        letter-spacing: -0.65px !important;
+        margin: 0 !important;
+    }
+
+    .till-slips-title-row>div:first-child>div>div>div:first-child {
+        font-size: 7px !important;
+        letter-spacing: 1.4px !important;
+        margin-bottom: 5px !important;
+    }
+
+    .till-slips-title-row>div:first-child>div>div>div:last-child {
+        font-size: 10px !important;
+        line-height: 1.45 !important;
+        margin-top: 5px !important;
+    }
+
+    /* LIVE DESIGNS + COUNT */
+
+    .till-slips-search-row {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+    }
+
+    .till-slips-search-row>div {
+        padding: 7px 10px !important;
+        font-size: 9px !important;
+    }
+
+    .till-slips-search-row span {
+        font-size: 9px !important;
+    }
+
+    /* SEARCH */
+
+    .till-slips-search-controls {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 92px !important;
+        gap: 9px !important;
+        margin-top: 17px !important;
+        align-items: center !important;
+    }
+
+    .till-slips-search-controls>div:first-child {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: initial !important;
+    }
+
+    .till-slips-search-controls input {
+        height: 44px !important;
+        padding-left: 39px !important;
+        padding-right: 10px !important;
+        border-radius: 11px !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        background: rgba(5, 13, 19, 0.95) !important;
+        border: 1px solid rgba(0, 197, 251, 0.28) !important;
+    }
+
+    .till-slips-search-controls>button {
+        width: 92px !important;
+        height: 44px !important;
+        min-width: 0 !important;
+        padding: 0 8px !important;
+        display: flex !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        border-radius: 11px !important;
+        font-size: 9px !important;
+        letter-spacing: 0.4px !important;
+        box-shadow: 0 0 15px rgba(47, 222, 252, 0.20) !important;
+    }
+
+    .till-slips-search-controls>button svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* CATEGORY NAVIGATION */
+
+    .till-slips-category-list {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 8px !important;
+        width: calc(100% + 30px) !important;
+        margin: 15px -15px 0 !important;
+        padding: 2px 15px 8px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+    }
+
+    .till-slips-category-list::-webkit-scrollbar {
+        display: none;
+    }
+
+    .till-slips-category-list button {
+        flex: 0 0 auto !important;
+        min-height: 34px !important;
+        padding: 8px 13px !important;
+        border-radius: 9px !important;
+        font-size: 9px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.3px !important;
+        white-space: nowrap !important;
+        scroll-snap-align: start;
+    }
+
+    /* GALLERY SCROLL AREA */
+
+    .till-slips-gallery-scroll {
+        flex: 1 1 0 !important;
+        min-height: 0 !important;
+        height: 0 !important;
+        padding: 13px 12px 30px !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        background: #080F15 !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* VIDEO */
+
+    .till-slips-video-layer {
+        width: calc(100% + 24px) !important;
+        height: 100vh !important;
+        margin-top: -13px !important;
+        margin-left: -12px !important;
+        margin-bottom: -100vh !important;
+        zoom: 1 !important;
+        transform: none !important;
+        opacity: 0.85;
+    }
+
+    .till-slips-background-video {
+        object-position: center center !important;
+        opacity: 0.25 !important;
+        filter: brightness(0.48) saturate(0.8) !important;
+    }
+
+    /* GALLERY GRID */
+
+    .till-slips-gallery-grid-wrapper {
+        width: 100% !important;
+        min-height: 100% !important;
+        overflow: visible !important;
+    }
+
+    .till-slips-gallery-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 17px !important;
+        zoom: 1 !important;
+        align-items: stretch !important;
+    }
+
+    /* DESIGN CARDS */
+
+    .till-slips-design-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+        transform: none !important;
+        border-radius: 13px !important;
+        clip-path: none !important;
+        border: 1px solid rgba(0, 190, 235, 0.38) !important;
+        background:
+            linear-gradient(145deg,
+                rgba(5, 17, 25, 0.98),
+                rgba(2, 7, 11, 0.99)) !important;
+        box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.35),
+            inset 0 0 18px rgba(0, 170, 255, 0.025) !important;
+    }
+
+    .till-slips-design-card::before {
+        inset: 5px !important;
+        opacity: 0.5;
+    }
+
+    .till-slips-design-card::after {
+        top: 7px !important;
+        left: 9px !important;
+        right: 9px !important;
+    }
+
+    /* CARD HEADER */
+
+    .till-slips-design-card>.ruach-slip-frame-content:first-child {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        padding: 13px 13px 11px !important;
+        min-height: 49px;
+    }
+
+    .till-slips-design-card>.ruach-slip-frame-content:first-child>div:first-child {
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+        font-weight: 800 !important;
+    }
+
+    .till-slips-design-card>.ruach-slip-frame-content:first-child>div:last-child {
+        max-width: 45%;
+        font-size: 7px !important;
+        letter-spacing: 0.4px !important;
+        padding: 5px 8px !important;
+        white-space: nowrap;
+    }
+
+    /* RECEIPT PREVIEW */
+
+    .till-slips-design-card .till-slips-preview-area {
+        width: 100% !important;
+        min-height: 450px !important;
+        padding: 14px 7px 10px !important;
+        align-items: flex-start !important;
+        overflow: hidden !important;
+        border-radius: 8px !important;
+        background:
+            radial-gradient(circle at 50% 10%,
+                rgba(0, 174, 255, 0.08),
+                transparent 52%),
+            linear-gradient(180deg,
+                rgba(2, 10, 15, 0.96),
+                rgba(0, 0, 0, 0.98)) !important;
+    }
+
+    .till-slips-receipt-slot {
+        width: 100% !important;
+        min-height: 420px !important;
+        zoom: 0.90 !important;
+        overflow: visible !important;
+        justify-content: center !important;
+    }
+
+    .till-slips-receipt-slot>* {
+        width: 410px !important;
+        min-width: 410px !important;
+        max-width: 410px !important;
+        flex: 0 0 410px !important;
+        zoom: 0.74 !important;
+        transform: none !important;
+        transform-origin: center top !important;
+    }
+
+    /* CARD FOOTER */
+
+    .till-slips-design-card .ruach-slip-footer {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        flex-wrap: nowrap !important;
+        padding: 12px 13px !important;
+    }
+
+    .till-slips-design-card .ruach-slip-footer>div:first-child {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    .till-slips-design-card .ruach-slip-footer>div:first-child>div:first-child {
+        font-size: 11px !important;
+        line-height: 1.3 !important;
+    }
+
+    .till-slips-design-card .ruach-slip-footer>div:first-child>div:last-child {
+        font-size: 8px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* CHOOSE BUTTON */
+
+    .till-slips-design-card .ruach-slip-choose {
+        flex: 0 0 auto !important;
+        min-width: 88px !important;
+        min-height: 37px !important;
+        padding: 9px 12px !important;
+        border-radius: 8px !important;
+        font-size: 8px !important;
+        letter-spacing: 0.7px !important;
+        white-space: nowrap !important;
+        transform: none !important;
+        box-shadow: 0 0 12px rgba(0, 190, 255, 0.14) !important;
+    }
+
+    /* EMPTY SEARCH STATE */
+
+    .till-slips-gallery-scroll h2 {
+        font-size: 22px !important;
+    }
+
+    .till-slips-gallery-scroll p {
+        font-size: 11px !important;
+        line-height: 1.7 !important;
+    }
+}
+
+/* ============================================================
+   EXTRA SMALL PHONES
+============================================================ */
+
+@media (max-width: 390px) {
+
+    .till-slips-collection-header {
+        padding: 16px 12px 13px !important;
+    }
+
+    .till-slips-title-row h1 {
+        font-size: 19px !important;
+    }
+
+    .till-slips-search-controls {
+        grid-template-columns: minmax(0, 1fr) 82px !important;
+        gap: 7px !important;
+    }
+
+    .till-slips-search-controls>button {
+        width: 82px !important;
+        font-size: 8px !important;
+    }
+
+    .till-slips-category-list {
+        width: calc(100% + 24px) !important;
+        margin-left: -12px !important;
+        margin-right: -12px !important;
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+    }
+
+    .till-slips-gallery-scroll {
+        padding-left: 9px !important;
+        padding-right: 9px !important;
+    }
+
+    .till-slips-gallery-grid {
+        gap: 13px !important;
+    }
+
+    .till-slips-design-card .till-slips-preview-area {
+        min-height: 420px !important;
+        padding-left: 3px !important;
+        padding-right: 3px !important;
+    }
+
+    .till-slips-receipt-slot {
+        zoom: 0.86 !important;
+    }
+
+    .till-slips-receipt-slot>* {
+        zoom: 0.70 !important;
+    }
+}
+
+/* ============================================================
+   DESKTOP AND TABLET VIDEO PROTECTION
+============================================================ */
+
+@media (min-width: 761px) {
+
+    .till-slips-video-layer {
+        zoom: 1 !important;
+        transform: none !important;
+    }
+
+    .till-slips-background-video {
+        display: block !important;
+        visibility: visible !important;
+    }
+
+    .till-slips-gallery-grid {
+        /* Keep desktop card layout and existing visual zoom. */
+        zoom: 0.80;
+    }
+}
+
+/* ============================================================
+   REDUCED MOTION ACCESSIBILITY
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .till-slips-design-card,
+    .ruach-slip-choose {
+        transition: none !important;
+    }
+}
