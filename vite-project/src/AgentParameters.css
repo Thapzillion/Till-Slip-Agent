@@ -1,0 +1,426 @@
+/* ============================================================
+   RUACHAGENT — AGENT PARAMETERS
+   MOBILE RESPONSIVE DESIGN SYSTEM
+   Desktop styling remains unchanged.
+   ============================================================ */
+
+/* Prevent accidental horizontal overflow */
+.agent-parameters-page {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.agent-parameters-page *,
+.agent-parameters-page *::before,
+.agent-parameters-page *::after {
+    box-sizing: border-box;
+}
+
+/* ============================================================
+   MOBILE DESIGN
+   ============================================================ */
+
+@media screen and (max-width: 760px) {
+
+    /* ----------------------------------------------------------
+     PAGE SHELL
+     ---------------------------------------------------------- */
+
+    .agent-parameters-page {
+        width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+        padding: 0 !important;
+        background: #030608 !important;
+    }
+
+    .agent-parameters-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding: 20px 13px 38px !important;
+        margin: 0 auto !important;
+    }
+
+    /* ----------------------------------------------------------
+     HEADER
+     ---------------------------------------------------------- */
+
+    .agent-parameters-content header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 15px !important;
+        width: 100% !important;
+        margin-bottom: 23px !important;
+    }
+
+    .agent-parameters-content header>div:first-child {
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 12px !important;
+    }
+
+    .agent-parameters-content header h1 {
+        font-size: clamp(23px, 6vw, 30px) !important;
+        line-height: 1.15 !important;
+        letter-spacing: -0.8px !important;
+        margin: 5px 0 8px !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .agent-parameters-content header p {
+        max-width: 100% !important;
+        font-size: 11px !important;
+        line-height: 1.65 !important;
+        color: #8d9ba7 !important;
+    }
+
+    .agent-parameters-content header>div:last-child {
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+
+    /* ----------------------------------------------------------
+     CONTENT AREA
+     ---------------------------------------------------------- */
+
+    .agent-parameters-content>div {
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* ----------------------------------------------------------
+     METRICS
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-metrics {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin-bottom: 17px !important;
+    }
+
+    .agent-parameters-mobile-metrics>div {
+        min-width: 0 !important;
+        min-height: 105px !important;
+        padding: 13px 11px !important;
+        border-radius: 13px !important;
+        overflow: hidden !important;
+        background:
+            linear-gradient(145deg,
+                rgba(13, 22, 28, 0.98),
+                rgba(2, 5, 8, 1)) !important;
+        border: 1px solid rgba(77, 197, 235, 0.28) !important;
+        box-shadow:
+            0 8px 20px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
+    }
+
+    .agent-parameters-mobile-metrics>div>div:nth-child(2) {
+        font-size: 8px !important;
+        letter-spacing: 1px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 9px !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .agent-parameters-mobile-metrics>div>div:nth-child(3) {
+        font-size: 19px !important;
+        line-height: 1.1 !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.5px !important;
+    }
+
+    .agent-parameters-mobile-metrics>div>div:nth-child(4) {
+        font-size: 8px !important;
+        line-height: 1.45 !important;
+        margin-top: 7px !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     MAIN DASHBOARD
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .agent-parameters-mobile-dashboard>div {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* ----------------------------------------------------------
+     DASHBOARD CARDS
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard section {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        border-radius: 15px !important;
+        overflow: hidden !important;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:first-child {
+        padding: 15px 13px !important;
+        gap: 10px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+        padding: 14px !important;
+        min-width: 0 !important;
+    }
+
+    .agent-parameters-mobile-dashboard h2 {
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        letter-spacing: -0.15px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section p {
+        font-size: 9px !important;
+        line-height: 1.6 !important;
+    }
+
+    /* Card icons */
+    .agent-parameters-mobile-dashboard section>div:first-child>div:first-child {
+        min-width: 0 !important;
+    }
+
+    /* ----------------------------------------------------------
+     BUSINESS LOGO UPLOAD
+     ---------------------------------------------------------- */
+
+    .agent-parameters-logo-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 105px !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+        width: 100% !important;
+    }
+
+    .agent-parameters-logo-grid>label {
+        min-height: 125px !important;
+        padding: 12px !important;
+        border-radius: 12px !important;
+    }
+
+    .agent-parameters-logo-grid>div {
+        min-width: 0 !important;
+        min-height: 125px !important;
+        padding: 8px !important;
+        border-radius: 12px !important;
+    }
+
+    .agent-parameters-logo-grid img {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 95px !important;
+        object-fit: contain !important;
+    }
+
+    /* ----------------------------------------------------------
+     FORM FIELDS
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-fields {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 15px !important;
+        width: 100% !important;
+    }
+
+    .agent-parameters-mobile-fields>div {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .agent-parameters-mobile-fields label {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 5px !important;
+        width: 100% !important;
+        font-size: 9px !important;
+        line-height: 1.5 !important;
+        letter-spacing: 0.7px !important;
+    }
+
+    .agent-parameters-mobile-fields input,
+    .agent-parameters-mobile-fields select,
+    .agent-parameters-mobile-fields textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        min-height: 44px !important;
+        padding: 11px 12px !important;
+        border-radius: 9px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        color: #edf8fc !important;
+        background: #050a0e !important;
+        border: 1px solid rgba(88, 177, 207, 0.28) !important;
+        outline: none !important;
+    }
+
+    .agent-parameters-mobile-fields textarea {
+        min-height: 95px !important;
+        resize: vertical !important;
+    }
+
+    .agent-parameters-mobile-fields input:focus,
+    .agent-parameters-mobile-fields select:focus,
+    .agent-parameters-mobile-fields textarea:focus {
+        border-color: rgba(85, 210, 255, 0.8) !important;
+        box-shadow: 0 0 0 3px rgba(40, 177, 225, 0.09) !important;
+    }
+
+    /* ----------------------------------------------------------
+     INSIGHT GRID
+     ---------------------------------------------------------- */
+
+    .agent-parameters-insight-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+        width: 100% !important;
+    }
+
+    .agent-parameters-insight-grid>div {
+        min-width: 0 !important;
+        padding: 11px !important;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+    }
+
+    .agent-parameters-insight-grid>div>div {
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     BUTTONS
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard button {
+        max-width: 100% !important;
+        min-height: 43px !important;
+        padding: 11px 13px !important;
+        font-size: 9px !important;
+        line-height: 1.4 !important;
+        letter-spacing: 0.5px !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     SAVE AND SYNC FOOTER
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard section[style*="space-between"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .agent-parameters-mobile-dashboard button {
+        touch-action: manipulation;
+    }
+
+    /* ----------------------------------------------------------
+     RECEIPT PREVIEW
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard img {
+        max-width: 100% !important;
+    }
+
+    .agent-parameters-mobile-dashboard pre,
+    .agent-parameters-mobile-dashboard code {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        white-space: pre-wrap !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     GENERAL TEXT SAFETY
+     ---------------------------------------------------------- */
+
+    .agent-parameters-page h1,
+    .agent-parameters-page h2,
+    .agent-parameters-page p,
+    .agent-parameters-page label,
+    .agent-parameters-page span,
+    .agent-parameters-page div {
+        overflow-wrap: break-word;
+    }
+
+    .agent-parameters-page button,
+    .agent-parameters-page input,
+    .agent-parameters-page select,
+    .agent-parameters-page textarea {
+        font-family: inherit;
+    }
+
+}
+
+/* ============================================================
+   SMALL MOBILE DEVICES
+   ============================================================ */
+
+@media screen and (max-width: 390px) {
+
+    .agent-parameters-content {
+        padding: 16px 10px 30px !important;
+    }
+
+    .agent-parameters-mobile-metrics {
+        gap: 8px !important;
+    }
+
+    .agent-parameters-mobile-metrics>div {
+        padding: 11px 9px !important;
+        min-height: 100px !important;
+    }
+
+    .agent-parameters-mobile-metrics>div>div:nth-child(3) {
+        font-size: 17px !important;
+    }
+
+    .agent-parameters-logo-grid {
+        grid-template-columns: minmax(0, 1fr) 90px !important;
+        gap: 8px !important;
+    }
+
+    .agent-parameters-insight-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media screen and (min-width: 761px) and (max-width: 1100px) {
+
+    .agent-parameters-mobile-dashboard {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .agent-parameters-logo-grid {
+        grid-template-columns: minmax(0, 1fr) 140px !important;
+    }
+
+}

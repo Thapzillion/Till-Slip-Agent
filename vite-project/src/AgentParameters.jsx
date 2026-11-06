@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+import "./AgentParameters.css";
+
 import { useBusiness } from "./backend/businessService";
 
 import MatrixTillSlip from "./models/MatrixTillSlip";
@@ -1149,7 +1151,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         PAGE CONTENT
     ========================================================= */}
 
-      <div style={styles.content}>
+      <div
+        className="agent-parameters-content"
+        style={styles.content}
+      >
 
         {/* =======================================================
           PREMIUM AGENT PARAMETERS HEADER
@@ -2497,52 +2502,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         </div>
 
       </div >
-
-      {/* =========================================================
-        RESPONSIVE OVERRIDES
-    ========================================================= */}
-
-      < style >
-        {`
-
-        @media (max-width: 1100px) {
-
-          .agent-parameters-logo-grid {
-            grid-template-columns: 1fr !important;
-          }
-
-        }
-
-        @media (max-width: 900px) {
-
-          .agent-parameters-insight-grid {
-            grid-template-columns: 1fr 1fr !important;
-          }
-
-        }
-
-        @media (max-width: 760px) {
-
-          .agent-parameters-responsive-grid {
-            grid-template-columns: 1fr !important;
-          }
-
-          .agent-parameters-logo-grid {
-            grid-template-columns: 1fr !important;
-          }
-
-          .agent-parameters-insight-grid {
-            grid-template-columns: 1fr !important;
-          }
-
-          .agent-parameters-page-padding {
-            padding: 18px 14px 40px !important;
-          }
-
-        }
-
-      `}
-      </style >
 
     </div >
   );
