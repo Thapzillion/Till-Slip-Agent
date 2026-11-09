@@ -758,6 +758,7 @@ export default function AdminPanel() {
       {/* GLOBAL MODAL 3: PREMIUM PAYMENT NEGOTIATION */}
       {showSubscriptionModal && (
         <div
+          className="ruach-mobile-modal-overlay ruach-subscription-overlay"
           style={{
             ...styles.modalOverlay,
             background:
@@ -867,6 +868,7 @@ export default function AdminPanel() {
           </style>
 
           <div
+            className="ruach-mobile-modal-card ruach-subscription-modal-card"
             style={{
               ...styles.flatCard,
               maxWidth: "475px",
@@ -1306,6 +1308,7 @@ export default function AdminPanel() {
       {/* GLOBAL MODAL 2: 3-DAY PREMIUM TRIAL WELCOME */}
       {showTrialWelcomeModal && (
         <div
+          className="ruach-mobile-modal-overlay ruach-trial-welcome-overlay"
           style={{
             ...styles.modalOverlay,
             background:
@@ -1380,6 +1383,7 @@ export default function AdminPanel() {
           </style>
 
           <div
+            className="ruach-mobile-modal-card ruach-trial-welcome-card"
             style={{
               ...styles.flatCard,
               maxWidth: "470px",
@@ -1662,6 +1666,7 @@ export default function AdminPanel() {
       {/* GLOBAL MODAL 2: 3-DAY PREMIUM TRIAL WELCOME */}
       {showTrialWelcomeModal && (
         <div
+          className="ruach-mobile-modal-overlay tesla-trial-welcome-overlay"
           style={{
             ...styles.modalOverlay,
             background:
@@ -1733,6 +1738,7 @@ export default function AdminPanel() {
           </style>
 
           <div
+            className="ruach-mobile-modal-card tesla-trial-welcome-card"
             style={{
               ...styles.flatCard,
               maxWidth: "470px",
@@ -2033,6 +2039,7 @@ export default function AdminPanel() {
       >
         {!user ? (
           <section
+            className="ruach-auth-section"
             style={{
               position: 'relative',
               minHeight: '85vh',
