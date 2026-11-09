@@ -670,6 +670,10 @@ export default function AdminPanel() {
       backdrop-filter: blur(12px) !important;
     }
 
+    .ruach-trial-welcome-overlay {
+      display: none !important;
+    }
+
     .ruach-mobile-modal-card {
       width: 100% !important;
       max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;

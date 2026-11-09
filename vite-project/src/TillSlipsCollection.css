@@ -760,3 +760,249 @@
         transition: none !important;
     }
 }
+
+
+/* =========================================================
+   MOBILE GALLERY — SCROLLING AND CARD HEIGHT CORRECTION
+   Desktop layout remains unchanged.
+========================================================= */
+
+@media screen and (max-width: 760px) {
+
+    /* Keep the collection within the phone viewport */
+    .till-slips-collection-page {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        height: 100dvh !important;
+        min-height: 0 !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Header must not consume the gallery's scrolling space */
+    .till-slips-collection-header {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        zoom: 1 !important;
+        overflow: visible !important;
+    }
+
+    /* Make the gallery the actual scrollable area */
+    .till-slips-gallery-scroll {
+        position: relative !important;
+        display: block !important;
+
+        flex: 1 1 0% !important;
+        width: 100% !important;
+
+        height: 0 !important;
+        min-height: 0 !important;
+
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-y: contain;
+
+        padding: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* The video stays behind the cards */
+    .till-slips-video-layer {
+        position: sticky !important;
+        top: 0 !important;
+        left: 0 !important;
+
+        width: 100% !important;
+        height: 100dvh !important;
+
+        margin: 0 0 -100dvh 0 !important;
+
+        zoom: 1 !important;
+        pointer-events: none !important;
+        z-index: 0 !important;
+        overflow: hidden !important;
+    }
+
+    .till-slips-background-video {
+        position: absolute !important;
+        inset: 0 !important;
+
+        width: 100% !important;
+        height: 100% !important;
+
+        object-fit: cover !important;
+        object-position: center !important;
+        pointer-events: none !important;
+    }
+
+    .till-slips-video-overlay {
+        position: absolute !important;
+        inset: 0 !important;
+        pointer-events: none !important;
+    }
+
+    /* Remove the desktop minimum-height behavior */
+    .till-slips-gallery-grid-wrapper {
+        position: relative !important;
+        width: 100% !important;
+        max-width: 100% !important;
+
+        min-height: 0 !important;
+        height: auto !important;
+
+        overflow: visible !important;
+        z-index: 1 !important;
+    }
+
+    /* One full-width card per row */
+    .till-slips-gallery-grid {
+        display: grid !important;
+
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-auto-rows: auto !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        zoom: 1 !important;
+        gap: 22px !important;
+
+        align-items: start !important;
+        justify-items: stretch !important;
+
+        position: relative !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Cards must occupy their actual layout height */
+    .till-slips-design-card {
+        display: flex !important;
+        flex-direction: column !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        transform: none !important;
+        zoom: 1 !important;
+
+        overflow: visible !important;
+        box-sizing: border-box !important;
+    }
+
+    .ruach-slip-frame-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Let the receipt preview expand with its contents */
+    .till-slips-preview-area {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+
+        width: 100% !important;
+        min-width: 0 !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        padding: 14px 8px !important;
+        overflow: visible !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /* Receipt component container */
+    .till-slips-receipt-slot {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+
+        position: relative !important;
+        width: 100% !important;
+
+        height: auto !important;
+        min-height: 0 !important;
+
+        overflow: visible !important;
+        zoom: 1 !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /*
+    The actual till slip components retain their 410px
+    desktop design width, but are scaled down for phones.
+  */
+    .till-slips-receipt-slot>* {
+        width: 410px !important;
+        min-width: 410px !important;
+        max-width: 410px !important;
+
+        flex: 0 0 410px !important;
+
+        zoom: 0.70 !important;
+        transform-origin: top center !important;
+
+        box-sizing: border-box !important;
+    }
+
+    /* Footer stays underneath each complete receipt */
+    .ruach-slip-footer {
+        position: relative !important;
+        width: 100% !important;
+        min-width: 0 !important;
+
+        display: flex !important;
+        flex-wrap: wrap !important;
+
+        justify-content: space-between !important;
+        align-items: center !important;
+
+        gap: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .ruach-slip-choose {
+        min-height: 42px !important;
+        padding: 10px 18px !important;
+        touch-action: manipulation;
+    }
+
+    /* Avoid hover transforms on touch screens */
+    .till-slips-design-card:hover {
+        transform: none !important;
+    }
+}
+
+/* Extra-small phones */
+@media screen and (max-width: 390px) {
+    .till-slips-gallery-scroll {
+        padding: 9px !important;
+    }
+
+    .till-slips-gallery-grid {
+        gap: 17px !important;
+    }
+
+    .till-slips-receipt-slot>* {
+        zoom: 0.64 !important;
+    }
+
+    .ruach-slip-footer {
+        padding: 12px !important;
+    }
+}
