@@ -646,9 +646,66 @@ export default function AdminPanel() {
   }
 
   @media (max-width: 560px) {
+    .ruach-auth-section {
+      min-height: calc(100dvh - 48px) !important;
+      padding: 12px 0 !important;
+    }
+
     .ruach-auth-card {
-      padding: 26px !important;
-      border-radius: 28px !important;
+      width: 100% !important;
+      padding: 24px 20px !important;
+      border-radius: 22px !important;
+    }
+
+    .ruach-mobile-modal-overlay {
+      position: fixed !important;
+      inset: 0 !important;
+      align-items: center !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      padding: max(10px, env(safe-area-inset-top)) 12px
+        max(10px, env(safe-area-inset-bottom)) !important;
+      box-sizing: border-box !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      backdrop-filter: blur(12px) !important;
+    }
+
+    .ruach-mobile-modal-card {
+      width: 100% !important;
+      max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+      margin: auto !important;
+      padding: 26px 19px 22px !important;
+      border-radius: 18px !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      overflow-wrap: anywhere;
+    }
+
+    .ruach-mobile-modal-card h2 {
+      font-size: 24px !important;
+      letter-spacing: 0 !important;
+    }
+
+    .ruach-mobile-modal-card p {
+      font-size: 13px !important;
+      line-height: 1.7 !important;
+    }
+
+    .ruach-mobile-modal-card .ruach-subscription-card {
+      padding: 18px 14px !important;
+      border-radius: 13px !important;
+    }
+
+    .ruach-mobile-modal-card .ruach-paystack-button,
+    .ruach-mobile-modal-card .tesla-premium-button {
+      min-height: 48px;
+    }
+
+    .ruach-mobile-modal-card > div:last-child {
+      letter-spacing: 1px !important;
+      overflow-wrap: anywhere;
     }
   }
 `;
