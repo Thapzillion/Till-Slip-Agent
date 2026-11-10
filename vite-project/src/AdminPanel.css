@@ -1,4194 +1,1021 @@
-/* ===========================================================
-   RUACHAGENT AI
-   PREMIUM SAAS DASHBOARD
-   PART 1
-   Variables • Reset • Global Styles
-=========================================================== */
+/* ============================================================
+   RUACHAGENT — AGENT PARAMETERS
+   MOBILE RESPONSIVE DESIGN SYSTEM
+   Desktop styling remains unchanged.
+   ============================================================ */
 
-
-/* ===========================
-      CSS VARIABLES
-=========================== */
-
-:root {
-
-    /* Backgrounds */
-
-    --bg: #050608;
-    --bg-secondary: #0b0d11;
-    --panel: #000000;
-    --panel-light: #000000;
-
-    /* Borders */
-
-    --border: #1c2430;
-    --border-hover: #2ad4ff;
-    --divider: #202834;
-
-    /* Accent */
-
-    --primary: #26d8ff;
-    --primary-soft: #6fe8ff;
-    --primary-dark: #1299b8;
-
-    /* Text */
-
-    --text: #f4f7fb;
-    --text-secondary: #b4bfcd;
-    --text-muted: #7d8795;
-
-    /* Success */
-
-    --success: #36d17b;
-
-    /* Shadows */
-
-    --shadow-sm:
-        0 6px 16px rgba(0, 0, 0, .18);
-
-    --shadow-md:
-        0 12px 32px rgba(0, 0, 0, .28);
-
-    --shadow-lg:
-        0 22px 60px rgba(0, 0, 0, .45);
-
-    /* Neon */
-
-    --neon:
-        0 0 10px rgba(38, 216, 255, .18),
-        0 0 24px rgba(38, 216, 255, .08);
-
-    /* Glass */
-
-    --glass:
-        rgba(8, 136, 210, 0.253);
-
-    --glass-border:
-        rgba(3, 168, 234, 0.054);
-
-    /* Radius */
-
-    --radius-xs: 10px;
-    --radius-sm: 14px;
-    --radius-md: 18px;
-    --radius-lg: 24px;
-    --radius-xl: 34px;
-
-    /* Sidebar */
-
-    --sidebar-width: 270px;
-
-    /* Preview */
-
-    --preview-width: 390px;
-
-    /* Topbar */
-
-    --topbar-height: 82px;
-
-    /* Transition */
-
-    --transition:
-        .22s cubic-bezier(.4, 0, .2, 1);
-
-}
-
-
-
-/* ===========================
-          RESET
-=========================== */
-
-*,
-*::before,
-*::after {
-
-    margin: 0;
-    padding: 0;
-
-    box-sizing: border-box;
-
-}
-
-
-
-html {
-
-    scroll-behavior: smooth;
-
-}
-
-
-
-body {
-
-    font-family: "Inter", sans-serif;
-
-    background: var(--bg);
-
-    color: var(--text);
-
-    overflow-x: hidden;
-
-    overflow-y: auto;
-
-    -webkit-font-smoothing: antialiased;
-
-    text-rendering: optimizeLegibility;
-
-}
-
-
-
-/* Images */
-
-img {
-
-    display: block;
-
+/* Prevent accidental horizontal overflow */
+.agent-parameters-page {
+    width: 100%;
     max-width: 100%;
-
-}
-
-
-
-/* Links */
-
-a {
-
-    color: inherit;
-
-    text-decoration: none;
-
-}
-
-
-
-/* Lists */
-
-ul {
-
-    list-style: none;
-
-}
-
-
-
-/* Inputs */
-
-input,
-textarea,
-button {
-
-    font-family: inherit;
-
-}
-
-
-
-/* Buttons */
-
-button {
-
-    border: none;
-
-    outline: none;
-
-    cursor: pointer;
-
-    transition: var(--transition);
-
-}
-
-
-
-/* Inputs */
-
-input {
-
-    outline: none;
-
-    border: none;
-
-}
-
-
-
-/* ===========================
-      CUSTOM SCROLLBAR
-=========================== */
-
-::-webkit-scrollbar {
-
-    width: 10px;
-
-}
-
-::-webkit-scrollbar-track {
-
-    background: #090b0e;
-
-}
-
-::-webkit-scrollbar-thumb {
-
-    background: #202732;
-
-    border-radius: 30px;
-
-}
-
-::-webkit-scrollbar-thumb:hover {
-
-    background: #2ad4ff;
-
-}
-
-
-
-/* Firefox */
-
-* {
-
-    scrollbar-width: thin;
-
-    scrollbar-color: #202732 #090b0e;
-
-}
-
-
-
-/* ===========================
-      SELECTION
-=========================== */
-
-::selection {
-
-    background: rgba(38, 216, 255, .25);
-
-    color: white;
-
-}
-
-
-
-/* ===========================
-        GLOBAL PAGE
-=========================== */
-
-.admin-page {
-
-    width: 100%;
-
-    height: 100%;
-
-    flex: 1 1 auto;
-
-    min-height: 0;
-
-    display: flex;
-
+    box-sizing: border-box;
     overflow-x: hidden;
-
-    overflow-y: auto;
-
-    background:
-        radial-gradient(circle at top right,
-            rgb(0, 0, 0),
-            transparent 30%),
-
-        radial-gradient(circle at bottom left,
-            rgb(0, 0, 0),
-            transparent 35%),
-
-        var(--bg);
-
 }
 
-
-
-/* ===========================
-     GLASS PANEL TEMPLATE
-=========================== */
-
-.glass {
-
-    background: var(--glass);
-
-    backdrop-filter: blur(22px);
-
-    -webkit-backdrop-filter: blur(22px);
-
-    border: 1px solid var(--glass-border);
-
-    box-shadow: var(--shadow-md);
-
+.agent-parameters-page *,
+.agent-parameters-page *::before,
+.agent-parameters-page *::after {
+    box-sizing: border-box;
 }
 
+/* ============================================================
+   MOBILE DESIGN
+   ============================================================ */
 
+@media screen and (max-width: 760px) {
 
-/* ===========================
-      PREMIUM CARDS
-=========================== */
+    /* ----------------------------------------------------------
+     PAGE SHELL
+     ---------------------------------------------------------- */
 
-.card {
-
-    background: linear-gradient(180deg,
-
-            rgba(255, 255, 255, .035),
-
-            rgba(255, 255, 255, .02));
-
-    border: 1px solid var(--border);
-
-    border-radius: var(--radius-md);
-
-    transition: var(--transition);
-
-}
-
-
-
-.card:hover {
-
-    border-color: rgba(42, 212, 255, .45);
-
-    box-shadow: var(--neon);
-
-}
-
-
-
-/* ===========================
-       ICON BUTTONS
-=========================== */
-
-.icon-button {
-
-    width: 42px;
-
-    height: 42px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    background: transparent;
-
-    border: 1px solid var(--border);
-
-    border-radius: 12px;
-
-    color: var(--text-secondary);
-
-}
-
-
-
-.icon-button:hover {
-
-    color: white;
-
-    border-color: var(--primary);
-
-    background: rgba(38, 216, 255, .06);
-
-    box-shadow: var(--neon);
-
-}
-
-
-
-/* ===========================
-      PREMIUM INPUT
-=========================== */
-
-input {
-
-    background: transparent;
-
-    color: white;
-
-}
-
-
-
-input::placeholder {
-
-    color: var(--text-muted);
-
-}
-
-
-
-/* ===========================
-     SUBTLE ANIMATIONS
-=========================== */
-
-@keyframes fadeUp {
-
-    from {
-
-        opacity: 0;
-
-        transform: translateY(20px);
-
+    .agent-parameters-page {
+        width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+        padding: 0 !important;
+        background: #030608 !important;
     }
 
-    to {
-
-        opacity: 1;
-
-        transform: translateY(0);
-
+    .agent-parameters-content {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        padding: 20px 13px 38px !important;
+        margin: 0 auto !important;
     }
 
-}
+    /* ----------------------------------------------------------
+     HEADER
+     ---------------------------------------------------------- */
 
-
-
-@keyframes glow {
-
-    0% {
-
-        box-shadow: 0 0 0 rgba(38, 216, 255, 0);
-
+    .agent-parameters-content header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+        gap: 15px !important;
+        width: 100% !important;
+        margin-bottom: 23px !important;
     }
 
-    50% {
-
-        box-shadow: 0 0 18px rgba(38, 216, 255, .22);
-
+    .agent-parameters-content header>div:first-child {
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 12px !important;
     }
 
-    100% {
-
-        box-shadow: 0 0 0 rgba(38, 216, 255, 0);
-
+    .agent-parameters-content header h1 {
+        font-size: clamp(23px, 6vw, 30px) !important;
+        line-height: 1.15 !important;
+        letter-spacing: -0.8px !important;
+        margin: 5px 0 8px !important;
+        overflow-wrap: anywhere !important;
     }
 
-}
-
-/*==========================================================
-    PART 2
-    MAIN LAYOUT
-    Sidebar • Topbar • Main Layout
-==========================================================*/
-
-
-/*==========================================================
-    SIDEBAR
-==========================================================*/
-
-.sidebar {
-
-    width: calc(var(--sidebar-width) - 20px);
-
-    min-width: calc(var(--sidebar-width) - 20px);
-
-    height: calc(100vh / 0.70);
-
-    min-height: calc(100vh / 0.70);
-
-    flex: 0 0 auto;
-
-    padding: 28px 18px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    justify-content: space-between;
-
-    background:
-        linear-gradient(180deg,
-            rgb(0, 0, 0),
-            rgba(0, 0, 0, 0.98));
-
-    border-right: 1px solid var(--border);
-
-    position: sticky;
-
-    top: 0;
-
-    overflow: hidden;
-
-}
-
-
-/* Neon edge */
-
-.sidebar::after {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-
-    right: 0;
-
-    width: 1px;
-
-    height: 100%;
-
-    background: rgba(38, 215, 255, 0.642);
-
-    box-shadow:
-        0 0 12px rgba(38, 215, 255, 0.257);
-
-}
-
-
-/*==========================================================
-    LOGO
-==========================================================*/
-
-.sidebar-logo {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    margin-bottom: 36px;
-
-}
-
-.logo-icon {
-
-    width: 46px;
-
-    height: 46px;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-size: 18px;
-
-    font-weight: 700;
-
-    color: white;
-
-    background:
-
-        linear-gradient(135deg,
-            #26d8ff,
-            #1299b8);
-
-    box-shadow:
-        0 0 20px rgba(38, 216, 255, .18);
-
-}
-
-.sidebar-logo h2 {
-
-    font-size: 16px;
-
-    font-weight: 700;
-
-    letter-spacing: -0.3px;
-
-}
-
-.sidebar-logo span {
-
-    display: block;
-
-    margin-top: 3px;
-
-    font-size: 10px;
-
-    color: var(--text-muted);
-
-}
-
-
-/*==========================================================
-    SECTION
-==========================================================*/
-
-.sidebar-section {
-
-    margin-bottom: 28px;
-
-}
-
-.sidebar-title {
-
-    color: var(--text-muted);
-
-    font-size: 10px;
-
-    letter-spacing: 1.8px;
-
-    text-transform: uppercase;
-
-    margin-bottom: 12px;
-
-    padding-left: 10px;
-
-}
-
-
-/*==========================================================
-    SIDEBAR ITEMS
-==========================================================*/
-
-.sidebar-item {
-
-    width: 100%;
-
-    height: 46px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 11px;
-
-    padding: 0 13px;
-
-    margin-bottom: 6px;
-
-    border-radius: 12px;
-
-    background: transparent;
-
-    color: var(--text-secondary);
-
-    border: 1px solid transparent;
-
-    transition: var(--transition);
-
-}
-
-.sidebar-item svg {
-
-    flex-shrink: 0;
-
-    width: 17px;
-
-    height: 17px;
-
-}
-
-.sidebar-item span {
-
-    font-size: 13px;
-
-    font-weight: 500;
-
-}
-
-.sidebar-item:hover {
-
-    color: white;
-
-    background: rgb(0, 2, 7);
-
-    border-color: rgba(38, 216, 255, .20);
-
-}
-
-.sidebar-item.active {
-
-    color: white;
-
-    background:
-
-        linear-gradient(90deg,
-
-            rgb(0, 0, 0),
-
-            rgb(0, 0, 0));
-
-    border: 1px solid rgba(38, 216, 255, .25);
-
-    box-shadow:
-        inset 0 0 0 1px rgba(38, 216, 255, .08),
-        0 0 18px rgba(38, 216, 255, .08);
-
-}
-
-
-/*==========================================================
-    BOTTOM PROFILE
-==========================================================*/
-
-.sidebar-bottom {
-
-    margin-top: auto;
-
-}
-
-.bottom-profile {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 14px;
-
-    padding: 16px;
-
-    border-radius: 18px;
-
-    background: rgb(0, 0, 0);
-
-    border: 1px solid var(--border);
-
-}
-
-.bottom-logo {
-
-    width: 46px;
-
-    height: 46px;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-weight: 700;
-
-    background:
-
-        linear-gradient(135deg,
-            #26d8ff,
-            #1299b8);
-
-}
-
-.bottom-profile h4 {
-
-    font-size: 14px;
-
-}
-
-.bottom-profile p {
-
-    margin-top: 3px;
-
-    font-size: 12px;
-
-    color: var(--text-muted);
-
-}
-
-
-/*==========================================================
-    MAIN CONTENT
-==========================================================*/
-
-.main-content {
-
-    flex: 1 1 auto;
-
-    min-width: 0;
-
-    min-height: 0;
-
-    height: 100%;
-
-    display: flex;
-
-    flex-direction: column;
-
-    overflow-x: hidden;
-
-    overflow-y: auto;
-
-}
-
-
-/*==========================================================
-    TOP BAR
-==========================================================*/
-
-.topbar {
-
-    height: var(--topbar-height);
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    padding: 0 34px;
-
-    background: rgb(0, 0, 0);
-
-    backdrop-filter: blur(18px);
-
-    -webkit-backdrop-filter: blur(18px);
-
-    border-bottom: 1px solid var(--border);
-
-}
-
-.topbar-center {
-
-    display: flex;
-
-    flex-direction: column;
-
-}
-
-.topbar-center h1 {
-
-    font-size: 24px;
-
-    font-weight: 700;
-
-    letter-spacing: -0.6px;
-
-}
-
-.topbar-center p {
-
-    margin-top: 4px;
-
-    color: var(--text-muted);
-
-    font-size: 13px;
-
-}
-
-.topbar-actions {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-}
-
-
-/*==========================================================
-    CONTENT LAYOUT
-==========================================================*/
-
-.content-layout {
-
-    flex: 1;
-
-    display: grid;
-
-    grid-template-columns:
-
-        minmax(0, 1fr) var(--preview-width);
-
-    gap: 26px;
-
-    padding: 26px;
-
-    overflow: visible;
-
-}
-
-
-
-/*==========================================================
-    PREVIEW PANEL
-==========================================================*/
-
-.preview-panel {
-
-    width: 100%;
-
-    animation: fadeUp .55s ease;
-
-}
-
-
-/*==========================================================
-    PREMIUM PANEL SURFACE
-==========================================================*/
-
-.chat-window,
-.preview-card {
-
-    height: 100%;
-
-    display: flex;
-
-    flex-direction: column;
-
-    background:
-
-        linear-gradient(180deg,
-
-            rgba(255, 255, 255, .035),
-
-            rgba(255, 255, 255, .018));
-
-    border: 1px solid var(--border);
-
-    border-radius: 26px;
-
-    backdrop-filter: blur(18px);
-
-    -webkit-backdrop-filter: blur(18px);
-
-    box-shadow:
-
-        var(--shadow-md);
-
-    transition: var(--transition);
-
-}
-
-.chat-window:hover,
-.preview-card:hover {
-
-    border-color: rgba(38, 216, 255, .18);
-
-}
-
-/*==========================================================
-    PART 3
-    CHAT PANEL
-    Hero • Feature Cards • Conversation
-==========================================================*/
-
-
-/*==========================================================
-    CHAT WINDOW
-==========================================================*/
-
-.chat-window {
-
-    display: flex;
-
-    flex-direction: column;
-
-    height: auto;
-
-    min-height: 100%;
-
-    overflow: visible;
-
-    padding: 42px;
-
-}
-
-.chat-scroll {
-
-    flex: 1;
-
-    overflow-y: auto;
-
-    padding-right: 10px;
-
-}
-
-
-/*==========================================================
-    HERO
-==========================================================*/
-
-.hero {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    text-align: center;
-
-    margin-bottom: 42px;
-
-}
-
-.hero-badge {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 8px 16px;
-
-    border-radius: 999px;
-
-    background: rgba(38, 216, 255, .07);
-
-    border: 1px solid rgba(38, 216, 255, .18);
-
-    color: var(--primary-soft);
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    margin-bottom: 24px;
-
-}
-
-.hero h1 {
-
-    font-size: 44px;
-
-    font-weight: 800;
-
-    line-height: 1.15;
-
-    letter-spacing: -1.5px;
-
-    color: var(--text);
-
-}
-
-.hero h1 span {
-
-    color: var(--primary);
-
-}
-
-.hero p {
-
-    margin-top: 18px;
-
-    max-width: 720px;
-
-    color: var(--text-secondary);
-
-    font-size: 16px;
-
-    line-height: 1.8;
-
-}
-
-
-/*==========================================================
-    FEATURE GRID
-==========================================================*/
-
-.feature-grid {
-
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    gap: 22px;
-
-    margin-bottom: 52px;
-
-}
-
-
-/*==========================================================
-    FEATURE CARD
-==========================================================*/
-
-.feature-card {
-
-    padding: 26px;
-
-    border-radius: 22px;
-
-    background:
-
-        linear-gradient(180deg,
-
-            rgba(255, 255, 255, .035),
-
-            rgba(255, 255, 255, .015));
-
-    border: 1px solid var(--border);
-
-    transition: var(--transition);
-
-}
-
-.feature-card:hover {
-
-    transform: translateY(-5px);
-
-    border-color: rgba(38, 216, 255, .28);
-
-    box-shadow:
-        0 0 24px rgba(38, 216, 255, .10);
-
-}
-
-.feature-icon {
-
-    width: 56px;
-
-    height: 56px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin-bottom: 20px;
-
-    border-radius: 18px;
-
-    color: var(--primary);
-
-    background: rgba(38, 216, 255, .08);
-
-    border: 1px solid rgba(38, 216, 255, .16);
-
-}
-
-.feature-card h3 {
-
-    font-size: 18px;
-
-    font-weight: 700;
-
-    margin-bottom: 10px;
-
-    color: white;
-
-}
-
-.feature-card p {
-
-    color: var(--text-secondary);
-
-    font-size: 14px;
-
-    line-height: 1.8;
-
-}
-
-
-/*==========================================================
-    CONVERSATION AREA
-==========================================================*/
-
-.conversation {
-
-    flex: 1;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    min-height: 280px;
-
-    margin: 10px 0 34px;
-
-}
-
-.conversation-center {
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    text-align: center;
-
-}
-
-.conversation-icon {
-
-    width: 88px;
-
-    height: 88px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    margin-bottom: 24px;
-
-    border-radius: 50%;
-
-    background:
-
-        radial-gradient(circle,
-
-            rgba(38, 216, 255, .15),
-
-            rgba(38, 216, 255, .04));
-
-    border: 1px solid rgba(38, 216, 255, .18);
-
-    color: var(--primary);
-
-}
-
-.conversation-center h2 {
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    margin-bottom: 12px;
-
-}
-
-.conversation-center p {
-
-    max-width: 520px;
-
-    color: var(--text-secondary);
-
-    line-height: 1.8;
-
-    font-size: 15px;
-
-}
-
-
-/*==========================================================
-    SUBTLE DIVIDER
-==========================================================*/
-
-.chat-window::after {
-
-    content: "";
-
-    display: block;
-
-    width: 100%;
-
-    height: 1px;
-
-    margin-top: 8px;
-
-    background:
-
-        linear-gradient(90deg,
-
-            transparent,
-
-            rgba(38, 216, 255, .12),
-
-            transparent);
-
-}
-
-
-/*==========================================================
-    PREMIUM HOVER EFFECTS
-==========================================================*/
-
-.hero,
-.feature-card,
-.conversation {
-
-    animation: fadeUp .5s ease;
-
-}
-
-/*==========================================================
-    PART 4
-    PROMPT BOX & CONVERSATION AREA
-==========================================================*/
-
-
-/*==========================================================
-    PROMPT SECTION
-==========================================================*/
-
-.prompt-section {
-
-    margin-top: auto;
-
-    padding-top: 20px;
-
-}
-
-
-
-/*==========================================================
-    PROMPT CONTAINER
-==========================================================*/
-
-.prompt-box {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 16px;
-
-    width: 100%;
-
-    min-height: 72px;
-
-    padding: 14px 16px 14px 24px;
-
-    border-radius: 22px;
-
-    background:
-
-        linear-gradient(180deg,
-
-            rgba(255, 255, 255, .045),
-
-            rgba(255, 255, 255, .02));
-
-    border: 1px solid var(--border);
-
-    backdrop-filter: blur(18px);
-
-    transition: var(--transition);
-
-    box-shadow:
-
-        0 12px 32px rgba(0, 0, 0, .28);
-
-}
-
-
-
-/*==========================================================
-    FOCUS STATE
-==========================================================*/
-
-.prompt-box:focus-within {
-
-    border-color: rgba(38, 216, 255, .45);
-
-    box-shadow:
-
-        0 0 0 1px rgba(38, 216, 255, .18),
-
-        0 0 30px rgba(38, 216, 255, .12);
-
-}
-
-
-
-/*==========================================================
-    INPUT
-==========================================================*/
-
-.prompt-box input {
-
-    flex: 1;
-
-    background: transparent;
-
-    color: white;
-
-    font-size: 15px;
-
-    font-weight: 500;
-
-    letter-spacing: .2px;
-
-}
-
-
-
-.prompt-box input::placeholder {
-
-    color: var(--text-muted);
-
-}
-
-
-
-/*==========================================================
-    SEND BUTTON
-==========================================================*/
-
-.prompt-box button {
-
-    width: 48px;
-
-    height: 48px;
-
-    border-radius: 16px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    color: white;
-
-    background:
-
-        linear-gradient(135deg,
-
-            var(--primary),
-
-            var(--primary-dark));
-
-    transition: var(--transition);
-
-    box-shadow:
-
-        0 10px 24px rgba(38, 216, 255, .18);
-
-}
-
-
-
-.prompt-box button:hover {
-
-    transform:
-
-        translateY(-2px) scale(1.04);
-
-    box-shadow:
-
-        0 0 22px rgba(38, 216, 255, .32);
-
-}
-
-
-
-.prompt-box button:active {
-
-    transform: scale(.96);
-
-}
-
-
-
-/*==========================================================
-    FOOTER
-==========================================================*/
-
-.prompt-footer {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    margin-top: 14px;
-
-    padding: 0 6px;
-
-    font-size: 12px;
-
-    color: var(--text-muted);
-
-}
-
-
-
-/*==========================================================
-    EMPTY CHAT TRANSITION
-==========================================================*/
-
-.conversation {
-
-    transition: var(--transition);
-
-}
-
-
-
-/*==========================================================
-    CHAT MESSAGE AREA
-    (used later when messages exist)
-==========================================================*/
-
-.messages {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 22px;
-
-}
-
-
-
-/*==========================================================
-    USER MESSAGE
-==========================================================*/
-
-.user-message {
-
-    align-self: flex-end;
-
-    max-width: 72%;
-
-    padding: 18px 22px;
-
-    border-radius: 22px;
-
-    color: white;
-
-    background:
-
-        linear-gradient(135deg,
-
-            rgba(38, 216, 255, .18),
-
-            rgba(38, 216, 255, .08));
-
-    border: 1px solid rgba(38, 216, 255, .20);
-
-}
-
-
-
-/*==========================================================
-    AI MESSAGE
-==========================================================*/
-
-.ai-message {
-
-    align-self: flex-start;
-
-    max-width: 78%;
-
-    padding: 22px;
-
-    border-radius: 22px;
-
-    background:
-
-        rgba(255, 255, 255, .03);
-
-    border: 1px solid var(--border);
-
-    line-height: 1.8;
-
-}
-
-
-
-/*==========================================================
-    MESSAGE AVATAR
-==========================================================*/
-
-.message-avatar {
-
-    width: 40px;
-
-    height: 40px;
-
-    border-radius: 14px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: white;
-
-    background:
-
-        linear-gradient(135deg,
-
-            var(--primary),
-
-            var(--primary-dark));
-
-}
-
-
-
-/*==========================================================
-    MESSAGE ROW
-==========================================================*/
-
-.message-row {
-
-    display: flex;
-
-    gap: 14px;
-
-    align-items: flex-start;
-
-}
-
-
-
-/*==========================================================
-    TYPING INDICATOR
-==========================================================*/
-
-.typing {
-
-    display: flex;
-
-    gap: 6px;
-
-    padding: 18px 22px;
-
-    border-radius: 18px;
-
-    background:
-
-        rgba(255, 255, 255, .03);
-
-    border: 1px solid var(--border);
-
-}
-
-
-
-.typing span {
-
-    width: 8px;
-
-    height: 8px;
-
-    border-radius: 50%;
-
-    background: var(--primary);
-
-    animation: typingBounce 1.2s infinite;
-
-}
-
-
-
-.typing span:nth-child(2) {
-
-    animation-delay: .2s;
-
-}
-
-
-
-.typing span:nth-child(3) {
-
-    animation-delay: .4s;
-
-}
-
-
-
-/*==========================================================
-    ANIMATION
-==========================================================*/
-
-@keyframes typingBounce {
-
-    0% {
-
-        transform: translateY(0);
-
-        opacity: .3;
-
+    .agent-parameters-content header p {
+        max-width: 100% !important;
+        font-size: 11px !important;
+        line-height: 1.65 !important;
+        color: #8d9ba7 !important;
     }
 
-    50% {
-
-        transform: translateY(-6px);
-
-        opacity: 1;
-
+    .agent-parameters-content header>div:last-child {
+        width: 100% !important;
+        justify-content: flex-start !important;
     }
 
-    100% {
+    /* ----------------------------------------------------------
+     CONTENT AREA
+     ---------------------------------------------------------- */
 
-        transform: translateY(0);
-
-        opacity: .3;
-
+    .agent-parameters-content>div {
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
 
-}
+    /* ----------------------------------------------------------
+     METRICS
+     ---------------------------------------------------------- */
 
-
-
-/*==========================================================
-    MOBILE
-==========================================================*/
-
-@media(max-width:900px) {
-
-    .prompt-footer {
-
-        flex-direction: column;
-
-        gap: 8px;
-
-        text-align: center;
-
+    .agent-parameters-mobile-metrics {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin-bottom: 17px !important;
     }
 
-}
-
-/*==========================================================
-    PART 5
-    PREVIEW PANEL & TILL SLIP CARD
-==========================================================*/
-
-
-/*==========================================================
-    PREVIEW PANEL
-==========================================================*/
-
-.preview-panel {
-
-    display: flex;
-
-    flex-direction: column;
-
-    height: 100%;
-
-}
-
-
-
-/*==========================================================
-    PREVIEW CARD
-==========================================================*/
-
-.preview-card {
-
-    display: flex;
-
-    flex-direction: column;
-
-    height: 100%;
-
-    padding: 28px;
-
-    overflow: hidden;
-
-}
-
-
-
-/*==========================================================
-    HEADER
-==========================================================*/
-
-.preview-header {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: flex-start;
-
-    margin-bottom: 28px;
-
-}
-
-.preview-header h2 {
-
-    font-size: 22px;
-
-    font-weight: 700;
-
-    color: white;
-
-}
-
-.preview-header p {
-
-    margin-top: 6px;
-
-    color: var(--text-muted);
-
-    font-size: 13px;
-
-}
-
-
-
-/*==========================================================
-    AI STATUS BADGE
-==========================================================*/
-
-.status-badge {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    padding: 8px 14px;
-
-    border-radius: 999px;
-
-    background: rgba(54, 209, 123, .08);
-
-    border: 1px solid rgba(54, 209, 123, .22);
-
-}
-
-.status-dot {
-
-    width: 8px;
-
-    height: 8px;
-
-    border-radius: 50%;
-
-    background: var(--success);
-
-    box-shadow:
-
-        0 0 10px rgba(54, 209, 123, .7);
-
-}
-
-.status-badge span {
-
-    color: var(--success);
-
-    font-size: 12px;
-
-    font-weight: 600;
-
-}
-
-
-
-/*==========================================================
-    RECEIPT AREA
-==========================================================*/
-
-.receipt-preview {
-
-    flex: 1;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    padding: 18px;
-
-    border-radius: 24px;
-
-    background:
-
-        linear-gradient(180deg,
-
-            rgba(255, 255, 255, .02),
-
-            rgba(255, 255, 255, .01));
-
-    border: 1px solid var(--border);
-
-}
-
-
-
-/*==========================================================
-    RECEIPT PAPER
-==========================================================*/
-
-.receipt-paper {
-
-    width: 250px;
-
-    height: 500px;
-
-    border-radius: 18px;
-
-    background: white;
-
-    color: #111;
-
-    display: flex;
-
-    flex-direction: column;
-
-    align-items: center;
-
-    padding: 22px;
-
-    position: relative;
-
-    box-shadow:
-
-        0 30px 80px rgba(0, 0, 0, .45);
-
-}
-
-
-
-/*==========================================================
-    PAPER GLOW
-==========================================================*/
-
-.receipt-paper::before {
-
-    content: "";
-
-    position: absolute;
-
-    inset: -2px;
-
-    border-radius: 20px;
-
-    background:
-
-        linear-gradient(135deg,
-
-            rgba(38, 216, 255, .55),
-
-            transparent,
-
-            rgba(38, 216, 255, .25));
-
-    z-index: -1;
-
-    filter: blur(12px);
-
-}
-
-
-
-/*==========================================================
-    RECEIPT TITLE
-==========================================================*/
-
-.receipt-title {
-
-    font-size: 20px;
-
-    font-weight: 700;
-
-    margin-bottom: 26px;
-
-    color: #222;
-
-}
-
-
-
-/*==========================================================
-    IMAGE PLACEHOLDER
-==========================================================*/
-
-.receipt-image {
-
-    width: 170px;
-
-    height: 220px;
-
-    border-radius: 16px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    color: #26d8ff;
-
-    background:
-
-        linear-gradient(180deg,
-
-            #eefbff,
-
-            #f8fdff);
-
-    border: 2px dashed rgba(38, 216, 255, .45);
-
-}
-
-
-
-/*==========================================================
-    RECEIPT LINES
-==========================================================*/
-
-.receipt-lines {
-
-    width: 100%;
-
-    margin-top: 28px;
-
-}
-
-.receipt-lines div {
-
-    width: 100%;
-
-    height: 8px;
-
-    margin-bottom: 12px;
-
-    border-radius: 999px;
-
-    background: #e5e8ed;
-
-}
-
-.receipt-lines div:nth-child(1) {
-
-    width: 95%;
-
-}
-
-.receipt-lines div:nth-child(2) {
-
-    width: 82%;
-
-}
-
-.receipt-lines div:nth-child(3) {
-
-    width: 90%;
-
-}
-
-.receipt-lines div:nth-child(4) {
-
-    width: 72%;
-
-}
-
-.receipt-lines div:nth-child(5) {
-
-    width: 86%;
-
-}
-
-.receipt-lines div:nth-child(6) {
-
-    width: 68%;
-
-}
-
-.receipt-lines div:nth-child(7) {
-
-    width: 92%;
-
-}
-
-
-
-/*==========================================================
-    STATS
-==========================================================*/
-
-.preview-stats {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 14px;
-
-    margin-top: 24px;
-
-}
-
-.stat-card {
-
-    padding: 18px;
-
-    text-align: center;
-
-    border-radius: 18px;
-
-    background: rgba(255, 255, 255, .03);
-
-    border: 1px solid var(--border);
-
-}
-
-.stat-value {
-
-    display: block;
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    color: white;
-
-}
-
-.stat-label {
-
-    display: block;
-
-    margin-top: 6px;
-
-    font-size: 12px;
-
-    color: var(--text-muted);
-
-}
-
-
-
-/*==========================================================
-    AI ENGINE
-==========================================================*/
-
-.ai-card {
-
-    display: flex;
-
-    gap: 16px;
-
-    align-items: flex-start;
-
-    margin-top: 22px;
-
-    padding: 20px;
-
-    border-radius: 18px;
-
-    background: rgba(255, 255, 255, .03);
-
-    border: 1px solid var(--border);
-
-}
-
-.ai-icon {
-
-    width: 48px;
-
-    height: 48px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    flex-shrink: 0;
-
-    border-radius: 16px;
-
-    color: white;
-
-    background:
-
-        linear-gradient(135deg,
-
-            var(--primary),
-
-            var(--primary-dark));
-
-}
-
-.ai-card h4 {
-
-    margin-bottom: 8px;
-
-    font-size: 16px;
-
-}
-
-.ai-card p {
-
-    color: var(--text-secondary);
-
-    line-height: 1.7;
-
-    font-size: 13px;
-
-}
-
-
-
-/*==========================================================
-    ACTION BUTTONS
-==========================================================*/
-
-.preview-actions {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 14px;
-
-    margin-top: 22px;
-
-}
-
-.primary-action {
-
-    height: 52px;
-
-    border-radius: 16px;
-
-    color: white;
-
-    font-weight: 600;
-
-    background:
-
-        linear-gradient(135deg,
-
-            var(--primary),
-
-            var(--primary-dark));
-
-}
-
-.primary-action:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-
-        0 0 18px rgba(38, 216, 255, .28);
-
-}
-
-.secondary-action {
-
-    height: 52px;
-
-    border-radius: 16px;
-
-    color: white;
-
-    background: transparent;
-
-    border: 1px solid var(--border);
-
-}
-
-.secondary-action:hover {
-
-    border-color: var(--primary);
-
-}
-
-
-
-/*==========================================================
-    EXPORT
-==========================================================*/
-
-.export-card {
-
-    margin-top: 22px;
-
-    padding: 22px;
-
-    border-radius: 18px;
-
-    background: rgba(255, 255, 255, .03);
-
-    border: 1px solid var(--border);
-
-}
-
-.export-card h3 {
-
-    font-size: 17px;
-
-}
-
-.export-card p {
-
-    margin: 10px 0 18px;
-
-    color: var(--text-secondary);
-
-    line-height: 1.7;
-
-    font-size: 13px;
-
-}
-
-.export-button {
-
-    width: 100%;
-
-    height: 50px;
-
-    border-radius: 14px;
-
-    color: white;
-
-    font-weight: 600;
-
-    background:
-
-        linear-gradient(135deg,
-
-            #232d38,
-
-            #1a222b);
-
-    border: 1px solid rgba(38, 216, 255, .18);
-
-}
-
-.export-button:hover {
-
-    border-color: var(--primary);
-
-    box-shadow:
-
-        0 0 16px rgba(38, 216, 255, .18);
-
-}
-
-/*==========================================================
-    PART 5.5
-    AI LIVE RECEIPT CANVAS
-==========================================================*/
-
-
-.receipt-preview {
-
-    position: relative;
-
-    flex: 1;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    padding: 28px;
-
-    border-radius: 26px;
-
-    overflow: hidden;
-
-    background:
-
-        radial-gradient(circle at top,
-            rgba(38, 216, 255, .06),
-            transparent 60%),
-
-        linear-gradient(180deg,
-
-            rgba(255, 255, 255, .025),
-
-            rgba(255, 255, 255, .01));
-
-    border: 1px solid var(--border);
-
-}
-
-
-
-/*======================================
-      Floating Corner Guides
-======================================*/
-
-.receipt-preview::before,
-
-.receipt-preview::after {
-
-    content: "";
-
-    position: absolute;
-
-    width: 70px;
-
-    height: 70px;
-
-    border: 2px solid rgba(38, 216, 255, .55);
-
-    pointer-events: none;
-
-    animation: cornerPulse 4s infinite ease-in-out;
-
-}
-
-.receipt-preview::before {
-
-    top: 22px;
-
-    left: 22px;
-
-    border-right: none;
-
-    border-bottom: none;
-
-    border-radius: 18px 0 0 0;
-
-}
-
-.receipt-preview::after {
-
-    right: 22px;
-
-    bottom: 22px;
-
-    border-left: none;
-
-    border-top: none;
-
-    border-radius: 0 0 18px 0;
-
-}
-
-
-
-/*======================================
-      AI Receipt
-======================================*/
-
-.receipt-paper {
-
-    position: relative;
-
-    width: 270px;
-
-    height: 560px;
-
-    border-radius: 18px;
-
-    overflow: hidden;
-
-    background:
-
-        linear-gradient(180deg,
-
-            #ffffff,
-
-            #fbfbfb),
-
-        repeating-linear-gradient(0deg,
-
-            rgba(0, 0, 0, .012),
-
-            rgba(0, 0, 0, .012) 1px,
-
-            transparent 1px,
-
-            transparent 6px);
-
-    box-shadow:
-
-        0 35px 90px rgba(0, 0, 0, .45),
-
-        0 0 28px rgba(38, 216, 255, .14);
-
-    animation: receiptAppear .65s ease;
-
-}
-
-
-
-/*======================================
-      Cyan Glow
-======================================*/
-
-.receipt-paper::before {
-
-    content: "";
-
-    position: absolute;
-
-    inset: -2px;
-
-    border-radius: 20px;
-
-    background:
-
-        linear-gradient(135deg,
-
-            rgba(38, 216, 255, .35),
-
-            transparent,
-
-            rgba(38, 216, 255, .15));
-
-    filter: blur(16px);
-
-    z-index: -1;
-
-}
-
-
-
-/*======================================
-      AI Badge
-======================================*/
-
-.ai-preview-badge {
-
-    position: absolute;
-
-    top: 18px;
-
-    right: 18px;
-
-    padding: 8px 14px;
-
-    border-radius: 999px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 8px;
-
-    background:
-
-        rgba(38, 216, 255, .08);
-
-    border: 1px solid rgba(38, 216, 255, .25);
-
-    color: #26d8ff;
-
-    font-size: 11px;
-
-    font-weight: 700;
-
-    letter-spacing: .8px;
-
-    text-transform: uppercase;
-
-    backdrop-filter: blur(8px);
-
-}
-
-
-
-/*======================================
-      Merchant
-======================================*/
-
-.receipt-merchant {
-
-    text-align: center;
-
-    margin-top: 60px;
-
-}
-
-.receipt-merchant h2 {
-
-    font-size: 22px;
-
-    color: #111;
-
-    font-weight: 800;
-
-}
-
-.receipt-merchant p {
-
-    color: #777;
-
-    font-size: 12px;
-
-    margin-top: 6px;
-
-}
-
-
-
-/*======================================
-      Divider
-======================================*/
-
-.receipt-divider {
-
-    height: 1px;
-
-    margin: 18px 22px;
-
-    background: #dddddd;
-
-}
-
-
-
-/*======================================
-      Items
-======================================*/
-
-.receipt-items {
-
-    padding: 0 22px;
-
-}
-
-.receipt-row {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-bottom: 12px;
-
-    font-size: 13px;
-
-    color: #333;
-
-}
-
-
-
-/*======================================
-      Totals
-======================================*/
-
-.receipt-total {
-
-    margin: 24px 22px 18px;
-
-    padding-top: 14px;
-
-    border-top: 2px dashed #cccccc;
-
-}
-
-.receipt-total-row {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    margin-bottom: 10px;
-
-}
-
-.receipt-grand-total {
-
-    font-size: 18px;
-
-    font-weight: 800;
-
-}
-
-
-
-/*======================================
-      QR Placeholder
-======================================*/
-
-.receipt-qr {
-
-    width: 95px;
-
-    height: 95px;
-
-    margin: 22px auto 0;
-
-    border-radius: 10px;
-
-    background:
-
-        repeating-conic-gradient(#222 0 25%,
-
-            white 0 50%);
-
-    background-size: 14px 14px;
-
-}
-
-
-
-/*======================================
-      Footer
-======================================*/
-
-.receipt-footer {
-
-    margin-top: 18px;
-
-    text-align: center;
-
-    font-size: 11px;
-
-    color: #777;
-
-}
-
-
-
-/*======================================
-      Animations
-======================================*/
-
-@keyframes receiptAppear {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-
-            translateY(16px) scale(.96);
-
-        filter: blur(10px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-
-            translateY(0) scale(1);
-
-        filter: none;
-
-    }
-
-}
-
-
-
-@keyframes cornerPulse {
-
-    0% {
-
-        opacity: .25;
-
-    }
-
-    50% {
-
-        opacity: 1;
-
-    }
-
-    100% {
-
-        opacity: .25;
-
-    }
-
-}
-
-/*==========================================================
-    PART 6
-    BUTTONS • HOVER EFFECTS • ANIMATIONS
-==========================================================*/
-
-
-/*==========================================================
-    GLOBAL BUTTON STYLES
-==========================================================*/
-
-button {
-
-    position: relative;
-
-    overflow: hidden;
-
-    transition:
-        transform .22s ease,
-        box-shadow .22s ease,
-        border-color .22s ease,
-        background .22s ease,
-        color .22s ease;
-
-}
-
-button:disabled {
-
-    opacity: .55;
-
-    cursor: not-allowed;
-
-    transform: none !important;
-
-}
-
-
-
-/*==========================================================
-    RIPPLE EFFECT
-==========================================================*/
-
-button::after {
-
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-
-    top: 50%;
-
-    width: 0;
-
-    height: 0;
-
-    border-radius: 50%;
-
-    background:
-
-        rgba(255, 255, 255, .14);
-
-    transform:
-
-        translate(-50%, -50%);
-
-    transition:
-
-        width .45s ease,
-        height .45s ease;
-
-}
-
-button:active::after {
-
-    width: 240px;
-
-    height: 240px;
-
-}
-
-
-
-/*==========================================================
-    PREMIUM PRIMARY BUTTON
-==========================================================*/
-
-.primary-action,
-
-.export-button,
-
-.prompt-box button {
-
-    font-weight: 600;
-
-    letter-spacing: .2px;
-
-}
-
-.primary-action:hover,
-
-.export-button:hover,
-
-.prompt-box button:hover {
-
-    transform:
-
-        translateY(-2px);
-
-}
-
-
-
-/*==========================================================
-    SECONDARY BUTTON
-==========================================================*/
-
-.secondary-action {
-
-    transition: all .25s ease;
-
-}
-
-.secondary-action:hover {
-
-    background:
-
-        rgba(38, 216, 255, .05);
-
-}
-
-
-
-/*==========================================================
-    ICON BUTTONS
-==========================================================*/
-
-.icon-button {
-
-    transition:
-
-        transform .2s ease,
-
-        background .2s ease,
-
-        box-shadow .2s ease;
-
-}
-
-.icon-button:hover {
-
-    transform:
-
-        translateY(-2px);
-
-}
-
-.icon-button:active {
-
-    transform:
-
-        scale(.94);
-
-}
-
-
-
-/*==========================================================
-    FEATURE CARD HOVER
-==========================================================*/
-
-.feature-card {
-
-    cursor: pointer;
-
-}
-
-.feature-card:hover {
-
-    transform:
-
-        translateY(-5px);
-
-}
-
-.feature-card:hover .feature-icon {
-
-    transform:
-
-        rotate(-6deg) scale(1.08);
-
-    box-shadow:
-
-        0 0 20px rgba(38, 216, 255, .18);
-
-}
-
-.feature-icon {
-
-    transition:
-
-        transform .25s ease,
-
-        box-shadow .25s ease;
-
-}
-
-
-
-/*==========================================================
-    SIDEBAR ITEMS
-==========================================================*/
-
-.sidebar-item {
-
-    position: relative;
-
-}
-
-.sidebar-item::before {
-
-    content: "";
-
-    position: absolute;
-
-    left: 0;
-
-    top: 10px;
-
-    bottom: 10px;
-
-    width: 3px;
-
-    border-radius: 999px;
-
-    background:
-
-        var(--primary);
-
-    transform: scaleY(0);
-
-    transition: .2s ease;
-
-}
-
-.sidebar-item:hover::before,
-
-.sidebar-item.active::before {
-
-    transform: scaleY(1);
-
-}
-
-
-
-/*==========================================================
-    RECEIPT GLOW
-==========================================================*/
-
-.receipt-paper {
-
-    transition:
-
-        transform .35s ease,
-
-        box-shadow .35s ease;
-
-}
-
-.receipt-paper:hover {
-
-    transform:
-
-        scale(1.02) rotate(.2deg);
-
-    box-shadow:
-
-        0 40px 90px rgba(0, 0, 0, .45),
-
-        0 0 34px rgba(38, 216, 255, .18);
-
-}
-
-
-
-/*==========================================================
-    RECEIPT UPDATE FLASH
-==========================================================*/
-
-.receipt-paper.updated {
-
-    animation:
-
-        receiptUpdated .8s ease;
-
-}
-
-@keyframes receiptUpdated {
-
-    0% {
-
-        filter: blur(8px);
-
-        opacity: .5;
-
-    }
-
-    35% {
-
-        filter: blur(2px);
-
-    }
-
-    70% {
-
+    .agent-parameters-mobile-metrics>div {
+        min-width: 0 !important;
+        min-height: 105px !important;
+        padding: 13px 11px !important;
+        border-radius: 13px !important;
+        overflow: hidden !important;
+        background:
+            linear-gradient(145deg,
+                rgba(13, 22, 28, 0.98),
+                rgba(2, 5, 8, 1)) !important;
+        border: 1px solid rgba(77, 197, 235, 0.28) !important;
         box-shadow:
-
-            0 0 32px rgba(38, 216, 255, .28);
-
+            0 8px 20px rgba(0, 0, 0, 0.35),
+            inset 0 1px 0 rgba(255, 255, 255, 0.035) !important;
     }
 
-    100% {
-
-        filter: none;
-
-        opacity: 1;
-
+    .agent-parameters-mobile-metrics>div>div:nth-child(2) {
+        font-size: 8px !important;
+        letter-spacing: 1px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 9px !important;
+        overflow-wrap: anywhere !important;
     }
 
-}
-
-
-
-/*==========================================================
-    STATUS BADGE
-==========================================================*/
-
-.status-badge {
-
-    transition: .25s ease;
-
-}
-
-.status-badge:hover {
-
-    transform:
-
-        scale(1.04);
-
-}
-
-
-
-/*==========================================================
-    LIVE DOT
-==========================================================*/
-
-.status-dot {
-
-    animation:
-
-        livePulse 2s infinite;
-
-}
-
-@keyframes livePulse {
-
-    0% {
-
-        transform: scale(1);
-
-        opacity: .7;
-
+    .agent-parameters-mobile-metrics>div>div:nth-child(3) {
+        font-size: 19px !important;
+        line-height: 1.1 !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.5px !important;
     }
 
-    50% {
-
-        transform: scale(1.45);
-
-        opacity: 1;
-
+    .agent-parameters-mobile-metrics>div>div:nth-child(4) {
+        font-size: 8px !important;
+        line-height: 1.45 !important;
+        margin-top: 7px !important;
+        overflow-wrap: anywhere !important;
     }
 
-    100% {
+    /* ----------------------------------------------------------
+     MAIN DASHBOARD
+     ---------------------------------------------------------- */
 
-        transform: scale(1);
-
-        opacity: .7;
-
+    .agent-parameters-mobile-dashboard {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 15px !important;
+        width: 100% !important;
+        min-width: 0 !important;
     }
 
-}
-
-
-
-/*==========================================================
-    HERO
-==========================================================*/
-
-.hero {
-
-    animation:
-
-        heroFade .6s ease;
-
-}
-
-@keyframes heroFade {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-
-            translateY(16px);
-
+    .agent-parameters-mobile-dashboard>div {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
 
-    to {
+    /* ----------------------------------------------------------
+     DASHBOARD CARDS
+     ---------------------------------------------------------- */
 
-        opacity: 1;
-
-        transform: none;
-
+    .agent-parameters-mobile-dashboard section {
+        min-width: 0 !important;
+        max-width: 100% !important;
+        border-radius: 15px !important;
+        overflow: hidden !important;
     }
 
-}
-
-
-
-/*==========================================================
-    STAGGERED FEATURE CARDS
-==========================================================*/
-
-.feature-card:nth-child(1) {
-
-    animation:
-
-        fadeUp .45s ease;
-
-}
-
-.feature-card:nth-child(2) {
-
-    animation:
-
-        fadeUp .55s ease;
-
-}
-
-.feature-card:nth-child(3) {
-
-    animation:
-
-        fadeUp .65s ease;
-
-}
-
-.feature-card:nth-child(4) {
-
-    animation:
-
-        fadeUp .75s ease;
-
-}
-
-
-
-/*==========================================================
-    GLASS PANELS
-==========================================================*/
-
-.chat-window,
-
-.preview-card {
-
-    transition:
-
-        border-color .25s ease,
-
-        transform .25s ease,
-
-        box-shadow .25s ease;
-
-}
-
-.chat-window:hover,
-
-.preview-card:hover {
-
-    border-color:
-
-        rgba(38, 216, 255, .16);
-
-}
-
-
-
-/*==========================================================
-    INPUT PLACEHOLDER
-==========================================================*/
-
-.prompt-box input {
-
-    transition: .25s ease;
-
-}
-
-.prompt-box input:focus {
-
-    color: white;
-
-}
-
-.prompt-box input:focus::placeholder {
-
-    opacity: .4;
-
-}
-
-
-
-/*==========================================================
-    SCROLL FADE
-==========================================================*/
-
-.chat-window {
-
-    mask-image:
-
-        linear-gradient(black 94%,
-
-            transparent);
-
-}
-
-
-
-/*==========================================================
-    PAGE LOAD
-==========================================================*/
-
-.admin-page {
-
-    animation:
-
-        appFade .5s ease;
-
-}
-
-@keyframes appFade {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-
-            scale(.992);
-
+    .agent-parameters-mobile-dashboard section>div:first-child {
+        padding: 15px 13px !important;
+        gap: 10px !important;
     }
 
-    to {
-
-        opacity: 1;
-
-        transform: none;
-
+    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+        padding: 14px !important;
+        min-width: 0 !important;
     }
 
-}
-
-
-
-/*==========================================================
-    FLOATING AI BADGE
-==========================================================*/
-
-.ai-preview-badge {
-
-    animation:
-
-        floatBadge 4s ease-in-out infinite;
-
-}
-
-@keyframes floatBadge {
-
-    0% {
-
-        transform:
-
-            translateY(0);
-
+    .agent-parameters-mobile-dashboard h2 {
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        letter-spacing: -0.15px !important;
     }
 
-    50% {
-
-        transform:
-
-            translateY(-3px);
-
+    .agent-parameters-mobile-dashboard section p {
+        font-size: 9px !important;
+        line-height: 1.6 !important;
     }
 
-    100% {
+    /* Card icons */
+    .agent-parameters-mobile-dashboard section>div:first-child>div:first-child {
+        min-width: 0 !important;
+    }
 
-        transform:
+    /* ----------------------------------------------------------
+     BUSINESS LOGO UPLOAD
+     ---------------------------------------------------------- */
 
-            translateY(0);
+    .agent-parameters-logo-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) 105px !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+        width: 100% !important;
+    }
 
+    .agent-parameters-logo-grid>label {
+        min-height: 125px !important;
+        padding: 12px !important;
+        border-radius: 12px !important;
+    }
+
+    .agent-parameters-logo-grid>div {
+        min-width: 0 !important;
+        min-height: 125px !important;
+        padding: 8px !important;
+        border-radius: 12px !important;
+    }
+
+    .agent-parameters-logo-grid img {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 95px !important;
+        object-fit: contain !important;
+    }
+
+    /* ----------------------------------------------------------
+     FORM FIELDS
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-fields {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 15px !important;
+        width: 100% !important;
+    }
+
+    .agent-parameters-mobile-fields>div {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .agent-parameters-mobile-fields label {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 5px !important;
+        width: 100% !important;
+        font-size: 9px !important;
+        line-height: 1.5 !important;
+        letter-spacing: 0.7px !important;
+    }
+
+    .agent-parameters-mobile-fields input,
+    .agent-parameters-mobile-fields select,
+    .agent-parameters-mobile-fields textarea {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        min-height: 44px !important;
+        padding: 11px 12px !important;
+        border-radius: 9px !important;
+        font-size: 13px !important;
+        line-height: 1.4 !important;
+        color: #edf8fc !important;
+        background: #050a0e !important;
+        border: 1px solid rgba(88, 177, 207, 0.28) !important;
+        outline: none !important;
+    }
+
+    .agent-parameters-mobile-fields textarea {
+        min-height: 95px !important;
+        resize: vertical !important;
+    }
+
+    .agent-parameters-mobile-fields input:focus,
+    .agent-parameters-mobile-fields select:focus,
+    .agent-parameters-mobile-fields textarea:focus {
+        border-color: rgba(85, 210, 255, 0.8) !important;
+        box-shadow: 0 0 0 3px rgba(40, 177, 225, 0.09) !important;
+    }
+
+    /* ----------------------------------------------------------
+     INSIGHT GRID
+     ---------------------------------------------------------- */
+
+    .agent-parameters-insight-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
+        width: 100% !important;
+    }
+
+    .agent-parameters-insight-grid>div {
+        min-width: 0 !important;
+        padding: 11px !important;
+        border-radius: 10px !important;
+        overflow: hidden !important;
+    }
+
+    .agent-parameters-insight-grid>div>div {
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     BUTTONS
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard button {
+        max-width: 100% !important;
+        min-height: 43px !important;
+        padding: 11px 13px !important;
+        font-size: 9px !important;
+        line-height: 1.4 !important;
+        letter-spacing: 0.5px !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     SAVE AND SYNC FOOTER
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard section[style*="space-between"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    .agent-parameters-mobile-dashboard button {
+        touch-action: manipulation;
+    }
+
+    /* ----------------------------------------------------------
+     RECEIPT PREVIEW
+     ---------------------------------------------------------- */
+
+    .agent-parameters-mobile-dashboard img {
+        max-width: 100% !important;
+    }
+
+    .agent-parameters-mobile-dashboard pre,
+    .agent-parameters-mobile-dashboard code {
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        white-space: pre-wrap !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* ----------------------------------------------------------
+     GENERAL TEXT SAFETY
+     ---------------------------------------------------------- */
+
+    .agent-parameters-page h1,
+    .agent-parameters-page h2,
+    .agent-parameters-page p,
+    .agent-parameters-page label,
+    .agent-parameters-page span,
+    .agent-parameters-page div {
+        overflow-wrap: break-word;
+    }
+
+    .agent-parameters-page button,
+    .agent-parameters-page input,
+    .agent-parameters-page select,
+    .agent-parameters-page textarea {
+        font-family: inherit;
     }
 
 }
 
+/* ============================================================
+   SMALL MOBILE DEVICES
+   ============================================================ */
 
+@media screen and (max-width: 390px) {
 
-/*==========================================================
-    LOADING SHIMMER
-==========================================================*/
+    .agent-parameters-content {
+        padding: 16px 10px 30px !important;
+    }
 
-.loading {
+    .agent-parameters-mobile-metrics {
+        gap: 8px !important;
+    }
 
-    position: relative;
+    .agent-parameters-mobile-metrics>div {
+        padding: 11px 9px !important;
+        min-height: 100px !important;
+    }
 
-    overflow: hidden;
+    .agent-parameters-mobile-metrics>div>div:nth-child(3) {
+        font-size: 17px !important;
+    }
+
+    .agent-parameters-logo-grid {
+        grid-template-columns: minmax(0, 1fr) 90px !important;
+        gap: 8px !important;
+    }
+
+    .agent-parameters-insight-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
 
 }
 
-.loading::before {
+/* ============================================================
+   TABLET
+   ============================================================ */
 
+@media screen and (min-width: 761px) and (max-width: 1100px) {
+
+    .agent-parameters-mobile-dashboard {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .agent-parameters-logo-grid {
+        grid-template-columns: minmax(0, 1fr) 140px !important;
+    }
+
+}
+
+
+
+/* ============================================================
+   RUACHAGENT // FUTURE INTERFACE LAYER
+   Visual-only overrides. Existing React state, handlers,
+   Supabase calls, form names and receipt rendering are untouched.
+   ============================================================ */
+
+.agent-parameters-page {
+    --ap-cyan: #69dfff;
+    --ap-blue: #42b9f4;
+    --ap-ice: #c8f3ff;
+    --ap-muted: #91a9b8;
+    --ap-line: rgba(91, 205, 247, .28);
+    isolation: isolate;
+    background: #03070b !important;
+    color: #eaf8ff !important;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif !important;
+}
+
+.agent-parameters-page::before {
     content: "";
-
     position: absolute;
-
     inset: 0;
-
-    transform:
-
-        translateX(-100%);
-
+    z-index: 0;
+    pointer-events: none;
+    opacity: .42;
     background:
-
-        linear-gradient(90deg,
-
-            transparent,
-
-            rgb(0, 0, 0),
-
-            transparent);
-
-    animation:
-
-        shimmer 1.6s infinite;
-
+        linear-gradient(90deg, transparent 0 49.9%, rgba(74, 194, 241, .035) 50%, transparent 50.1%),
+        linear-gradient(rgba(74, 194, 241, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(74, 194, 241, .025) 1px, transparent 1px);
+    background-size: 100% 100%, 48px 48px, 48px 48px;
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
 }
 
-@keyframes shimmer {
-
-    to {
-
-        transform:
-
-            translateX(100%);
-
-    }
-
+.agent-parameters-page .agent-parameters-ambient {
+    opacity: .82;
+    filter: blur(14px) saturate(1.2);
 }
 
-/*==========================================================
-    PART 7
-    SCROLLBARS & RESPONSIVE DESIGN
-==========================================================*/
-
-
-/*==========================================================
-    PREMIUM SCROLLBARS
-==========================================================*/
-
-.chat-window,
-.preview-card,
-.sidebar {
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-
-        rgba(38, 216, 255, .30) transparent;
-
+.agent-parameters-page .agent-parameters-grid-overlay {
+    opacity: .34 !important;
+    background-image:
+        linear-gradient(rgba(95, 207, 255, .07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95, 207, 255, .07) 1px, transparent 1px) !important;
+    background-size: 44px 44px !important;
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 84%) !important;
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 84%) !important;
 }
 
-.chat-window::-webkit-scrollbar,
-.preview-card::-webkit-scrollbar,
-.sidebar::-webkit-scrollbar {
-
-    width: 8px;
-
+.agent-parameters-content {
+    max-width: 1740px !important;
+    padding: 34px clamp(22px, 3vw, 48px) 64px !important;
 }
 
-.chat-window::-webkit-scrollbar-track,
-.preview-card::-webkit-scrollbar-track,
-.sidebar::-webkit-scrollbar-track {
-
-    background: transparent;
-
+.agent-parameters-content header {
+    position: relative;
+    padding: 18px 20px;
+    margin: 0 0 22px !important;
+    border: 1px solid rgba(91, 205, 247, .20);
+    border-radius: 20px;
+    background: linear-gradient(112deg, rgba(8, 22, 31, .86), rgba(3, 9, 14, .72) 62%, rgba(8, 24, 34, .62));
+    box-shadow: 0 18px 48px rgba(0, 0, 0, .34), inset 0 1px rgba(210, 246, 255, .06);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
-.chat-window::-webkit-scrollbar-thumb,
-.preview-card::-webkit-scrollbar-thumb,
-.sidebar::-webkit-scrollbar-thumb {
+.agent-parameters-header-orb {
+    border-radius: 15px !important;
+    background: linear-gradient(145deg, rgba(27, 90, 115, .9), #06111a 70%) !important;
+    border: 1px solid rgba(113, 224, 255, .78) !important;
+    box-shadow: 0 0 0 5px rgba(71, 195, 242, .055), 0 0 28px rgba(47, 190, 245, .25), inset 0 0 18px rgba(87, 214, 255, .15) !important;
+}
 
-    border-radius: 999px;
+.agent-parameters-page h1 {
+    text-shadow: 0 0 26px rgba(94, 208, 255, .18);
+}
 
+.agent-parameters-page [style*="letter-spacing"] {
+    text-rendering: geometricPrecision;
+}
+
+.agent-parameters-page [style*="AGENT ONLINE"],
+.agent-parameters-page [style*="LOADING PROFILE"],
+.agent-parameters-page [style*="SYNCING PROFILE"] {
+    color: #bceeff !important;
+}
+
+.agent-parameters-page .agent-parameters-mobile-metrics>div {
+    min-height: 118px !important;
+    padding: 19px !important;
+    border-radius: 17px !important;
+    border: 1px solid rgba(93, 207, 250, .34) !important;
     background:
-
-        rgba(38, 216, 255, .22);
-
+        radial-gradient(circle at 100% 0%, rgba(49, 174, 222, .14), transparent 42%),
+        linear-gradient(145deg, rgba(13, 29, 39, .96), rgba(3, 9, 14, .99) 68%) !important;
+    box-shadow: 0 13px 32px rgba(0, 0, 0, .38), inset 0 1px rgba(210, 246, 255, .07), 0 0 22px rgba(45, 174, 224, .055) !important;
+    transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
 }
 
-.chat-window::-webkit-scrollbar-thumb:hover,
-.preview-card::-webkit-scrollbar-thumb:hover,
-.sidebar::-webkit-scrollbar-thumb:hover {
+.agent-parameters-page .agent-parameters-mobile-metrics>div:hover {
+    transform: translateY(-3px);
+    border-color: rgba(111, 224, 255, .66) !important;
+    box-shadow: 0 17px 36px rgba(0, 0, 0, .42), 0 0 24px rgba(45, 174, 224, .12) !important;
+}
 
+.agent-parameters-page .agent-parameters-mobile-metrics>div>div:nth-child(2) {
+    color: #9ec6d8 !important;
+    font-size: 9px !important;
+    letter-spacing: 1.45px !important;
+}
+
+.agent-parameters-page .agent-parameters-mobile-metrics>div>div:nth-child(3) {
+    color: #eafaff !important;
+    text-shadow: 0 0 18px rgba(89, 208, 255, .16);
+}
+
+.agent-parameters-page .agent-parameters-mobile-metrics>div>div:nth-child(4) {
+    color: #7f9eae !important;
+}
+
+.agent-parameters-mobile-dashboard {
+    gap: 19px !important;
+}
+
+.agent-parameters-mobile-dashboard section,
+.agent-parameters-preview-card {
+    border: 1px solid rgba(91, 205, 247, .30) !important;
+    border-radius: 19px !important;
     background:
-
-        rgba(38, 216, 255, .45);
-
+        radial-gradient(circle at 100% 0%, rgba(31, 124, 158, .11), transparent 36%),
+        linear-gradient(145deg, rgba(12, 23, 31, .98), rgba(4, 9, 14, .99) 60%, #020609) !important;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, .43), inset 0 1px rgba(212, 246, 255, .065), 0 0 26px rgba(49, 178, 225, .045) !important;
 }
 
-
-
-/*==========================================================
-    LARGE DESKTOP
-==========================================================*/
-
-@media (min-width:1700px) {
-
-    :root {
-
-        --sidebar-width: 300px;
-
-        --preview-width: 430px;
-
-    }
-
-    .chat-window {
-
-        padding: 56px;
-
-    }
-
+.agent-parameters-mobile-dashboard section>div:first-child {
+    border-bottom: 1px solid rgba(93, 205, 245, .16) !important;
+    background: linear-gradient(100deg, rgba(24, 65, 82, .26), rgba(6, 15, 22, .14)) !important;
 }
 
-
-
-/*==========================================================
-    LAPTOP
-==========================================================*/
-
-@media (max-width:1500px) {
-
-    :root {
-
-        --preview-width: 350px;
-
-    }
-
+.agent-parameters-mobile-dashboard section>div:first-child h2 {
+    color: #e5f7ff !important;
+    font-size: 13px !important;
+    letter-spacing: .15px !important;
 }
 
-
-
-/*==========================================================
-    SMALL LAPTOP
-==========================================================*/
-
-@media (max-width:1300px) {
-
-    :root {
-
-        --sidebar-width: 240px;
-
-        --preview-width: 320px;
-
-    }
-
-    .feature-grid {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .hero h1 {
-
-        font-size: 38px;
-
-    }
-
+.agent-parameters-mobile-dashboard section>div:first-child p {
+    color: #8da8b7 !important;
 }
 
-
-
-/*==========================================================
-    TABLET LANDSCAPE
-==========================================================*/
-
-@media (max-width:1150px) {
-
-    .content-layout {
-
-        grid-template-columns: 1fr;
-
-    }
-
-    .preview-panel {
-
-        display: flex;
-
-        min-height: 620px;
-
-    }
-
+.agent-parameters-mobile-dashboard section>div:first-child>div:first-child>div:first-child {
+    color: #9be6ff !important;
+    background: linear-gradient(145deg, #123344, #06111a) !important;
+    border: 1px solid rgba(104, 218, 255, .48) !important;
+    box-shadow: 0 0 18px rgba(56, 185, 232, .13), inset 0 1px rgba(220, 249, 255, .1) !important;
 }
 
-
-
-/*==========================================================
-    TABLET
-==========================================================*/
-
-@media (max-width:900px) {
-
-    .sidebar {
-
-        width: 90px;
-
-        min-width: 90px;
-
-        padding: 22px 12px;
-
-    }
-
-    .sidebar-logo h2,
-    .sidebar-logo span,
-    .sidebar-title,
-    .sidebar-item span,
-    .bottom-profile h4,
-    .bottom-profile p {
-
-        display: none;
-
-    }
-
-    .sidebar-logo {
-
-        justify-content: center;
-
-    }
-
-    .sidebar-item {
-
-        justify-content: center;
-
-        padding: 0;
-
-    }
-
-    .bottom-profile {
-
-        justify-content: center;
-
-    }
-
-    .topbar {
-
-        padding: 0 20px;
-
-    }
-
-    .topbar-center h1 {
-
-        font-size: 21px;
-
-    }
-
-    .chat-window {
-
-        padding: 28px;
-
-    }
-
+.agent-parameters-mobile-dashboard section>div:nth-child(2) {
+    color: #d7eaf2;
 }
 
+.agent-parameters-mobile-fields label,
+.agent-parameters-page label {
+    color: #a9c8d7 !important;
+}
 
+.agent-parameters-mobile-fields input,
+.agent-parameters-mobile-fields select,
+.agent-parameters-mobile-fields textarea,
+.agent-parameters-page input:not([type="file"]),
+.agent-parameters-page select,
+.agent-parameters-page textarea {
+    color: #e9f8ff !important;
+    background: linear-gradient(180deg, #07131b, #040b10) !important;
+    border: 1px solid rgba(90, 184, 220, .34) !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, .28), 0 1px rgba(212, 246, 255, .025) !important;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease !important;
+}
 
-/*==========================================================
-    LARGE MOBILE
-==========================================================*/
+.agent-parameters-mobile-fields input:hover,
+.agent-parameters-mobile-fields select:hover,
+.agent-parameters-mobile-fields textarea:hover,
+.agent-parameters-page input:not([type="file"]):hover,
+.agent-parameters-page select:hover,
+.agent-parameters-page textarea:hover {
+    border-color: rgba(99, 211, 251, .55) !important;
+}
 
-@media (max-width:768px) {
+.agent-parameters-mobile-fields input:focus,
+.agent-parameters-mobile-fields select:focus,
+.agent-parameters-mobile-fields textarea:focus,
+.agent-parameters-page input:not([type="file"]):focus,
+.agent-parameters-page select:focus,
+.agent-parameters-page textarea:focus {
+    outline: none !important;
+    border-color: #65d8ff !important;
+    box-shadow: 0 0 0 3px rgba(69, 190, 239, .13), 0 0 19px rgba(69, 190, 239, .10), inset 0 2px 8px rgba(0, 0, 0, .25) !important;
+}
 
-    .admin-page {
+.agent-parameters-page input::placeholder,
+.agent-parameters-page textarea::placeholder {
+    color: #607f90 !important;
+    opacity: 1;
+}
 
-        flex-direction: column;
+.agent-parameters-logo-grid>label {
+    border: 1px dashed rgba(107, 213, 250, .56) !important;
+    background: radial-gradient(circle at 50% 0%, rgba(61, 178, 221, .17), transparent 58%), #050d13 !important;
+    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
 
+.agent-parameters-logo-grid>label:hover {
+    border-color: #8be6ff !important;
+    box-shadow: inset 0 0 28px rgba(49, 177, 225, .08), 0 0 20px rgba(49, 177, 225, .09);
+}
+
+.agent-parameters-logo-grid>label>div>div:nth-child(2) {
+    color: #d9f5ff !important;
+}
+
+.agent-parameters-logo-grid>label>div>div:nth-child(3) {
+    color: #7899aa !important;
+}
+
+.agent-parameters-page button {
+    border: 1px solid rgba(104, 201, 240, .34) !important;
+    background: linear-gradient(180deg, rgba(13, 35, 47, .98), rgba(5, 15, 22, .98)) !important;
+    color: #c9efff !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 1px rgba(225, 249, 255, .07), 0 7px 20px rgba(0, 0, 0, .22) !important;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, filter .18s ease !important;
+}
+
+.agent-parameters-page button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(117, 224, 255, .78) !important;
+    box-shadow: inset 0 1px rgba(225, 249, 255, .1), 0 0 20px rgba(53, 177, 224, .13) !important;
+    filter: brightness(1.12);
+}
+
+.agent-parameters-page button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.agent-parameters-page button:disabled {
+    opacity: .58;
+    cursor: not-allowed !important;
+}
+
+.agent-parameters-page button[style*="linear-gradient"] {
+    color: #03111a !important;
+}
+
+.agent-parameters-page .agent-parameters-insight-grid>div {
+    border: 1px solid rgba(87, 183, 221, .25) !important;
+    background: linear-gradient(145deg, rgba(8, 23, 32, .96), rgba(3, 9, 14, .98)) !important;
+    box-shadow: inset 0 1px rgba(220, 247, 255, .035);
+}
+
+.agent-parameters-page .agent-parameters-insight-grid>div>div:first-child {
+    color: #7fa8ba !important;
+}
+
+.agent-parameters-page .agent-parameters-insight-grid>div>div:last-child {
+    color: #d8f2fc !important;
+}
+
+.agent-parameters-preview-card {
+    position: sticky;
+    top: 18px;
+    padding: 18px !important;
+}
+
+.agent-parameters-preview-card>div {
+    border: 1px solid rgba(85, 194, 237, .22) !important;
+    border-radius: 14px !important;
+    background:
+        radial-gradient(circle at 50% 5%, rgba(68, 192, 238, .13), transparent 38%),
+        linear-gradient(180deg, #07121a, #020609) !important;
+}
+
+.agent-parameters-page [style*="SYSTEM NOTE"] {
+    color: #9cddf4 !important;
+}
+
+.agent-parameters-page [style*="SYSTEM NOTE"]+div {
+    color: #89a4b2 !important;
+}
+
+.agent-parameters-page section[style*="space-between"] {
+    border: 1px solid rgba(94, 205, 247, .36) !important;
+    border-radius: 15px !important;
+    background: linear-gradient(110deg, rgba(12, 32, 43, .97), rgba(4, 12, 18, .98)) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .34), inset 0 1px rgba(220, 248, 255, .055) !important;
+}
+
+.agent-parameters-page ::selection {
+    color: #00121b;
+    background: #83e2ff;
+}
+
+@media (min-width: 1101px) {
+    .agent-parameters-mobile-dashboard {
+        grid-template-columns: minmax(0, 1.38fr) minmax(350px, .62fr) !important;
+        gap: 20px !important;
     }
 
-    .sidebar {
+    .agent-parameters-mobile-dashboard>div {
+        gap: 19px !important;
+    }
 
-        width: 100%;
+    .agent-parameters-content header {
+        min-height: 112px;
+    }
+}
 
-        min-width: 100%;
+@media (min-width: 761px) and (max-width: 1100px) {
+    .agent-parameters-content {
+        padding: 26px 22px 48px !important;
+    }
 
-        height: auto;
+    .agent-parameters-mobile-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
 
-        min-height: auto;
-
+    .agent-parameters-preview-card {
         position: relative;
-
         top: auto;
+    }
+}
 
-        padding: 14px 18px;
-
-        flex-direction: row;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        border-right: none;
-
-        border-bottom: 1px solid var(--border);
-
+@media (max-width: 760px) {
+    .agent-parameters-page {
+        min-height: 100%;
+        overflow-x: clip !important;
+        background:
+            radial-gradient(ellipse at 50% -8%, rgba(36, 153, 198, .19), transparent 42%),
+            #03070b !important;
     }
 
-    .sidebar::after {
-
-        display: none;
-
+    .agent-parameters-page::before {
+        opacity: .22;
+        background-size: 100% 100%, 30px 30px, 30px 30px;
     }
 
-    .sidebar-section {
-
-        display: none;
-
+    .agent-parameters-content {
+        padding: 17px 12px 36px !important;
     }
 
-    .sidebar-bottom {
-
-        margin-top: 0;
-
+    .agent-parameters-content header {
+        padding: 15px 13px !important;
+        margin-bottom: 16px !important;
+        border-radius: 16px !important;
+        gap: 12px !important;
+        background: linear-gradient(145deg, rgba(10, 28, 38, .95), rgba(3, 10, 15, .96)) !important;
+        box-shadow: 0 13px 30px rgba(0, 0, 0, .34), inset 0 1px rgba(225, 248, 255, .06) !important;
     }
 
-    .main-content {
+    .agent-parameters-content header>div:first-child {
+        align-items: flex-start !important;
+        gap: 11px !important;
+    }
 
+    .agent-parameters-header-orb {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        border-radius: 12px !important;
+    }
+
+    .agent-parameters-content header h1 {
+        font-size: clamp(22px, 6.2vw, 28px) !important;
+        line-height: 1.12 !important;
+        margin: 4px 0 6px !important;
+    }
+
+    .agent-parameters-content header p {
+        font-size: 10px !important;
+        line-height: 1.55 !important;
+    }
+
+    .agent-parameters-content header>div:last-child {
+        padding-left: 51px;
+    }
+
+    .agent-parameters-content header>div:last-child>div {
+        padding: 7px 10px !important;
+        font-size: 8px !important;
+    }
+
+    .agent-parameters-mobile-metrics {
+        gap: 9px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .agent-parameters-page .agent-parameters-mobile-metrics>div {
+        min-height: 102px !important;
+        padding: 13px 11px !important;
+        border-radius: 13px !important;
+    }
+
+    .agent-parameters-page .agent-parameters-mobile-metrics>div>div:nth-child(2) {
+        font-size: 7px !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 7px !important;
+    }
+
+    .agent-parameters-page .agent-parameters-mobile-metrics>div>div:nth-child(3) {
+        font-size: clamp(17px, 5vw, 21px) !important;
+    }
+
+    .agent-parameters-page .agent-parameters-mobile-metrics>div>div:nth-child(4) {
+        font-size: 7px !important;
+        line-height: 1.4 !important;
+        margin-top: 6px !important;
+    }
+
+    .agent-parameters-mobile-dashboard {
+        gap: 13px !important;
+    }
+
+    .agent-parameters-mobile-dashboard>div {
+        gap: 13px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section,
+    .agent-parameters-preview-card {
+        border-radius: 15px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:first-child {
+        padding: 13px 12px !important;
+        gap: 9px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+        padding: 13px 12px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:first-child>div:last-child {
+        max-width: 40%;
+        overflow-wrap: anywhere;
+        text-align: right;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:first-child h2 {
+        font-size: 12px !important;
+    }
+
+    .agent-parameters-mobile-dashboard section>div:first-child p {
+        font-size: 8px !important;
+        line-height: 1.45 !important;
+    }
+
+    .agent-parameters-mobile-fields {
+        gap: 13px !important;
+    }
+
+    .agent-parameters-mobile-fields label {
+        font-size: 8px !important;
+        letter-spacing: .8px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .agent-parameters-mobile-fields input,
+    .agent-parameters-mobile-fields select,
+    .agent-parameters-mobile-fields textarea {
+        min-height: 44px !important;
+        padding: 11px 12px !important;
+        font-size: 13px !important;
+        border-radius: 10px !important;
+    }
+
+    .agent-parameters-mobile-fields textarea {
+        min-height: 100px !important;
+    }
+
+    .agent-parameters-logo-grid {
+        grid-template-columns: minmax(0, 1fr) 96px !important;
+        gap: 9px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .agent-parameters-logo-grid>label,
+    .agent-parameters-logo-grid>div {
+        min-height: 116px !important;
+        border-radius: 11px !important;
+    }
+
+    .agent-parameters-logo-grid>label {
+        padding: 9px !important;
+    }
+
+    .agent-parameters-logo-grid>label>div {
+        gap: 6px !important;
+    }
+
+    .agent-parameters-logo-grid>label>div>div:nth-child(2) {
+        font-size: 9px !important;
+        line-height: 1.35 !important;
+        text-align: center;
+    }
+
+    .agent-parameters-logo-grid>label>div>div:nth-child(3) {
+        font-size: 7px !important;
+        line-height: 1.4 !important;
+    }
+
+    .agent-parameters-insight-grid {
+        gap: 8px !important;
+    }
+
+    .agent-parameters-page .agent-parameters-insight-grid>div {
+        padding: 10px !important;
+    }
+
+    .agent-parameters-mobile-dashboard button {
+        min-height: 44px !important;
+        padding: 11px 12px !important;
+        font-size: 8px !important;
+        border-radius: 10px !important;
+    }
+
+    .agent-parameters-preview-card {
+        position: relative !important;
+        top: auto !important;
+        padding: 12px !important;
+    }
+
+    .agent-parameters-preview-card>div {
+        min-height: 390px !important;
+        padding: 12px !important;
+        border-radius: 11px !important;
+    }
+
+    .agent-parameters-preview-card>div>div {
+        transform: scale(.72) !important;
+        transform-origin: top center !important;
+    }
+
+    .agent-parameters-page section[style*="space-between"] {
+        gap: 12px !important;
+        padding: 13px !important;
+    }
+
+    .agent-parameters-page section[style*="space-between"] button {
         width: 100%;
-
+        min-width: 0 !important;
     }
-
-    .topbar {
-
-        height: 72px;
-
-    }
-
-    .content-layout {
-
-        padding: 18px;
-
-    }
-
-    .hero {
-
-        margin-bottom: 30px;
-
-    }
-
-    .hero h1 {
-
-        font-size: 32px;
-
-    }
-
-    .conversation {
-
-        min-height: 220px;
-
-    }
-
 }
 
-
-
-/*==========================================================
-    MOBILE
-==========================================================*/
-
-@media (max-width:600px) {
-
-    .feature-grid {
-
-        gap: 16px;
-
+@media (max-width: 390px) {
+    .agent-parameters-content {
+        padding: 14px 9px 30px !important;
     }
 
-    .feature-card {
-
-        padding: 20px;
-
+    .agent-parameters-content header {
+        padding: 13px 10px !important;
     }
 
-    .hero p {
-
-        font-size: 15px;
-
+    .agent-parameters-page .agent-parameters-mobile-metrics>div {
+        min-height: 96px !important;
+        padding: 11px 9px !important;
     }
 
-    .conversation-center h2 {
-
-        font-size: 24px;
-
+    .agent-parameters-mobile-dashboard section>div:first-child {
+        padding: 12px 10px !important;
     }
 
-    .prompt-box {
-
-        min-height: 64px;
-
-        padding: 12px 14px 12px 18px;
-
+    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+        padding: 11px 10px !important;
     }
 
-    .prompt-box button {
-
-        width: 44px;
-
-        height: 44px;
-
+    .agent-parameters-logo-grid {
+        grid-template-columns: minmax(0, 1fr) 84px !important;
     }
 
+    .agent-parameters-preview-card>div>div {
+        transform: scale(.65) !important;
+    }
 }
 
-
-
-/*==========================================================
-    SMALL MOBILE
-==========================================================*/
-
-@media (max-width:420px) {
-
-
-    /* ==========================================================
-   MOBILE WORKSPACE OVERRIDES
-   Desktop layout above remains unchanged.
-========================================================== */
-    @media (max-width: 768px) {
-        .admin-app-root {
-            zoom: 1 !important;
-            min-height: 100dvh !important;
-            height: auto !important;
-            overflow-x: hidden;
-        }
-
-        .admin-app-root>main {
-            width: 100% !important;
-            height: auto !important;
-            min-height: 100dvh !important;
-        }
-
-        .admin-page {
-            display: flex;
-            flex-direction: column;
-            min-height: 100dvh;
-            height: auto;
-            overflow: visible;
-        }
-
-        .sidebar {
-            position: sticky;
-            top: 0;
-            z-index: 120;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 12px;
-            width: 100%;
-            min-width: 0;
-            height: auto;
-            min-height: 0;
-            padding: 8px 10px;
-            overflow-x: auto;
-            overflow-y: visible;
-            background: rgba(5, 7, 10, .97);
-            border-right: 0;
-            border-bottom: 1px solid var(--border);
-            scrollbar-width: thin;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .sidebar::after {
-            display: none;
-        }
-
-        .sidebar-logo {
-            flex: 0 0 auto;
-            gap: 8px !important;
-            margin: 0 !important;
-            padding-right: 10px;
-            border-right: 1px solid var(--border);
-        }
-
-        .sidebar-logo img {
-            width: 34px !important;
-            height: 34px !important;
-        }
-
-        .sidebar-logo h2 {
-            display: block;
-            font-size: 12px !important;
-        }
-
-        .sidebar-logo span {
-            display: none !important;
-        }
-
-        .sidebar-section {
-            display: flex;
-            flex: 0 0 auto;
-            align-items: center;
-            gap: 6px;
-            margin: 0 !important;
-        }
-
-        .sidebar-title {
-            display: none;
-        }
-
-        .sidebar-item {
-            display: inline-flex;
-            flex: 0 0 auto;
-            width: auto;
-            height: 40px;
-            min-height: 40px;
-            gap: 7px;
-            margin: 0;
-            padding: 0 11px;
-            border-radius: 10px;
-            white-space: nowrap;
-        }
-
-        .sidebar-item span {
-            display: inline;
-            font-size: 11px;
-        }
-
-        .sidebar-item svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .sidebar-bottom {
-            position: sticky !important;
-            right: 0;
-            flex: 0 0 42px;
-            width: 42px;
-            min-width: 42px;
-            margin: 0 0 0 auto;
-            padding-left: 5px;
-            background: #05070a;
-        }
-
-        .bottom-profile {
-            padding: 0;
-            border: 0;
-            background: transparent;
-        }
-
-        .bottom-profile>button {
-            justify-content: center !important;
-            width: 40px !important;
-            height: 40px;
-            padding: 4px !important;
-            border-radius: 50% !important;
-        }
-
-        .bottom-profile>button>div:nth-child(2),
-        .bottom-profile>button>div:nth-child(3) {
-            display: none !important;
-        }
-
-        .account-menu {
-            position: fixed !important;
-            top: 56px !important;
-            right: 10px !important;
-            bottom: auto !important;
-            left: auto !important;
-            width: min(280px, calc(100vw - 20px));
-        }
-
-        .main-content {
-            width: 100%;
-            height: auto;
-            min-height: calc(100dvh - 58px);
-            overflow: visible;
-            padding: 14px 12px !important;
-        }
-
-        .ruach-auth-card {
-            max-width: 100%;
-        }
-    }
-
-    @media (max-width: 600px) {
-        .agent-parameters-page {
-            min-height: 0 !important;
-            overflow: hidden !important;
-        }
-
-        .agent-parameters-page>div:last-of-type {
-            padding: 18px 14px 36px !important;
-        }
-
-        .agent-parameters-page header {
-            align-items: flex-start !important;
-            gap: 12px !important;
-        }
-
-        .agent-parameters-mobile-metrics {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        }
-
-        .agent-parameters-mobile-dashboard {
-            grid-template-columns: minmax(0, 1fr) !important;
-        }
-
-        .agent-parameters-mobile-fields {
-            grid-template-columns: minmax(0, 1fr) !important;
-        }
-
-        .agent-parameters-page .agent-parameters-mobile-fields>* {
-            min-width: 0;
-        }
-
-        .connected-stores-page {
-            padding: 20px 14px 36px !important;
-        }
-
-        .connected-stores-mobile-header {
-            align-items: flex-start !important;
-            flex-direction: column !important;
-            gap: 15px !important;
-        }
-
-        .connected-stores-mobile-header-actions {
-            display: grid !important;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            width: 100%;
-        }
-
-        .connected-stores-mobile-metrics {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 10px !important;
-        }
-
-        .connected-stores-mobile-controls {
-            grid-template-columns: minmax(0, 1fr) !important;
-        }
-
-        .connected-stores-mobile-grid {
-            grid-template-columns: minmax(0, 1fr) !important;
-        }
-
-        .till-slips-collection-page {
-            height: auto !important;
-            min-height: 100%;
-            overflow: visible !important;
-        }
-
-        .till-slips-collection-header {
-            zoom: 1 !important;
-            padding: 12px !important;
-        }
-
-        .till-slips-collection-header>div:first-of-type {
-            gap: 12px !important;
-        }
-
-        .till-slips-search-row {
-            display: grid !important;
-            grid-template-columns: minmax(0, 1fr) auto;
-            gap: 9px !important;
-        }
-
-        .till-slips-search-field {
-            grid-column: 1 / -1;
-            min-width: 0 !important;
-        }
-
-        .till-slips-gallery-scroll {
-            flex: 1 1 auto !important;
-            height: auto !important;
-            min-height: 60dvh !important;
-            padding: 10px !important;
-        }
-
-        .till-slips-design-grid {
-            grid-template-columns: minmax(0, 1fr) !important;
-            gap: 14px !important;
-            zoom: 1 !important;
-        }
-
-        .ruach-slip-frame {
-            transform: none !important;
-            margin: 0 !important;
-        }
-
-        .ruach-slip-frame:hover {
-            transform: translateY(-2px) !important;
-        }
-
-        .till-slip-live-slot>* {
-            width: min(410px, calc(100vw - 76px)) !important;
-            min-width: 0 !important;
-            max-width: 100% !important;
-            flex: 0 1 auto !important;
-        }
-    }
-
-    @media (max-width: 380px) {
-        .sidebar-logo h2 {
-            display: none;
-        }
-
-        .sidebar-item {
-            gap: 5px;
-            padding: 0 9px;
-        }
-
-        .sidebar-item span {
-            font-size: 10px;
-        }
-
-        .agent-parameters-mobile-metrics,
-        .connected-stores-mobile-metrics {
-            grid-template-columns: minmax(0, 1fr) !important;
-        }
-
-        .till-slips-collection-header h1 {
-            font-size: 20px !important;
-        }
-    }
-
-    .chat-window {
-
-        padding: 20px;
-
-    }
-
-    .hero h1 {
-
-        font-size: 28px;
-
-    }
-
-    .hero p {
-
-        font-size: 14px;
-
-    }
-
-    .feature-card {
-
-        padding: 18px;
-
-    }
-
-    .feature-icon {
-
-        width: 50px;
-
-        height: 50px;
-
-    }
-
-    .conversation {
-
-        min-height: 180px;
-
-    }
-
-}
-
-
-
-/*==========================================================
-    REDUCED MOTION
-==========================================================*/
-
-@media (prefers-reduced-motion:reduce) {
-
-    * {
-
-        animation: none !important;
-
-        transition: none !important;
-
+@media (prefers-reduced-motion: reduce) {
+
+    .agent-parameters-page *,
+    .agent-parameters-page *::before,
+    .agent-parameters-page *::after {
         scroll-behavior: auto !important;
-
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
     }
-
 }

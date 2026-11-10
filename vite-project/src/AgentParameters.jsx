@@ -1115,8 +1115,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
         AMBIENT TESLA BACKGROUND
     ========================================================= */}
 
-      <div style={styles.pageBackground} />
-      <div style={styles.gridOverlay} />
+      <div className="agent-parameters-ambient" style={styles.pageBackground} />
+      <div className="agent-parameters-grid-overlay" style={styles.gridOverlay} />
 
       <div
         style={{
@@ -1164,7 +1164,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
           <div style={styles.headerLeft}>
 
-            <div style={styles.headerOrb}>
+            <div className="agent-parameters-header-orb" style={styles.headerOrb}>
               <div style={styles.headerOrbCore} />
             </div>
 
@@ -2346,7 +2346,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
               </section>
 
-              <section style={styles.previewCard}>
+              <section className="agent-parameters-preview-card" style={styles.previewCard}>
 
                 <div style={styles.paperStage}>
                   <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
@@ -2506,3 +2506,4 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
     </div >
   );
 }
+
