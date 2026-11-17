@@ -4053,6 +4053,36 @@ button:active::after {
             grid-template-columns: minmax(0, 1fr) !important;
         }
 
+        .connected-stores-integration-grid {
+            grid-template-columns: minmax(0, 1fr) !important;
+            gap: 12px !important;
+        }
+
+        .connected-stores-integration-card {
+            min-width: 0;
+            padding: 16px !important;
+        }
+
+        .connected-stores-integration-top {
+            align-items: flex-start !important;
+            flex-wrap: wrap;
+            gap: 10px !important;
+        }
+
+        .connected-stores-integration-identity {
+            flex: 1 1 180px;
+            min-width: 0;
+        }
+
+        .connected-stores-integration-name {
+            overflow-wrap: anywhere;
+        }
+
+        .connected-stores-integration-description {
+            min-height: 0 !important;
+            overflow-wrap: anywhere;
+        }
+
         .till-slips-collection-page {
             height: auto !important;
             min-height: 100%;

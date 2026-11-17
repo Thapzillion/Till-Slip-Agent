@@ -1958,7 +1958,7 @@ export default function ConnectedStores() {
                             </div>
                         </div>
 
-                        <div style={styles.integrationGrid}>
+                        <div className="connected-stores-integration-grid" style={styles.integrationGrid}>
                             {[
                                 {
                                     name: "Shopify",
@@ -2000,6 +2000,7 @@ export default function ConnectedStores() {
                             ].map((integration) => (
                                 <div
                                     key={integration.name}
+                                    className="connected-stores-integration-card"
                                     style={{
                                         ...styles.integrationCard,
                                         ...(integration.custom
@@ -2007,14 +2008,14 @@ export default function ConnectedStores() {
                                             : {})
                                     }}
                                 >
-                                    <div style={styles.integrationTop}>
-                                        <div style={styles.integrationIdentity}>
+                                    <div className="connected-stores-integration-top" style={styles.integrationTop}>
+                                        <div className="connected-stores-integration-identity" style={styles.integrationIdentity}>
                                             <div style={styles.integrationIcon}>
                                                 {integration.code}
                                             </div>
 
                                             <div>
-                                                <div style={styles.integrationName}>
+                                                <div className="connected-stores-integration-name" style={styles.integrationName}>
                                                     {integration.name}
                                                 </div>
                                                 <div style={styles.integrationType}>
@@ -2028,7 +2029,7 @@ export default function ConnectedStores() {
                                         </span>
                                     </div>
 
-                                    <div style={styles.integrationDescription}>
+                                    <div className="connected-stores-integration-description" style={styles.integrationDescription}>
                                         {integration.description}
                                     </div>
 
