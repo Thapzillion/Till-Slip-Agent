@@ -2184,7 +2184,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                     ...styles.primaryButton,
                     minWidth: '205px',
                     background: isSaveSyncing
-                      ? '#11171e'
+                      ? 'rgb(66, 91, 120)'
                       : styles.primaryButton.background,
                     color: isSaveSyncing
                       ? '#606b77'
