@@ -761,9 +761,15 @@
     background: #83e2ff;
 }
 
-@media (min-width: 1101px) {
+@media (min-width: 1101px) and (max-width: 1399px) {
     .agent-parameters-mobile-dashboard {
-        grid-template-columns: minmax(0, 1.38fr) minmax(350px, .62fr) !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+@media (min-width: 1400px) {
+    .agent-parameters-mobile-dashboard {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
         gap: 20px !important;
     }
 

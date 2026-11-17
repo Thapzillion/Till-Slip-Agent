@@ -338,7 +338,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
     dashboardGrid: {
       display: 'grid',
-      gridTemplateColumns: 'minmax(0, 1.35fr) minmax(360px, 0.65fr)',
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
       gap: '16px',
       alignItems: 'start',
     },
@@ -2237,6 +2237,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                 </div>
 
               </section>
+
+            </div>
+
+            <div style={styles.rightColumn}>
 
               {/* ===================================================
               SAVE & SYNC FOOTER
