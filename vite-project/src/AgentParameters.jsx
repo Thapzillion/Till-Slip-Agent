@@ -1600,186 +1600,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
 
               {/* ===================================================
-              WEBHOOK INFRASTRUCTURE
-          =================================================== */}
-
-              <section style={styles.card}>
-
-                <div style={styles.cardHeader}>
-
-                  <div style={styles.cardHeaderLeft}>
-
-                    <div style={styles.cardIcon}>
-                      ↗
-                    </div>
-
-                    <div>
-
-                      <h2 style={styles.cardTitle}>
-                        Live Webhook Infrastructure
-                      </h2>
-
-                      <p style={styles.cardDescription}>
-                        Endpoint used by your store to communicate
-                        with the RuachAgent receipt engine.
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <div style={styles.statusPill}>
-                    <span style={styles.statusDot} />
-                    {settings?.webhook_slug
-                      ? 'READY'
-                      : 'CONFIGURATION REQUIRED'}
-                  </div>
-
-                </div>
-
-
-                <div style={styles.cardBody}>
-
-                  <div style={styles.webhookPanel}>
-
-                    <div style={styles.webhookPreview}>
-
-                      <div style={styles.webhookLabel}>
-                        LIVE RECEIPT AGENT ENDPOINT
-                      </div>
-
-                      <div style={styles.webhookUrl}>
-
-                        {settings?.webhook_slug
-                          ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
-                          : 'Enter a webhook slug above to generate your live endpoint.'}
-
-                      </div>
-
-                    </div>
-
-
-                    <div style={styles.webhookActions}>
-
-                      <button
-                        type="button"
-                        style={styles.secondaryButton}
-                        onClick={async () => {
-
-                          if (!settings?.webhook_slug) {
-                            alert('Define a webhook slug first.');
-                            return;
-                          }
-
-                          const endpoint =
-                            `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`;
-
-                          try {
-
-                            await navigator.clipboard.writeText(endpoint);
-
-                            alert('Webhook endpoint copied.');
-
-                          } catch (error) {
-
-                            console.error(
-                              'Unable to copy webhook:',
-                              error
-                            );
-
-                            alert(
-                              'Unable to copy endpoint automatically.'
-                            );
-
-                          }
-
-                        }}
-                      >
-                        COPY ENDPOINT
-                      </button>
-
-                      <button
-                        type="button"
-                        style={styles.secondaryButton}
-                        onClick={() => {
-                          // Navigate to the interactive POS simulator page
-                          window.location.href = `/demo-pos?slug=${settings.webhook_slug || 'default'}&template=${currentTemplate}`;
-                        }}
-                      >
-                        TEST CONNECTION
-                      </button>
-
-                    </div>
-
-
-                    <div
-                      style={{
-                        padding: '12px 13px',
-                        borderRadius: '10px',
-                        border:
-                          '1px solid rgba(70,110,150,0.18)',
-                        background:
-                          'rgba(3,8,13,0.68)',
-                        display: 'flex',
-                        gap: '10px',
-                        alignItems: 'flex-start',
-                      }}
-                    >
-
-                      <div
-                        style={{
-                          width: '6px',
-                          height: '6px',
-                          marginTop: '4px',
-                          borderRadius: '50%',
-                          background: settings?.webhook_slug
-                            ? '#d3ecff'
-                            : '#566473',
-                          boxShadow: settings?.webhook_slug
-                            ? '0 0 10px rgba(202, 229, 250, 0.8)'
-                            : 'none',
-                        }}
-                      />
-
-                      <div>
-
-                        <div
-                          style={{
-                            fontSize: '8px',
-                            fontWeight: '700',
-                            color: '#9cb3c9',
-                            letterSpacing: '0.8px',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          CONNECTION STATUS
-                        </div>
-
-                        <div
-                          style={{
-                            marginTop: '4px',
-                            fontSize: '8px',
-                            lineHeight: 1.5,
-                            color: '#566a7d',
-                          }}
-                        >
-                          {settings?.webhook_slug
-                            ? 'A merchant-specific receipt endpoint has been generated from the current webhook slug.'
-                            : 'Your endpoint becomes available immediately after a valid webhook slug is defined.'}
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </section>
-
-
-              {/* ===================================================
               AI CONFIGURATION
           =================================================== */}
 
@@ -2127,88 +1947,6 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
               </section>
 
 
-              {/* ===================================================
-              SAVE & SYNC FOOTER
-          =================================================== */}
-
-              <section style={styles.saveFooter}>
-
-                <div style={styles.saveInfo}>
-
-                  <div style={styles.saveTitle}>
-
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        width: '7px',
-                        height: '7px',
-                        marginRight: '8px',
-                        borderRadius: '50%',
-                        background: isSaveSyncing
-                          ? '#66717d'
-                          : '#e6eff2',
-                        boxShadow: isSaveSyncing
-                          ? 'none'
-                          : '0 0 12px rgba(201, 234, 245, 0.8)',
-                      }}
-                    />
-
-                    {isSaveSyncing
-                      ? 'SYNCHRONIZING MERCHANT PROFILE'
-                      : 'AGENT CONFIGURATION READY'}
-
-                  </div>
-
-                  <div style={styles.saveDescription}>
-                    Changes are persisted to your merchant
-                    business settings profile.
-                  </div>
-
-                </div>
-
-
-                <button
-                  className="agent-parameters-save-button"
-                  type="button"
-                  onClick={(e) => {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    if (!isSaveSyncing) {
-                      handleSave(e);
-                    }
-
-                  }}
-                  disabled={isSaveSyncing}
-                  style={{
-                    ...styles.primaryButton,
-                    minWidth: '205px',
-                    background: isSaveSyncing
-                      ? 'rgb(66, 91, 120)'
-                      : styles.primaryButton.background,
-                    color: isSaveSyncing
-                      ? '#c1cbd1'
-                      : '#d1d5db',
-                    border: isSaveSyncing
-                      ? '1px solid rgba(255,255,255,0.05)'
-                      : styles.primaryButton.border,
-                    boxShadow: isSaveSyncing
-                      ? 'none'
-                      : styles.primaryButton.boxShadow,
-                    cursor: isSaveSyncing
-                      ? 'not-allowed'
-                      : 'pointer',
-                  }}
-                >
-                  {isSaveSyncing
-                    ? 'SYNCING PROFILE...'
-                    : 'SAVE & SYNC LIVE PROFILE'}
-                </button>
-
-              </section>
-
-
             </div>
 
             <div style={styles.rightColumn}>
@@ -2346,6 +2084,10 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                 </div>
 
               </section>
+
+              {/*============================================
+                LIVE RECEIPT PREVIEW
+               ============================================*/}
 
               <section className="agent-parameters-preview-card" style={styles.previewCard}>
 
@@ -2492,6 +2234,266 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                     )}
 
                   </div>
+                </div>
+
+              </section>
+
+              {/* ===================================================
+              SAVE & SYNC FOOTER
+          =================================================== */}
+
+              <section style={styles.saveFooter}>
+
+                <div style={styles.saveInfo}>
+
+                  <div style={styles.saveTitle}>
+
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        width: '7px',
+                        height: '7px',
+                        marginRight: '8px',
+                        borderRadius: '50%',
+                        background: isSaveSyncing
+                          ? '#66717d'
+                          : '#e6eff2',
+                        boxShadow: isSaveSyncing
+                          ? 'none'
+                          : '0 0 12px rgba(201, 234, 245, 0.8)',
+                      }}
+                    />
+
+                    {isSaveSyncing
+                      ? 'SYNCHRONIZING MERCHANT PROFILE'
+                      : 'AGENT CONFIGURATION READY'}
+
+                  </div>
+
+                  <div style={styles.saveDescription}>
+                    Changes are persisted to your merchant
+                    business settings profile.
+                  </div>
+
+                </div>
+
+
+                <button
+                  className="agent-parameters-save-button"
+                  type="button"
+                  onClick={(e) => {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    if (!isSaveSyncing) {
+                      handleSave(e);
+                    }
+
+                  }}
+                  disabled={isSaveSyncing}
+                  style={{
+                    ...styles.primaryButton,
+                    minWidth: '205px',
+                    background: isSaveSyncing
+                      ? 'rgb(66, 91, 120)'
+                      : styles.primaryButton.background,
+                    color: isSaveSyncing
+                      ? '#c1cbd1'
+                      : '#d1d5db',
+                    border: isSaveSyncing
+                      ? '1px solid rgba(255,255,255,0.05)'
+                      : styles.primaryButton.border,
+                    boxShadow: isSaveSyncing
+                      ? 'none'
+                      : styles.primaryButton.boxShadow,
+                    cursor: isSaveSyncing
+                      ? 'not-allowed'
+                      : 'pointer',
+                  }}
+                >
+                  {isSaveSyncing
+                    ? 'SYNCING PROFILE...'
+                    : 'SAVE & SYNC LIVE PROFILE'}
+                </button>
+
+              </section>
+
+              {/* ===================================================
+              WEBHOOK INFRASTRUCTURE
+          =================================================== */}
+
+              <section style={styles.card}>
+
+                <div style={styles.cardHeader}>
+
+                  <div style={styles.cardHeaderLeft}>
+
+                    <div style={styles.cardIcon}>
+                      ↗
+                    </div>
+
+                    <div>
+
+                      <h2 style={styles.cardTitle}>
+                        Live Webhook Infrastructure
+                      </h2>
+
+                      <p style={styles.cardDescription}>
+                        Endpoint used by your store to communicate
+                        with the RuachAgent receipt engine.
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <div style={styles.statusPill}>
+                    <span style={styles.statusDot} />
+                    {settings?.webhook_slug
+                      ? 'READY'
+                      : 'CONFIGURATION REQUIRED'}
+                  </div>
+
+                </div>
+
+
+                <div style={styles.cardBody}>
+
+                  <div style={styles.webhookPanel}>
+
+                    <div style={styles.webhookPreview}>
+
+                      <div style={styles.webhookLabel}>
+                        LIVE RECEIPT AGENT ENDPOINT
+                      </div>
+
+                      <div style={styles.webhookUrl}>
+
+                        {settings?.webhook_slug
+                          ? `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`
+                          : 'Enter a webhook slug above to generate your live endpoint.'}
+
+                      </div>
+
+                    </div>
+
+
+                    <div style={styles.webhookActions}>
+
+                      <button
+                        type="button"
+                        style={styles.secondaryButton}
+                        onClick={async () => {
+
+                          if (!settings?.webhook_slug) {
+                            alert('Define a webhook slug first.');
+                            return;
+                          }
+
+                          const endpoint =
+                            `https://agadjdvhqguunowplbak.functions.supabase.co/receipt-agent?slug=${settings.webhook_slug}`;
+
+                          try {
+
+                            await navigator.clipboard.writeText(endpoint);
+
+                            alert('Webhook endpoint copied.');
+
+                          } catch (error) {
+
+                            console.error(
+                              'Unable to copy webhook:',
+                              error
+                            );
+
+                            alert(
+                              'Unable to copy endpoint automatically.'
+                            );
+
+                          }
+
+                        }}
+                      >
+                        COPY ENDPOINT
+                      </button>
+
+                      <button
+                        type="button"
+                        style={styles.secondaryButton}
+                        onClick={() => {
+                          // Navigate to the interactive POS simulator page
+                          window.location.href = `/demo-pos?slug=${settings.webhook_slug || 'default'}&template=${currentTemplate}`;
+                        }}
+                      >
+                        TEST CONNECTION
+                      </button>
+
+                    </div>
+
+
+                    <div
+                      style={{
+                        padding: '12px 13px',
+                        borderRadius: '10px',
+                        border:
+                          '1px solid rgba(70,110,150,0.18)',
+                        background:
+                          'rgba(3,8,13,0.68)',
+                        display: 'flex',
+                        gap: '10px',
+                        alignItems: 'flex-start',
+                      }}
+                    >
+
+                      <div
+                        style={{
+                          width: '6px',
+                          height: '6px',
+                          marginTop: '4px',
+                          borderRadius: '50%',
+                          background: settings?.webhook_slug
+                            ? '#d3ecff'
+                            : '#566473',
+                          boxShadow: settings?.webhook_slug
+                            ? '0 0 10px rgba(202, 229, 250, 0.8)'
+                            : 'none',
+                        }}
+                      />
+
+                      <div>
+
+                        <div
+                          style={{
+                            fontSize: '8px',
+                            fontWeight: '700',
+                            color: '#9cb3c9',
+                            letterSpacing: '0.8px',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          CONNECTION STATUS
+                        </div>
+
+                        <div
+                          style={{
+                            marginTop: '4px',
+                            fontSize: '8px',
+                            lineHeight: 1.5,
+                            color: '#566a7d',
+                          }}
+                        >
+                          {settings?.webhook_slug
+                            ? 'A merchant-specific receipt endpoint has been generated from the current webhook slug.'
+                            : 'Your endpoint becomes available immediately after a valid webhook slug is defined.'}
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
                 </div>
 
               </section>
