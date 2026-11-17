@@ -36,6 +36,9 @@ const RUACH_DEFAULT_SETTINGS = {
  */
 let ruachBusinessSettingsCache = null;
 let ruachBusinessSettingsUserId = null;
+let ruachBusinessSettingsDraft = null;
+let ruachBusinessSettingsDraftUserId = null;
+let ruachPendingLogoFile = null;
 
 /*
  * Single-flight promise.
@@ -110,6 +113,13 @@ async function fetchSharedBusinessSettings(userId, options = {}) {
         return preserveLastKnownBusinessSettings();
     }
 
+    if (
+        ruachBusinessSettingsDraft &&
+        (!ruachBusinessSettingsDraftUserId || ruachBusinessSettingsDraftUserId === userId)
+    ) {
+        return ruachBusinessSettingsDraft;
+    }
+
     const force = options.force === true;
 
     /*
@@ -146,6 +156,13 @@ async function fetchSharedBusinessSettings(userId, options = {}) {
 
             if (error) {
                 throw error;
+            }
+
+            if (
+                ruachBusinessSettingsDraft &&
+                (!ruachBusinessSettingsDraftUserId || ruachBusinessSettingsDraftUserId === userId)
+            ) {
+                return ruachBusinessSettingsDraft;
             }
 
             /*
@@ -273,6 +290,9 @@ async function recoverRuachSession(userId, options = {}) {
 function clearRuachBusinessSessionCache() {
     ruachBusinessSettingsCache = null;
     ruachBusinessSettingsUserId = null;
+    ruachBusinessSettingsDraft = null;
+    ruachBusinessSettingsDraftUserId = null;
+    ruachPendingLogoFile = null;
     ruachBusinessSettingsRequest = null;
     ruachSessionRecoveryRequest = null;
 
@@ -323,7 +343,9 @@ export function useBusiness() {
 
     const [isAuthSyncing, setIsAuthSyncing] = useState(false);
 
-    const [pendingLogoFile, setPendingLogoFile] = useState(null);
+    const [pendingLogoFile, setPendingLogoFileState] = useState(
+        () => ruachPendingLogoFile
+    );
 
     const [isCheckingSession, setIsCheckingSession] = useState(true);
 
@@ -421,6 +443,35 @@ export function useBusiness() {
         logo_url: "",
         voucher_expiration_days: 30
     });
+
+    const setSharedSettings = (nextSettings) => {
+        const baseSettings =
+            ruachBusinessSettingsDraft ||
+            ruachBusinessSettingsCache ||
+            settings ||
+            RUACH_DEFAULT_SETTINGS;
+        const resolvedSettings = typeof nextSettings === 'function'
+            ? nextSettings(baseSettings)
+            : nextSettings;
+
+        if (!resolvedSettings || typeof resolvedSettings !== 'object') return;
+
+        ruachBusinessSettingsDraft = { ...resolvedSettings };
+        ruachBusinessSettingsDraftUserId =
+            userRef.current?.id || ruachBusinessSettingsUserId || null;
+
+        setSettings(ruachBusinessSettingsDraft);
+        notifyRuachBusinessSubscribers(ruachBusinessSettingsDraft);
+    };
+
+    const setSharedPendingLogoFile = (nextFile) => {
+        const resolvedFile = typeof nextFile === 'function'
+            ? nextFile(ruachPendingLogoFile)
+            : nextFile;
+
+        ruachPendingLogoFile = resolvedFile;
+        setPendingLogoFileState(resolvedFile);
+    };
 
     // Action Handler to call the backend API handler
     const handleSendPrompt = async () => {
@@ -564,6 +615,12 @@ export function useBusiness() {
         ruachBusinessSubscribers.add(
             handleSharedBusinessSettingsUpdate
         );
+
+        if (ruachBusinessSettingsDraft) {
+            handleSharedBusinessSettingsUpdate(ruachBusinessSettingsDraft);
+        } else if (ruachBusinessSettingsCache) {
+            handleSharedBusinessSettingsUpdate(ruachBusinessSettingsCache);
+        }
 
         return () => {
             ruachBusinessSubscribers.delete(
@@ -1417,7 +1474,6 @@ export function useBusiness() {
                 const uploadedUrl = await uploadBusinessLogo(pendingLogoFile, cleanWebhookSlug);
                 if (uploadedUrl) {
                     resolvedLogoUrl = uploadedUrl;
-                    setPendingLogoFile(null);
                 } else {
                     resolvedLogoUrl = settings?.logo_url?.startsWith('blob:') ? '' : (settings?.logo_url || '');
                 }
@@ -1477,7 +1533,13 @@ export function useBusiness() {
             alert('Live Agent Settings Synced Successfully!');
 
             if (data && data[0]) {
+                ruachBusinessSettingsCache = { ...data[0] };
+                ruachBusinessSettingsUserId = activeUser.id;
+                ruachBusinessSettingsDraft = null;
+                ruachBusinessSettingsDraftUserId = null;
+                setSharedPendingLogoFile(null);
                 setSettings(data[0]);
+                notifyRuachBusinessSubscribers(data[0]);
             }
         } catch (error) {
             console.error("Profile synchronization failed:", error);
@@ -1541,10 +1603,10 @@ export function useBusiness() {
 
         // ---------------- SETTINGS ----------------
         settings,
-        setSettings,
+        setSettings: setSharedSettings,
 
         pendingLogoFile,
-        setPendingLogoFile,
+        setPendingLogoFile: setSharedPendingLogoFile,
 
         isLoadingSettings,
         isSaveSyncing,
