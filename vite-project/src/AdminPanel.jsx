@@ -741,15 +741,139 @@ export default function AdminPanel() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#0a0a0a',
+        backgroundColor: '#05070A',
         color: '#ffffff',
         fontFamily: 'monospace',
         fontSize: '13px',
-        letterSpacing: '1px'
+        letterSpacing: '2px',
+        overflow: 'hidden'
       }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ marginBottom: '12px', fontSize: '24px', animation: 'pulse 1.5s infinite' }}>⚡</div>
-          SYNCHRONIZING SECURE NODE IDENTITY...
+        <style>
+          {`
+          @keyframes cinematicFade {
+            0%, 5% {
+              opacity: 0;
+              transform: translateY(12px);
+              filter: blur(5px);
+            }
+            15%, 40% {
+              opacity: 1;
+              transform: translateY(0);
+              filter: blur(0);
+            }
+            50%, 100% {
+              opacity: 0;
+              transform: translateY(-10px);
+              filter: blur(5px);
+            }
+          }
+
+          @keyframes cinematicFadeSecond {
+            0%, 50% {
+              opacity: 0;
+              transform: translateY(12px);
+              filter: blur(5px);
+            }
+            60%, 90% {
+              opacity: 1;
+              transform: translateY(0);
+              filter: blur(0);
+            }
+            100% {
+              opacity: 0;
+              transform: translateY(-10px);
+              filter: blur(5px);
+            }
+          }
+
+          @keyframes electricPulse {
+            0%, 100% {
+              opacity: 0.5;
+              transform: scale(0.9);
+              text-shadow: 0 0 8px #38bdf8;
+            }
+            50% {
+              opacity: 1;
+              transform: scale(1.15);
+              text-shadow: 0 0 25px #38bdf8;
+            }
+          }
+
+          @keyframes loadingLine {
+            0% { width: 0%; opacity: 0.4; }
+            50% { width: 100%; opacity: 1; }
+            100% { width: 0%; opacity: 0.4; }
+          }
+        `}
+        </style>
+
+        <div style={{
+          textAlign: 'center',
+          width: '90%',
+          maxWidth: '500px'
+        }}>
+
+          {/* Cinematic Energy Symbol */}
+          <div style={{
+            marginBottom: '30px',
+            fontSize: '32px',
+            color: '#38bdf8',
+            animation: 'electricPulse 2s ease-in-out infinite'
+          }}>
+            ⚡
+          </div>
+
+          {/* Animated Messages */}
+          <div style={{
+            position: 'relative',
+            height: '30px',
+            width: '100%',
+            marginBottom: '25px'
+          }}>
+
+            <div style={{
+              position: 'absolute',
+              width: '100%',
+              left: 0,
+              animation: 'cinematicFade 6s ease-in-out infinite',
+              whiteSpace: 'nowrap',
+              fontSize: 'clamp(10px, 2.5vw, 13px)',
+              color: '#e0f7ff'
+            }}>
+              GETTING THINGS READY FOR YOU...
+            </div>
+
+            <div style={{
+              position: 'absolute',
+              width: '100%',
+              left: 0,
+              animation: 'cinematicFadeSecond 6s ease-in-out infinite',
+              whiteSpace: 'nowrap',
+              fontSize: 'clamp(10px, 2.5vw, 13px)',
+              color: '#38bdf8'
+            }}>
+              CONNECTING DATA FOR YOUR CONVENIENCE...
+            </div>
+
+          </div>
+
+          {/* Cinematic Loading Indicator */}
+          <div style={{
+            width: '160px',
+            height: '2px',
+            backgroundColor: 'rgba(56, 189, 248, 0.12)',
+            margin: '0 auto',
+            overflow: 'hidden',
+            borderRadius: '10px'
+          }}>
+            <div style={{
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, #38bdf8, #ffffff, #38bdf8, transparent)',
+              animation: 'loadingLine 2s ease-in-out infinite',
+              boxShadow: '0 0 12px #38bdf8'
+            }} />
+          </div>
+
         </div>
       </div>
     );
