@@ -12,9 +12,9 @@
     overflow-x: hidden;
 }
 
-.agent-parameters-page *,
-.agent-parameters-page *::before,
-.agent-parameters-page *::after {
+.agent-parameters-page *:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *),
+.agent-parameters-page *:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)::before,
+.agent-parameters-page *:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)::after {
     box-sizing: border-box;
 }
 
@@ -165,36 +165,36 @@
      DASHBOARD CARDS
      ---------------------------------------------------------- */
 
-    .agent-parameters-mobile-dashboard section {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *) {
         min-width: 0 !important;
         max-width: 100% !important;
         border-radius: 15px !important;
         overflow: hidden !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:first-child {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child {
         padding: 15px 13px !important;
         gap: 10px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:nth-child(2) {
         padding: 14px !important;
         min-width: 0 !important;
     }
 
-    .agent-parameters-mobile-dashboard h2 {
+    .agent-parameters-mobile-dashboard h2:not(.agent-parameters-preview-card *) {
         font-size: 13px !important;
         line-height: 1.4 !important;
         letter-spacing: -0.15px !important;
     }
 
-    .agent-parameters-mobile-dashboard section p {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *) p {
         font-size: 9px !important;
         line-height: 1.6 !important;
     }
 
     /* Card icons */
-    .agent-parameters-mobile-dashboard section>div:first-child>div:first-child {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child>div:first-child {
         min-width: 0 !important;
     }
 
@@ -313,7 +313,7 @@
      BUTTONS
      ---------------------------------------------------------- */
 
-    .agent-parameters-mobile-dashboard button {
+    .agent-parameters-mobile-dashboard button:not(.agent-parameters-preview-card *) {
         max-width: 100% !important;
         min-height: 43px !important;
         padding: 11px 13px !important;
@@ -328,12 +328,12 @@
      SAVE AND SYNC FOOTER
      ---------------------------------------------------------- */
 
-    .agent-parameters-mobile-dashboard section[style*="space-between"] {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)[style*="space-between"] {
         flex-direction: column !important;
         align-items: stretch !important;
     }
 
-    .agent-parameters-mobile-dashboard button {
+    .agent-parameters-mobile-dashboard button:not(.agent-parameters-preview-card *) {
         touch-action: manipulation;
     }
 
@@ -341,12 +341,12 @@
      RECEIPT PREVIEW
      ---------------------------------------------------------- */
 
-    .agent-parameters-mobile-dashboard img {
+    .agent-parameters-mobile-dashboard img:not(.agent-parameters-preview-card *) {
         max-width: 100% !important;
     }
 
-    .agent-parameters-mobile-dashboard pre,
-    .agent-parameters-mobile-dashboard code {
+    .agent-parameters-mobile-dashboard pre:not(.agent-parameters-preview-card *),
+    .agent-parameters-mobile-dashboard code:not(.agent-parameters-preview-card *) {
         max-width: 100% !important;
         overflow-x: auto !important;
         white-space: pre-wrap !important;
@@ -357,19 +357,19 @@
      GENERAL TEXT SAFETY
      ---------------------------------------------------------- */
 
-    .agent-parameters-page h1,
-    .agent-parameters-page h2,
-    .agent-parameters-page p,
-    .agent-parameters-page label,
-    .agent-parameters-page span,
-    .agent-parameters-page div {
+    .agent-parameters-page h1:not(.agent-parameters-preview-card *),
+    .agent-parameters-page h2:not(.agent-parameters-preview-card *),
+    .agent-parameters-page p:not(.agent-parameters-preview-card *),
+    .agent-parameters-page label:not(.agent-parameters-preview-card *),
+    .agent-parameters-page span:not(.agent-parameters-preview-card *),
+    .agent-parameters-page div:not(.agent-parameters-preview-card *) {
         overflow-wrap: break-word;
     }
 
-    .agent-parameters-page button,
-    .agent-parameters-page input,
-    .agent-parameters-page select,
-    .agent-parameters-page textarea {
+    .agent-parameters-page button:not(.agent-parameters-preview-card *),
+    .agent-parameters-page input:not(.agent-parameters-preview-card *),
+    .agent-parameters-page select:not(.agent-parameters-preview-card *),
+    .agent-parameters-page textarea:not(.agent-parameters-preview-card *) {
         font-family: inherit;
     }
 
@@ -499,11 +499,11 @@
     box-shadow: 0 0 0 5px rgba(71, 195, 242, .055), 0 0 28px rgba(47, 190, 245, .25), inset 0 0 18px rgba(87, 214, 255, .15) !important;
 }
 
-.agent-parameters-page h1 {
+.agent-parameters-page h1:not(.agent-parameters-preview-card *) {
     text-shadow: 0 0 26px rgba(94, 208, 255, .18);
 }
 
-.agent-parameters-page [style*="letter-spacing"] {
+.agent-parameters-page [style*="letter-spacing"]:not(.agent-parameters-preview-card *) {
     text-rendering: geometricPrecision;
 }
 
@@ -550,7 +550,7 @@
     gap: 19px !important;
 }
 
-.agent-parameters-mobile-dashboard section,
+.agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *),
 .agent-parameters-preview-card {
     border: 1px solid rgba(91, 205, 247, .30) !important;
     border-radius: 19px !important;
@@ -560,43 +560,43 @@
     box-shadow: 0 20px 48px rgba(0, 0, 0, .43), inset 0 1px rgba(212, 246, 255, .065), 0 0 26px rgba(49, 178, 225, .045) !important;
 }
 
-.agent-parameters-mobile-dashboard section>div:first-child {
+.agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child {
     border-bottom: 1px solid rgba(93, 205, 245, .16) !important;
     background: linear-gradient(100deg, rgba(24, 65, 82, .26), rgba(6, 15, 22, .14)) !important;
 }
 
-.agent-parameters-mobile-dashboard section>div:first-child h2 {
+.agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child h2 {
     color: #e5f7ff !important;
     font-size: 13px !important;
     letter-spacing: .15px !important;
 }
 
-.agent-parameters-mobile-dashboard section>div:first-child p {
+.agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child p {
     color: #8da8b7 !important;
 }
 
-.agent-parameters-mobile-dashboard section>div:first-child>div:first-child>div:first-child {
+.agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child>div:first-child>div:first-child {
     color: #9be6ff !important;
     background: linear-gradient(145deg, #123344, #06111a) !important;
     border: 1px solid rgba(104, 218, 255, .48) !important;
     box-shadow: 0 0 18px rgba(56, 185, 232, .13), inset 0 1px rgba(220, 249, 255, .1) !important;
 }
 
-.agent-parameters-mobile-dashboard section>div:nth-child(2) {
+.agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:nth-child(2) {
     color: #d7eaf2;
 }
 
-.agent-parameters-mobile-fields label,
-.agent-parameters-page label {
+.agent-parameters-mobile-fields label:not(.agent-parameters-preview-card *),
+.agent-parameters-page label:not(.agent-parameters-preview-card *) {
     color: #a9c8d7 !important;
 }
 
 .agent-parameters-mobile-fields input,
 .agent-parameters-mobile-fields select,
 .agent-parameters-mobile-fields textarea,
-.agent-parameters-page input:not([type="file"]),
-.agent-parameters-page select,
-.agent-parameters-page textarea {
+.agent-parameters-page input:not([type="file"]):not(.agent-parameters-preview-card *),
+.agent-parameters-page select:not(.agent-parameters-preview-card *),
+.agent-parameters-page textarea:not(.agent-parameters-preview-card *) {
     color: #e9f8ff !important;
     background: linear-gradient(180deg, #07131b, #040b10) !important;
     border: 1px solid rgba(90, 184, 220, .34) !important;
@@ -608,25 +608,25 @@
 .agent-parameters-mobile-fields input:hover,
 .agent-parameters-mobile-fields select:hover,
 .agent-parameters-mobile-fields textarea:hover,
-.agent-parameters-page input:not([type="file"]):hover,
-.agent-parameters-page select:hover,
-.agent-parameters-page textarea:hover {
+.agent-parameters-page input:not([type="file"]):not(.agent-parameters-preview-card *):hover,
+.agent-parameters-page select:not(.agent-parameters-preview-card *):hover,
+.agent-parameters-page textarea:not(.agent-parameters-preview-card *):hover {
     border-color: rgba(99, 211, 251, .55) !important;
 }
 
 .agent-parameters-mobile-fields input:focus,
 .agent-parameters-mobile-fields select:focus,
 .agent-parameters-mobile-fields textarea:focus,
-.agent-parameters-page input:not([type="file"]):focus,
-.agent-parameters-page select:focus,
-.agent-parameters-page textarea:focus {
+.agent-parameters-page input:not([type="file"]):not(.agent-parameters-preview-card *):focus,
+.agent-parameters-page select:not(.agent-parameters-preview-card *):focus,
+.agent-parameters-page textarea:not(.agent-parameters-preview-card *):focus {
     outline: none !important;
     border-color: #65d8ff !important;
     box-shadow: 0 0 0 3px rgba(69, 190, 239, .13), 0 0 19px rgba(69, 190, 239, .10), inset 0 2px 8px rgba(0, 0, 0, .25) !important;
 }
 
-.agent-parameters-page input::placeholder,
-.agent-parameters-page textarea::placeholder {
+.agent-parameters-page input:not(.agent-parameters-preview-card *)::placeholder,
+.agent-parameters-page textarea:not(.agent-parameters-preview-card *)::placeholder {
     color: #607f90 !important;
     opacity: 1;
 }
@@ -650,7 +650,7 @@
     color: #7899aa !important;
 }
 
-.agent-parameters-page button {
+.agent-parameters-page button:not(.agent-parameters-preview-card *) {
     border: 1px solid rgba(104, 201, 240, .34) !important;
     background: linear-gradient(180deg, rgba(13, 35, 47, .98), rgba(5, 15, 22, .98)) !important;
     color: #c9efff !important;
@@ -659,23 +659,23 @@
     transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease, filter .18s ease !important;
 }
 
-.agent-parameters-page button:hover:not(:disabled) {
+.agent-parameters-page button:not(.agent-parameters-preview-card *):hover:not(:disabled) {
     transform: translateY(-1px);
     border-color: rgba(117, 224, 255, .78) !important;
     box-shadow: inset 0 1px rgba(225, 249, 255, .1), 0 0 20px rgba(53, 177, 224, .13) !important;
     filter: brightness(1.12);
 }
 
-.agent-parameters-page button:active:not(:disabled) {
+.agent-parameters-page button:not(.agent-parameters-preview-card *):active:not(:disabled) {
     transform: translateY(0);
 }
 
-.agent-parameters-page button:disabled {
+.agent-parameters-page button:not(.agent-parameters-preview-card *):disabled {
     opacity: .58;
     cursor: not-allowed !important;
 }
 
-.agent-parameters-page button[style*="linear-gradient"] {
+.agent-parameters-page button:not(.agent-parameters-preview-card *):not(.agent-parameters-save-button)[style*="linear-gradient"] {
     color: #03111a !important;
 }
 
@@ -715,7 +715,7 @@
     color: #89a4b2 !important;
 }
 
-.agent-parameters-page section[style*="space-between"] {
+.agent-parameters-page section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)[style*="space-between"] {
     border: 1px solid rgba(94, 205, 247, .36) !important;
     border-radius: 15px !important;
     background: linear-gradient(110deg, rgba(12, 32, 43, .97), rgba(4, 12, 18, .98)) !important;
@@ -851,31 +851,31 @@
         gap: 13px !important;
     }
 
-    .agent-parameters-mobile-dashboard section,
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *),
     .agent-parameters-preview-card {
         border-radius: 15px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:first-child {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child {
         padding: 13px 12px !important;
         gap: 9px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:nth-child(2) {
         padding: 13px 12px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:first-child>div:last-child {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child>div:last-child {
         max-width: 40%;
         overflow-wrap: anywhere;
         text-align: right;
     }
 
-    .agent-parameters-mobile-dashboard section>div:first-child h2 {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child h2 {
         font-size: 12px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:first-child p {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child p {
         font-size: 8px !important;
         line-height: 1.45 !important;
     }
@@ -966,12 +966,12 @@
         transform-origin: top center !important;
     }
 
-    .agent-parameters-page section[style*="space-between"] {
+    .agent-parameters-page section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)[style*="space-between"] {
         gap: 12px !important;
         padding: 13px !important;
     }
 
-    .agent-parameters-page section[style*="space-between"] button {
+    .agent-parameters-page section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)[style*="space-between"] button {
         width: 100%;
         min-width: 0 !important;
     }
@@ -991,11 +991,11 @@
         padding: 11px 9px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:first-child {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:first-child {
         padding: 12px 10px !important;
     }
 
-    .agent-parameters-mobile-dashboard section>div:nth-child(2) {
+    .agent-parameters-mobile-dashboard section:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)>div:nth-child(2) {
         padding: 11px 10px !important;
     }
 
@@ -1010,9 +1010,9 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .agent-parameters-page *,
-    .agent-parameters-page *::before,
-    .agent-parameters-page *::after {
+    .agent-parameters-page *:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *),
+    .agent-parameters-page *:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)::before,
+    .agent-parameters-page *:not(.agent-parameters-preview-card):not(.agent-parameters-preview-card *)::after {
         scroll-behavior: auto !important;
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;

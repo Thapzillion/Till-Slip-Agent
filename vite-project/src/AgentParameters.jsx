@@ -2168,6 +2168,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
 
 
                 <button
+                  className="agent-parameters-save-button"
                   type="button"
                   onClick={(e) => {
 
@@ -2187,8 +2188,8 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
                       ? 'rgb(66, 91, 120)'
                       : styles.primaryButton.background,
                     color: isSaveSyncing
-                      ? '#606b77'
-                      : styles.primaryButton.color,
+                      ? '#c1cbd1'
+                      : '#d1d5db',
                     border: isSaveSyncing
                       ? '1px solid rgba(255,255,255,0.05)'
                       : styles.primaryButton.border,
