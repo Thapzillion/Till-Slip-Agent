@@ -132,7 +132,7 @@ export default function ClassicTillSlip({
        DISPLAY HELPERS
        ================================================================ */
 
-    const businessAddress =
+    const store_address =
         settings?.business_address ||
         settings?.address ||
         "";
@@ -453,7 +453,7 @@ export default function ClassicTillSlip({
                         </h1>
                     )}
 
-                    {(businessAddress || businessPhone || businessEmail) && (
+                    {(store_address || businessPhone || businessEmail) && (
                         <div
                             style={{
                                 textAlign: "center",
@@ -464,7 +464,7 @@ export default function ClassicTillSlip({
                                 overflowWrap: "anywhere",
                             }}
                         >
-                            {businessAddress && <div>{businessAddress}</div>}
+                            {store_address && <div>{store_address}</div>}
                             {businessPhone && <div>{businessPhone}</div>}
                             {businessEmail && <div>{businessEmail}</div>}
                         </div>

@@ -193,11 +193,11 @@ export default function BlackGoldTillSlip({
         receiptData?.businessName ??
         "";
 
-    const businessAddress =
+    const store_address =
         settings?.business_address ??
         settings?.address ??
         receiptData?.business_address ??
-        receiptData?.businessAddress ??
+        receiptData?.store_address ??
         "";
 
     const businessEmail =
@@ -324,14 +324,14 @@ export default function BlackGoldTillSlip({
                 </header>
 
                 {/* BUSINESS DETAILS */}
-                {(businessAddress || businessEmail || businessPhone) && (
+                {(store_address || businessEmail || businessPhone) && (
                     <section className="bg-slip-contact">
-                        {businessAddress && (
+                        {store_address && (
                             <p>
                                 <span className="bg-slip-contact-icon">
                                     ◇
                                 </span>
-                                {businessAddress}
+                                {store_address}
                             </p>
                         )}
 

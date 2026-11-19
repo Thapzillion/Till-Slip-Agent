@@ -146,7 +146,7 @@ export default function GraffitiTillSlip({
         user?.business?.name ||
         "";
 
-    const businessAddress =
+    const store_address =
         settings?.business_address ||
         settings?.address ||
         receiptData?.business_address ||
@@ -872,12 +872,12 @@ export default function GraffitiTillSlip({
                 </header>
 
                 {/* Business contact details */}
-                {(businessAddress || businessPhone || businessEmail) && (
+                {(store_address || businessPhone || businessEmail) && (
                     <section
                         className="gs-contact"
                         aria-label="Business contact information"
                     >
-                        {businessAddress && (
+                        {store_address && (
                             <div className="gs-contact-row">
                                 <span
                                     className="gs-contact-icon"
@@ -885,7 +885,7 @@ export default function GraffitiTillSlip({
                                 >
                                     ◈
                                 </span>
-                                <span>{businessAddress}</span>
+                                <span>{store_address}</span>
                             </div>
                         )}
 

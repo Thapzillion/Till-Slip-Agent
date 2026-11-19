@@ -135,7 +135,7 @@ export default function TechTillSlip({
         receiptData?.company_name ||
         "";
 
-    const businessAddress =
+    const store_address =
         settings?.business_address ||
         settings?.address ||
         receiptData?.business_address ||
@@ -300,7 +300,7 @@ export default function TechTillSlip({
 
                             <div className="tech-slip-contact-list">
 
-                                {businessAddress && (
+                                {store_address && (
                                     <div className="tech-contact-row">
                                         <span className="tech-contact-icon">
                                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -308,7 +308,7 @@ export default function TechTillSlip({
                                                 <circle cx="12" cy="10" r="2.5" />
                                             </svg>
                                         </span>
-                                        <span>{businessAddress}</span>
+                                        <span>{store_address}</span>
                                     </div>
                                 )}
 

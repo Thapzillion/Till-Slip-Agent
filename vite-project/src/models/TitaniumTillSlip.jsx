@@ -645,7 +645,7 @@ export default function TitaniumTillSlip({
         receiptData?.store_name ??
         "";
 
-    const businessAddress =
+    const store_address =
         settings?.business_address ??
         settings?.address ??
         receiptData?.business_address ??
@@ -853,7 +853,7 @@ export default function TitaniumTillSlip({
                     {/* BUSINESS INFORMATION */}
 
                     {(businessName ||
-                        businessAddress ||
+                        store_address ||
                         businessEmail ||
                         businessPhone) && (
                             <section style={styles.panel}>
@@ -878,8 +878,8 @@ export default function TitaniumTillSlip({
                                             </div>
                                         )}
 
-                                        {businessAddress && (
-                                            <div>{businessAddress}</div>
+                                        {store_address && (
+                                            <div>{store_address}</div>
                                         )}
 
                                         {businessEmail && (
