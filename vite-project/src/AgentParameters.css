@@ -733,6 +733,11 @@
     padding: 18px !important;
 }
 
+.agent-parameters-receipt-isolation {
+    color: initial;
+    font-family: initial;
+}
+
 .agent-parameters-preview-card>div {
     border: 1px solid rgba(85, 194, 237, .22) !important;
     border-radius: 14px !important;
@@ -763,7 +768,8 @@
 
 @media (min-width: 1101px) and (max-width: 1399px) {
     .agent-parameters-mobile-dashboard {
-        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 16px !important;
     }
 }
 

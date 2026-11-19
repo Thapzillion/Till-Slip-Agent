@@ -2092,7 +2092,7 @@ export default function AgentParameters({ selectedTemplateId, setSelectedTemplat
               <section className="agent-parameters-preview-card" style={styles.previewCard}>
 
                 <div style={styles.paperStage}>
-                  <div style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
+                  <div className="agent-parameters-receipt-isolation" style={{ width: "100%", display: "flex", justifyContent: "center", transform: "scale(0.85)", transformOrigin: "top center" }}>
 
                     {currentTemplate === "matrix-grid" || currentTemplate === "matrix" ? (
                       <MatrixTillSlip
