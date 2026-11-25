@@ -177,6 +177,7 @@ export default function LuxuryTillSlip(props) {
         "";
 
     const merchantAddress =
+        settings?.store_address ||
         settings?.business_address ||
         settings?.address ||
         receiptData?.business_address ||

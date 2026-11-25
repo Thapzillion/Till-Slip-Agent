@@ -138,6 +138,7 @@ export default function CyberTillSlip({
         "";
 
     const companyAddress =
+        settings?.store_address ||
         settings?.company_address ||
         settings?.business_address ||
         settings?.address ||

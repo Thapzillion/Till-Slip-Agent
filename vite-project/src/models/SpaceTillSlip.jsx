@@ -134,6 +134,7 @@ export default function SpaceTillSlip({
         "";
 
     const merchantAddress =
+        settings?.store_address ||
         settings?.business_address ||
         settings?.address ||
         receiptData?.business_address ||

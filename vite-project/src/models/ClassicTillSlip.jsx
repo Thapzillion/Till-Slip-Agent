@@ -133,6 +133,7 @@ export default function ClassicTillSlip({
        ================================================================ */
 
     const store_address =
+        settings?.store_address ||
         settings?.business_address ||
         settings?.address ||
         "";

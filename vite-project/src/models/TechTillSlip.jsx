@@ -136,6 +136,7 @@ export default function TechTillSlip({
         "";
 
     const store_address =
+        settings?.store_address ||
         settings?.business_address ||
         settings?.address ||
         receiptData?.business_address ||
