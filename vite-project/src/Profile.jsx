@@ -1,4 +1,5 @@
 
+
 import { useCallback, useEffect, useState } from "react";
 import {
     X,
@@ -350,7 +351,7 @@ export default function Profile({
                                 </div>
 
                                 <div className="profile-date-row ruach-profile-expiry-row">
-                                    <CalendarClock size={18} />
+                                    <CalendarClock className="ruach-profile-expiry-icon" size={18} />
                                     <div>
                                         <span className="profile-label ruach-profile-field-label">
                                             {details.periodLabel.toUpperCase()}
@@ -361,7 +362,7 @@ export default function Profile({
 
                                 {subscription?.last_payment_at && (
                                     <div className="profile-date-row ruach-profile-expiry-row">
-                                        <Clock3 size={18} />
+                                        <Clock3 className="ruach-profile-expiry-icon" size={18} />
                                         <div>
                                             <span className="profile-label ruach-profile-field-label">
                                                 LAST PAYMENT
